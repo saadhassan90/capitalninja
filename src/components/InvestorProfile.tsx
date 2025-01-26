@@ -11,6 +11,7 @@ import { OverviewTab } from "./investor-profile/OverviewTab";
 import { CommitmentsTab } from "./investor-profile/CommitmentsTab";
 import { InvestmentsTab } from "./investor-profile/InvestmentsTab";
 import { InvestorData } from "@/types/investor";
+import { ProcessedInvestorData } from "@/types/processedInvestor";
 
 type InvestorProfileProps = {
   investorId: number;
@@ -18,7 +19,7 @@ type InvestorProfileProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-async function fetchInvestorDetails(investorId: number): Promise<InvestorData> {
+async function fetchInvestorDetails(investorId: number): Promise<ProcessedInvestorData> {
   const { data, error } = await supabase
     .from('limited_partners')
     .select('*')
@@ -27,29 +28,34 @@ async function fetchInvestorDetails(investorId: number): Promise<InvestorData> {
   
   if (error) throw error;
 
-  // Keep bigint values as they are, only convert non-bigint numeric fields
-  const processedData: InvestorData = {
-    ...data,
-    id: Number(data.id),
-    year_founded: data.year_founded ? Number(data.year_founded) : null,
-    number_of_affiliated_funds: data.number_of_affiliated_funds ? Number(data.number_of_affiliated_funds) : null,
-    number_of_affiliated_investors: data.number_of_affiliated_investors ? Number(data.number_of_affiliated_investors) : null,
-    allocation_to_alternative_investments_percent: data.allocation_to_alternative_investments_percent ? Number(data.allocation_to_alternative_investments_percent) : null,
-    private_equity_percent: data.private_equity_percent ? Number(data.private_equity_percent) : null,
-    real_estate_percent: data.real_estate_percent ? Number(data.real_estate_percent) : null,
-    special_opportunities_percent: data.special_opportunities_percent ? Number(data.special_opportunities_percent) : null,
-    hedge_funds_percent: data.hedge_funds_percent ? Number(data.hedge_funds_percent) : null,
-    equities_percent: data.equities_percent ? Number(data.equities_percent) : null,
-    fixed_income_percent: data.fixed_income_percent ? Number(data.fixed_income_percent) : null,
-    cash_percent: data.cash_percent ? Number(data.cash_percent) : null,
-    target_alternatives_min: data.target_alternatives_min ? Number(data.target_alternatives_min) : null,
-    target_alternatives_max: data.target_alternatives_max ? Number(data.target_alternatives_max) : null,
-    target_private_equity_min: data.target_private_equity_min ? Number(data.target_private_equity_min) : null,
-    target_private_equity_max: data.target_private_equity_max ? Number(data.target_private_equity_max) : null,
-    target_real_estate_min: data.target_real_estate_min ? Number(data.target_real_estate_min) : null,
-    target_real_estate_max: data.target_real_estate_max ? Number(data.target_real_estate_max) : null,
-    target_special_opportunities_min: data.target_special_opportunities_min ? Number(data.target_special_opportunities_min) : null,
-    target_special_opportunities_max: data.target_special_opportunities_max ? Number(data.target_special_opportunities_max) : null,
+  const rawData = data as unknown as InvestorData;
+
+  // Convert bigint values to numbers for the UI
+  const processedData: ProcessedInvestorData = {
+    ...rawData,
+    id: Number(rawData.id),
+    aum: rawData.aum ? Number(rawData.aum) : null,
+    total_commitments_in_debt_funds: rawData.total_commitments_in_debt_funds ? Number(rawData.total_commitments_in_debt_funds) : null,
+    total_commitments_in_pefunds: rawData.total_commitments_in_pefunds ? Number(rawData.total_commitments_in_pefunds) : null,
+    total_commitments_in_refunds: rawData.total_commitments_in_refunds ? Number(rawData.total_commitments_in_refunds) : null,
+    total_commitments_in_vcfunds: rawData.total_commitments_in_vcfunds ? Number(rawData.total_commitments_in_vcfunds) : null,
+    total_commitments_in_fofs_and2nd: rawData.total_commitments_in_fofs_and2nd ? Number(rawData.total_commitments_in_fofs_and2nd) : null,
+    total_commitments_in_infrastructure: rawData.total_commitments_in_infrastructure ? Number(rawData.total_commitments_in_infrastructure) : null,
+    total_commitments_in_energy_funds: rawData.total_commitments_in_energy_funds ? Number(rawData.total_commitments_in_energy_funds) : null,
+    total_commitments_in_other_funds: rawData.total_commitments_in_other_funds ? Number(rawData.total_commitments_in_other_funds) : null,
+    direct_investments: rawData.direct_investments ? Number(rawData.direct_investments) : null,
+    allocation_to_alternative_investments: rawData.allocation_to_alternative_investments ? Number(rawData.allocation_to_alternative_investments) : null,
+    private_equity: rawData.private_equity ? Number(rawData.private_equity) : null,
+    real_estate: rawData.real_estate ? Number(rawData.real_estate) : null,
+    special_opportunities: rawData.special_opportunities ? Number(rawData.special_opportunities) : null,
+    hedge_funds: rawData.hedge_funds ? Number(rawData.hedge_funds) : null,
+    equities: rawData.equities ? Number(rawData.equities) : null,
+    fixed_income: rawData.fixed_income ? Number(rawData.fixed_income) : null,
+    cash: rawData.cash ? Number(rawData.cash) : null,
+    preferred_commitment_size_min: rawData.preferred_commitment_size_min ? Number(rawData.preferred_commitment_size_min) : null,
+    preferred_commitment_size_max: rawData.preferred_commitment_size_max ? Number(rawData.preferred_commitment_size_max) : null,
+    preferred_direct_investment_size_min: rawData.preferred_direct_investment_size_min ? Number(rawData.preferred_direct_investment_size_min) : null,
+    preferred_direct_investment_size_max: rawData.preferred_direct_investment_size_max ? Number(rawData.preferred_direct_investment_size_max) : null,
   };
 
   return processedData;
