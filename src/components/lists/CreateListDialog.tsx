@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { DynamicListFilters } from "./DynamicListFilters";
 import { useAuth } from "@/components/AuthProvider";
+import { toast } from "sonner";
 import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
 interface CreateListDialogProps {
@@ -42,9 +43,20 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
     },
   });
 
+  const hasAtLeastOneFilter = () => {
+    const { type, location, assetClass, firstTimeFunds, aumRange } = newList.filters;
+    return type !== null || location !== null || assetClass !== null || 
+           firstTimeFunds !== null || (aumRange !== null && aumRange.length === 2);
+  };
+
   const handleCreate = () => {
     if (!user) return;
     
+    if (newList.type === 'dynamic' && !hasAtLeastOneFilter()) {
+      toast.error("Please set at least one filter for dynamic lists");
+      return;
+    }
+
     const listData = {
       name: newList.name,
       description: newList.description,
@@ -124,7 +136,11 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleCreate} className="bg-black hover:bg-black/80">
+          <Button 
+            onClick={handleCreate} 
+            disabled={!newList.name}
+            className="bg-black hover:bg-black/80"
+          >
             Create List
           </Button>
         </DialogFooter>
