@@ -4,7 +4,7 @@ import { InvestorsTable } from "@/components/InvestorsTable";
 
 const Index = () => {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={true} open={true}>
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <main className="flex-1 p-8 flex flex-col h-screen">

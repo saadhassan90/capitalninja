@@ -13,15 +13,14 @@ interface MenuItem {
 
 interface MenuListProps {
   items: MenuItem[];
-  isCollapsed: boolean;
 }
 
-export function MenuList({ items, isCollapsed }: MenuListProps) {
+export function MenuList({ items }: MenuListProps) {
   return (
     <SidebarMenu>
       {items.map((item) => (
         <SidebarMenuItem key={item.title}>
-          <SidebarMenuButton asChild tooltip={isCollapsed ? item.title : undefined}>
+          <SidebarMenuButton asChild>
             <a href={item.url} className="flex items-center gap-3">
               <item.icon className="h-4 w-4" />
               <span>{item.title}</span>
