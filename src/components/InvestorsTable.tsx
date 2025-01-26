@@ -4,6 +4,7 @@ import { InvestorProfile } from "./InvestorProfile";
 import { InvestorsSearch } from "./investors/InvestorsSearch";
 import { InvestorsTableView } from "./investors/InvestorsTableView";
 import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
+import type { SortConfig } from "@/types/sorting";
 
 export function InvestorsTable() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,6 +15,10 @@ export function InvestorsTable() {
   const [selectedAUMRange, setSelectedAUMRange] = useState<AUMRange>(null);
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    column: 'limited_partner_name',
+    direction: 'asc'
+  });
 
   const { data: investorsData, isLoading, error } = useInvestorsData({
     searchTerm,
@@ -23,6 +28,7 @@ export function InvestorsTable() {
     selectedFirstTimeFunds,
     selectedAUMRange,
     currentPage,
+    sortConfig,
   });
 
   const handleFilterChange = (
@@ -37,6 +43,14 @@ export function InvestorsTable() {
     if (assetClass !== null) setSelectedAssetClass(assetClass === '_all' ? null : assetClass);
     if (firstTimeFunds !== null) setSelectedFirstTimeFunds(firstTimeFunds === '_all' ? null : firstTimeFunds);
     if (aumRange !== null) setSelectedAUMRange(aumRange);
+    setCurrentPage(1);
+  };
+
+  const handleSort = (column: string) => {
+    setSortConfig(prevConfig => ({
+      column,
+      direction: prevConfig.column === column && prevConfig.direction === 'asc' ? 'desc' : 'asc'
+    }));
     setCurrentPage(1);
   };
 
@@ -62,6 +76,8 @@ export function InvestorsTable() {
         currentPage={currentPage}
         totalPages={Math.ceil((investorsData?.count ?? 0) / 200)}
         onPageChange={setCurrentPage}
+        sortConfig={sortConfig}
+        onSort={handleSort}
       />
 
       {selectedInvestorId && (
