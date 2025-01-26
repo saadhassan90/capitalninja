@@ -31,7 +31,7 @@ export function MenuList({ items }: MenuListProps) {
                 href={item.url}
                 className={`flex items-center gap-3 rounded-md px-3 py-2 transition-colors hover:bg-gray-900/10 dark:hover:bg-gray-50/10 ${
                   isActive
-                    ? "bg-gray-900/10 dark:bg-gray-50/10 font-medium"
+                    ? "bg-black text-white dark:bg-black dark:text-white"
                     : ""
                 }`}
               >
