@@ -22,16 +22,24 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
   const renderFundTypes = (fundTypes: string | null) => {
     if (!fundTypes) return 'N/A';
     
-    type AssetClass = 'privateEquity' | 'realEstate' | 'privateCredit' | 'venture' | 'energy' | 'infrastructure' | 'other';
-    
-    const mapFundTypeToAssetClass = (type: string): AssetClass => {
+    const mapFundTypeToAssetClass = (type: string) => {
       type = type.toLowerCase().trim();
-      if (type.includes('private equity') || type.includes('pe') || type.includes('buyout') || type.includes('growth')) return 'privateEquity';
-      if (type.includes('real estate') || type.includes('re')) return 'realEstate';
-      if (type.includes('private credit') || type.includes('debt')) return 'privateCredit';
+      
+      if (type.includes('buyout')) return 'buyout';
+      if (type.includes('growth') || type.includes('expansion')) return 'growth';
+      if (type.includes('real estate')) return 'realEstate';
+      if (type.includes('early stage') || type.includes('seed')) return 'earlyStage';
+      if (type.includes('late stage')) return 'lateStage';
       if (type.includes('venture') || type.includes('vc')) return 'venture';
       if (type.includes('energy')) return 'energy';
       if (type.includes('infrastructure')) return 'infrastructure';
+      if (type.includes('secondaries')) return 'secondaries';
+      if (type.includes('fund of funds') || type.includes('fof')) return 'fundOfFunds';
+      if (type.includes('distressed')) return 'distressed';
+      if (type.includes('mezzanine')) return 'mezzanine';
+      if (type.includes('credit') || type.includes('debt')) return 'privateCredit';
+      if (type.includes('private equity') || type.includes('pe')) return 'privateEquity';
+      
       return 'other';
     };
     
