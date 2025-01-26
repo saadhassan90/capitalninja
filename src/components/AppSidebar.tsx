@@ -1,4 +1,4 @@
-import { Home, Users, BookOpen, Settings } from "lucide-react";
+import { ChevronLeft, Home, Users, BookOpen, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -8,6 +8,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 const menuItems = [
@@ -18,16 +20,23 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
+  const { state } = useSidebar();
+
   return (
     <Sidebar>
       <SidebarContent>
+        <div className="flex items-center justify-between p-2">
+          <span className={`font-semibold transition-opacity duration-200 ${state === 'collapsed' ? 'opacity-0' : 'opacity-100'}`}>
+            Menu
+          </span>
+          <SidebarTrigger className="h-8 w-8" />
+        </div>
         <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={state === 'collapsed' ? item.title : undefined}>
                     <a href={item.url} className="flex items-center gap-3">
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>

@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { InvestorsTable } from "@/components/InvestorsTable";
 
@@ -13,7 +13,6 @@ const Index = () => {
               <h1 className="text-3xl font-bold text-gray-900">Investors</h1>
               <p className="text-gray-500 mt-1">Find and connect with investors</p>
             </div>
-            <SidebarTrigger />
           </div>
           <div className="flex-1 overflow-hidden">
             <InvestorsTable />
