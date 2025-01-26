@@ -38,10 +38,17 @@ const Lists = () => {
         throw error;
       }
 
-      // Safely type cast the data
+      // Safely type cast the data with proper type checking
       const typedLists = (data as any[]).map(list => ({
         ...list,
-        filters: list.filters as ListFilters | null,
+        // Ensure filters match the ListFilters type structure
+        filters: list.filters ? {
+          type: list.filters.type ?? null,
+          location: list.filters.location ?? null,
+          assetClass: list.filters.assetClass ?? null,
+          firstTimeFunds: list.filters.firstTimeFunds ?? null,
+          aumRange: list.filters.aumRange ?? null
+        } as ListFilters : null,
         type: list.type as "static" | "dynamic"
       }));
 
@@ -79,7 +86,7 @@ const Lists = () => {
         description: newList.description,
         type: newList.type,
         filters: filtersJson,
-        created_by: user.id // Set the created_by field to the current user's ID
+        created_by: user.id
       })
       .select()
       .single();
