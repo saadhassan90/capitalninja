@@ -108,7 +108,10 @@ export function AddToListDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] h-[600px] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Add to List</DialogTitle>
+          <DialogTitle className="text-2xl font-semibold">Add to List</DialogTitle>
+          <p className="text-sm text-muted-foreground">
+            Add selected investors to an existing list or create a new one
+          </p>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto space-y-4 py-4">
@@ -120,10 +123,15 @@ export function AddToListDialog({
             <div className="border rounded-lg p-4 space-y-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="existing" id="existing" />
-                <Label htmlFor="existing">Add to existing list</Label>
+                <Label htmlFor="existing" className="text-lg font-medium">
+                  Add to existing list
+                </Label>
               </div>
               {mode === "existing" && (
                 <div className="pl-6 space-y-2">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Select a list from your existing static lists
+                  </p>
                   {listsLoading ? (
                     <div className="flex items-center justify-center py-4">
                       <Loader2 className="h-6 w-6 animate-spin" />
@@ -137,7 +145,7 @@ export function AddToListDialog({
                       {lists.map((list) => (
                         <div key={list.id} className="flex items-center space-x-2">
                           <RadioGroupItem value={list.id} id={list.id} />
-                          <Label htmlFor={list.id}>{list.name}</Label>
+                          <Label htmlFor={list.id} className="font-medium">{list.name}</Label>
                         </div>
                       ))}
                     </RadioGroup>
@@ -151,12 +159,17 @@ export function AddToListDialog({
             <div className="border rounded-lg p-4 space-y-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="new" id="new" />
-                <Label htmlFor="new">Create new list</Label>
+                <Label htmlFor="new" className="text-lg font-medium">
+                  Create new list
+                </Label>
               </div>
               {mode === "new" && (
                 <div className="pl-6 space-y-4">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Create a new list to add your selected investors
+                  </p>
                   <div className="space-y-2">
-                    <Label htmlFor="name">List Name</Label>
+                    <Label htmlFor="name" className="font-medium">List Name</Label>
                     <Input
                       id="name"
                       value={newList.name}
@@ -165,7 +178,7 @@ export function AddToListDialog({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description" className="font-medium">Description</Label>
                     <Textarea
                       id="description"
                       value={newList.description}
