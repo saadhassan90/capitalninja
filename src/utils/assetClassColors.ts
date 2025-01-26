@@ -1,31 +1,31 @@
 export const assetClassColors = {
   privateEquity: {
-    bg: '#8B5CF6', // Vivid Purple
+    bg: '#1B4965', // Deep Blue
     text: 'white'
   },
   realEstate: {
-    bg: '#D946EF', // Magenta Pink
+    bg: '#62B6CB', // Medium Blue
     text: 'white'
   },
   debtFunds: {
-    bg: '#F97316', // Bright Orange
+    bg: '#5FA777', // Forest Green
     text: 'white'
   },
   infrastructure: {
-    bg: '#0EA5E9', // Ocean Blue
-    text: 'white'
+    bg: '#CAE9FF', // Light Blue
+    text: '#1B4965' // Dark text for contrast
   },
   fofSecondaries: {
-    bg: '#8E9196', // Neutral Gray
-    text: 'white'
+    bg: '#BEE9E8', // Mint
+    text: '#1B4965'
   },
   energy: {
-    bg: '#F1F0FB', // Soft Gray
-    text: '#1F2937'
+    bg: '#62B6CB', // Medium Blue
+    text: 'white'
   },
   other: {
-    bg: '#F1F0FB', // Soft Gray
-    text: '#1F2937'
+    bg: '#CAE9FF', // Light Blue
+    text: '#1B4965'
   }
 };
 
