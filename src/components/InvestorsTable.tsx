@@ -1,19 +1,9 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Eye } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { InvestorProfile } from "./InvestorProfile";
+import { InvestorsSearch } from "./investors/InvestorsSearch";
+import { InvestorsTableView } from "./investors/InvestorsTableView";
 
 type LimitedPartner = {
   id: number;
@@ -53,82 +43,22 @@ export function InvestorsTable() {
     queryFn: () => fetchInvestors(searchTerm),
   });
 
-  const renderFundTypes = (fundTypes: string | null) => {
-    if (!fundTypes) return 'N/A';
-    
-    return fundTypes.split(',').map((type, index) => (
-      <Badge key={index} variant="secondary" className="mr-1 mb-1">
-        {type.trim()}
-      </Badge>
-    ));
-  };
-
   if (error) {
     return <div>Error loading investors</div>;
   }
 
   return (
     <div className="w-full">
-      <div className="mb-6">
-        <Input
-          placeholder="Search investors..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
-        />
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>AUM (USD M)</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Investment Focus</TableHead>
-              <TableHead>Min. Investment (USD M)</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center">Loading...</TableCell>
-              </TableRow>
-            ) : investors.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center">No investors found</TableCell>
-              </TableRow>
-            ) : (
-              investors.map((investor) => (
-                <TableRow key={investor.id}>
-                  <TableCell className="font-medium">{investor.limited_partner_name}</TableCell>
-                  <TableCell>{investor.limited_partner_type || 'N/A'}</TableCell>
-                  <TableCell>{investor.aum ? `${(investor.aum / 1e6).toFixed(0)}` : 'N/A'}</TableCell>
-                  <TableCell>{investor.hqlocation || 'N/A'}</TableCell>
-                  <TableCell className="flex flex-wrap gap-1">
-                    {renderFundTypes(investor.preferred_fund_type)}
-                  </TableCell>
-                  <TableCell>
-                    {investor.preferred_commitment_size_min 
-                      ? `${(investor.preferred_commitment_size_min / 1e6).toFixed(0)}`
-                      : 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setSelectedInvestorId(investor.id)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <InvestorsSearch 
+        value={searchTerm}
+        onChange={setSearchTerm}
+      />
+      
+      <InvestorsTableView 
+        investors={investors}
+        isLoading={isLoading}
+        onViewInvestor={setSelectedInvestorId}
+      />
 
       {selectedInvestorId && (
         <InvestorProfile
