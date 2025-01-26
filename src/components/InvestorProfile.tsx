@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OverviewTab } from "./investor-profile/OverviewTab";
 import { CommitmentsTab } from "./investor-profile/CommitmentsTab";
 import { InvestmentsTab } from "./investor-profile/InvestmentsTab";
+import { InvestorData } from "@/types/investor";
 
 type InvestorProfileProps = {
   investorId: number;
@@ -25,7 +26,23 @@ async function fetchInvestorDetails(investorId: number) {
     .single();
   
   if (error) throw error;
-  return data;
+
+  // Convert bigint values to numbers
+  const processedData: InvestorData = {
+    ...data,
+    aum: data.aum ? Number(data.aum) : null,
+    private_equity: data.private_equity ? Number(data.private_equity) : null,
+    real_estate: data.real_estate ? Number(data.real_estate) : null,
+    special_opportunities: data.special_opportunities ? Number(data.special_opportunities) : null,
+    hedge_funds: data.hedge_funds ? Number(data.hedge_funds) : null,
+    equities: data.equities ? Number(data.equities) : null,
+    fixed_income: data.fixed_income ? Number(data.fixed_income) : null,
+    cash: data.cash ? Number(data.cash) : null,
+    preferred_commitment_size_min: data.preferred_commitment_size_min ? Number(data.preferred_commitment_size_min) : null,
+    preferred_commitment_size_max: data.preferred_commitment_size_max ? Number(data.preferred_commitment_size_max) : null,
+  };
+
+  return processedData;
 }
 
 async function fetchFundCommitments(investorId: number) {
