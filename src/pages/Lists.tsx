@@ -30,7 +30,6 @@ const Lists = () => {
 
       if (error) throw error;
       
-      // Transform the data to ensure type is either "static" or "dynamic"
       return (lists || []).map(list => ({
         ...list,
         type: list.type === 'dynamic' ? 'dynamic' : 'static'
@@ -42,6 +41,7 @@ const Lists = () => {
     name: string;
     description: string;
     type: "static" | "dynamic";
+    created_by: string;
     filters?: ListFilters;
   }) => {
     try {
@@ -51,6 +51,7 @@ const Lists = () => {
           name: list.name,
           description: list.description,
           type: list.type,
+          created_by: list.created_by,
           filters: list.filters ? JSON.stringify(list.filters) : null,
         }]);
 

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { DynamicListFilters } from "./DynamicListFilters";
+import { useAuth } from "@/hooks/useAuth";
 import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
 interface CreateListDialogProps {
@@ -15,6 +16,7 @@ interface CreateListDialogProps {
     name: string;
     description: string;
     type: "static" | "dynamic";
+    created_by: string;
     filters?: {
       type: InvestorFilterType;
       location: InvestorFilterType;
@@ -26,6 +28,7 @@ interface CreateListDialogProps {
 }
 
 export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateListDialogProps) {
+  const { user } = useAuth();
   const [newList, setNewList] = useState({
     name: "",
     description: "",
@@ -40,7 +43,13 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
   });
 
   const handleCreate = () => {
-    onCreateList(newList);
+    if (!user) return;
+    
+    onCreateList({
+      ...newList,
+      created_by: user.id,
+    });
+    
     onOpenChange(false);
     setNewList({
       name: "",
