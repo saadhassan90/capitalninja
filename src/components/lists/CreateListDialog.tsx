@@ -62,7 +62,7 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
         <DialogHeader>
           <DialogTitle>Create New List</DialogTitle>
         </DialogHeader>
-        <div className="space-y-6 flex-1">
+        <div className="flex-1 overflow-y-auto space-y-6 pr-6">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input
@@ -106,7 +106,7 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
             />
           )}
         </div>
-        <DialogFooter className="mt-6">
+        <DialogFooter className="flex justify-end gap-2 pt-6 border-t">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
