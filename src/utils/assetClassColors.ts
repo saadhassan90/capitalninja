@@ -3,7 +3,7 @@ const mainColors = {
   privateEquity: '#1B4965', // Deep Blue
   realEstate: '#F97316',   // Bright Orange
   privateCredit: '#5FA777', // Forest Green
-  venture: '#7209B7',      // Deep Purple
+  venture: '#D3E4FD',      // Soft Blue (changed to light blue)
   energy: '#F4A261',       // Warm Orange
   infrastructure: '#2A9D8F', // Teal
   other: '#6C757D',        // Neutral Gray
@@ -40,11 +40,11 @@ export const assetClassColors = {
   },
   venture: {
     bg: mainColors.venture,
-    text: 'white'
+    text: '#1B4965' // Dark text for contrast with light blue
   },
   energy: {
     bg: mainColors.energy,
-    text: '#1B4965' // Dark text for contrast
+    text: '#1B4965'
   },
   infrastructure: {
     bg: mainColors.infrastructure,
@@ -55,7 +55,7 @@ export const assetClassColors = {
     text: 'white'
   },
   
-  // Sub-asset classes (using lighter shades)
+  // Sub-asset classes
   debtFunds: {
     bg: generateLighterShade(mainColors.privateCredit, 20),
     text: '#1B4965'
