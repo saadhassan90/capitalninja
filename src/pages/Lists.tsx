@@ -71,11 +71,11 @@ const Lists = () => {
 
     const filtersJson = newList.type === "dynamic" 
       ? {
-          type: newList.filters?.type,
-          location: newList.filters?.location,
-          assetClass: newList.filters?.assetClass,
-          firstTimeFunds: newList.filters?.firstTimeFunds,
-          aumRange: newList.filters?.aumRange,
+          type: newList.filters?.type ?? null,
+          location: newList.filters?.location ?? null,
+          assetClass: newList.filters?.assetClass ?? null,
+          firstTimeFunds: newList.filters?.firstTimeFunds ?? null,
+          aumRange: newList.filters?.aumRange ?? null,
         }
       : null;
 
@@ -99,7 +99,13 @@ const Lists = () => {
     // Safely type cast the new list
     const typedList: List = {
       ...data,
-      filters: data.filters as ListFilters | null,
+      filters: data.filters ? {
+        type: data.filters.type ?? null,
+        location: data.filters.location ?? null,
+        assetClass: data.filters.assetClass ?? null,
+        firstTimeFunds: data.filters.firstTimeFunds ?? null,
+        aumRange: data.filters.aumRange ?? null
+      } as ListFilters : null,
       type: data.type as "static" | "dynamic"
     };
 
