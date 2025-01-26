@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, User, Settings, Users, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,9 +13,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 
 const menuItems = [
-  { title: "Profile", url: "/profile" },
-  { title: "Settings", url: "/settings" },
-  { title: "Team Management", url: "/team" },
+  { title: "Profile", url: "/profile", icon: User },
+  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Team Management", url: "/team", icon: Users },
 ];
 
 export function UserMenu() {
@@ -52,6 +52,7 @@ export function UserMenu() {
                     href={item.url}
                     className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent"
                   >
+                    <item.icon className="h-4 w-4" />
                     {item.title}
                   </a>
                 </SidebarMenuButton>
@@ -62,6 +63,7 @@ export function UserMenu() {
                 onClick={handleLogout}
                 className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-destructive hover:bg-accent"
               >
+                <LogOut className="h-4 w-4" />
                 Log Out
               </SidebarMenuButton>
             </SidebarMenuItem>
