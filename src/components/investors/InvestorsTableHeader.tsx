@@ -1,4 +1,4 @@
-import { TableHeader, TableRow } from "@/components/ui/table";
+import { TableHeader, TableRow, TableHead } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SortableHeader } from "./SortableHeader";
 import type { SortConfig } from "@/types/sorting";
@@ -23,13 +23,17 @@ export function InvestorsTableHeader({
     selectedInvestors.includes(investor.id)
   );
 
+  const handleSelectAll = (checked: boolean) => {
+    onSelectAll(checked);
+  };
+
   return (
     <TableHeader>
       <TableRow>
         <TableHead className="w-[50px] text-xs font-medium">
           <Checkbox 
             checked={allSelected}
-            onCheckedChange={onSelectAll}
+            onCheckedChange={handleSelectAll}
             aria-label="Select all investors"
           />
         </TableHead>

@@ -1,13 +1,12 @@
 import { useState } from "react";
-import type { LimitedPartner } from "@/types/investor";
 
 export function useInvestorSelection() {
   const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
 
-  const handleSelectAll = (investors: LimitedPartner[], checked: boolean) => {
+  const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      const allIds = investors.map(investor => investor.id);
-      setSelectedInvestors(allIds);
+      // This will be handled by the component that has access to the investors array
+      setSelectedInvestors([]);
     } else {
       setSelectedInvestors([]);
     }

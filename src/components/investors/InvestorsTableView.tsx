@@ -9,7 +9,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { InvestorsTableRow } from "./InvestorsTableRow";
 import { InvestorsPagination } from "./InvestorsPagination";
-import { ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
+import { InvestorsTableHeader } from "./InvestorsTableHeader";
 import type { LimitedPartner } from "@/types/investor";
 import type { SortConfig } from "@/types/sorting";
 
@@ -40,28 +40,6 @@ export function InvestorsTableView({
   onSelectAll,
   onSelectInvestor,
 }: InvestorsTableViewProps) {
-  const SortableHeader = ({ column, children }: { column: string, children: React.ReactNode }) => {
-    const isSorted = sortConfig.column === column;
-    
-    return (
-      <TableHead 
-        className="text-xs font-medium cursor-pointer hover:bg-muted/50"
-        onClick={() => onSort(column)}
-      >
-        <div className="flex items-center gap-1">
-          {children}
-          {isSorted ? (
-            sortConfig.direction === 'asc' ? 
-              <ChevronUp className="h-3 w-3 text-muted-foreground" /> : 
-              <ChevronDown className="h-3 w-3 text-muted-foreground" />
-          ) : (
-            <ArrowUpDown className="h-3 w-3 text-muted-foreground/50" />
-          )}
-        </div>
-      </TableHead>
-    );
-  };
-
   const allSelected = investors.length > 0 && investors.every(investor => 
     selectedInvestors.includes(investor.id)
   );
@@ -70,24 +48,13 @@ export function InvestorsTableView({
     <div className="flex flex-col h-full">
       <div className="rounded-md border flex-1 overflow-auto max-h-[calc(100vh-300px)]">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[50px] text-xs font-medium">
-                <Checkbox 
-                  checked={allSelected}
-                  onCheckedChange={onSelectAll}
-                  aria-label="Select all investors"
-                />
-              </TableHead>
-              <SortableHeader column="limited_partner_name">Name</SortableHeader>
-              <SortableHeader column="limited_partner_type">Type</SortableHeader>
-              <SortableHeader column="aum">AUM (USD M)</SortableHeader>
-              <SortableHeader column="hqlocation">Location</SortableHeader>
-              <TableHead className="text-xs font-medium">Investment Focus</TableHead>
-              <SortableHeader column="primary_contact">Primary Contact</SortableHeader>
-              <TableHead className="text-xs font-medium">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+          <InvestorsTableHeader
+            investors={investors}
+            selectedInvestors={selectedInvestors}
+            onSelectAll={onSelectAll}
+            sortConfig={sortConfig}
+            onSort={onSort}
+          />
           <TableBody>
             {isLoading ? (
               <TableRow>
