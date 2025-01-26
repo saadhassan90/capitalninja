@@ -1,7 +1,7 @@
 // Main asset class colors from financial color palette
 const mainColors = {
   privateEquity: '#1B4965', // Deep Blue
-  realEstate: '#62B6CB',   // Medium Blue
+  realEstate: '#F97316',   // Bright Orange
   privateCredit: '#5FA777', // Forest Green
   venture: '#7209B7',      // Deep Purple
   energy: '#F4A261',       // Warm Orange
@@ -65,20 +65,20 @@ export const assetClassColors = {
     text: '#1B4965'
   },
   buyout: {
-    bg: generateLighterShade(mainColors.privateEquity, 20),
-    text: '#1B4965'
+    bg: mainColors.privateEquity,
+    text: 'white'
   },
   growth: {
-    bg: generateLighterShade(mainColors.venture, 20),
-    text: '#1B4965'
+    bg: generateLighterShade(mainColors.privateEquity, 20),
+    text: 'white'
   },
   residential: {
     bg: generateLighterShade(mainColors.realEstate, 20),
-    text: '#1B4965'
+    text: 'white'
   },
   commercial: {
     bg: generateLighterShade(mainColors.realEstate, 40),
-    text: '#1B4965'
+    text: 'white'
   }
 };
 

@@ -26,7 +26,7 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
     
     const mapFundTypeToAssetClass = (type: string): AssetClass => {
       type = type.toLowerCase().trim();
-      if (type.includes('private equity') || type.includes('pe')) return 'privateEquity';
+      if (type.includes('private equity') || type.includes('pe') || type.includes('buyout') || type.includes('growth')) return 'privateEquity';
       if (type.includes('real estate') || type.includes('re')) return 'realEstate';
       if (type.includes('private credit') || type.includes('debt')) return 'privateCredit';
       if (type.includes('venture') || type.includes('vc')) return 'venture';
