@@ -133,8 +133,8 @@ export function AddToListDialog({
 
         <div className="flex-1 overflow-y-auto space-y-4 py-4">
           <RadioGroup
-            value={mode}
-            onValueChange={(value: "existing" | "new") => setMode(value)}
+            value={listMode}
+            onValueChange={(value: "existing" | "new") => setListMode(value)}
             className="flex flex-col space-y-4"
           >
             <div className="border rounded-lg p-4 space-y-4">
@@ -144,7 +144,7 @@ export function AddToListDialog({
                   Add to existing list
                 </Label>
               </div>
-              {mode === "existing" && (
+              {listMode === "existing" && (
                 <div className="pl-6 space-y-2">
                   <p className="text-sm text-muted-foreground mb-3">
                     Select a list from your existing static lists
@@ -180,7 +180,7 @@ export function AddToListDialog({
                   Create new list
                 </Label>
               </div>
-              {mode === "new" && (
+              {listMode === "new" && (
                 <div className="pl-6 space-y-4">
                   <p className="text-sm text-muted-foreground mb-2">
                     Create a new list to add your selected investors

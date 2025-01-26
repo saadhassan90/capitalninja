@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 import type { SortConfig } from "@/types/sorting";
 
-export function InvestorsTable() {
+export function InvestorsTable({ listId }: { listId?: string }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState<InvestorFilterType>(null);
   const [selectedLocation, setSelectedLocation] = useState<InvestorFilterType>(null);
@@ -107,6 +107,7 @@ export function InvestorsTable() {
             selectedCount={selectedInvestors.length}
             selectedInvestors={selectedInvestors}
             onClearSelection={() => setSelectedInvestors([])}
+            listId={listId}
           />
         )}
       </div>

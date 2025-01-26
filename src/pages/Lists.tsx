@@ -51,13 +51,14 @@ const Lists = () => {
           name: list.name,
           description: list.description,
           type: list.type,
-          filters: list.filters || null,
+          filters: list.filters ? JSON.stringify(list.filters) : null,
         }]);
 
       if (error) throw error;
       
       toast.success("List created successfully");
       refetch();
+      setOpen(false);
     } catch (error) {
       console.error('Error creating list:', error);
       toast.error("Failed to create list");
