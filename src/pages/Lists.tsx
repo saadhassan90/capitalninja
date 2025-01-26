@@ -34,7 +34,7 @@ const Lists = () => {
       const typedData = data?.map(item => ({
         ...item,
         type: item.type === "dynamic" ? "dynamic" : "static"
-      })) as List[];
+      } as List));
       
       setLists(typedData || []);
     } catch (error: any) {
