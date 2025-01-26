@@ -42,23 +42,23 @@ export function InvestorsTableView({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>AUM (USD M)</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Investment Focus</TableHead>
-              <TableHead>Min. Investment (USD M)</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-xs font-medium">Name</TableHead>
+              <TableHead className="text-xs font-medium">Type</TableHead>
+              <TableHead className="text-xs font-medium">AUM (USD M)</TableHead>
+              <TableHead className="text-xs font-medium">Location</TableHead>
+              <TableHead className="text-xs font-medium">Investment Focus</TableHead>
+              <TableHead className="text-xs font-medium">Min. Investment (USD M)</TableHead>
+              <TableHead className="text-xs font-medium">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center">Loading...</TableCell>
+                <TableCell colSpan={7} className="text-center text-sm">Loading...</TableCell>
               </TableRow>
             ) : investors.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center">No investors found</TableCell>
+                <TableCell colSpan={7} className="text-center text-sm">No investors found</TableCell>
               </TableRow>
             ) : (
               investors.map((investor) => (

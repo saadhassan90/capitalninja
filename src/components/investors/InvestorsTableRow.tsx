@@ -66,14 +66,12 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
 
   return (
     <TableRow>
-      <TableCell className="font-medium">{investor.limited_partner_name}</TableCell>
-      <TableCell>{investor.limited_partner_type || 'N/A'}</TableCell>
-      <TableCell>{investor.aum ? `${(investor.aum / 1e6).toFixed(0)}` : 'N/A'}</TableCell>
-      <TableCell>{investor.hqlocation || 'N/A'}</TableCell>
-      <TableCell className="flex flex-wrap gap-1">
-        {renderFundTypes(investor.preferred_fund_type)}
-      </TableCell>
-      <TableCell>
+      <TableCell className="text-sm font-medium">{investor.limited_partner_name}</TableCell>
+      <TableCell className="text-sm">{investor.limited_partner_type || 'N/A'}</TableCell>
+      <TableCell className="text-sm">{investor.aum ? `${(investor.aum / 1e6).toFixed(0)}` : 'N/A'}</TableCell>
+      <TableCell className="text-sm">{investor.hqlocation || 'N/A'}</TableCell>
+      <TableCell className="flex flex-wrap gap-1">{renderFundTypes(investor.preferred_fund_type)}</TableCell>
+      <TableCell className="text-sm">
         {investor.preferred_commitment_size_min 
           ? `${(investor.preferred_commitment_size_min / 1e6).toFixed(0)}`
           : 'N/A'}
