@@ -106,12 +106,12 @@ export function AddToListDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] h-[600px] flex flex-col">
         <DialogHeader>
           <DialogTitle>Add to List</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        <div className="flex-1 overflow-y-auto space-y-4 py-4">
           <RadioGroup
             value={mode}
             onValueChange={(value: "existing" | "new") => setMode(value)}
@@ -179,7 +179,7 @@ export function AddToListDialog({
           </RadioGroup>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex justify-end space-x-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
