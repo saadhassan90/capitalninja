@@ -6,6 +6,7 @@ import { InvestorsTableView } from "./investors/InvestorsTableView";
 import { BulkActions } from "./investors/BulkActions";
 import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 import type { SortConfig } from "@/types/sorting";
+import type { LimitedPartner } from "@/types/investor";
 
 export function InvestorsTable() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,7 +80,7 @@ export function InvestorsTable() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-center gap-2 mb-6">
+      <div className="flex items-center gap-2 mb-6">
         <InvestorsSearch 
           value={searchTerm}
           onChange={(value) => {
