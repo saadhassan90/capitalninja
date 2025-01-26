@@ -7,9 +7,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { InvestorProfile } from "./InvestorProfile";
 
 type LimitedPartner = {
   id: number;
@@ -42,6 +45,7 @@ async function fetchInvestors(searchTerm: string) {
 
 export function InvestorsTable() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
 
   const { data: investors = [], isLoading, error } = useQuery({
     queryKey: ['investors', searchTerm],
@@ -72,16 +76,17 @@ export function InvestorsTable() {
               <TableHead>Location</TableHead>
               <TableHead>Investment Focus</TableHead>
               <TableHead>Min. Investment</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center">Loading...</TableCell>
+                <TableCell colSpan={7} className="text-center">Loading...</TableCell>
               </TableRow>
             ) : investors.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center">No investors found</TableCell>
+                <TableCell colSpan={7} className="text-center">No investors found</TableCell>
               </TableRow>
             ) : (
               investors.map((investor) => (
@@ -96,12 +101,29 @@ export function InvestorsTable() {
                       ? `$${(investor.preferred_commitment_size_min / 1e6).toFixed(0)}M`
                       : 'N/A'}
                   </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setSelectedInvestorId(investor.id)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
       </div>
+
+      {selectedInvestorId && (
+        <InvestorProfile
+          investorId={selectedInvestorId}
+          open={selectedInvestorId !== null}
+          onOpenChange={(open) => !open && setSelectedInvestorId(null)}
+        />
+      )}
     </div>
   );
 }
