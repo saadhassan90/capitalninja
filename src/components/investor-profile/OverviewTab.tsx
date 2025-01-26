@@ -12,6 +12,11 @@ type InvestorData = {
   preferred_commitment_size_min: number | null;
   preferred_commitment_size_max: number | null;
   open_to_first_time_funds: string | null;
+  primary_contact: string | null;
+  primary_contact_title: string | null;
+  primary_contact_email: string | null;
+  primary_contact_phone: string | null;
+  website: string | null;
 };
 
 export function OverviewTab({ investor }: { investor: InvestorData }) {
@@ -31,6 +36,15 @@ export function OverviewTab({ investor }: { investor: InvestorData }) {
             </div>
             <div>
               <span className="font-medium">Year Founded:</span> {investor?.year_founded || 'N/A'}
+            </div>
+            <div>
+              <span className="font-medium">Website:</span> {
+                investor?.website ? (
+                  <a href={investor.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {investor.website}
+                  </a>
+                ) : 'N/A'
+              }
             </div>
           </CardContent>
         </Card>
@@ -52,6 +66,26 @@ export function OverviewTab({ investor }: { investor: InvestorData }) {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Primary Contact</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div>
+            <span className="font-medium">Name:</span> {investor?.primary_contact || 'N/A'}
+          </div>
+          <div>
+            <span className="font-medium">Title:</span> {investor?.primary_contact_title || 'N/A'}
+          </div>
+          <div>
+            <span className="font-medium">Email:</span> {investor?.primary_contact_email || 'N/A'}
+          </div>
+          <div>
+            <span className="font-medium">Phone:</span> {investor?.primary_contact_phone || 'N/A'}
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
