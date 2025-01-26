@@ -31,11 +31,11 @@ async function fetchInvestors(searchTerm: string, type: string | null, location:
     query = query.ilike('limited_partner_name', `%${searchTerm}%`);
   }
 
-  if (type) {
+  if (type && type !== '_all') {
     query = query.eq('limited_partner_type', type);
   }
 
-  if (location) {
+  if (location && location !== '_all') {
     // Handle different location filters
     if (location === 'US') {
       query = query.ilike('hqlocation', '%United States%');
@@ -72,8 +72,8 @@ export function InvestorsTable() {
   const totalPages = Math.ceil(totalInvestors / INVESTORS_PER_PAGE);
 
   const handleFilterChange = (type: string | null, location: string | null) => {
-    if (type !== null) setSelectedType(type || null);
-    if (location !== null) setSelectedLocation(location || null);
+    if (type !== null) setSelectedType(type === '_all' ? null : type);
+    if (location !== null) setSelectedLocation(location === '_all' ? null : location);
     setCurrentPage(1);
   };
 

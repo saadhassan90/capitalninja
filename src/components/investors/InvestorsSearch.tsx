@@ -43,7 +43,7 @@ export function InvestorsSearch({ value, onChange, onFilterChange }: InvestorsSe
           <SelectValue placeholder="Filter by Type" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Types</SelectItem>
+          <SelectItem value="_all">All Types</SelectItem>
           {types.map((type) => (
             <SelectItem key={type} value={type}>
               {type}
@@ -57,7 +57,7 @@ export function InvestorsSearch({ value, onChange, onFilterChange }: InvestorsSe
           <SelectValue placeholder="Filter by Location" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Locations</SelectItem>
+          <SelectItem value="_all">All Locations</SelectItem>
           {locations.map((location) => (
             <SelectItem key={location.value} value={location.value}>
               {location.label}
