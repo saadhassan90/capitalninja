@@ -25,9 +25,9 @@ export function OverviewTab({ investor }: { investor: InvestorData }) {
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle className="text-sm font-medium">Basic Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-2 text-sm">
             <div>
               <span className="font-medium">Type:</span> {investor?.limited_partner_type || 'N/A'}
             </div>
@@ -51,9 +51,9 @@ export function OverviewTab({ investor }: { investor: InvestorData }) {
         
         <Card>
           <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
+            <CardTitle className="text-sm font-medium">Contact Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-2 text-sm">
             <div>
               <span className="font-medium">Location:</span> {investor?.hqlocation || 'N/A'}
             </div>
@@ -69,9 +69,9 @@ export function OverviewTab({ investor }: { investor: InvestorData }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Primary Contact</CardTitle>
+          <CardTitle className="text-sm font-medium">Primary Contact</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-2 text-sm">
           <div>
             <span className="font-medium">Name:</span> {investor?.primary_contact || 'N/A'}
           </div>
@@ -89,9 +89,9 @@ export function OverviewTab({ investor }: { investor: InvestorData }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Investment Preferences</CardTitle>
+          <CardTitle className="text-sm font-medium">Investment Preferences</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-2 text-sm">
           <div>
             <span className="font-medium">Preferred Fund Type:</span> {investor?.preferred_fund_type || 'N/A'}
           </div>
@@ -118,9 +118,9 @@ export function OverviewTab({ investor }: { investor: InvestorData }) {
       {investor?.description && (
         <Card>
           <CardHeader>
-            <CardTitle>Description</CardTitle>
+            <CardTitle className="text-sm font-medium">Description</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="text-sm">
             {investor.description}
           </CardContent>
         </Card>

@@ -19,32 +19,32 @@ export function InvestmentsTab({ investments }: { investments: DirectInvestment[
     <div className="h-[600px] overflow-y-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle>Direct Investments</CardTitle>
+          <CardTitle className="text-sm font-medium">Direct Investments</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Company</TableHead>
-                <TableHead>Deal Size</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead className="text-xs">Company</TableHead>
+                <TableHead className="text-xs">Deal Size</TableHead>
+                <TableHead className="text-xs">Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {investments.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-center">No direct investments found</TableCell>
+                  <TableCell colSpan={3} className="text-center text-sm">No direct investments found</TableCell>
                 </TableRow>
               ) : (
                 investments.map((investment, index) => (
                   <TableRow key={index}>
-                    <TableCell>{investment.company_name}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-sm">{investment.company_name}</TableCell>
+                    <TableCell className="text-sm">
                       {investment.deal_size 
                         ? `$${(investment.deal_size / 1e6).toFixed(0)}M` 
                         : 'N/A'}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-sm">
                       {investment.deal_date 
                         ? new Date(investment.deal_date).toLocaleDateString() 
                         : 'N/A'}
