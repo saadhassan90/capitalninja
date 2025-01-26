@@ -11,12 +11,12 @@ interface InvestorsSearchProps {
 export function InvestorsSearch({ value, onChange, onFilterChange }: InvestorsSearchProps) {
   return (
     <div className="mb-6">
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center h-10">
         <Input
           placeholder="Search investors..."
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="max-w-sm focus:outline-none focus:ring-0 focus:border-gray-300"
+          className="max-w-sm focus:outline-none focus:ring-0 focus:border-gray-300 h-10"
         />
         <FiltersMenu onFilterChange={onFilterChange} />
       </div>
