@@ -45,10 +45,15 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
   const handleCreate = () => {
     if (!user) return;
     
-    onCreateList({
-      ...newList,
+    const listData = {
+      name: newList.name,
+      description: newList.description,
+      type: newList.type,
       created_by: user.id,
-    });
+      ...(newList.type === 'dynamic' && { filters: newList.filters }),
+    };
+    
+    onCreateList(listData);
     
     onOpenChange(false);
     setNewList({

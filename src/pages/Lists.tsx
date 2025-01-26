@@ -51,7 +51,7 @@ const Lists = () => {
         location: list.filters.location === '_all' ? null : list.filters.location,
         assetClass: list.filters.assetClass === '_all' ? null : list.filters.assetClass,
         firstTimeFunds: list.filters.firstTimeFunds === '_all' ? null : list.filters.firstTimeFunds,
-        aumRange: list.filters.aumRange
+        aumRange: list.filters.aumRange && list.filters.aumRange.length === 2 ? list.filters.aumRange : null
       } : null;
 
       const { error } = await supabase
