@@ -106,6 +106,7 @@ export function InvestorsTable() {
           <BulkActions 
             selectedCount={selectedInvestors.length} 
             onClearSelection={() => setSelectedInvestors([])}
+            selectedInvestors={selectedInvestors}
           />
         )}
       </div>
