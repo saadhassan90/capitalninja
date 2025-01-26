@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 import { InvestorsTableRow } from "./InvestorsTableRow";
 import { InvestorsPagination } from "./InvestorsPagination";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -21,6 +22,9 @@ interface InvestorsTableViewProps {
   onPageChange: (page: number) => void;
   sortConfig: SortConfig;
   onSort: (column: string) => void;
+  selectedInvestors: number[];
+  onSelectAll: (checked: boolean) => void;
+  onSelectInvestor: (id: number, checked: boolean) => void;
 }
 
 export function InvestorsTableView({ 
@@ -32,6 +36,9 @@ export function InvestorsTableView({
   onPageChange,
   sortConfig,
   onSort,
+  selectedInvestors,
+  onSelectAll,
+  onSelectInvestor,
 }: InvestorsTableViewProps) {
   const SortableHeader = ({ column, children }: { column: string, children: React.ReactNode }) => {
     const isSorted = sortConfig.column === column;
@@ -53,12 +60,23 @@ export function InvestorsTableView({
     );
   };
 
+  const allSelected = investors.length > 0 && investors.every(investor => 
+    selectedInvestors.includes(investor.id)
+  );
+
   return (
     <div className="flex flex-col h-full">
       <div className="rounded-md border flex-1 overflow-auto max-h-[calc(100vh-300px)]">
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[50px] text-xs font-medium">
+                <Checkbox 
+                  checked={allSelected}
+                  onCheckedChange={onSelectAll}
+                  aria-label="Select all investors"
+                />
+              </TableHead>
               <SortableHeader column="limited_partner_name">Name</SortableHeader>
               <SortableHeader column="limited_partner_type">Type</SortableHeader>
               <SortableHeader column="aum">AUM (USD M)</SortableHeader>
@@ -71,11 +89,11 @@ export function InvestorsTableView({
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-sm">Loading...</TableCell>
+                <TableCell colSpan={8} className="text-center text-sm">Loading...</TableCell>
               </TableRow>
             ) : investors.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-sm">No investors found</TableCell>
+                <TableCell colSpan={8} className="text-center text-sm">No investors found</TableCell>
               </TableRow>
             ) : (
               investors.map((investor) => (
@@ -83,6 +101,8 @@ export function InvestorsTableView({
                   key={investor.id}
                   investor={investor}
                   onViewInvestor={onViewInvestor}
+                  selected={selectedInvestors.includes(investor.id)}
+                  onSelect={onSelectInvestor}
                 />
               ))
             )}

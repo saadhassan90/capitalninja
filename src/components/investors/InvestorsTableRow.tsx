@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Eye, Plus } from "lucide-react";
 import { getAssetClassStyle } from "@/utils/assetClassColors";
@@ -7,9 +8,16 @@ import type { LimitedPartner } from "@/types/investor";
 interface InvestorsTableRowProps {
   investor: LimitedPartner;
   onViewInvestor: (id: number) => void;
+  selected: boolean;
+  onSelect: (id: number, checked: boolean) => void;
 }
 
-export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRowProps) {
+export function InvestorsTableRow({ 
+  investor, 
+  onViewInvestor, 
+  selected, 
+  onSelect 
+}: InvestorsTableRowProps) {
   const renderFundTypes = (fundTypes: string | null) => {
     if (!fundTypes) return 'N/A';
     
@@ -64,6 +72,13 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
 
   return (
     <TableRow>
+      <TableCell>
+        <Checkbox 
+          checked={selected}
+          onCheckedChange={(checked) => onSelect(investor.id, checked as boolean)}
+          aria-label={`Select ${investor.limited_partner_name}`}
+        />
+      </TableCell>
       <TableCell className="text-sm font-medium">{investor.limited_partner_name}</TableCell>
       <TableCell className="text-sm">{investor.limited_partner_type || 'N/A'}</TableCell>
       <TableCell className="text-sm">{investor.aum ? `${(investor.aum / 1e6).toFixed(0)}` : 'N/A'}</TableCell>
