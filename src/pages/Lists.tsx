@@ -4,6 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { CreateListDialog } from "@/components/lists/CreateListDialog";
 import { ListCard } from "@/components/lists/ListCard";
 import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
+import type { Json } from "@/integrations/supabase/types";
+
+interface ListFilters {
+  type: InvestorFilterType;
+  location: InvestorFilterType;
+  assetClass: InvestorFilterType;
+  firstTimeFunds: InvestorFilterType;
+  aumRange: AUMRange;
+}
 
 interface List {
   id: string;
@@ -11,14 +20,19 @@ interface List {
   description: string | null;
   created_at: string;
   type: "static" | "dynamic";
-  filters: {
-    type: InvestorFilterType;
-    location: InvestorFilterType;
-    assetClass: InvestorFilterType;
-    firstTimeFunds: InvestorFilterType;
-    aumRange: AUMRange;
-  } | null;
+  filters: ListFilters | null;
   last_refreshed_at: string | null;
+}
+
+interface DatabaseList {
+  id: string;
+  name: string;
+  description: string | null;
+  created_at: string;
+  type: "static" | "dynamic";
+  filters: Json | null;
+  last_refreshed_at: string | null;
+  created_by: string | null;
 }
 
 const Lists = () => {
@@ -39,10 +53,15 @@ const Lists = () => {
 
       if (error) throw error;
       
-      const typedData = data?.map(item => ({
-        ...item,
-        type: item.type === "dynamic" ? "dynamic" : "static"
-      } as List));
+      const typedData = (data as DatabaseList[])?.map(item => ({
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        created_at: item.created_at,
+        type: item.type === "dynamic" ? "dynamic" : "static",
+        filters: item.filters as ListFilters | null,
+        last_refreshed_at: item.last_refreshed_at
+      }));
       
       setLists(typedData || []);
     } catch (error: any) {
@@ -60,13 +79,7 @@ const Lists = () => {
     name: string, 
     description: string, 
     type: "static" | "dynamic",
-    filters?: {
-      type: InvestorFilterType;
-      location: InvestorFilterType;
-      assetClass: InvestorFilterType;
-      firstTimeFunds: InvestorFilterType;
-      aumRange: AUMRange;
-    }
+    filters?: ListFilters
   ) => {
     try {
       const { data, error } = await supabase
@@ -84,10 +97,15 @@ const Lists = () => {
 
       if (error) throw error;
 
-      const newList = {
-        ...data,
-        type: data.type === "dynamic" ? "dynamic" : "static"
-      } as List;
+      const newList: List = {
+        id: data.id,
+        name: data.name,
+        description: data.description,
+        created_at: data.created_at,
+        type: data.type === "dynamic" ? "dynamic" : "static",
+        filters: data.filters as ListFilters | null,
+        last_refreshed_at: data.last_refreshed_at
+      };
 
       setLists([newList, ...lists]);
 
