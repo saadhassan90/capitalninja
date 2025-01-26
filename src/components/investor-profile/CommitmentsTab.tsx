@@ -46,7 +46,7 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
     { 
       label: "Fund of Funds & Secondaries", 
       value: investor.total_commitments_in_fofs_and2nd,
-      assetClass: 'fofSecondaries' as const
+      assetClass: 'fundOfFunds' as const
     },
     { 
       label: "Energy Funds", 
