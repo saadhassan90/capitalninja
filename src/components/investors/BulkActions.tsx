@@ -14,7 +14,7 @@ export function BulkActions({ selectedCount, onClearSelection }: BulkActionsProp
       </span>
       <div className="flex items-center gap-2">
         <Button
-          variant="secondary"
+          className="bg-black hover:bg-black/80"
           size="sm"
           onClick={() => {
             // Add bulk actions here
