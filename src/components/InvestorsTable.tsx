@@ -1,114 +1,36 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useInvestorsData } from "@/hooks/useInvestorsData";
 import { InvestorProfile } from "./InvestorProfile";
 import { InvestorsSearch } from "./investors/InvestorsSearch";
 import { InvestorsTableView } from "./investors/InvestorsTableView";
-
-type LimitedPartner = {
-  id: number;
-  limited_partner_name: string;
-  limited_partner_type: string | null;
-  aum: number | null;
-  hqlocation: string | null;
-  preferred_fund_type: string | null;
-  primary_contact: string | null;
-  primary_contact_title: string | null;
-};
-
-const INVESTORS_PER_PAGE = 200;
-
-async function fetchInvestors(
-  searchTerm: string, 
-  type: string | null, 
-  location: string | null, 
-  assetClass: string | null,
-  firstTimeFunds: string | null,
-  aumRange: [number, number] | null,
-  page: number
-) {
-  const start = (page - 1) * INVESTORS_PER_PAGE;
-  
-  let query = supabase
-    .from('limited_partners')
-    .select('id, limited_partner_name, limited_partner_type, aum, hqlocation, preferred_fund_type, primary_contact, primary_contact_title, count:id', { count: 'exact' })
-    .order('limited_partner_name')
-    .range(start, start + INVESTORS_PER_PAGE - 1);
-
-  if (searchTerm) {
-    query = query.ilike('limited_partner_name', `%${searchTerm}%`);
-  }
-
-  if (type && type !== '_all') {
-    query = query.eq('limited_partner_type', type);
-  }
-
-  if (location && location !== '_all') {
-    if (location === 'US') {
-      query = query.ilike('hqlocation', '%United States%');
-    } else if (location === 'MENA') {
-      query = query.or('hqlocation.ilike.%Middle East%,hqlocation.ilike.%North Africa%');
-    } else {
-      query = query.ilike('hqlocation', `%${location}%`);
-    }
-  }
-
-  if (assetClass && assetClass !== '_all') {
-    query = query.ilike('preferred_fund_type', `%${assetClass}%`);
-  }
-
-  if (firstTimeFunds && firstTimeFunds !== '_all') {
-    query = query.eq('open_to_first_time_funds', firstTimeFunds);
-  }
-
-  if (aumRange) {
-    const [min, max] = aumRange;
-    // Convert billions to actual numbers (multiply by 1B)
-    query = query.gte('aum', min * 1000000000).lte('aum', max * 1000000000);
-  }
-
-  const { data, error, count } = await query;
-  
-  if (error) {
-    throw error;
-  }
-  
-  return { data, count };
-}
+import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
 export function InvestorsTable() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
-  const [selectedAssetClass, setSelectedAssetClass] = useState<string | null>(null);
-  const [selectedFirstTimeFunds, setSelectedFirstTimeFunds] = useState<string | null>(null);
-  const [selectedAUMRange, setSelectedAUMRange] = useState<[number, number] | null>(null);
+  const [selectedType, setSelectedType] = useState<InvestorFilterType>(null);
+  const [selectedLocation, setSelectedLocation] = useState<InvestorFilterType>(null);
+  const [selectedAssetClass, setSelectedAssetClass] = useState<InvestorFilterType>(null);
+  const [selectedFirstTimeFunds, setSelectedFirstTimeFunds] = useState<InvestorFilterType>(null);
+  const [selectedAUMRange, setSelectedAUMRange] = useState<AUMRange>(null);
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: investorsData, isLoading, error } = useQuery({
-    queryKey: ['investors', searchTerm, selectedType, selectedLocation, selectedAssetClass, selectedFirstTimeFunds, selectedAUMRange, currentPage],
-    queryFn: () => fetchInvestors(
-      searchTerm, 
-      selectedType, 
-      selectedLocation, 
-      selectedAssetClass,
-      selectedFirstTimeFunds,
-      selectedAUMRange,
-      currentPage
-    ),
+  const { data: investorsData, isLoading, error } = useInvestorsData({
+    searchTerm,
+    selectedType,
+    selectedLocation,
+    selectedAssetClass,
+    selectedFirstTimeFunds,
+    selectedAUMRange,
+    currentPage,
   });
 
-  const investors = investorsData?.data ?? [];
-  const totalInvestors = investorsData?.count ?? 0;
-  const totalPages = Math.ceil(totalInvestors / INVESTORS_PER_PAGE);
-
   const handleFilterChange = (
-    type: string | null, 
-    location: string | null, 
-    assetClass: string | null,
-    firstTimeFunds: string | null,
-    aumRange: [number, number] | null
+    type: InvestorFilterType, 
+    location: InvestorFilterType, 
+    assetClass: InvestorFilterType,
+    firstTimeFunds: InvestorFilterType,
+    aumRange: AUMRange
   ) => {
     if (type !== null) setSelectedType(type === '_all' ? null : type);
     if (location !== null) setSelectedLocation(location === '_all' ? null : location);
@@ -134,11 +56,11 @@ export function InvestorsTable() {
       />
       
       <InvestorsTableView 
-        investors={investors}
+        investors={investorsData?.data ?? []}
         isLoading={isLoading}
         onViewInvestor={setSelectedInvestorId}
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={Math.ceil((investorsData?.count ?? 0) / 200)}
         onPageChange={setCurrentPage}
       />
 
