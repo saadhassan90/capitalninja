@@ -71,31 +71,29 @@ export function InvestorsTableView({
       <div className="flex-1 rounded-md border">
         <div className="relative h-full">
           {/* Fixed Header */}
-          <div className="sticky top-0 bg-background z-10 border-b">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[50px] text-xs font-medium">
-                    <Checkbox 
-                      checked={allSelected}
-                      onCheckedChange={onSelectAll}
-                      aria-label="Select all investors"
-                    />
-                  </TableHead>
-                  <SortableHeader column="limited_partner_name">Name</SortableHeader>
-                  <SortableHeader column="limited_partner_type">Type</SortableHeader>
-                  <SortableHeader column="aum">AUM (USD M)</SortableHeader>
-                  <SortableHeader column="hqlocation">Location</SortableHeader>
-                  <TableHead className="text-xs font-medium">Investment Focus</TableHead>
-                  <SortableHeader column="primary_contact">Primary Contact</SortableHeader>
-                  <TableHead className="text-xs font-medium">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-            </Table>
-          </div>
+          <Table>
+            <TableHeader className="sticky top-0 bg-background z-10 border-b">
+              <TableRow>
+                <TableHead className="w-[50px] text-xs font-medium">
+                  <Checkbox 
+                    checked={allSelected}
+                    onCheckedChange={onSelectAll}
+                    aria-label="Select all investors"
+                  />
+                </TableHead>
+                <SortableHeader column="limited_partner_name">Name</SortableHeader>
+                <SortableHeader column="limited_partner_type">Type</SortableHeader>
+                <SortableHeader column="aum">AUM (USD M)</SortableHeader>
+                <SortableHeader column="hqlocation">Location</SortableHeader>
+                <TableHead className="text-xs font-medium">Investment Focus</TableHead>
+                <SortableHeader column="primary_contact">Primary Contact</SortableHeader>
+                <TableHead className="text-xs font-medium">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+          </Table>
           
           {/* Scrollable Body */}
-          <div className="overflow-auto" style={{ height: 'calc(100% - 41px)' }}>
+          <div className="overflow-auto" style={{ height: 'calc(100% - 48px)' }}>
             <Table>
               <TableBody>
                 {isLoading ? (
