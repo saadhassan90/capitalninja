@@ -16,7 +16,7 @@ type InvestorData = {
 
 export function OverviewTab({ investor }: { investor: InvestorData }) {
   return (
-    <div className="space-y-4">
+    <div className="h-[600px] overflow-y-auto space-y-4 p-4">
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardHeader>

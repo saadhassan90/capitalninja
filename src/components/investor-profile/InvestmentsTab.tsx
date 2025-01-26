@@ -16,44 +16,46 @@ type DirectInvestment = {
 
 export function InvestmentsTab({ investments }: { investments: DirectInvestment[] }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Direct Investments</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Company</TableHead>
-              <TableHead>Deal Size</TableHead>
-              <TableHead>Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {investments.length === 0 ? (
+    <div className="h-[600px] overflow-y-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Direct Investments</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={3} className="text-center">No direct investments found</TableCell>
+                <TableHead>Company</TableHead>
+                <TableHead>Deal Size</TableHead>
+                <TableHead>Date</TableHead>
               </TableRow>
-            ) : (
-              investments.map((investment, index) => (
-                <TableRow key={index}>
-                  <TableCell>{investment.company_name}</TableCell>
-                  <TableCell>
-                    {investment.deal_size 
-                      ? `$${(investment.deal_size / 1e6).toFixed(0)}M` 
-                      : 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    {investment.deal_date 
-                      ? new Date(investment.deal_date).toLocaleDateString() 
-                      : 'N/A'}
-                  </TableCell>
+            </TableHeader>
+            <TableBody>
+              {investments.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center">No direct investments found</TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+              ) : (
+                investments.map((investment, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{investment.company_name}</TableCell>
+                    <TableCell>
+                      {investment.deal_size 
+                        ? `$${(investment.deal_size / 1e6).toFixed(0)}M` 
+                        : 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                      {investment.deal_date 
+                        ? new Date(investment.deal_date).toLocaleDateString() 
+                        : 'N/A'}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
