@@ -71,14 +71,12 @@ const Lists = () => {
   }) => {
     const { data, error } = await supabase
       .from("lists")
-      .insert([
-        {
-          name: newList.name,
-          description: newList.description,
-          type: newList.type,
-          filters: newList.type === "dynamic" ? newList.filters : null,
-        },
-      ])
+      .insert({
+        name: newList.name,
+        description: newList.description,
+        type: newList.type,
+        filters: newList.type === "dynamic" ? newList.filters as Json : null,
+      })
       .select()
       .single();
 
