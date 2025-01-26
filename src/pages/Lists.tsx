@@ -14,7 +14,7 @@ interface List {
   created_at: string;
   type: "static" | "dynamic";
   filters: ListFilters | null;
-  last_refreshed_at: string;
+  last_refreshed_at: string | null;
 }
 
 const Lists = () => {
@@ -24,6 +24,11 @@ const Lists = () => {
   const { isLoading } = useQuery({
     queryKey: ["lists"],
     queryFn: async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) {
+        throw new Error("User not authenticated");
+      }
+
       const { data, error } = await supabase
         .from("lists")
         .select("*")
@@ -33,8 +38,15 @@ const Lists = () => {
         throw error;
       }
 
-      setLists(data as List[]);
-      return data;
+      // Safely type cast the data
+      const typedLists = (data as any[]).map(list => ({
+        ...list,
+        filters: list.filters as ListFilters | null,
+        type: list.type as "static" | "dynamic"
+      }));
+
+      setLists(typedLists);
+      return typedLists;
     },
   });
 
@@ -44,6 +56,12 @@ const Lists = () => {
     type: "static" | "dynamic";
     filters?: ListFilters;
   }) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      console.error("User not authenticated");
+      return;
+    }
+
     const filtersJson = newList.type === "dynamic" 
       ? {
           type: newList.filters?.type,
@@ -61,6 +79,7 @@ const Lists = () => {
         description: newList.description,
         type: newList.type,
         filters: filtersJson,
+        created_by: user.id // Set the created_by field to the current user's ID
       })
       .select()
       .single();
@@ -70,7 +89,14 @@ const Lists = () => {
       return;
     }
 
-    setLists([data as List, ...lists]);
+    // Safely type cast the new list
+    const typedList: List = {
+      ...data,
+      filters: data.filters as ListFilters | null,
+      type: data.type as "static" | "dynamic"
+    };
+
+    setLists([typedList, ...lists]);
   };
 
   if (isLoading) {
