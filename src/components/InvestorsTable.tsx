@@ -79,7 +79,7 @@ export function InvestorsTable() {
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center gap-2 h-10">
+      <div className="flex items-center gap-2">
         <InvestorsSearch 
           value={searchTerm}
           onChange={(value) => {
