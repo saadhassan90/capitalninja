@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,6 +53,16 @@ export function InvestorsTable() {
     queryFn: () => fetchInvestors(searchTerm),
   });
 
+  const renderFundTypes = (fundTypes: string | null) => {
+    if (!fundTypes) return 'N/A';
+    
+    return fundTypes.split(',').map((type, index) => (
+      <Badge key={index} variant="secondary" className="mr-1 mb-1">
+        {type.trim()}
+      </Badge>
+    ));
+  };
+
   if (error) {
     return <div>Error loading investors</div>;
   }
@@ -95,7 +106,9 @@ export function InvestorsTable() {
                   <TableCell>{investor.limited_partner_type || 'N/A'}</TableCell>
                   <TableCell>{investor.aum ? `${(investor.aum / 1e6).toFixed(0)}` : 'N/A'}</TableCell>
                   <TableCell>{investor.hqlocation || 'N/A'}</TableCell>
-                  <TableCell>{investor.preferred_fund_type || 'N/A'}</TableCell>
+                  <TableCell className="flex flex-wrap gap-1">
+                    {renderFundTypes(investor.preferred_fund_type)}
+                  </TableCell>
                   <TableCell>
                     {investor.preferred_commitment_size_min 
                       ? `${(investor.preferred_commitment_size_min / 1e6).toFixed(0)}`
