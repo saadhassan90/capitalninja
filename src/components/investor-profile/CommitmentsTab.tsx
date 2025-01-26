@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tables } from "@/integrations/supabase/types";
+import { getAssetClassStyle } from "@/utils/assetClassColors";
 
 type FundCommitment = {
   fund_name: string;
@@ -22,14 +23,41 @@ type CommitmentsTabProps = {
 
 export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
   const fundActivityData = [
-    { label: "Private Equity Funds", value: investor.total_commitments_in_pefunds },
-    { label: "Venture Capital Funds", value: investor.total_commitments_in_vcfunds },
-    { label: "Real Estate Funds", value: investor.total_commitments_in_refunds },
-    { label: "Debt Funds", value: investor.total_commitments_in_debt_funds },
-    { label: "Fund of Funds & Secondaries", value: investor.total_commitments_in_fofs_and2nd },
-    { label: "Infrastructure Funds", value: investor.total_commitments_in_infrastructure },
-    { label: "Energy Funds", value: investor.total_commitments_in_energy_funds },
-    { label: "Other Funds", value: investor.total_commitments_in_other_funds },
+    { 
+      label: "Private Equity Funds", 
+      value: investor.total_commitments_in_pefunds,
+      assetClass: 'privateEquity' as const
+    },
+    { 
+      label: "Real Estate Funds", 
+      value: investor.total_commitments_in_refunds,
+      assetClass: 'realEstate' as const
+    },
+    { 
+      label: "Debt Funds", 
+      value: investor.total_commitments_in_debt_funds,
+      assetClass: 'debtFunds' as const
+    },
+    { 
+      label: "Infrastructure Funds", 
+      value: investor.total_commitments_in_infrastructure,
+      assetClass: 'infrastructure' as const
+    },
+    { 
+      label: "Fund of Funds & Secondaries", 
+      value: investor.total_commitments_in_fofs_and2nd,
+      assetClass: 'fofSecondaries' as const
+    },
+    { 
+      label: "Energy Funds", 
+      value: investor.total_commitments_in_energy_funds,
+      assetClass: 'energy' as const
+    },
+    { 
+      label: "Other Funds", 
+      value: investor.total_commitments_in_other_funds,
+      assetClass: 'other' as const
+    },
   ];
 
   return (
@@ -42,7 +70,12 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
           <div className="grid grid-cols-2 gap-4">
             {fundActivityData.map((item, index) => (
               <div key={index} className="flex justify-between items-center">
-                <span className="text-xs text-muted-foreground">{item.label}</span>
+                <span 
+                  className="text-xs"
+                  style={getAssetClassStyle(item.assetClass)}
+                >
+                  {item.label}
+                </span>
                 <span className="text-xs font-medium">
                   {item.value !== null ? item.value : 'N/A'}
                 </span>
