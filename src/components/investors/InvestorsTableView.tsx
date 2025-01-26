@@ -38,7 +38,7 @@ export function InvestorsTableView({
 }: InvestorsTableViewProps) {
   return (
     <div className="flex flex-col h-full">
-      <div className="rounded-md border flex-1 overflow-auto">
+      <div className="rounded-md border flex-1 overflow-auto max-h-[calc(100vh-300px)]">
         <Table>
           <TableHeader>
             <TableRow>
@@ -73,11 +73,13 @@ export function InvestorsTableView({
         </Table>
       </div>
 
-      <InvestorsPagination 
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={onPageChange}
-      />
+      <div className="mt-4">
+        <InvestorsPagination 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
+      </div>
     </div>
   );
 }
