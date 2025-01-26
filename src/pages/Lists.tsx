@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Json } from "@/integrations/supabase/types";
 
 interface ListFilters {
   type: string;
@@ -10,13 +11,23 @@ interface ListFilters {
   aumRange: [number, number];
 }
 
+interface DatabaseList {
+  id: string;
+  name: string;
+  description: string;
+  created_at: string;
+  type: "static" | "dynamic";
+  filters: Json;
+  last_refreshed_at: string;
+}
+
 interface List {
   id: string;
   name: string;
   description: string;
   created_at: string;
   type: "static" | "dynamic";
-  filters: ListFilters;
+  filters: ListFilters | null;
   last_refreshed_at: string;
 }
 
@@ -35,10 +46,9 @@ const Lists = () => {
         throw error;
       }
 
-      const typedLists = data.map((list) => ({
+      const typedLists = (data as DatabaseList[]).map((list) => ({
         ...list,
-        type: list.type as "static" | "dynamic",
-        filters: list.filters as ListFilters,
+        filters: list.filters ? (list.filters as unknown as ListFilters) : null,
       }));
 
       setLists(typedLists);
