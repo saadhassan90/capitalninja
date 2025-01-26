@@ -69,9 +69,9 @@ export function InvestorsTableView({
   return (
     <div className="flex flex-col h-full">
       <div className="rounded-md border flex-1 overflow-hidden">
-        <div className="relative">
+        <div className="overflow-auto max-h-[calc(100vh-300px)]">
           <Table>
-            <TableHeader className="sticky top-0 bg-background z-10 border-b">
+            <TableHeader>
               <TableRow>
                 <TableHead className="w-[50px] text-xs font-medium">
                   <Checkbox 
@@ -89,10 +89,6 @@ export function InvestorsTableView({
                 <TableHead className="text-xs font-medium">Actions</TableHead>
               </TableRow>
             </TableHeader>
-          </Table>
-        </div>
-        <div className="overflow-auto max-h-[calc(100vh-300px)]">
-          <Table>
             <TableBody>
               {isLoading ? (
                 <TableRow>
