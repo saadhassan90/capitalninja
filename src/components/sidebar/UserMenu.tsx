@@ -36,7 +36,7 @@ export function UserMenu() {
   const displayName = user?.email?.split("@")[0] || "User";
 
   return (
-    <SidebarFooter className="border-t border-border/50">
+    <SidebarFooter className="border-t border-border/50 bg-[hsl(var(--sidebar-muted))]">
       <div className="relative px-2 py-2">
         <div
           className={cn(
@@ -50,7 +50,7 @@ export function UserMenu() {
                 <SidebarMenuButton asChild>
                   <a
                     href={item.url}
-                    className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent"
+                    className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-foreground))]"
                   >
                     <item.icon className="h-4 w-4" />
                     {item.title}
@@ -61,7 +61,7 @@ export function UserMenu() {
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-destructive hover:bg-accent"
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-destructive hover:bg-[hsl(var(--sidebar-accent))]"
               >
                 <LogOut className="h-4 w-4" />
                 Log Out
@@ -71,20 +71,20 @@ export function UserMenu() {
         </div>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex w-full items-center justify-between rounded-md p-2 hover:bg-accent"
+          className="flex w-full items-center justify-between rounded-md p-2 hover:bg-[hsl(var(--sidebar-accent))]"
         >
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
               <AvatarFallback>{userInitials}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-start text-left">
-              <span className="text-sm font-medium capitalize">{displayName}</span>
-              <span className="text-xs text-muted-foreground">{user?.email}</span>
+              <span className="text-sm font-medium capitalize text-[hsl(var(--sidebar-foreground))]">{displayName}</span>
+              <span className="text-xs text-[hsl(var(--sidebar-muted-foreground))]">{user?.email}</span>
             </div>
           </div>
           <ChevronDown
             className={cn(
-              "h-4 w-4 transition-transform duration-200 ease-out",
+              "h-4 w-4 transition-transform duration-200 ease-out text-[hsl(var(--sidebar-muted-foreground))]",
               isOpen && "rotate-180"
             )}
           />
