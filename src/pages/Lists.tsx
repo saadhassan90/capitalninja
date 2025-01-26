@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Json } from "@/integrations/supabase/types";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 interface ListFilters {
   type: string;
@@ -62,7 +64,13 @@ const Lists = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Lists</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Lists</h1>
+        <Button>
+          <Plus className="w-4 h-4 mr-2" />
+          New List
+        </Button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {lists.map((list) => (
           <div
@@ -84,8 +92,7 @@ const Lists = () => {
                 {list.type}
               </span>
               <span>
-                Created:{" "}
-                {new Date(list.created_at).toLocaleDateString()}
+                Created: {new Date(list.created_at).toLocaleDateString()}
               </span>
             </div>
           </div>
