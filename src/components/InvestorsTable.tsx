@@ -104,7 +104,8 @@ export function InvestorsTable() {
         />
         {selectedInvestors.length > 0 && (
           <BulkActions 
-            selectedCount={selectedInvestors.length} 
+            selectedCount={selectedInvestors.length}
+            selectedInvestors={selectedInvestors}
             onClearSelection={() => setSelectedInvestors([])}
           />
         )}

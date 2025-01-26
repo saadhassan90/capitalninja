@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Eye, Plus } from "lucide-react";
 import { getAssetClassStyle } from "@/utils/assetClassColors";
+import { AddToListDialog } from "./AddToListDialog";
 import type { LimitedPartner } from "@/types/investor";
 
 interface InvestorsTableRowProps {
@@ -18,6 +20,8 @@ export function InvestorsTableRow({
   selected, 
   onSelect 
 }: InvestorsTableRowProps) {
+  const [showAddToList, setShowAddToList] = useState(false);
+
   const renderFundTypes = (fundTypes: string | null) => {
     if (!fundTypes) return 'N/A';
     
@@ -99,12 +103,19 @@ export function InvestorsTableRow({
           <Button
             variant="secondary"
             size="sm"
+            onClick={() => setShowAddToList(true)}
             className="transition-colors hover:bg-black hover:text-white"
           >
             <Plus className="h-4 w-4" />
             Add to List
           </Button>
         </div>
+
+        <AddToListDialog
+          open={showAddToList}
+          onOpenChange={setShowAddToList}
+          selectedInvestors={[investor.id]}
+        />
       </TableCell>
     </TableRow>
   );
