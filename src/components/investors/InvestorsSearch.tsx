@@ -12,7 +12,7 @@ export function InvestorsSearch({ value, onChange }: InvestorsSearchProps) {
         placeholder="Search investors..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="max-w-sm"
+        className="max-w-sm focus:outline-none focus:ring-0 focus:border-gray-300"
       />
     </div>
   );
