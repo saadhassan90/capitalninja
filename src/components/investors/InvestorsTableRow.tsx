@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Eye } from "lucide-react";
+import { Eye, Plus } from "lucide-react";
 import { getAssetClassStyle } from "@/utils/assetClassColors";
 
 type LimitedPartner = {
@@ -81,13 +81,23 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
       <TableCell className="flex flex-wrap gap-1">{renderFundTypes(investor.preferred_fund_type)}</TableCell>
       <TableCell className="text-sm">{renderPrimaryContact()}</TableCell>
       <TableCell>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onViewInvestor(investor.id)}
-        >
-          <Eye className="h-4 w-4" />
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => onViewInvestor(investor.id)}
+          >
+            <Eye className="h-4 w-4" />
+            View
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+          >
+            <Plus className="h-4 w-4" />
+            Add to List
+          </Button>
+        </div>
       </TableCell>
     </TableRow>
   );
