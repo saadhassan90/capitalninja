@@ -18,7 +18,7 @@ export function AUMRangeFilter({ onAUMRangeChange }: AUMRangeFilterProps) {
   return (
     <div className="space-y-2 max-w-xl">
       <div className="flex justify-between items-center">
-        <Label>AUM Range</Label>
+        <Label className="text-sm font-medium text-gray-900">AUM Range</Label>
         <div className="text-sm text-muted-foreground">
           {formatAUM(defaultAUMRange[0])} - {formatAUM(defaultAUMRange[1])}
         </div>
