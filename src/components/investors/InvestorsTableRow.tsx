@@ -86,6 +86,7 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
             variant="secondary"
             size="sm"
             onClick={() => onViewInvestor(investor.id)}
+            className="transition-colors hover:bg-secondary/90 hover:text-secondary-foreground/90"
           >
             <Eye className="h-4 w-4" />
             View
@@ -93,6 +94,7 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
           <Button
             variant="secondary"
             size="sm"
+            className="transition-colors hover:bg-secondary/90 hover:text-secondary-foreground/90"
           >
             <Plus className="h-4 w-4" />
             Add to List
