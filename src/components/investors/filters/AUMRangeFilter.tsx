@@ -31,7 +31,7 @@ export function AUMRangeFilter({ onAUMRangeChange }: AUMRangeFilterProps) {
 
   return (
     <div className="space-y-2">
-      <Label className="text-sm font-medium text-gray-900">AUM Range (in billions)</Label>
+      <Label className="text-sm font-medium text-gray-900">AUM Range (in millions)</Label>
       <div className="flex gap-4 items-center">
         <div className="flex-1">
           <Label htmlFor="min-aum" className="text-xs text-muted-foreground">Min</Label>
@@ -49,7 +49,7 @@ export function AUMRangeFilter({ onAUMRangeChange }: AUMRangeFilterProps) {
           <Input
             id="max-aum"
             type="number"
-            placeholder="1000"
+            placeholder="1000000"
             value={maxValue}
             onChange={(e) => handleMaxChange(e.target.value)}
             className="mt-1"
