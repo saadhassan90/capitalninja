@@ -40,7 +40,7 @@ export function UserMenu() {
       <div className="relative px-2 py-2">
         <div
           className={cn(
-            "absolute bottom-full left-0 right-0 w-full overflow-hidden transition-all duration-200 ease-out",
+            "absolute bottom-full left-0 right-0 w-full overflow-hidden transition-all duration-200 ease-out bg-[hsl(var(--sidebar-muted))]",
             isOpen ? "mb-2 max-h-[200px] opacity-100" : "max-h-0 opacity-0"
           )}
         >
