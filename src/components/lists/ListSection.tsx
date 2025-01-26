@@ -7,6 +7,7 @@ interface List {
   description: string;
   created_at: string;
   type: "static" | "dynamic";
+  last_refreshed_at: string | null;
 }
 
 interface ListSectionProps {
