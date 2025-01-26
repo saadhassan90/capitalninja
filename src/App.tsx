@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Investors from "./pages/Investors";
-import Lists from "./pages/Lists";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +19,6 @@ const App = () => (
           <Route path="/" element={<Index />}>
             <Route index element={<Dashboard />} />
             <Route path="investors" element={<Investors />} />
-            <Route path="lists" element={<Lists />} />
           </Route>
         </Routes>
       </BrowserRouter>
