@@ -1,13 +1,24 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import { InvestorsTable } from "@/components/InvestorsTable";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <main className="flex-1 p-8">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Investor Directory</h1>
+              <p className="text-gray-500 mt-1">Find and connect with investors</p>
+            </div>
+            <SidebarTrigger />
+          </div>
+          <InvestorsTable />
+        </main>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
