@@ -48,20 +48,22 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
 
       return { data: investors || [], count: count || 0 };
     },
-    onError: (error: any) => {
-      if (error?.message?.includes('rate limit')) {
-        toast({
-          title: "Rate Limit Reached",
-          description: "Please wait a moment before making more requests.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to load investors data. Please try again later.",
-          variant: "destructive",
-        });
-      }
+    meta: {
+      onError: (error: any) => {
+        if (error?.message?.includes('rate limit')) {
+          toast({
+            title: "Rate Limit Reached",
+            description: "Please wait a moment before making more requests.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to load investors data. Please try again later.",
+            variant: "destructive",
+          });
+        }
+      },
     },
   });
 
