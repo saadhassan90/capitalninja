@@ -24,6 +24,7 @@ async function fetchInvestors(
   location: string | null, 
   assetClass: string | null,
   firstTimeFunds: string | null,
+  aumRange: [number, number] | null,
   page: number
 ) {
   const start = (page - 1) * INVESTORS_PER_PAGE;
@@ -60,6 +61,12 @@ async function fetchInvestors(
     query = query.eq('open_to_first_time_funds', firstTimeFunds);
   }
 
+  if (aumRange) {
+    const [min, max] = aumRange;
+    // Convert billions to actual numbers (multiply by 1B)
+    query = query.gte('aum', min * 1000000000).lte('aum', max * 1000000000);
+  }
+
   const { data, error, count } = await query;
   
   if (error) {
@@ -75,17 +82,19 @@ export function InvestorsTable() {
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [selectedAssetClass, setSelectedAssetClass] = useState<string | null>(null);
   const [selectedFirstTimeFunds, setSelectedFirstTimeFunds] = useState<string | null>(null);
+  const [selectedAUMRange, setSelectedAUMRange] = useState<[number, number] | null>(null);
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data: investorsData, isLoading, error } = useQuery({
-    queryKey: ['investors', searchTerm, selectedType, selectedLocation, selectedAssetClass, selectedFirstTimeFunds, currentPage],
+    queryKey: ['investors', searchTerm, selectedType, selectedLocation, selectedAssetClass, selectedFirstTimeFunds, selectedAUMRange, currentPage],
     queryFn: () => fetchInvestors(
       searchTerm, 
       selectedType, 
       selectedLocation, 
       selectedAssetClass,
       selectedFirstTimeFunds,
+      selectedAUMRange,
       currentPage
     ),
   });
@@ -98,12 +107,14 @@ export function InvestorsTable() {
     type: string | null, 
     location: string | null, 
     assetClass: string | null,
-    firstTimeFunds: string | null
+    firstTimeFunds: string | null,
+    aumRange: [number, number] | null
   ) => {
     if (type !== null) setSelectedType(type === '_all' ? null : type);
     if (location !== null) setSelectedLocation(location === '_all' ? null : location);
     if (assetClass !== null) setSelectedAssetClass(assetClass === '_all' ? null : assetClass);
     if (firstTimeFunds !== null) setSelectedFirstTimeFunds(firstTimeFunds === '_all' ? null : firstTimeFunds);
+    if (aumRange !== null) setSelectedAUMRange(aumRange);
     setCurrentPage(1);
   };
 
