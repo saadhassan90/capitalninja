@@ -68,49 +68,58 @@ export function InvestorsTableView({
 
   return (
     <div className="flex flex-col h-[calc(100vh-14rem)]">
-      <div className="flex-1 rounded-md border overflow-hidden">
-        <div className="overflow-auto h-full">
-          <Table>
-            <TableHeader className="sticky top-0 bg-background z-10 border-b">
-              <TableRow>
-                <TableHead className="w-[50px] text-xs font-medium">
-                  <Checkbox 
-                    checked={allSelected}
-                    onCheckedChange={onSelectAll}
-                    aria-label="Select all investors"
-                  />
-                </TableHead>
-                <SortableHeader column="limited_partner_name">Name</SortableHeader>
-                <SortableHeader column="limited_partner_type">Type</SortableHeader>
-                <SortableHeader column="aum">AUM (USD M)</SortableHeader>
-                <SortableHeader column="hqlocation">Location</SortableHeader>
-                <TableHead className="text-xs font-medium">Investment Focus</TableHead>
-                <SortableHeader column="primary_contact">Primary Contact</SortableHeader>
-                <TableHead className="text-xs font-medium">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
+      <div className="flex-1 rounded-md border">
+        <div className="relative h-full">
+          {/* Fixed Header */}
+          <div className="sticky top-0 bg-background z-10 border-b">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-sm">Loading...</TableCell>
+                  <TableHead className="w-[50px] text-xs font-medium">
+                    <Checkbox 
+                      checked={allSelected}
+                      onCheckedChange={onSelectAll}
+                      aria-label="Select all investors"
+                    />
+                  </TableHead>
+                  <SortableHeader column="limited_partner_name">Name</SortableHeader>
+                  <SortableHeader column="limited_partner_type">Type</SortableHeader>
+                  <SortableHeader column="aum">AUM (USD M)</SortableHeader>
+                  <SortableHeader column="hqlocation">Location</SortableHeader>
+                  <TableHead className="text-xs font-medium">Investment Focus</TableHead>
+                  <SortableHeader column="primary_contact">Primary Contact</SortableHeader>
+                  <TableHead className="text-xs font-medium">Actions</TableHead>
                 </TableRow>
-              ) : investors.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center text-sm">No investors found</TableCell>
-                </TableRow>
-              ) : (
-                investors.map((investor) => (
-                  <InvestorsTableRow 
-                    key={investor.id}
-                    investor={investor}
-                    onViewInvestor={onViewInvestor}
-                    selected={selectedInvestors.includes(investor.id)}
-                    onSelect={onSelectInvestor}
-                  />
-                ))
-              )}
-            </TableBody>
-          </Table>
+              </TableHeader>
+            </Table>
+          </div>
+          
+          {/* Scrollable Body */}
+          <div className="overflow-auto" style={{ height: 'calc(100% - 41px)' }}>
+            <Table>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center text-sm">Loading...</TableCell>
+                  </TableRow>
+                ) : investors.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center text-sm">No investors found</TableCell>
+                  </TableRow>
+                ) : (
+                  investors.map((investor) => (
+                    <InvestorsTableRow 
+                      key={investor.id}
+                      investor={investor}
+                      onViewInvestor={onViewInvestor}
+                      selected={selectedInvestors.includes(investor.id)}
+                      onSelect={onSelectInvestor}
+                    />
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
 
