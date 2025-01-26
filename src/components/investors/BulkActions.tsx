@@ -52,7 +52,7 @@ export function BulkActions({ selectedCount, selectedInvestors, onClearSelection
       </span>
       <div className="flex items-center gap-2">
         <Button
-          className="bg-black hover:bg-black/80"
+          variant="secondary"
           size="sm"
           onClick={() => setShowAddToList(true)}
         >
@@ -60,7 +60,7 @@ export function BulkActions({ selectedCount, selectedInvestors, onClearSelection
           Copy to List
         </Button>
         <Button
-          className="bg-black hover:bg-black/80"
+          variant="secondary"
           size="sm"
           onClick={() => setShowMoveToList(true)}
         >
