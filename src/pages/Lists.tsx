@@ -75,23 +75,23 @@ const Lists = () => {
         {lists.map((list) => (
           <div
             key={list.id}
-            className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+            className="border rounded-lg p-4 hover:shadow-md transition-shadow bg-card text-card-foreground"
           >
             <h2 className="text-lg font-semibold">{list.name}</h2>
             {list.description && (
-              <p className="text-gray-600 mt-2">{list.description}</p>
+              <p className="text-muted-foreground mt-2">{list.description}</p>
             )}
-            <div className="flex items-center gap-2 mt-4 text-sm text-gray-500">
+            <div className="flex items-center gap-2 mt-4 text-sm">
               <span
                 className={`px-2 py-1 rounded-full ${
                   list.type === "static"
-                    ? "bg-blue-100 text-blue-700"
-                    : "bg-green-100 text-green-700"
+                    ? "bg-primary/10 text-primary"
+                    : "bg-secondary/10 text-secondary-foreground"
                 }`}
               >
                 {list.type}
               </span>
-              <span>
+              <span className="text-muted-foreground">
                 Created: {new Date(list.created_at).toLocaleDateString()}
               </span>
             </div>
