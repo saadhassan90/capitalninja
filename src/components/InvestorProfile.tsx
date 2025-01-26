@@ -91,7 +91,7 @@ export function InvestorProfile({ investorId, open, onOpenChange }: InvestorProf
           </TabsContent>
           
           <TabsContent value="investments">
-            <InvestmentsTab investments={directInvestments} />
+            <InvestmentsTab investments={directInvestments} investor={investor} />
           </TabsContent>
         </Tabs>
       </DialogContent>
