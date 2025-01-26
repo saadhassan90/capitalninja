@@ -8,19 +8,36 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
-import { Plus } from "lucide-react";
+import { Plus, Trash2, Edit, ListFilter } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface List {
   id: string;
   name: string;
   description: string | null;
   created_at: string;
+  type: 'static' | 'dynamic';
 }
 
 const Lists = () => {
   const [lists, setLists] = useState<List[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [newListName, setNewListName] = useState("");
+  const [newListDescription, setNewListDescription] = useState("");
+  const [newListType, setNewListType] = useState<'static' | 'dynamic'>('static');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -47,6 +64,63 @@ const Lists = () => {
     }
   };
 
+  const handleCreateList = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('lists')
+        .insert([
+          {
+            name: newListName,
+            description: newListDescription,
+            type: newListType,
+          },
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setLists([data, ...lists]);
+      setNewListName("");
+      setNewListDescription("");
+      setNewListType('static');
+
+      toast({
+        title: "Success",
+        description: "List created successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to create list. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteList = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('lists')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setLists(lists.filter((list) => list.id !== id));
+      toast({
+        title: "Success",
+        description: "List deleted successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to delete list. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="flex-1 p-8 flex flex-col">
       <div className="flex justify-between items-center mb-8">
@@ -54,10 +128,58 @@ const Lists = () => {
           <h1 className="text-3xl font-bold text-gray-900">Lists</h1>
           <p className="text-gray-500 mt-1">Manage your investor lists</p>
         </div>
-        <Button className="bg-black hover:bg-black/80">
-          <Plus className="h-4 w-4 mr-2" />
-          New List
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-black hover:bg-black/80">
+              <Plus className="h-4 w-4 mr-2" />
+              New List
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New List</DialogTitle>
+              <DialogDescription>
+                Create a new list to organize your investors.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  value={newListName}
+                  onChange={(e) => setNewListName(e.target.value)}
+                  placeholder="Enter list name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  value={newListDescription}
+                  onChange={(e) => setNewListDescription(e.target.value)}
+                  placeholder="Enter list description"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>List Type</Label>
+                <RadioGroup value={newListType} onValueChange={(value: 'static' | 'dynamic') => setNewListType(value)}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="static" id="static" />
+                    <Label htmlFor="static">Static</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="dynamic" id="dynamic" />
+                    <Label htmlFor="dynamic">Dynamic</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleCreateList}>Create List</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {isLoading ? (
@@ -79,14 +201,30 @@ const Lists = () => {
           {lists.map((list) => (
             <Card key={list.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle>{list.name}</CardTitle>
+                <CardTitle className="flex items-center justify-between">
+                  <span>{list.name}</span>
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon" onClick={() => handleDeleteList(list.id)}>
+                      <Trash2 className="h-4 w-4 text-gray-500" />
+                    </Button>
+                    <Button variant="ghost" size="icon">
+                      <Edit className="h-4 w-4 text-gray-500" />
+                    </Button>
+                  </div>
+                </CardTitle>
                 <CardDescription>{list.description}</CardDescription>
               </CardHeader>
               <CardContent>
+                <div className="flex items-center gap-2">
+                  <ListFilter className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm text-gray-500 capitalize">{list.type} List</span>
+                </div>
+              </CardContent>
+              <CardFooter>
                 <p className="text-sm text-gray-500">
                   Created {new Date(list.created_at).toLocaleDateString()}
                 </p>
-              </CardContent>
+              </CardFooter>
             </Card>
           ))}
         </div>
