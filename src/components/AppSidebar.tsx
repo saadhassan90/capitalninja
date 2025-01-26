@@ -7,6 +7,7 @@ import {
 import { MenuHeader } from "./sidebar/MenuHeader";
 import { MenuList } from "./sidebar/MenuList";
 import { menuItems } from "./sidebar/MenuItems";
+import { UserMenu } from "./sidebar/UserMenu";
 
 export function AppSidebar() {
   return (
@@ -19,6 +20,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <UserMenu />
     </Sidebar>
   );
 }
