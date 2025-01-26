@@ -23,6 +23,17 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
 
   return (
     <div className="h-[600px] overflow-y-auto space-y-4 p-4">
+      {investor?.description && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Description</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm">
+            {investor.description}
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardHeader>
@@ -68,6 +79,26 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
         </Card>
       </div>
 
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium">Primary Contact</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm">
+          <div>
+            <span className="font-medium">Name:</span> {investor?.primary_contact || 'N/A'}
+          </div>
+          <div>
+            <span className="font-medium">Title:</span> {investor?.primary_contact_title || 'N/A'}
+          </div>
+          <div>
+            <span className="font-medium">Email:</span> {investor?.primary_contact_email || 'N/A'}
+          </div>
+          <div>
+            <span className="font-medium">Phone:</span> {investor?.primary_contact_phone || 'N/A'}
+          </div>
+        </CardContent>
+      </Card>
+
       {assetAllocation.length > 0 && (
         <Card>
           <CardHeader>
@@ -90,26 +121,6 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
           </CardContent>
         </Card>
       )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm font-medium">Primary Contact</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm">
-          <div>
-            <span className="font-medium">Name:</span> {investor?.primary_contact || 'N/A'}
-          </div>
-          <div>
-            <span className="font-medium">Title:</span> {investor?.primary_contact_title || 'N/A'}
-          </div>
-          <div>
-            <span className="font-medium">Email:</span> {investor?.primary_contact_email || 'N/A'}
-          </div>
-          <div>
-            <span className="font-medium">Phone:</span> {investor?.primary_contact_phone || 'N/A'}
-          </div>
-        </CardContent>
-      </Card>
 
       <Card>
         <CardHeader>
@@ -138,17 +149,6 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
           </div>
         </CardContent>
       </Card>
-
-      {investor?.description && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Description</CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm">
-            {investor.description}
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }
