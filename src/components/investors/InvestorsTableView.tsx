@@ -67,8 +67,8 @@ export function InvestorsTableView({
   );
 
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)]">
-      <div className="rounded-md border flex-1 overflow-auto">
+    <div className="flex flex-col h-[calc(100vh-14rem)]">
+      <div className="flex-1 rounded-md border overflow-auto">
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
@@ -112,7 +112,7 @@ export function InvestorsTableView({
         </Table>
       </div>
 
-      <div className="mt-4">
+      <div className="sticky bottom-0 bg-background border-t mt-4 py-2">
         <InvestorsPagination 
           currentPage={currentPage}
           totalPages={totalPages}
