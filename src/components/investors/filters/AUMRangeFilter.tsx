@@ -38,6 +38,7 @@ export function AUMRangeFilter({ onAUMRangeChange }: AUMRangeFilterProps) {
           <Input
             id="min-aum"
             type="number"
+            min="0"
             placeholder="0"
             value={minValue}
             onChange={(e) => handleMinChange(e.target.value)}
@@ -49,6 +50,7 @@ export function AUMRangeFilter({ onAUMRangeChange }: AUMRangeFilterProps) {
           <Input
             id="max-aum"
             type="number"
+            min="0"
             placeholder="1000000"
             value={maxValue}
             onChange={(e) => handleMaxChange(e.target.value)}
