@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { InvestorProfile } from "@/components/InvestorProfile";
 import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
+import { BulkActions } from "@/components/investors/BulkActions";
 import { useToast } from "@/hooks/use-toast";
 import type { SortConfig } from "@/types/sorting";
 
@@ -94,6 +95,17 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
 
   return (
     <div className="flex flex-col">
+      {selectedInvestors.length > 0 && (
+        <div className="mb-4">
+          <BulkActions
+            selectedCount={selectedInvestors.length}
+            selectedInvestors={selectedInvestors}
+            onClearSelection={() => setSelectedInvestors([])}
+            listId={listId}
+          />
+        </div>
+      )}
+
       <InvestorsTableView 
         investors={investorsData?.data ?? []}
         isLoading={isLoading}

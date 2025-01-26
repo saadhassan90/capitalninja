@@ -15,15 +15,19 @@ interface AddToListDialogProps {
   onOpenChange: (open: boolean) => void;
   selectedInvestors: number[];
   onSuccess?: () => void;
+  mode?: "copy" | "move";
+  sourceListId?: string;
 }
 
 export function AddToListDialog({ 
   open, 
   onOpenChange,
   selectedInvestors,
-  onSuccess
+  onSuccess,
+  mode = "copy",
+  sourceListId
 }: AddToListDialogProps) {
-  const [mode, setMode] = useState<"existing" | "new">("existing");
+  const [listMode, setListMode] = useState<"existing" | "new">("existing");
   const [selectedListId, setSelectedListId] = useState<string>("");
   const [newList, setNewList] = useState({ name: "", description: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,7 +64,7 @@ export function AddToListDialog({
       setIsSubmitting(true);
       let targetListId = selectedListId;
 
-      if (mode === "new") {
+      if (listMode === "new") {
         const { data: newListData, error: createError } = await supabase
           .from("lists")
           .insert({
@@ -86,9 +90,20 @@ export function AddToListDialog({
 
       if (insertError) throw insertError;
 
+      // If this is a move operation, delete from the source list
+      if (mode === "move" && sourceListId) {
+        const { error: deleteError } = await supabase
+          .from("list_investors")
+          .delete()
+          .eq("list_id", sourceListId)
+          .in("investor_id", selectedInvestors);
+
+        if (deleteError) throw deleteError;
+      }
+
       toast({
         title: "Success",
-        description: `Added ${selectedInvestors.length} investor${selectedInvestors.length === 1 ? "" : "s"} to the list.`,
+        description: `${mode === "move" ? "Moved" : "Copied"} ${selectedInvestors.length} investor${selectedInvestors.length === 1 ? "" : "s"} to the list.`,
       });
 
       onSuccess?.();
@@ -96,7 +111,7 @@ export function AddToListDialog({
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to add investors to list",
+        description: error.message || `Failed to ${mode} investors to list`,
         variant: "destructive",
       });
     } finally {
@@ -108,9 +123,11 @@ export function AddToListDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] h-[600px] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold">Add to List</DialogTitle>
+          <DialogTitle className="text-2xl font-semibold">
+            {mode === "move" ? "Move to List" : "Copy to List"}
+          </DialogTitle>
           <p className="text-sm text-muted-foreground">
-            Add selected investors to an existing list or create a new one
+            {mode === "move" ? "Move" : "Copy"} selected investors to an existing list or create a new one
           </p>
         </DialogHeader>
 
@@ -198,16 +215,16 @@ export function AddToListDialog({
           </Button>
           <Button 
             onClick={handleSubmit}
-            disabled={isSubmitting || (mode === "existing" && !selectedListId) || (mode === "new" && !newList.name)}
+            disabled={isSubmitting || (listMode === "existing" && !selectedListId) || (listMode === "new" && !newList.name)}
             className="bg-black hover:bg-black/80"
           >
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Adding...
+                {mode === "move" ? "Moving..." : "Copying..."}
               </>
             ) : (
-              "Add to List"
+              mode === "move" ? "Move to List" : "Copy to List"
             )}
           </Button>
         </DialogFooter>
