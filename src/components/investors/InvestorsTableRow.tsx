@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
+import { getAssetClassStyle } from "@/utils/assetClassColors";
 
 type LimitedPartner = {
   id: number;
@@ -22,11 +23,44 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
   const renderFundTypes = (fundTypes: string | null) => {
     if (!fundTypes) return 'N/A';
     
-    return fundTypes.split(',').map((type, index) => (
-      <Badge key={index} variant="secondary" className="mr-1 mb-1">
-        {type.trim()}
-      </Badge>
-    ));
+    const mapFundTypeToAssetClass = (type: string): keyof typeof getAssetClassStyle => {
+      type = type.trim().toLowerCase();
+      switch (type) {
+        case 'private equity':
+        case 'pe':
+          return 'privateEquity';
+        case 'real estate':
+        case 're':
+          return 'realEstate';
+        case 'private credit':
+        case 'debt':
+          return 'privateCredit';
+        case 'venture capital':
+        case 'vc':
+          return 'venture';
+        case 'energy':
+          return 'energy';
+        case 'infrastructure':
+          return 'infrastructure';
+        default:
+          return 'other';
+      }
+    };
+    
+    return fundTypes.split(',').map((type, index) => {
+      const assetClass = mapFundTypeToAssetClass(type);
+      const style = getAssetClassStyle(assetClass);
+      
+      return (
+        <span
+          key={index}
+          className="inline-block mr-1 mb-1 px-2 py-0.5 rounded text-xs"
+          style={style}
+        >
+          {type.trim()}
+        </span>
+      );
+    });
   };
 
   return (
