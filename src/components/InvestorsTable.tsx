@@ -4,6 +4,7 @@ import { InvestorProfile } from "./InvestorProfile";
 import { InvestorsSearch } from "./investors/InvestorsSearch";
 import { InvestorsTableView } from "./investors/InvestorsTableView";
 import { BulkActions } from "./investors/BulkActions";
+import { useToast } from "@/hooks/use-toast";
 import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 import type { SortConfig } from "@/types/sorting";
 
@@ -22,6 +23,8 @@ export function InvestorsTable() {
     direction: 'asc'
   });
 
+  const { toast } = useToast();
+
   const { data: investorsData, isLoading, error } = useInvestorsData({
     searchTerm,
     selectedType,
@@ -31,6 +34,21 @@ export function InvestorsTable() {
     selectedAUMRange,
     currentPage,
     sortConfig,
+    onError: (error) => {
+      if (error?.message?.includes('rate limit')) {
+        toast({
+          title: "Rate Limit Reached",
+          description: "Please wait a moment before making more requests.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to load investors data. Please try again later.",
+          variant: "destructive",
+        });
+      }
+    },
   });
 
   const handleFilterChange = (
@@ -72,10 +90,6 @@ export function InvestorsTable() {
       setSelectedInvestors(prev => prev.filter(investorId => investorId !== id));
     }
   };
-
-  if (error) {
-    return <div>Error loading investors</div>;
-  }
 
   return (
     <div className="flex flex-col">

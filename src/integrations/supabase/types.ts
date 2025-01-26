@@ -334,11 +334,37 @@ export type Database = {
         }
         Relationships: []
       }
+      request_logs: {
+        Row: {
+          client_ip: string
+          id: number
+          request_time: string | null
+        }
+        Insert: {
+          client_ip: string
+          id?: number
+          request_time?: string | null
+        }
+        Update: {
+          client_ip?: string
+          id?: number
+          request_time?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      check_rate_limit: {
+        Args: {
+          user_ip: string
+          rate_limit_seconds?: number
+          max_requests?: number
+        }
+        Returns: boolean
+      }
       gtrgm_compress: {
         Args: {
           "": unknown

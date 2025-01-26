@@ -15,6 +15,7 @@ interface UseInvestorsDataParams {
   selectedAUMRange: AUMRange;
   currentPage: number;
   sortConfig: SortConfig;
+  onError?: (error: Error) => void;
 }
 
 async function fetchInvestors({
@@ -79,5 +80,12 @@ export function useInvestorsData(params: UseInvestorsDataParams) {
   return useQuery({
     queryKey: ['investors', params],
     queryFn: () => fetchInvestors(params),
+    retry: (failureCount, error: any) => {
+      // Don't retry on rate limit errors
+      if (error?.message?.includes('rate limit')) {
+        return false;
+      }
+      return failureCount < 3;
+    },
   });
 }
