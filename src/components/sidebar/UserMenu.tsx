@@ -38,32 +38,35 @@ export function UserMenu() {
   return (
     <SidebarFooter className="border-t border-border/50">
       <div className="relative px-2 py-2">
-        {isOpen && (
-          <div className="absolute bottom-full left-0 right-0 mb-2 w-full animate-accordion-up">
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a
-                      href={item.url}
-                      className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent"
-                    >
-                      {item.title}
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-destructive hover:bg-accent"
-                >
-                  Log Out
+        <div
+          className={cn(
+            "absolute bottom-full left-0 right-0 w-full overflow-hidden transition-all duration-200 ease-out",
+            isOpen ? "mb-2 max-h-[200px] opacity-100" : "max-h-0 opacity-0"
+          )}
+        >
+          <SidebarMenu>
+            {menuItems.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild>
+                  <a
+                    href={item.url}
+                    className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent"
+                  >
+                    {item.title}
+                  </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            </SidebarMenu>
-          </div>
-        )}
+            ))}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-destructive hover:bg-accent"
+              >
+                Log Out
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </div>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="flex w-full items-center justify-between rounded-md p-2 hover:bg-accent"
@@ -79,7 +82,7 @@ export function UserMenu() {
           </div>
           <ChevronDown
             className={cn(
-              "h-4 w-4 transition-transform duration-200",
+              "h-4 w-4 transition-transform duration-200 ease-out",
               isOpen && "rotate-180"
             )}
           />
