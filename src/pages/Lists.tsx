@@ -6,6 +6,7 @@ import { CreateListDialog } from "@/components/lists/CreateListDialog";
 import { ListSection } from "@/components/lists/ListSection";
 import type { ListFilters } from "@/types/investorFilters";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface List {
   id: string;
@@ -19,7 +20,7 @@ interface List {
 const Lists = () => {
   const [open, setOpen] = useState(false);
 
-  const { data: lists } = useQuery({
+  const { data: lists, refetch } = useQuery({
     queryKey: ['lists'],
     queryFn: async () => {
       const { data: lists, error } = await supabase
@@ -28,9 +29,40 @@ const Lists = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return lists || [];
+      
+      // Transform the data to ensure type is either "static" or "dynamic"
+      return (lists || []).map(list => ({
+        ...list,
+        type: list.type === 'dynamic' ? 'dynamic' : 'static'
+      })) as List[];
     },
   });
+
+  const handleCreateList = async (list: {
+    name: string;
+    description: string;
+    type: "static" | "dynamic";
+    filters?: ListFilters;
+  }) => {
+    try {
+      const { error } = await supabase
+        .from('lists')
+        .insert([{
+          name: list.name,
+          description: list.description,
+          type: list.type,
+          filters: list.filters || null,
+        }]);
+
+      if (error) throw error;
+      
+      toast.success("List created successfully");
+      refetch();
+    } catch (error) {
+      console.error('Error creating list:', error);
+      toast.error("Failed to create list");
+    }
+  };
 
   const staticLists = lists?.filter(list => list.type === 'static') || [];
   const dynamicLists = lists?.filter(list => list.type === 'dynamic') || [];
@@ -48,6 +80,7 @@ const Lists = () => {
       <CreateListDialog
         open={open}
         onOpenChange={setOpen}
+        onCreateList={handleCreateList}
       />
 
       <ListSection title="Static Lists" lists={staticLists} />
