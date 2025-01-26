@@ -61,7 +61,7 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
             <TableHeader>
               <TableRow>
                 <TableHead className="text-xs">Fund Name</TableHead>
-                <TableHead className="text-xs">Commitment</TableHead>
+                <TableHead className="text-xs">Commitment (USD M)</TableHead>
                 <TableHead className="text-xs">Date</TableHead>
               </TableRow>
             </TableHeader>
@@ -76,7 +76,7 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
                     <TableCell className="text-xs">{commitment.fund_name}</TableCell>
                     <TableCell className="text-xs">
                       {commitment.commitment 
-                        ? `$${(commitment.commitment / 1e6).toFixed(0)}M` 
+                        ? `${(commitment.commitment / 1e6).toFixed(0)}` 
                         : 'N/A'}
                     </TableCell>
                     <TableCell className="text-xs">

@@ -72,10 +72,10 @@ export function InvestorsTable() {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Type</TableHead>
-              <TableHead>AUM</TableHead>
+              <TableHead>AUM (USD M)</TableHead>
               <TableHead>Location</TableHead>
               <TableHead>Investment Focus</TableHead>
-              <TableHead>Min. Investment</TableHead>
+              <TableHead>Min. Investment (USD M)</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -93,12 +93,12 @@ export function InvestorsTable() {
                 <TableRow key={investor.id}>
                   <TableCell className="font-medium">{investor.limited_partner_name}</TableCell>
                   <TableCell>{investor.limited_partner_type || 'N/A'}</TableCell>
-                  <TableCell>{investor.aum ? `$${(investor.aum / 1e9).toFixed(1)}B` : 'N/A'}</TableCell>
+                  <TableCell>{investor.aum ? `${(investor.aum / 1e6).toFixed(0)}` : 'N/A'}</TableCell>
                   <TableCell>{investor.hqlocation || 'N/A'}</TableCell>
                   <TableCell>{investor.preferred_fund_type || 'N/A'}</TableCell>
                   <TableCell>
                     {investor.preferred_commitment_size_min 
-                      ? `$${(investor.preferred_commitment_size_min / 1e6).toFixed(0)}M`
+                      ? `${(investor.preferred_commitment_size_min / 1e6).toFixed(0)}`
                       : 'N/A'}
                   </TableCell>
                   <TableCell>

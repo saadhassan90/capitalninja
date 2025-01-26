@@ -27,15 +27,15 @@ export function InvestmentsTab({ investments, investor }: InvestmentsTabProps) {
       value: investor.direct_investments,
     },
     {
-      label: "Min Direct Investment Size",
+      label: "Min Direct Investment Size (USD M)",
       value: investor.preferred_direct_investment_size_min ? 
-        `$${(investor.preferred_direct_investment_size_min / 1e6).toFixed(0)}M` : 
+        `${(investor.preferred_direct_investment_size_min / 1e6).toFixed(0)}` : 
         'N/A'
     },
     {
-      label: "Max Direct Investment Size",
+      label: "Max Direct Investment Size (USD M)",
       value: investor.preferred_direct_investment_size_max ? 
-        `$${(investor.preferred_direct_investment_size_max / 1e6).toFixed(0)}M` : 
+        `${(investor.preferred_direct_investment_size_max / 1e6).toFixed(0)}` : 
         'N/A'
     },
     {
@@ -73,7 +73,7 @@ export function InvestmentsTab({ investments, investor }: InvestmentsTabProps) {
             <TableHeader>
               <TableRow>
                 <TableHead className="text-xs">Company</TableHead>
-                <TableHead className="text-xs">Deal Size</TableHead>
+                <TableHead className="text-xs">Deal Size (USD M)</TableHead>
                 <TableHead className="text-xs">Date</TableHead>
               </TableRow>
             </TableHeader>
@@ -88,7 +88,7 @@ export function InvestmentsTab({ investments, investor }: InvestmentsTabProps) {
                     <TableCell className="text-xs">{investment.company_name}</TableCell>
                     <TableCell className="text-xs">
                       {investment.deal_size 
-                        ? `$${(investment.deal_size / 1e6).toFixed(0)}M` 
+                        ? `${(investment.deal_size / 1e6).toFixed(0)}` 
                         : 'N/A'}
                     </TableCell>
                     <TableCell className="text-xs">

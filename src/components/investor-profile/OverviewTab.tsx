@@ -32,7 +32,7 @@ export function OverviewTab({ investor }: { investor: InvestorData }) {
               <span className="font-medium">Type:</span> {investor?.limited_partner_type || 'N/A'}
             </div>
             <div>
-              <span className="font-medium">AUM:</span> {investor?.aum ? `$${(investor.aum / 1e9).toFixed(1)}B` : 'N/A'}
+              <span className="font-medium">AUM (USD M):</span> {investor?.aum ? `${(investor.aum / 1e6).toFixed(0)}` : 'N/A'}
             </div>
             <div>
               <span className="font-medium">Year Founded:</span> {investor?.year_founded || 'N/A'}
@@ -96,16 +96,16 @@ export function OverviewTab({ investor }: { investor: InvestorData }) {
             <span className="font-medium">Preferred Fund Type:</span> {investor?.preferred_fund_type || 'N/A'}
           </div>
           <div>
-            <span className="font-medium">Min Commitment:</span> {
+            <span className="font-medium">Min Commitment (USD M):</span> {
               investor?.preferred_commitment_size_min 
-                ? `$${(investor.preferred_commitment_size_min / 1e6).toFixed(0)}M` 
+                ? `${(investor.preferred_commitment_size_min / 1e6).toFixed(0)}` 
                 : 'N/A'
             }
           </div>
           <div>
-            <span className="font-medium">Max Commitment:</span> {
+            <span className="font-medium">Max Commitment (USD M):</span> {
               investor?.preferred_commitment_size_max 
-                ? `$${(investor.preferred_commitment_size_max / 1e6).toFixed(0)}M` 
+                ? `${(investor.preferred_commitment_size_max / 1e6).toFixed(0)}` 
                 : 'N/A'
             }
           </div>
