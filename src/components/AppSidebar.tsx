@@ -1,50 +1,25 @@
-import { ChevronLeft, Home, Users, BookOpen, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-
-const menuItems = [
-  { title: "Dashboard", icon: Home, url: "/" },
-  { title: "Investors", icon: Users, url: "/" },
-  { title: "Resources", icon: BookOpen, url: "/" },
-  { title: "Settings", icon: Settings, url: "/" },
-];
+import { MenuHeader } from "./sidebar/MenuHeader";
+import { MenuList } from "./sidebar/MenuList";
+import { menuItems } from "./sidebar/MenuItems";
 
 export function AppSidebar() {
   const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
 
   return (
     <Sidebar>
       <SidebarContent>
-        <div className="flex items-center justify-between p-2">
-          <span className={`font-semibold transition-opacity duration-200 ${state === 'collapsed' ? 'opacity-0' : 'opacity-100'}`}>
-            Menu
-          </span>
-          <SidebarTrigger className="h-8 w-8" />
-        </div>
+        <MenuHeader isCollapsed={isCollapsed} />
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={state === 'collapsed' ? item.title : undefined}>
-                    <a href={item.url} className="flex items-center gap-3">
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <MenuList items={menuItems} isCollapsed={isCollapsed} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
