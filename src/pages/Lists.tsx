@@ -66,7 +66,7 @@ const Lists = () => {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Lists</h1>
-        <Button>
+        <Button variant="default" className="bg-black hover:bg-black/80">
           <Plus className="w-4 h-4 mr-2" />
           New List
         </Button>
@@ -75,7 +75,7 @@ const Lists = () => {
         {lists.map((list) => (
           <div
             key={list.id}
-            className="border rounded-lg p-4 hover:shadow-md transition-shadow bg-card text-card-foreground"
+            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-card text-card-foreground"
           >
             <h2 className="text-lg font-semibold">{list.name}</h2>
             {list.description && (
@@ -85,8 +85,8 @@ const Lists = () => {
               <span
                 className={`px-2 py-1 rounded-full ${
                   list.type === "static"
-                    ? "bg-primary/10 text-primary"
-                    : "bg-secondary/10 text-secondary-foreground"
+                    ? "bg-black/10 text-black"
+                    : "bg-gray-100 text-gray-700"
                 }`}
               >
                 {list.type}
