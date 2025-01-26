@@ -18,6 +18,52 @@ export function InvestorsPagination({
   totalPages, 
   onPageChange 
 }: InvestorsPaginationProps) {
+  const getVisiblePages = (current: number, total: number) => {
+    const maxVisible = 10;
+    const pages: number[] = [];
+    
+    if (total <= maxVisible) {
+      // If total pages is less than maxVisible, show all pages
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    // Always include first page
+    pages.push(1);
+
+    let start = Math.max(2, current - 4);
+    let end = Math.min(total - 1, current + 4);
+
+    // Adjust start and end to show up to maxVisible pages
+    if (start <= 2) {
+      end = Math.min(maxVisible - 1, total - 1);
+    }
+    if (end >= total - 1) {
+      start = Math.max(2, total - maxVisible + 2);
+    }
+
+    // Add ellipsis after first page if needed
+    if (start > 2) {
+      pages.push(-1); // -1 represents ellipsis
+    }
+
+    // Add visible page numbers
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    // Add ellipsis before last page if needed
+    if (end < total - 1) {
+      pages.push(-1); // -1 represents ellipsis
+    }
+
+    // Always include last page if there is more than one page
+    if (total > 1) {
+      pages.push(total);
+    }
+
+    return pages;
+  };
+
   return (
     <div className="py-4">
       <Pagination>
@@ -29,30 +75,25 @@ export function InvestorsPagination({
             />
           </PaginationItem>
           
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter(page => {
-              const distance = Math.abs(page - currentPage);
-              return distance === 0 || distance === 1 || page === 1 || page === totalPages;
-            })
-            .map((page, index, array) => {
-              if (index > 0 && array[index - 1] !== page - 1) {
-                return (
-                  <PaginationItem key={`ellipsis-${page}`}>
-                    <span className="px-4">...</span>
-                  </PaginationItem>
-                );
-              }
+          {getVisiblePages(currentPage, totalPages).map((page, index) => {
+            if (page === -1) {
               return (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    isActive={page === currentPage}
-                    onClick={() => onPageChange(page)}
-                  >
-                    {page}
-                  </PaginationLink>
+                <PaginationItem key={`ellipsis-${index}`}>
+                  <span className="px-4">...</span>
                 </PaginationItem>
               );
-            })}
+            }
+            return (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  isActive={page === currentPage}
+                  onClick={() => onPageChange(page)}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            );
+          })}
 
           <PaginationItem>
             <PaginationNext 
