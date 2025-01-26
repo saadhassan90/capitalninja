@@ -67,10 +67,10 @@ export function InvestorsTableView({
   );
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="rounded-md border flex-1 overflow-auto max-h-[calc(100vh-300px)]">
+    <div className="flex flex-col h-[calc(100vh-12rem)]">
+      <div className="rounded-md border flex-1 overflow-auto">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
               <TableHead className="w-[50px] text-xs font-medium">
                 <Checkbox 
