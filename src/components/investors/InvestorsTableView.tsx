@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { InvestorsTableRow } from "./InvestorsTableRow";
 import { InvestorsPagination } from "./InvestorsPagination";
+import { assetClassColors } from "@/utils/assetClassColors";
 
 type LimitedPartner = {
   id: number;
@@ -28,6 +29,16 @@ interface InvestorsTableViewProps {
   onPageChange: (page: number) => void;
 }
 
+const getHeaderStyle = (type: keyof typeof assetClassColors) => {
+  const colors = assetClassColors[type];
+  return {
+    color: colors.text,
+    backgroundColor: colors.bg,
+    borderRadius: '4px',
+    padding: '4px 8px',
+  };
+};
+
 export function InvestorsTableView({ 
   investors, 
   isLoading, 
@@ -42,12 +53,24 @@ export function InvestorsTableView({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>AUM (USD M)</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Investment Focus</TableHead>
-              <TableHead>Min. Investment (USD M)</TableHead>
+              <TableHead>
+                <span style={getHeaderStyle('other')}>Name</span>
+              </TableHead>
+              <TableHead>
+                <span style={getHeaderStyle('privateEquity')}>Type</span>
+              </TableHead>
+              <TableHead>
+                <span style={getHeaderStyle('realEstate')}>AUM (USD M)</span>
+              </TableHead>
+              <TableHead>
+                <span style={getHeaderStyle('infrastructure')}>Location</span>
+              </TableHead>
+              <TableHead>
+                <span style={getHeaderStyle('venture')}>Investment Focus</span>
+              </TableHead>
+              <TableHead>
+                <span style={getHeaderStyle('privateCredit')}>Min. Investment (USD M)</span>
+              </TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
