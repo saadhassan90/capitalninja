@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +26,8 @@ interface ListCardProps {
 }
 
 export function ListCard({ list }: ListCardProps) {
+  const navigate = useNavigate();
+
   const { data: investorCount } = useQuery({
     queryKey: ['listInvestorsCount', list.id],
     queryFn: async () => {
@@ -46,8 +49,12 @@ export function ListCard({ list }: ListCardProps) {
     return formatDistanceToNow(date, { addSuffix: true });
   };
 
+  const handleView = () => {
+    navigate(`/lists/${list.id}`);
+  };
+
   return (
-    <Card className="border-gray-200 hover:shadow-md transition-shadow">
+    <Card className="border-gray-200 hover:shadow-md transition-shadow cursor-pointer" onClick={handleView}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">{list.name}</CardTitle>
@@ -60,14 +67,14 @@ export function ListCard({ list }: ListCardProps) {
               {list.type}
             </span>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <MoreVertical className="h-4 w-4" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>View</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
                 <DropdownMenuItem>Edit</DropdownMenuItem>
                 <DropdownMenuItem>Clone</DropdownMenuItem>
                 <DropdownMenuItem>Export</DropdownMenuItem>

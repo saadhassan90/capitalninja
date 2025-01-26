@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Investors from "./pages/Investors";
 import Lists from "./pages/Lists";
+import ListView from "./pages/ListView";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
               <Route index element={<Dashboard />} />
               <Route path="investors" element={<Investors />} />
               <Route path="lists" element={<Lists />} />
+              <Route path="lists/:listId" element={<ListView />} />
             </Route>
           </Routes>
         </AuthProvider>
