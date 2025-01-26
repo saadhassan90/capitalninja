@@ -5,6 +5,8 @@ import { InvestorProfile } from "@/components/InvestorProfile";
 import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
 import { BulkActions } from "@/components/investors/BulkActions";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 import type { SortConfig } from "@/types/sorting";
 
 interface ListInvestorsTableProps {
@@ -22,7 +24,7 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
 
   const { toast } = useToast();
 
-  const { data: investorsData, isLoading } = useQuery({
+  const { data: investorsData, isLoading, refetch } = useQuery({
     queryKey: ['listInvestors', listId, currentPage, sortConfig],
     queryFn: async () => {
       const { data: listInvestors, error: listInvestorsError, count } = await supabase
@@ -93,18 +95,53 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
     }
   };
 
+  const handleRefresh = async () => {
+    try {
+      // First, trigger the refresh function
+      const { error: refreshError } = await supabase
+        .rpc('refresh_dynamic_lists');
+
+      if (refreshError) throw refreshError;
+
+      // Then refetch the data
+      await refetch();
+
+      toast({
+        title: "List Refreshed",
+        description: "The list has been updated with the latest data.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to refresh the list. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col">
-      {selectedInvestors.length > 0 && (
-        <div className="mb-4">
+      <div className="flex justify-between items-center mb-4">
+        {selectedInvestors.length > 0 ? (
           <BulkActions
             selectedCount={selectedInvestors.length}
             selectedInvestors={selectedInvestors}
             onClearSelection={() => setSelectedInvestors([])}
             listId={listId}
           />
-        </div>
-      )}
+        ) : (
+          <div /> {/* Empty div to maintain spacing */}
+        )}
+        <Button 
+          onClick={handleRefresh}
+          variant="outline"
+          size="sm"
+          className="ml-auto"
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Refresh List
+        </Button>
+      </div>
 
       <InvestorsTableView 
         investors={investorsData?.data ?? []}
