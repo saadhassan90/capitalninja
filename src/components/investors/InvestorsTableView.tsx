@@ -16,7 +16,8 @@ type LimitedPartner = {
   aum: number | null;
   hqlocation: string | null;
   preferred_fund_type: string | null;
-  preferred_commitment_size_min: number | null;
+  primary_contact: string | null;
+  primary_contact_title: string | null;
 };
 
 interface InvestorsTableViewProps {
@@ -47,7 +48,7 @@ export function InvestorsTableView({
               <TableHead className="text-xs font-medium">AUM (USD M)</TableHead>
               <TableHead className="text-xs font-medium">Location</TableHead>
               <TableHead className="text-xs font-medium">Investment Focus</TableHead>
-              <TableHead className="text-xs font-medium">Min. Investment (USD M)</TableHead>
+              <TableHead className="text-xs font-medium">Primary Contact</TableHead>
               <TableHead className="text-xs font-medium">Actions</TableHead>
             </TableRow>
           </TableHeader>

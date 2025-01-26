@@ -12,7 +12,8 @@ type LimitedPartner = {
   aum: number | null;
   hqlocation: string | null;
   preferred_fund_type: string | null;
-  preferred_commitment_size_min: number | null;
+  primary_contact: string | null;
+  primary_contact_title: string | null;
 };
 
 const INVESTORS_PER_PAGE = 200;
@@ -22,7 +23,7 @@ async function fetchInvestors(searchTerm: string, page: number) {
   
   const query = supabase
     .from('limited_partners')
-    .select('id, limited_partner_name, limited_partner_type, aum, hqlocation, preferred_fund_type, preferred_commitment_size_min, count:id', { count: 'exact' })
+    .select('id, limited_partner_name, limited_partner_type, aum, hqlocation, preferred_fund_type, primary_contact, primary_contact_title, count:id', { count: 'exact' })
     .order('limited_partner_name')
     .range(start, start + INVESTORS_PER_PAGE - 1);
 

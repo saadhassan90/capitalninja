@@ -10,7 +10,8 @@ type LimitedPartner = {
   aum: number | null;
   hqlocation: string | null;
   preferred_fund_type: string | null;
-  preferred_commitment_size_min: number | null;
+  primary_contact: string | null;
+  primary_contact_title: string | null;
 };
 
 interface InvestorsTableRowProps {
@@ -59,6 +60,18 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
     });
   };
 
+  const renderPrimaryContact = () => {
+    if (!investor.primary_contact) return 'N/A';
+    return (
+      <div>
+        <div>{investor.primary_contact}</div>
+        {investor.primary_contact_title && (
+          <div className="text-xs text-gray-500">{investor.primary_contact_title}</div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <TableRow>
       <TableCell className="text-sm font-medium">{investor.limited_partner_name}</TableCell>
@@ -66,11 +79,7 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
       <TableCell className="text-sm">{investor.aum ? `${(investor.aum / 1e6).toFixed(0)}` : 'N/A'}</TableCell>
       <TableCell className="text-sm">{investor.hqlocation || 'N/A'}</TableCell>
       <TableCell className="flex flex-wrap gap-1">{renderFundTypes(investor.preferred_fund_type)}</TableCell>
-      <TableCell className="text-sm">
-        {investor.preferred_commitment_size_min 
-          ? `${(investor.preferred_commitment_size_min / 1e6).toFixed(0)}`
-          : 'N/A'}
-      </TableCell>
+      <TableCell className="text-sm">{renderPrimaryContact()}</TableCell>
       <TableCell>
         <Button
           variant="ghost"
