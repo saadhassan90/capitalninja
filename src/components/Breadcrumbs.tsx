@@ -28,8 +28,8 @@ export function Breadcrumbs() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink as={Link} to="/">
-            Dashboard
+          <BreadcrumbLink asChild>
+            <Link to="/">Dashboard</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         {pathSegments.map((segment, index) => {
@@ -42,8 +42,8 @@ export function Breadcrumbs() {
               {isLast ? (
                 <BreadcrumbPage>{getBreadcrumbLabel(segment)}</BreadcrumbPage>
               ) : (
-                <BreadcrumbLink as={Link} to={path}>
-                  {getBreadcrumbLabel(segment)}
+                <BreadcrumbLink asChild>
+                  <Link to={path}>{getBreadcrumbLabel(segment)}</Link>
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>
