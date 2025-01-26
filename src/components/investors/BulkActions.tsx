@@ -8,7 +8,7 @@ interface BulkActionsProps {
 
 export function BulkActions({ selectedCount, onClearSelection }: BulkActionsProps) {
   return (
-    <div className="flex items-center gap-4 px-4 py-2 bg-muted rounded-md">
+    <div className="flex items-center gap-4 px-4 py-2 bg-muted rounded-md ml-auto">
       <span className="text-sm font-medium">
         {selectedCount} investor{selectedCount !== 1 ? 's' : ''} selected
       </span>
