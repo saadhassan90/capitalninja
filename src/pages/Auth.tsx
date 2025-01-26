@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Mail } from "lucide-react";
+import { Mail, Bug } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +31,33 @@ export default function Auth() {
         title: "Check your email",
         description: "We've sent you a magic link to sign in.",
       });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleTestLogin = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: "saadhassan90@gmail.com",
+        password: "test123456",
+      });
+
+      if (error) throw error;
+      
+      toast({
+        title: "Test login successful",
+        description: "You are now logged in with the test account.",
+      });
+      
+      navigate("/");
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -74,6 +103,28 @@ export default function Auth() {
             {loading ? "Sending magic link..." : "Send magic link"}
           </Button>
         </form>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              For testing only
+            </span>
+          </div>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={handleTestLogin}
+          disabled={loading}
+        >
+          <Bug className="mr-2" />
+          Test Login (Dev Only)
+        </Button>
       </div>
     </div>
   );
