@@ -43,7 +43,7 @@ export function ListCard({ list }: ListCardProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">{list.name}</CardTitle>
-          <span className={`px-2 py-1 text-xs rounded-full ${
+          <span className={`px-2 py-1 text-xs rounded-md ${
             list.type === "static"
               ? "bg-gray-100 text-gray-700"
               : "bg-blue-100 text-blue-700"
