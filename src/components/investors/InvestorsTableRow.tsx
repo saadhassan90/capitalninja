@@ -25,27 +25,14 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
     type AssetClass = 'privateEquity' | 'realEstate' | 'privateCredit' | 'venture' | 'energy' | 'infrastructure' | 'other';
     
     const mapFundTypeToAssetClass = (type: string): AssetClass => {
-      type = type.trim().toLowerCase();
-      switch (type) {
-        case 'private equity':
-        case 'pe':
-          return 'privateEquity';
-        case 'real estate':
-        case 're':
-          return 'realEstate';
-        case 'private credit':
-        case 'debt':
-          return 'privateCredit';
-        case 'venture capital':
-        case 'vc':
-          return 'venture';
-        case 'energy':
-          return 'energy';
-        case 'infrastructure':
-          return 'infrastructure';
-        default:
-          return 'other';
-      }
+      type = type.toLowerCase().trim();
+      if (type.includes('private equity') || type.includes('pe')) return 'privateEquity';
+      if (type.includes('real estate') || type.includes('re')) return 'realEstate';
+      if (type.includes('private credit') || type.includes('debt')) return 'privateCredit';
+      if (type.includes('venture') || type.includes('vc')) return 'venture';
+      if (type.includes('energy')) return 'energy';
+      if (type.includes('infrastructure')) return 'infrastructure';
+      return 'other';
     };
     
     return fundTypes.split(',').map((type, index) => {
