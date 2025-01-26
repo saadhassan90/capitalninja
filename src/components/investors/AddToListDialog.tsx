@@ -117,61 +117,66 @@ export function AddToListDialog({
             onValueChange={(value: "existing" | "new") => setMode(value)}
             className="flex flex-col space-y-4"
           >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="existing" id="existing" />
-              <Label htmlFor="existing">Add to existing list</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="new" id="new" />
-              <Label htmlFor="new">Create new list</Label>
-            </div>
-          </RadioGroup>
-
-          {mode === "existing" ? (
-            <div className="space-y-4 pl-6">
-              {listsLoading ? (
-                <div className="flex items-center justify-center py-4">
-                  <Loader2 className="h-6 w-6 animate-spin" />
-                </div>
-              ) : lists && lists.length > 0 ? (
-                <RadioGroup
-                  value={selectedListId}
-                  onValueChange={setSelectedListId}
-                  className="flex flex-col space-y-2"
-                >
-                  {lists.map((list) => (
-                    <div key={list.id} className="flex items-center space-x-2">
-                      <RadioGroupItem value={list.id} id={list.id} />
-                      <Label htmlFor={list.id}>{list.name}</Label>
+            <div className="border rounded-lg p-4 space-y-4">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="existing" id="existing" />
+                <Label htmlFor="existing">Add to existing list</Label>
+              </div>
+              {mode === "existing" && (
+                <div className="pl-6 space-y-2">
+                  {listsLoading ? (
+                    <div className="flex items-center justify-center py-4">
+                      <Loader2 className="h-6 w-6 animate-spin" />
                     </div>
-                  ))}
-                </RadioGroup>
-              ) : (
-                <p className="text-sm text-muted-foreground">No lists found. Create a new one!</p>
+                  ) : lists && lists.length > 0 ? (
+                    <RadioGroup
+                      value={selectedListId}
+                      onValueChange={setSelectedListId}
+                      className="flex flex-col space-y-2"
+                    >
+                      {lists.map((list) => (
+                        <div key={list.id} className="flex items-center space-x-2">
+                          <RadioGroupItem value={list.id} id={list.id} />
+                          <Label htmlFor={list.id}>{list.name}</Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No lists found. Create a new one!</p>
+                  )}
+                </div>
               )}
             </div>
-          ) : (
-            <div className="space-y-4 pl-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">List Name</Label>
-                <Input
-                  id="name"
-                  value={newList.name}
-                  onChange={(e) => setNewList({ ...newList, name: e.target.value })}
-                  placeholder="Enter list name"
-                />
+
+            <div className="border rounded-lg p-4 space-y-4">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="new" id="new" />
+                <Label htmlFor="new">Create new list</Label>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={newList.description}
-                  onChange={(e) => setNewList({ ...newList, description: e.target.value })}
-                  placeholder="Enter list description"
-                />
-              </div>
+              {mode === "new" && (
+                <div className="pl-6 space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">List Name</Label>
+                    <Input
+                      id="name"
+                      value={newList.name}
+                      onChange={(e) => setNewList({ ...newList, name: e.target.value })}
+                      placeholder="Enter list name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={newList.description}
+                      onChange={(e) => setNewList({ ...newList, description: e.target.value })}
+                      placeholder="Enter list description"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </RadioGroup>
         </div>
 
         <DialogFooter>
