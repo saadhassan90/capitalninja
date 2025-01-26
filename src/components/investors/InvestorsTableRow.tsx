@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 import { getAssetClassStyle } from "@/utils/assetClassColors";
 
@@ -23,7 +22,9 @@ export function InvestorsTableRow({ investor, onViewInvestor }: InvestorsTableRo
   const renderFundTypes = (fundTypes: string | null) => {
     if (!fundTypes) return 'N/A';
     
-    const mapFundTypeToAssetClass = (type: string): keyof typeof getAssetClassStyle => {
+    type AssetClass = 'privateEquity' | 'realEstate' | 'privateCredit' | 'venture' | 'energy' | 'infrastructure' | 'other';
+    
+    const mapFundTypeToAssetClass = (type: string): AssetClass => {
       type = type.trim().toLowerCase();
       switch (type) {
         case 'private equity':

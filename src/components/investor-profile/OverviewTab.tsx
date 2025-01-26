@@ -1,40 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAssetClassStyle } from "@/utils/assetClassColors";
+import { ProcessedInvestorData } from "@/types/processedInvestor";
 
-type InvestorData = {
-  limited_partner_type: string | null;
-  aum: number | null;
-  year_founded: number | null;
-  hqlocation: string | null;
-  hqemail: string | null;
-  hqphone: string | null;
-  description: string | null;
-  preferred_fund_type: string | null;
-  preferred_commitment_size_min: number | null;
-  preferred_commitment_size_max: number | null;
-  open_to_first_time_funds: string | null;
-  primary_contact: string | null;
-  primary_contact_title: string | null;
-  primary_contact_email: string | null;
-  primary_contact_phone: string | null;
-  website: string | null;
-  private_equity: bigint | null;
-  private_equity_percent: number | null;
-  real_estate: bigint | null;
-  real_estate_percent: number | null;
-  special_opportunities: bigint | null;
-  special_opportunities_percent: number | null;
-  hedge_funds: bigint | null;
-  hedge_funds_percent: number | null;
-  equities: bigint | null;
-  equities_percent: number | null;
-  fixed_income: bigint | null;
-  fixed_income_percent: number | null;
-  cash: bigint | null;
-  cash_percent: number | null;
-};
-
-export function OverviewTab({ investor }: { investor: InvestorData }) {
+export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
   const assetAllocation = [
     { 
       label: "Private Equity",
