@@ -58,7 +58,7 @@ const Lists = () => {
         name: item.name,
         description: item.description,
         created_at: item.created_at,
-        type: item.type === "dynamic" ? "dynamic" : "static",
+        type: item.type === "dynamic" ? "dynamic" : "static" as const,
         filters: item.filters ? (item.filters as unknown as ListFilters) : null,
         last_refreshed_at: item.last_refreshed_at
       }));
@@ -102,7 +102,7 @@ const Lists = () => {
         name: data.name,
         description: data.description,
         created_at: data.created_at,
-        type: data.type === "dynamic" ? "dynamic" : "static",
+        type: data.type === "dynamic" ? "dynamic" : "static" as const,
         filters: data.filters ? (data.filters as unknown as ListFilters) : null,
         last_refreshed_at: data.last_refreshed_at
       };
