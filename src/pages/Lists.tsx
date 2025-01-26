@@ -1,31 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Json } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CreateListDialog } from "@/components/lists/CreateListDialog";
-import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
-
-interface ListFilters {
-  type: InvestorFilterType;
-  location: InvestorFilterType;
-  assetClass: InvestorFilterType;
-  firstTimeFunds: InvestorFilterType;
-  aumRange: AUMRange;
-}
-
-interface DatabaseList {
-  id: string;
-  name: string;
-  description: string;
-  created_at: string;
-  type: "static" | "dynamic";
-  filters: Json;
-  last_refreshed_at: string;
-}
+import { ListSection } from "@/components/lists/ListSection";
+import type { ListFilters } from "@/types/investorFilters";
 
 interface List {
   id: string;
@@ -53,13 +33,8 @@ const Lists = () => {
         throw error;
       }
 
-      const typedLists = (data as DatabaseList[]).map((list) => ({
-        ...list,
-        filters: list.filters ? (list.filters as unknown as ListFilters) : null,
-      }));
-
-      setLists(typedLists);
-      return typedLists;
+      setLists(data as List[]);
+      return data;
     },
   });
 
@@ -69,13 +44,23 @@ const Lists = () => {
     type: "static" | "dynamic";
     filters?: ListFilters;
   }) => {
+    const filtersJson = newList.type === "dynamic" 
+      ? {
+          type: newList.filters?.type,
+          location: newList.filters?.location,
+          assetClass: newList.filters?.assetClass,
+          firstTimeFunds: newList.filters?.firstTimeFunds,
+          aumRange: newList.filters?.aumRange,
+        }
+      : null;
+
     const { data, error } = await supabase
       .from("lists")
       .insert({
         name: newList.name,
         description: newList.description,
         type: newList.type,
-        filters: newList.type === "dynamic" ? newList.filters as Json : null,
+        filters: filtersJson,
       })
       .select()
       .single();
@@ -85,7 +70,7 @@ const Lists = () => {
       return;
     }
 
-    setLists([data as unknown as List, ...lists]);
+    setLists([data as List, ...lists]);
   };
 
   if (isLoading) {
@@ -94,52 +79,6 @@ const Lists = () => {
 
   const staticLists = lists.filter(list => list.type === 'static');
   const dynamicLists = lists.filter(list => list.type === 'dynamic');
-
-  const EmptySection = ({ type }: { type: string }) => (
-    <Alert variant="default" className="bg-gray-50 border-gray-200">
-      <AlertDescription>
-        No {type.toLowerCase()} lists found. Create a new {type.toLowerCase()} list by clicking the "New List" button.
-      </AlertDescription>
-    </Alert>
-  );
-
-  const ListSection = ({ title, lists }: { title: string; lists: List[] }) => (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-card-foreground">{title}</h2>
-      {lists.length === 0 ? (
-        <EmptySection type={title.split(" ")[0]} />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {lists.map((list) => (
-            <Card key={list.id} className="border-gray-200 hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{list.name}</CardTitle>
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    list.type === "static"
-                      ? "bg-black/10 text-black"
-                      : "bg-gray-100 text-gray-700"
-                  }`}>
-                    {list.type}
-                  </span>
-                </div>
-                {list.description && (
-                  <CardDescription className="text-muted-foreground mt-2">
-                    {list.description}
-                  </CardDescription>
-                )}
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Created: {new Date(list.created_at).toLocaleDateString()}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 
   return (
     <div className="p-6 space-y-8">
