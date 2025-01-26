@@ -44,7 +44,11 @@ export function BulkActions({ selectedCount, onClearSelection, selectedInvestors
       // Create new list
       const { data: listData, error: listError } = await supabase
         .from('lists')
-        .insert([{ name, description }])
+        .insert([{ 
+          name, 
+          description,
+          created_by: (await supabase.auth.getUser()).data.user?.id
+        }])
         .select()
         .single();
 
