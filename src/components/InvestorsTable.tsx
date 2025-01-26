@@ -15,49 +15,65 @@ type LimitedPartner = {
   preferred_commitment_size_min: number | null;
 };
 
-async function fetchInvestors(searchTerm: string) {
+const INVESTORS_PER_PAGE = 200;
+
+async function fetchInvestors(searchTerm: string, page: number) {
+  const start = (page - 1) * INVESTORS_PER_PAGE;
+  
   const query = supabase
     .from('limited_partners')
-    .select('id, limited_partner_name, limited_partner_type, aum, hqlocation, preferred_fund_type, preferred_commitment_size_min')
-    .order('limited_partner_name');
+    .select('id, limited_partner_name, limited_partner_type, aum, hqlocation, preferred_fund_type, preferred_commitment_size_min, count:id', { count: 'exact' })
+    .order('limited_partner_name')
+    .range(start, start + INVESTORS_PER_PAGE - 1);
 
   if (searchTerm) {
     query.ilike('limited_partner_name', `%${searchTerm}%`);
   }
 
-  const { data, error } = await query;
+  const { data, error, count } = await query;
   
   if (error) {
     throw error;
   }
   
-  return data;
+  return { data, count };
 }
 
 export function InvestorsTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: investors = [], isLoading, error } = useQuery({
-    queryKey: ['investors', searchTerm],
-    queryFn: () => fetchInvestors(searchTerm),
+  const { data: investorsData, isLoading, error } = useQuery({
+    queryKey: ['investors', searchTerm, currentPage],
+    queryFn: () => fetchInvestors(searchTerm, currentPage),
   });
+
+  const investors = investorsData?.data ?? [];
+  const totalInvestors = investorsData?.count ?? 0;
+  const totalPages = Math.ceil(totalInvestors / INVESTORS_PER_PAGE);
 
   if (error) {
     return <div>Error loading investors</div>;
   }
 
   return (
-    <div className="w-full">
+    <div className="flex flex-col h-full">
       <InvestorsSearch 
         value={searchTerm}
-        onChange={setSearchTerm}
+        onChange={(value) => {
+          setSearchTerm(value);
+          setCurrentPage(1);
+        }}
       />
       
       <InvestorsTableView 
         investors={investors}
         isLoading={isLoading}
         onViewInvestor={setSelectedInvestorId}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
       />
 
       {selectedInvestorId && (
