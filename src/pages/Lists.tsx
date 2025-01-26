@@ -45,6 +45,15 @@ const Lists = () => {
     filters?: ListFilters;
   }) => {
     try {
+      // Create a clean filters object without null values
+      const cleanFilters = list.type === 'dynamic' && list.filters ? {
+        type: list.filters.type === '_all' ? null : list.filters.type,
+        location: list.filters.location === '_all' ? null : list.filters.location,
+        assetClass: list.filters.assetClass === '_all' ? null : list.filters.assetClass,
+        firstTimeFunds: list.filters.firstTimeFunds === '_all' ? null : list.filters.firstTimeFunds,
+        aumRange: list.filters.aumRange
+      } : null;
+
       const { error } = await supabase
         .from('lists')
         .insert([{
@@ -52,7 +61,7 @@ const Lists = () => {
           description: list.description,
           type: list.type,
           created_by: list.created_by,
-          filters: list.filters ? JSON.stringify(list.filters) : null,
+          filters: cleanFilters
         }]);
 
       if (error) throw error;
