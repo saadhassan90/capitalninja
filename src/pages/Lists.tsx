@@ -29,8 +29,8 @@ interface DatabaseList {
   name: string;
   description: string | null;
   created_at: string;
-  type: "static" | "dynamic";
-  filters: Json | null;
+  type: string;
+  filters: Json;
   last_refreshed_at: string | null;
   created_by: string | null;
 }
@@ -59,7 +59,7 @@ const Lists = () => {
         description: item.description,
         created_at: item.created_at,
         type: item.type === "dynamic" ? "dynamic" : "static",
-        filters: item.filters as ListFilters | null,
+        filters: item.filters ? (item.filters as unknown as ListFilters) : null,
         last_refreshed_at: item.last_refreshed_at
       }));
       
@@ -89,7 +89,7 @@ const Lists = () => {
             name,
             description,
             type,
-            filters: type === "dynamic" ? filters : null,
+            filters: filters as unknown as Json,
           },
         ])
         .select()
@@ -103,7 +103,7 @@ const Lists = () => {
         description: data.description,
         created_at: data.created_at,
         type: data.type === "dynamic" ? "dynamic" : "static",
-        filters: data.filters as ListFilters | null,
+        filters: data.filters ? (data.filters as unknown as ListFilters) : null,
         last_refreshed_at: data.last_refreshed_at
       };
 
