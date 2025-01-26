@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 import { CreateListDialog } from "@/components/lists/CreateListDialog";
 import { ListSection } from "@/components/lists/ListSection";
 import type { ListFilters } from "@/types/investorFilters";
@@ -123,10 +123,16 @@ const Lists = () => {
     <div className="p-6 space-y-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-card-foreground">Lists</h1>
-        <Button variant="default" className="bg-black hover:bg-black/80" onClick={() => setOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          New List
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="default" className="bg-black hover:bg-black/80">
+            <Download className="w-4 h-4 mr-2" />
+            Export
+          </Button>
+          <Button variant="default" className="bg-black hover:bg-black/80" onClick={() => setOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            New List
+          </Button>
+        </div>
       </div>
 
       <CreateListDialog
