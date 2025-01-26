@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 interface InvestorsSearchProps {
   value: string;
   onChange: (value: string) => void;
-  onFilterChange: (type: string | null, location: string | null) => void;
+  onFilterChange: (type: string | null, location: string | null, assetClass: string | null, firstTimeFunds: string | null) => void;
 }
 
 export function InvestorsSearch({ value, onChange, onFilterChange }: InvestorsSearchProps) {
@@ -29,8 +29,19 @@ export function InvestorsSearch({ value, onChange, onFilterChange }: InvestorsSe
     "Other"
   ];
 
+  const assetClasses = [
+    "Private Equity",
+    "Venture Capital",
+    "Real Estate",
+    "Private Credit",
+    "Infrastructure",
+    "Energy",
+    "Fund of Funds",
+    "Other"
+  ];
+
   return (
-    <div className="mb-6 flex gap-4 items-center">
+    <div className="mb-6 flex gap-4 items-center flex-wrap">
       <Input
         placeholder="Search investors..."
         value={value}
@@ -38,7 +49,7 @@ export function InvestorsSearch({ value, onChange, onFilterChange }: InvestorsSe
         className="max-w-sm focus:outline-none focus:ring-0 focus:border-gray-300"
       />
       
-      <Select onValueChange={(value) => onFilterChange(value, null)}>
+      <Select onValueChange={(value) => onFilterChange(value, null, null, null)}>
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Filter by Type" />
         </SelectTrigger>
@@ -52,7 +63,7 @@ export function InvestorsSearch({ value, onChange, onFilterChange }: InvestorsSe
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onFilterChange(null, value)}>
+      <Select onValueChange={(value) => onFilterChange(null, value, null, null)}>
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Filter by Location" />
         </SelectTrigger>
@@ -63,6 +74,31 @@ export function InvestorsSearch({ value, onChange, onFilterChange }: InvestorsSe
               {location.label}
             </SelectItem>
           ))}
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => onFilterChange(null, null, value, null)}>
+        <SelectTrigger className="w-[200px]">
+          <SelectValue placeholder="Filter by Asset Class" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="_all">All Asset Classes</SelectItem>
+          {assetClasses.map((assetClass) => (
+            <SelectItem key={assetClass} value={assetClass}>
+              {assetClass}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => onFilterChange(null, null, null, value)}>
+        <SelectTrigger className="w-[200px]">
+          <SelectValue placeholder="First Time Funds" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="_all">All</SelectItem>
+          <SelectItem value="yes">Yes</SelectItem>
+          <SelectItem value="no">No</SelectItem>
         </SelectContent>
       </Select>
     </div>

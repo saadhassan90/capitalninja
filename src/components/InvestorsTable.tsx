@@ -18,7 +18,14 @@ type LimitedPartner = {
 
 const INVESTORS_PER_PAGE = 200;
 
-async function fetchInvestors(searchTerm: string, type: string | null, location: string | null, page: number) {
+async function fetchInvestors(
+  searchTerm: string, 
+  type: string | null, 
+  location: string | null, 
+  assetClass: string | null,
+  firstTimeFunds: string | null,
+  page: number
+) {
   const start = (page - 1) * INVESTORS_PER_PAGE;
   
   let query = supabase
@@ -36,7 +43,6 @@ async function fetchInvestors(searchTerm: string, type: string | null, location:
   }
 
   if (location && location !== '_all') {
-    // Handle different location filters
     if (location === 'US') {
       query = query.ilike('hqlocation', '%United States%');
     } else if (location === 'MENA') {
@@ -44,6 +50,14 @@ async function fetchInvestors(searchTerm: string, type: string | null, location:
     } else {
       query = query.ilike('hqlocation', `%${location}%`);
     }
+  }
+
+  if (assetClass && assetClass !== '_all') {
+    query = query.ilike('preferred_fund_type', `%${assetClass}%`);
+  }
+
+  if (firstTimeFunds && firstTimeFunds !== '_all') {
+    query = query.eq('open_to_first_time_funds', firstTimeFunds);
   }
 
   const { data, error, count } = await query;
@@ -59,21 +73,37 @@ export function InvestorsTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [selectedAssetClass, setSelectedAssetClass] = useState<string | null>(null);
+  const [selectedFirstTimeFunds, setSelectedFirstTimeFunds] = useState<string | null>(null);
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data: investorsData, isLoading, error } = useQuery({
-    queryKey: ['investors', searchTerm, selectedType, selectedLocation, currentPage],
-    queryFn: () => fetchInvestors(searchTerm, selectedType, selectedLocation, currentPage),
+    queryKey: ['investors', searchTerm, selectedType, selectedLocation, selectedAssetClass, selectedFirstTimeFunds, currentPage],
+    queryFn: () => fetchInvestors(
+      searchTerm, 
+      selectedType, 
+      selectedLocation, 
+      selectedAssetClass,
+      selectedFirstTimeFunds,
+      currentPage
+    ),
   });
 
   const investors = investorsData?.data ?? [];
   const totalInvestors = investorsData?.count ?? 0;
   const totalPages = Math.ceil(totalInvestors / INVESTORS_PER_PAGE);
 
-  const handleFilterChange = (type: string | null, location: string | null) => {
+  const handleFilterChange = (
+    type: string | null, 
+    location: string | null, 
+    assetClass: string | null,
+    firstTimeFunds: string | null
+  ) => {
     if (type !== null) setSelectedType(type === '_all' ? null : type);
     if (location !== null) setSelectedLocation(location === '_all' ? null : location);
+    if (assetClass !== null) setSelectedAssetClass(assetClass === '_all' ? null : assetClass);
+    if (firstTimeFunds !== null) setSelectedFirstTimeFunds(firstTimeFunds === '_all' ? null : firstTimeFunds);
     setCurrentPage(1);
   };
 
