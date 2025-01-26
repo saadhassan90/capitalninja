@@ -5,6 +5,7 @@ import { Json } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ListFilters {
   type: string;
@@ -66,37 +67,49 @@ const Lists = () => {
     return <div>Loading...</div>;
   }
 
+  const EmptySection = ({ type }: { type: string }) => (
+    <Alert variant="default" className="bg-gray-50 border-gray-200">
+      <AlertDescription>
+        No {type.toLowerCase()} lists found. Create a new {type.toLowerCase()} list by clicking the "New List" button.
+      </AlertDescription>
+    </Alert>
+  );
+
   const ListSection = ({ title, lists }: { title: string; lists: List[] }) => (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-card-foreground">{title}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {lists.map((list) => (
-          <Card key={list.id} className="border-gray-200 hover:shadow-md transition-shadow">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{list.name}</CardTitle>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  list.type === "static"
-                    ? "bg-black/10 text-black"
-                    : "bg-gray-100 text-gray-700"
-                }`}>
-                  {list.type}
-                </span>
-              </div>
-              {list.description && (
-                <CardDescription className="text-muted-foreground mt-2">
-                  {list.description}
-                </CardDescription>
-              )}
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Created: {new Date(list.created_at).toLocaleDateString()}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {lists.length === 0 ? (
+        <EmptySection type={title.split(" ")[0]} />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {lists.map((list) => (
+            <Card key={list.id} className="border-gray-200 hover:shadow-md transition-shadow">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">{list.name}</CardTitle>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    list.type === "static"
+                      ? "bg-black/10 text-black"
+                      : "bg-gray-100 text-gray-700"
+                  }`}>
+                    {list.type}
+                  </span>
+                </div>
+                {list.description && (
+                  <CardDescription className="text-muted-foreground mt-2">
+                    {list.description}
+                  </CardDescription>
+                )}
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Created: {new Date(list.created_at).toLocaleDateString()}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 
@@ -110,19 +123,8 @@ const Lists = () => {
         </Button>
       </div>
 
-      {staticLists.length > 0 && (
-        <ListSection title="Static Lists" lists={staticLists} />
-      )}
-
-      {dynamicLists.length > 0 && (
-        <ListSection title="Dynamic Lists" lists={dynamicLists} />
-      )}
-
-      {lists.length === 0 && (
-        <div className="text-center text-muted-foreground py-8">
-          No lists found. Create your first list by clicking the "New List" button.
-        </div>
-      )}
+      <ListSection title="Static Lists" lists={staticLists} />
+      <ListSection title="Dynamic Lists" lists={dynamicLists} />
     </div>
   );
 };
