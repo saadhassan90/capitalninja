@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -16,18 +17,31 @@ interface MenuListProps {
 }
 
 export function MenuList({ items }: MenuListProps) {
+  const location = useLocation();
+
   return (
     <SidebarMenu>
-      {items.map((item) => (
-        <SidebarMenuItem key={item.title}>
-          <SidebarMenuButton asChild>
-            <a href={item.url} className="flex items-center gap-3">
-              <item.icon className="h-4 w-4" />
-              <span>{item.title}</span>
-            </a>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
+      {items.map((item) => {
+        const isActive = location.pathname === item.url;
+        
+        return (
+          <SidebarMenuItem key={item.title}>
+            <SidebarMenuButton asChild>
+              <a
+                href={item.url}
+                className={`flex items-center gap-3 rounded-md px-3 py-2 transition-colors hover:bg-gray-900/10 dark:hover:bg-gray-50/10 ${
+                  isActive
+                    ? "bg-gray-900/10 dark:bg-gray-50/10 font-medium"
+                    : ""
+                }`}
+              >
+                <item.icon className="h-4 w-4" />
+                <span>{item.title}</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        );
+      })}
     </SidebarMenu>
   );
 }
