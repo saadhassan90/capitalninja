@@ -6,18 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { CreateListDialog } from "@/components/lists/CreateListDialog";
+import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
 interface ListFilters {
-  type: string;
-  location: string;
-  assetClass: string;
-  firstTimeFunds: string;
-  aumRange: [number, number];
+  type: InvestorFilterType;
+  location: InvestorFilterType;
+  assetClass: InvestorFilterType;
+  firstTimeFunds: InvestorFilterType;
+  aumRange: AUMRange;
 }
 
 interface DatabaseList {
@@ -43,11 +40,6 @@ interface List {
 const Lists = () => {
   const [lists, setLists] = useState<List[]>([]);
   const [open, setOpen] = useState(false);
-  const [newList, setNewList] = useState({
-    name: "",
-    description: "",
-    type: "static" as "static" | "dynamic"
-  });
 
   const { isLoading } = useQuery({
     queryKey: ["lists"],
@@ -71,17 +63,39 @@ const Lists = () => {
     },
   });
 
-  const handleCreateList = async () => {
-    // TODO: Implement list creation logic
-    setOpen(false);
-  };
+  const handleCreateList = async (newList: {
+    name: string;
+    description: string;
+    type: "static" | "dynamic";
+    filters?: ListFilters;
+  }) => {
+    const { data, error } = await supabase
+      .from("lists")
+      .insert([
+        {
+          name: newList.name,
+          description: newList.description,
+          type: newList.type,
+          filters: newList.type === "dynamic" ? newList.filters : null,
+        },
+      ])
+      .select()
+      .single();
 
-  const staticLists = lists.filter(list => list.type === 'static');
-  const dynamicLists = lists.filter(list => list.type === 'dynamic');
+    if (error) {
+      console.error("Error creating list:", error);
+      return;
+    }
+
+    setLists([data as unknown as List, ...lists]);
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  const staticLists = lists.filter(list => list.type === 'static');
+  const dynamicLists = lists.filter(list => list.type === 'dynamic');
 
   const EmptySection = ({ type }: { type: string }) => (
     <Alert variant="default" className="bg-gray-50 border-gray-200">
@@ -133,67 +147,17 @@ const Lists = () => {
     <div className="p-6 space-y-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-card-foreground">Lists</h1>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button variant="default" className="bg-black hover:bg-black/80">
-              <Plus className="w-4 h-4 mr-2" />
-              New List
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create New List</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-6 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  value={newList.name}
-                  onChange={(e) => setNewList({ ...newList, name: e.target.value })}
-                  placeholder="Enter list name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={newList.description}
-                  onChange={(e) => setNewList({ ...newList, description: e.target.value })}
-                  placeholder="Enter list description"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>List Type</Label>
-                <RadioGroup
-                  value={newList.type}
-                  onValueChange={(value: "static" | "dynamic") => 
-                    setNewList({ ...newList, type: value })
-                  }
-                  className="flex flex-col space-y-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="static" id="static" />
-                    <Label htmlFor="static">Static List</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="dynamic" id="dynamic" />
-                    <Label htmlFor="dynamic">Dynamic List</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreateList} className="bg-black hover:bg-black/80">
-                Create List
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button variant="default" className="bg-black hover:bg-black/80" onClick={() => setOpen(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          New List
+        </Button>
       </div>
+
+      <CreateListDialog
+        open={open}
+        onOpenChange={setOpen}
+        onCreateList={handleCreateList}
+      />
 
       <ListSection title="Static Lists" lists={staticLists} />
       <ListSection title="Dynamic Lists" lists={dynamicLists} />
