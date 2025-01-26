@@ -9,7 +9,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { InvestorsTableRow } from "./InvestorsTableRow";
 import { InvestorsPagination } from "./InvestorsPagination";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import type { LimitedPartner } from "@/types/investor";
 import type { SortConfig } from "@/types/sorting";
 
@@ -50,10 +50,12 @@ export function InvestorsTableView({
       >
         <div className="flex items-center gap-1">
           {children}
-          {isSorted && (
+          {isSorted ? (
             sortConfig.direction === 'asc' ? 
-              <ChevronUp className="h-4 w-4" /> : 
-              <ChevronDown className="h-4 w-4" />
+              <ChevronUp className="h-3 w-3 text-muted-foreground" /> : 
+              <ChevronDown className="h-3 w-3 text-muted-foreground" />
+          ) : (
+            <ArrowUpDown className="h-3 w-3 text-muted-foreground/50" />
           )}
         </div>
       </TableHead>
