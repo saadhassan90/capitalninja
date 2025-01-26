@@ -42,12 +42,12 @@ const Lists = () => {
       const typedLists = (data as any[]).map(list => ({
         ...list,
         // Ensure filters match the ListFilters type structure
-        filters: list.filters ? {
-          type: list.filters.type ?? null,
-          location: list.filters.location ?? null,
-          assetClass: list.filters.assetClass ?? null,
-          firstTimeFunds: list.filters.firstTimeFunds ?? null,
-          aumRange: list.filters.aumRange ?? null
+        filters: list.filters && typeof list.filters === 'object' ? {
+          type: (list.filters as any).type ?? null,
+          location: (list.filters as any).location ?? null,
+          assetClass: (list.filters as any).assetClass ?? null,
+          firstTimeFunds: (list.filters as any).firstTimeFunds ?? null,
+          aumRange: (list.filters as any).aumRange ?? null
         } as ListFilters : null,
         type: list.type as "static" | "dynamic"
       }));
@@ -99,12 +99,12 @@ const Lists = () => {
     // Safely type cast the new list
     const typedList: List = {
       ...data,
-      filters: data.filters ? {
-        type: data.filters.type ?? null,
-        location: data.filters.location ?? null,
-        assetClass: data.filters.assetClass ?? null,
-        firstTimeFunds: data.filters.firstTimeFunds ?? null,
-        aumRange: data.filters.aumRange ?? null
+      filters: data.filters && typeof data.filters === 'object' ? {
+        type: (data.filters as any).type ?? null,
+        location: (data.filters as any).location ?? null,
+        assetClass: (data.filters as any).assetClass ?? null,
+        firstTimeFunds: (data.filters as any).firstTimeFunds ?? null,
+        aumRange: (data.filters as any).aumRange ?? null
       } as ListFilters : null,
       type: data.type as "static" | "dynamic"
     };
