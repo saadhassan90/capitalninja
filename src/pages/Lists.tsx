@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { CreateListDialog } from "@/components/lists/CreateListDialog";
 import { ListCard } from "@/components/lists/ListCard";
+import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
 interface List {
   id: string;
@@ -10,6 +11,14 @@ interface List {
   description: string | null;
   created_at: string;
   type: "static" | "dynamic";
+  filters: {
+    type: InvestorFilterType;
+    location: InvestorFilterType;
+    assetClass: InvestorFilterType;
+    firstTimeFunds: InvestorFilterType;
+    aumRange: AUMRange;
+  } | null;
+  last_refreshed_at: string | null;
 }
 
 const Lists = () => {
@@ -30,7 +39,6 @@ const Lists = () => {
 
       if (error) throw error;
       
-      // Ensure the type is either "static" or "dynamic"
       const typedData = data?.map(item => ({
         ...item,
         type: item.type === "dynamic" ? "dynamic" : "static"
@@ -48,7 +56,18 @@ const Lists = () => {
     }
   };
 
-  const handleCreateList = async (name: string, description: string, type: "static" | "dynamic") => {
+  const handleCreateList = async (
+    name: string, 
+    description: string, 
+    type: "static" | "dynamic",
+    filters?: {
+      type: InvestorFilterType;
+      location: InvestorFilterType;
+      assetClass: InvestorFilterType;
+      firstTimeFunds: InvestorFilterType;
+      aumRange: AUMRange;
+    }
+  ) => {
     try {
       const { data, error } = await supabase
         .from('lists')
@@ -57,6 +76,7 @@ const Lists = () => {
             name,
             description,
             type,
+            filters: type === "dynamic" ? filters : null,
           },
         ])
         .select()
@@ -64,7 +84,6 @@ const Lists = () => {
 
       if (error) throw error;
 
-      // Ensure type is correctly typed
       const newList = {
         ...data,
         type: data.type === "dynamic" ? "dynamic" : "static"

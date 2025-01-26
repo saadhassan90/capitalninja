@@ -315,7 +315,9 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          filters: Json | null
           id: string
+          last_refreshed_at: string | null
           name: string
           type: string
         }
@@ -323,7 +325,9 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          filters?: Json | null
           id?: string
+          last_refreshed_at?: string | null
           name: string
           type?: string
         }
@@ -331,7 +335,9 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          filters?: Json | null
           id?: string
+          last_refreshed_at?: string | null
           name?: string
           type?: string
         }
@@ -397,6 +403,10 @@ export type Database = {
           "": unknown
         }
         Returns: unknown
+      }
+      refresh_dynamic_lists: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       set_limit: {
         Args: {
