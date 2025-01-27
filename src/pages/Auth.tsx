@@ -2,11 +2,10 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AuthHeader } from "@/components/auth/AuthHeader";
-import { MagicLinkForm, SignupFormData } from "@/components/auth/MagicLinkForm";
-import { TestLoginButton } from "@/components/auth/TestLoginButton";
 import { AuthPageHeader } from "@/components/auth/AuthPageHeader";
+import { AuthLeftColumn } from "@/components/auth/AuthLeftColumn";
+import { AuthFormContainer } from "@/components/auth/AuthFormContainer";
+import type { SignupFormData } from "@/components/auth/MagicLinkForm";
 
 export default function Auth() {
   const [loading, setLoading] = useState(false);
@@ -19,7 +18,6 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      // First, send the magic link
       const { error: otpError } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -33,7 +31,6 @@ export default function Auth() {
       
       if (otpError) throw otpError;
 
-      // Update profile with additional information
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -119,72 +116,17 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Left Column */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary p-12 text-primary-foreground">
-        <div className="max-w-xl mx-auto flex flex-col justify-center h-full">
-          <h1 className="text-5xl font-bold mb-6">
-            Connect with the Right Investors
-          </h1>
-          <p className="text-xl opacity-90 mb-12">
-            CapitalNinja helps you find and connect with investors that match your needs. 
-            Save time and make better investment decisions with our powerful platform.
-          </p>
-          
-          {/* Testimonial */}
-          <div className="bg-primary-foreground/10 p-6 rounded-lg">
-            <p className="italic mb-4">
-              "CapitalNinja has transformed how we connect with investors. The platform's 
-              efficiency and accuracy in matching us with the right investors has been invaluable."
-            </p>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-primary-foreground/20" />
-              <div>
-                <p className="font-medium">Sarah Chen</p>
-                <p className="text-sm opacity-80">Founder, TechVentures</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Column */}
+      <AuthLeftColumn />
       <div className="flex-1 flex flex-col">
         <AuthPageHeader />
-        
-        <div className="flex-1 flex items-center justify-center p-6">
-          <div className="w-full max-w-md space-y-8">
-            <AuthHeader />
-
-            <Tabs defaultValue="signup" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="signin">
-                <MagicLinkForm
-                  type="signin"
-                  email={email}
-                  loading={loading}
-                  onEmailChange={setEmail}
-                  onSubmit={handleSignIn}
-                />
-              </TabsContent>
-              
-              <TabsContent value="signup">
-                <MagicLinkForm
-                  type="signup"
-                  email={email}
-                  loading={loading}
-                  onEmailChange={setEmail}
-                  onSubmit={handleSignUp}
-                />
-              </TabsContent>
-            </Tabs>
-
-            <TestLoginButton loading={loading} onClick={handleTestLogin} />
-          </div>
-        </div>
+        <AuthFormContainer
+          email={email}
+          loading={loading}
+          onEmailChange={setEmail}
+          onSignIn={handleSignIn}
+          onSignUp={handleSignUp}
+          onTestLogin={handleTestLogin}
+        />
       </div>
     </div>
   );
