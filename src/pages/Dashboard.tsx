@@ -185,7 +185,7 @@ const Dashboard = () => {
                       fill="#8884d8"
                       dataKey="value"
                       paddingAngle={2}
-                      cornerRadius={4}
+                      cornerRadius={8}
                     >
                       {investorTypes?.map((entry, index) => (
                         <Cell 
