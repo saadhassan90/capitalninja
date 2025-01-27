@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { InvestorDistributionChart } from "@/components/dashboard/InvestorDistributionChart";
+import { TransactionsChart } from "@/components/dashboard/TransactionsChart";
 import { INVESTOR_CATEGORIES, categorizeInvestorType } from "@/utils/investorCategories";
 
 const Dashboard = () => {
@@ -64,8 +65,9 @@ const Dashboard = () => {
 
       <StatsCards listsCount={listsCount} investorsCount={investorsCount} />
 
-      <div className="grid gap-4">
-        {investorTypes && <InvestorDistributionChart data={investorTypes} />}
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+        <InvestorDistributionChart data={investorTypes} />
+        <TransactionsChart />
       </div>
     </div>
   );
