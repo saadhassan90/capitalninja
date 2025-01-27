@@ -100,25 +100,25 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1A1F2C]">
+    <div className="min-h-screen bg-background">
       <AuthPageHeader />
       
       <div className="container mx-auto pt-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Hero Content */}
-          <div className="text-white space-y-6 max-w-xl">
+          <div className="space-y-6 max-w-xl">
             <h1 className="text-5xl font-bold leading-tight">
               Connect with the Right
-              <span className="text-[#9b87f5]"> Investors</span>
+              <span className="text-primary"> Investors</span>
             </h1>
-            <p className="text-xl text-gray-300">
+            <p className="text-xl text-muted-foreground">
               CapitalNinja helps you find and connect with investors that match your needs. 
               Save time and make better investment decisions with our powerful platform.
             </p>
           </div>
 
           {/* Right Column - Auth Form */}
-          <div className="bg-white rounded-xl shadow-lg p-8 space-y-8">
+          <div className="bg-card rounded-xl shadow-lg p-8 space-y-8 border">
             <AuthHeader />
 
             <Tabs defaultValue="signin" className="w-full">
