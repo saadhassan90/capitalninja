@@ -1,12 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, ListTodo, Database } from "lucide-react";
+import { Activity, ListTodo, Database, Settings } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { supabase } from "@/integrations/supabase/client";
-import { assetClassColors } from "@/utils/assetClassColors";
+import { format, eachDayOfInterval, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 
 const Dashboard = () => {
-  // Fetch lists count
   const { data: listsCount } = useQuery({
     queryKey: ['listsCount'],
     queryFn: async () => {
@@ -49,19 +48,25 @@ const Dashboard = () => {
     },
   });
 
-  // Fetch asset class activity data
+  // Fetch asset class activity data with dates
   const { data: assetClassActivity } = useQuery({
     queryKey: ['assetClassActivity'],
     queryFn: async () => {
+      const startDate = subMonths(new Date(), 18); // Show last 18 months
+      const endDate = new Date();
+
       // Get fund commitments data
       const { data: commitments } = await supabase
         .from('fund_commitments')
         .select(`
           commitment,
+          commitment_date,
           limited_partners (
             preferred_fund_type
           )
         `)
+        .gte('commitment_date', startDate.toISOString())
+        .lte('commitment_date', endDate.toISOString())
         .not('commitment', 'is', null);
 
       // Get direct investments data
@@ -69,49 +74,74 @@ const Dashboard = () => {
         .from('direct_investments')
         .select(`
           deal_size,
+          deal_date,
           limited_partners (
             preferred_fund_type
           )
         `)
+        .gte('deal_date', startDate.toISOString())
+        .lte('deal_date', endDate.toISOString())
         .not('deal_size', 'is', null);
 
-      // Process the data for the heatmap
-      const activityMap = new Map();
+      // Generate all dates in range
+      const dates = eachDayOfInterval({ start: startDate, end: endDate });
+      const activityByDate = new Map();
+
+      // Initialize all dates with 0
+      dates.forEach(date => {
+        activityByDate.set(format(date, 'yyyy-MM-dd'), {
+          date,
+          value: 0,
+          deals: 0
+        });
+      });
 
       // Process fund commitments
       commitments?.forEach((item) => {
-        if (item.limited_partners?.preferred_fund_type) {
-          const types = item.limited_partners.preferred_fund_type.split(',').map(t => t.trim());
-          types.forEach(type => {
-            const current = activityMap.get(type) || { commitments: 0, investments: 0, total: 0 };
-            current.commitments += Number(item.commitment) || 0;
-            current.total = current.commitments + current.investments;
-            activityMap.set(type, current);
-          });
+        if (item.commitment_date) {
+          const dateKey = format(new Date(item.commitment_date), 'yyyy-MM-dd');
+          const current = activityByDate.get(dateKey) || { date: new Date(item.commitment_date), value: 0, deals: 0 };
+          current.value += Number(item.commitment) || 0;
+          current.deals += 1;
+          activityByDate.set(dateKey, current);
         }
       });
 
       // Process direct investments
       investments?.forEach((item) => {
-        if (item.limited_partners?.preferred_fund_type) {
-          const types = item.limited_partners.preferred_fund_type.split(',').map(t => t.trim());
-          types.forEach(type => {
-            const current = activityMap.get(type) || { commitments: 0, investments: 0, total: 0 };
-            current.investments += Number(item.deal_size) || 0;
-            current.total = current.commitments + current.investments;
-            activityMap.set(type, current);
-          });
+        if (item.deal_date) {
+          const dateKey = format(new Date(item.deal_date), 'yyyy-MM-dd');
+          const current = activityByDate.get(dateKey) || { date: new Date(item.deal_date), value: 0, deals: 0 };
+          current.value += Number(item.deal_size) || 0;
+          current.deals += 1;
+          activityByDate.set(dateKey, current);
         }
       });
 
-      // Convert to array and sort by total activity
-      return Array.from(activityMap.entries())
-        .map(([name, data]) => ({
-          name,
-          value: data.total / 1e6, // Convert to millions
-          intensity: Math.log(data.total / 1e6) // Logarithmic scale for better visualization
-        }))
-        .sort((a, b) => b.value - a.value);
+      // Group by month for the calendar view
+      const monthlyData = Array.from(activityByDate.values()).reduce((acc, curr) => {
+        const monthKey = format(curr.date, 'yyyy-MM');
+        if (!acc[monthKey]) {
+          acc[monthKey] = {
+            month: format(curr.date, 'MMM'),
+            year: format(curr.date, 'yyyy'),
+            days: [],
+            totalValue: 0,
+            totalDeals: 0
+          };
+        }
+        acc[monthKey].days.push({
+          date: curr.date,
+          value: curr.value,
+          deals: curr.deals,
+          intensity: curr.value > 0 ? Math.min(Math.log10(curr.value / 1e6) + 1, 4) : 0
+        });
+        acc[monthKey].totalValue += curr.value;
+        acc[monthKey].totalDeals += curr.deals;
+        return acc;
+      }, {});
+
+      return Object.values(monthlyData);
     },
   });
 
@@ -155,7 +185,6 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Section 2: Analytics */}
       <div className="grid gap-4">
         <Card>
           <CardHeader>
@@ -174,30 +203,62 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* New Section: Asset Class Activity Heatmap */}
+        {/* New Calendar Heatmap */}
         <Card>
-          <CardHeader>
-            <CardTitle>Asset Class Activity Heatmap (USD M)</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Investment Activity Heatmap</CardTitle>
+            <Settings className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {assetClassActivity?.map((item) => (
-                <div
-                  key={item.name}
-                  className="p-4 rounded-lg"
-                  style={{
-                    backgroundColor: `rgba(24, 119, 242, ${Math.min(item.intensity / 10, 0.9)})`,
-                    color: item.intensity > 5 ? 'white' : 'black',
-                  }}
-                >
-                  <div className="font-medium text-sm">{item.name}</div>
-                  <div className="text-lg font-bold">
-                    {item.value.toLocaleString(undefined, {
-                      maximumFractionDigits: 0,
-                    })}M
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {assetClassActivity?.map((monthData) => (
+                  <div key={`${monthData.year}-${monthData.month}`} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-lg font-semibold">
+                        {monthData.month} {monthData.year}
+                      </h3>
+                      <span className="text-sm text-muted-foreground">
+                        {monthData.totalDeals} deals
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-7 gap-1">
+                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                        <div key={day} className="text-xs text-center text-muted-foreground">
+                          {day}
+                        </div>
+                      ))}
+                      {monthData.days.map((day, index) => (
+                        <div
+                          key={index}
+                          className="aspect-square rounded-sm"
+                          style={{
+                            backgroundColor: day.intensity === 0 
+                              ? 'rgb(229, 231, 235)' 
+                              : `rgba(124, 58, 237, ${day.intensity * 0.25})`,
+                          }}
+                          title={`${format(day.date, 'PP')}: ${day.deals} deals, $${(day.value / 1e6).toFixed(1)}M`}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <div className="flex justify-end items-center gap-2">
+                <span className="text-sm text-muted-foreground">Less</span>
+                {[0, 1, 2, 3, 4].map((level) => (
+                  <div
+                    key={level}
+                    className="w-3 h-3 rounded-sm"
+                    style={{
+                      backgroundColor: level === 0 
+                        ? 'rgb(229, 231, 235)' 
+                        : `rgba(124, 58, 237, ${level * 0.25})`,
+                    }}
+                  />
+                ))}
+                <span className="text-sm text-muted-foreground">More</span>
+              </div>
             </div>
           </CardContent>
         </Card>
