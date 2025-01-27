@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { AuthProvider } from "@/components/AuthProvider";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -50,11 +49,9 @@ const router = createBrowserRouter([
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <RouterProvider router={router} />
       <Toaster />
       <Sonner />
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
