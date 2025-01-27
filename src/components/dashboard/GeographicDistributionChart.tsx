@@ -98,11 +98,11 @@ export function GeographicDistributionChart() {
               <ComposableMap
                 projection="geoAlbersUsa"
                 projectionConfig={{
-                  scale: 600
+                  scale: 800 // Increased from 600 to 800
                 }}
                 style={{
                   width: "100%",
-                  height: "300px"
+                  height: "400px" // Increased from 300px to 400px
                 }}
               >
                 <Geographies geography={usGeoUrl}>
@@ -112,14 +112,14 @@ export function GeographicDistributionChart() {
                         key={geo.rsmKey}
                         geography={geo}
                         fill={getRegionColor(geo)}
-                        stroke="#94A3B8" // Darker stroke for better visibility
-                        strokeWidth={0.75} // Slightly thicker stroke
+                        stroke="#94A3B8"
+                        strokeWidth={0.75}
                         style={{
                           default: {
                             outline: "none",
                           },
                           hover: {
-                            fill: "#0EA5E9", // Bright blue on hover
+                            fill: "#0EA5E9",
                             outline: "none",
                             cursor: "pointer",
                           },
@@ -150,12 +150,12 @@ export function GeographicDistributionChart() {
               <ComposableMap
                 projection="geoMercator"
                 projectionConfig={{
-                  scale: 600,
+                  scale: 800, // Increased to match US map scale
                   center: [-96, 60]
                 }}
                 style={{
                   width: "100%",
-                  height: "300px"
+                  height: "400px" // Increased to match US map height
                 }}
               >
                 <Geographies geography={canadaGeoUrl}>
