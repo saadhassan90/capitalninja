@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, ListTodo, Database } from "lucide-react";
+import { ListTodo, Database } from "lucide-react";
 
 interface StatsCardsProps {
   listsCount: number | null;
@@ -8,7 +8,7 @@ interface StatsCardsProps {
 
 export const StatsCards = ({ listsCount, investorsCount }: StatsCardsProps) => {
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Lists</CardTitle>
@@ -26,16 +26,6 @@ export const StatsCards = ({ listsCount, investorsCount }: StatsCardsProps) => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{investorsCount}</div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
-          <Activity className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">Active</div>
         </CardContent>
       </Card>
     </div>

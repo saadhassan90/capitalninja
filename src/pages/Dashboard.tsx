@@ -60,14 +60,13 @@ export default function Dashboard() {
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>
       
-      <StatsCards 
-        listsCount={stats?.listsCount ?? 0} 
-        investorsCount={stats?.investorsCount ?? 0} 
-      />
-
       {/* Account Activity Section */}
       <section className="space-y-6">
         <h3 className="text-xl font-semibold tracking-tight">Account Activity</h3>
+        <StatsCards 
+          listsCount={stats?.listsCount ?? 0} 
+          investorsCount={stats?.investorsCount ?? 0} 
+        />
         <ActivityTimeline />
       </section>
 
