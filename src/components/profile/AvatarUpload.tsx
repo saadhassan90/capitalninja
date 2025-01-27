@@ -30,6 +30,7 @@ export function AvatarUpload({ currentAvatarUrl, userId, onAvatarUpdate }: Avata
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
       reader.onload = () => {
+        console.log("File read successfully");
         setSelectedImage(reader.result as string);
         setIsOpen(true);
       };
@@ -38,6 +39,7 @@ export function AvatarUpload({ currentAvatarUrl, userId, onAvatarUpdate }: Avata
   };
 
   const getCroppedImg = async (image: HTMLImageElement, crop: Crop): Promise<Blob> => {
+    console.log("Starting image crop process");
     const canvas = document.createElement('canvas');
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
@@ -64,30 +66,43 @@ export function AvatarUpload({ currentAvatarUrl, userId, onAvatarUpdate }: Avata
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         if (!blob) throw new Error('Canvas is empty');
+        console.log("Image cropped successfully", { blobSize: blob.size });
         resolve(blob);
       }, 'image/jpeg', 1);
     });
   };
 
   const uploadAvatar = async () => {
-    if (!imageRef.current || !crop) return;
+    if (!imageRef.current || !crop) {
+      console.log("Missing image reference or crop data");
+      return;
+    }
 
     try {
+      console.log("Starting avatar upload process");
       const croppedImageBlob = await getCroppedImg(imageRef.current, crop);
       const filePath = `${userId}/avatar.jpg`;
 
-      const { error: uploadError } = await supabase.storage
+      console.log("Uploading to Supabase storage", { filePath });
+      const { error: uploadError, data: uploadData } = await supabase.storage
         .from('avatars')
         .upload(filePath, croppedImageBlob, {
           upsert: true,
           contentType: 'image/jpeg',
         });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error("Upload error:", uploadError);
+        throw uploadError;
+      }
+
+      console.log("Upload successful", uploadData);
 
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
+
+      console.log("Generated public URL:", publicUrl);
 
       onAvatarUpdate(publicUrl);
       setIsOpen(false);
@@ -96,9 +111,10 @@ export function AvatarUpload({ currentAvatarUrl, userId, onAvatarUpdate }: Avata
         description: "Avatar updated successfully",
       });
     } catch (error) {
+      console.error("Error in upload process:", error);
       toast({
         title: "Error",
-        description: "Failed to update avatar",
+        description: "Failed to update avatar. Please try again.",
         variant: "destructive",
       });
     }
