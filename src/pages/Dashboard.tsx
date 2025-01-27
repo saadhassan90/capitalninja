@@ -204,7 +204,9 @@ const Dashboard = () => {
                       iconType="circle"
                       wrapperStyle={{
                         paddingLeft: "40px",
-                        color: "hsl(var(--foreground))",
+                        color: "#000000",
+                        fontSize: "12px",
+                        fontWeight: "500"
                       }}
                     />
                   </PieChart>
