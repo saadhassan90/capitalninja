@@ -64,22 +64,39 @@ const Dashboard = () => {
         const type = investor.limited_partner_type || '';
         let matched = false;
 
-        // Try to match the type with our predefined categories
-        for (const [category, keywords] of Object.entries(INVESTOR_CATEGORIES)) {
-          if (category === 'Other') continue; // Skip Other category in matching
-          
-          if (keywords.some(keyword => 
-            type.toLowerCase().includes(keyword.toLowerCase())
-          )) {
-            typeCounts[category]++;
+        // First check for Family Office types specifically
+        if (type.toLowerCase().includes('family office')) {
+          if (type.toLowerCase().includes('single')) {
+            typeCounts['Single Family Offices']++;
             matched = true;
-            break;
+          } else if (type.toLowerCase().includes('multi')) {
+            typeCounts['Multi Family Offices']++;
+            matched = true;
+          } else {
+            // Generic "Family Office" without specific type - categorize as Single
+            typeCounts['Single Family Offices']++;
+            matched = true;
           }
         }
 
-        // If no match found, increment Other category
+        // If not a family office, try other categories
         if (!matched) {
-          typeCounts['Other']++;
+          for (const [category, keywords] of Object.entries(INVESTOR_CATEGORIES)) {
+            if (category === 'Other' || category.includes('Family Office')) continue;
+            
+            if (keywords.some(keyword => 
+              type.toLowerCase().includes(keyword.toLowerCase())
+            )) {
+              typeCounts[category]++;
+              matched = true;
+              break;
+            }
+          }
+
+          // If still no match, increment Other category
+          if (!matched) {
+            typeCounts['Other']++;
+          }
         }
       });
 
