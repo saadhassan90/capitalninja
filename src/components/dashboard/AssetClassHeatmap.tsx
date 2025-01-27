@@ -1,6 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, ResponsiveContainer, Treemap } from "recharts";
-import { CHART_COLORS } from "@/utils/chartColors";
+
+// Define specific colors for the heatmap
+const HEATMAP_COLORS = [
+  '#8ca6bd', // Light Blue Grey
+  '#7199bc', // Medium Blue Grey
+  '#5b7b98', // Blue Grey
+  '#718597', // Grey Blue
+  '#556573', // Dark Grey Blue
+  '#465f75'  // Deep Grey Blue
+] as const;
 
 const CHART_DATA = {
   "name": "Asset Classes",
@@ -80,7 +89,7 @@ export const AssetClassHeatmap = () => {
               
               return root.children?.map((node: any, index: number) => {
                 const { x, y, width, height, name, percentage } = node;
-                const color = CHART_COLORS[index % CHART_COLORS.length];
+                const color = HEATMAP_COLORS[index % HEATMAP_COLORS.length];
                 
                 return (
                   <g key={name}>
