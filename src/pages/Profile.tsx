@@ -9,7 +9,7 @@ import { useAuth } from "@/components/AuthProvider";
 
 const Profile = () => {
   const { user } = useAuth();
-  const { profile, isLoading, updateProfile, updateAvatar } = useProfile();
+  const { profile, isLoading, updateProfile } = useProfile();
   
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -29,6 +29,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (profile) {
+      console.log("Setting form values from profile:", profile);
       setEmail(user?.email || "");
       setCompanyName(profile.company_name || "");
       setCompanyDescription(profile.company_description || "");
@@ -72,11 +73,6 @@ const Profile = () => {
     updateProfile.mutate(profileData);
   };
 
-  const handleAvatarUpdate = async (url: string) => {
-    setAvatarUrl(url);
-    await updateAvatar(url);
-  };
-
   if (isLoading) {
     return <div className="flex-1 space-y-4 p-8 pt-6">Loading...</div>;
   }
@@ -92,7 +88,7 @@ const Profile = () => {
           <AvatarUpload
             currentAvatarUrl={avatarUrl}
             userId={user?.id || ""}
-            onAvatarUpdate={handleAvatarUpdate}
+            onAvatarUpdate={setAvatarUrl}
           />
         </div>
 
@@ -132,7 +128,12 @@ const Profile = () => {
             setRaisingDescription={setRaisingDescription}
           />
 
-          <Button type="submit">Update Profile</Button>
+          <Button 
+            type="submit" 
+            disabled={updateProfile.isPending}
+          >
+            {updateProfile.isPending ? "Updating..." : "Update Profile"}
+          </Button>
         </form>
       </div>
     </div>
