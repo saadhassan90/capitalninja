@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Updated GeoJSON URL for US states
 const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
 interface RegionData {
@@ -59,8 +58,7 @@ export function GeographicDistributionChart() {
     const regionInfo = regionData?.find(d => {
       // Match state names or abbreviations
       return d.region === stateName || 
-             d.region === geo.properties.postal || 
-             d.region === geo.properties.abbreviation;
+             d.region === geo.properties.postal;
     });
     
     if (!regionInfo) return "#F4F4F5"; // Light gray for regions with no data
@@ -95,52 +93,49 @@ export function GeographicDistributionChart() {
         ) : (
           <div className="relative" onMouseMove={handleMouseMove}>
             <ComposableMap
-              projection="geoAlbers"
+              projection="geoAlbersUsa"
               projectionConfig={{
-                scale: 800,
-                center: [-96, 36], // Centered on continental US
+                scale: 1000
               }}
-              width={800}
-              height={400}
+              style={{
+                width: "100%",
+                height: "400px"
+              }}
             >
               <Geographies geography={geoUrl}>
                 {({ geographies }) =>
-                  geographies.map((geo) => {
-                    const stateName = geo.properties.name;
-                    const regionInfo = regionData?.find(d => 
-                      d.region === stateName || 
-                      d.region === geo.properties.postal || 
-                      d.region === geo.properties.abbreviation
-                    );
-
-                    return (
-                      <Geography
-                        key={geo.rsmKey}
-                        geography={geo}
-                        fill={getRegionColor(geo)}
-                        stroke="#FFF"
-                        strokeWidth={0.5}
-                        style={{
-                          default: {
-                            outline: "none",
-                          },
-                          hover: {
-                            fill: "#3B82F6",
-                            outline: "none",
-                            cursor: "pointer",
-                          },
-                        }}
-                        onMouseEnter={() => {
-                          if (regionInfo) {
-                            setTooltipContent(regionInfo);
-                          }
-                        }}
-                        onMouseLeave={() => {
-                          setTooltipContent(null);
-                        }}
-                      />
-                    );
-                  })
+                  geographies.map((geo) => (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      fill={getRegionColor(geo)}
+                      stroke="#FFF"
+                      strokeWidth={0.5}
+                      style={{
+                        default: {
+                          outline: "none",
+                        },
+                        hover: {
+                          fill: "#3B82F6",
+                          outline: "none",
+                          cursor: "pointer",
+                        },
+                      }}
+                      onMouseEnter={() => {
+                        const stateName = geo.properties.name;
+                        const regionInfo = regionData?.find(d => 
+                          d.region === stateName || 
+                          d.region === geo.properties.postal
+                        );
+                        if (regionInfo) {
+                          setTooltipContent(regionInfo);
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        setTooltipContent(null);
+                      }}
+                    />
+                  ))
                 }
               </Geographies>
             </ComposableMap>
