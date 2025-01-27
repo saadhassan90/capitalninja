@@ -15,8 +15,8 @@ import { useQuery } from "@tanstack/react-query";
 
 const menuItems = [
   { title: "Profile", url: "/profile", icon: User },
+  { title: "Team", url: "/team", icon: Users },
   { title: "Settings", url: "/settings", icon: Settings },
-  { title: "Team Management", url: "/team", icon: Users },
 ];
 
 export function UserMenu() {

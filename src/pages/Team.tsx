@@ -1,25 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { InviteUserDialog } from "@/components/team/InviteUserDialog";
 import { TeamMembersTable } from "@/components/team/TeamMembersTable";
-
-type Role = "owner" | "administrator" | "viewer";
-
-type TeamMember = {
-  id: string;
-  user_id: string;
-  role: Role;
-  created_at: string;
-  profiles: {
-    first_name: string | null;
-    last_name: string | null;
-    email: string;
-    avatar_url: string | null;
-  };
-};
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Team() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
@@ -37,8 +22,7 @@ export default function Team() {
             email,
             avatar_url
           )
-        `)
-        .returns<TeamMember[]>();
+        `);
 
       if (error) throw error;
       return data;

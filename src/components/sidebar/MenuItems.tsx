@@ -7,3 +7,9 @@ export const menuItems = [
   { title: "Resources", icon: BookOpen, url: "/resources" },
   { title: "Settings", icon: Settings, url: "/settings" },
 ];
+
+export const userMenuItems = [
+  { title: "Profile", url: "/profile", icon: Users },
+  { title: "Team", url: "/team", icon: Users },
+  { title: "Settings", url: "/settings", icon: Settings },
+];
