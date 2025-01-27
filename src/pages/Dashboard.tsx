@@ -55,20 +55,31 @@ export default function Dashboard() {
   });
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>
+      
       <StatsCards 
         listsCount={stats?.listsCount ?? 0} 
         investorsCount={stats?.investorsCount ?? 0} 
       />
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
-        <InvestorDistributionChart data={investorTypes ?? []} />
-        <AUMDistributionChart />
+
+      <div className="grid gap-6">
+        {/* First row - Full width geographic distribution */}
         <GeographicDistributionChart />
-        <TransactionsChart />
-        <ActivityTimeline />
+        
+        {/* Second row - Two charts side by side on larger screens */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <InvestorDistributionChart data={investorTypes ?? []} />
+          <AUMDistributionChart />
+        </div>
+        
+        {/* Third row - Two charts side by side on larger screens */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <TransactionsChart />
+          <ActivityTimeline />
+        </div>
       </div>
     </div>
   );
