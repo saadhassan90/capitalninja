@@ -58,21 +58,24 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="flex-1 p-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Welcome to your investor management dashboard</p>
-      </div>
+    <div className="flex-1 p-8 space-y-12">
+      {/* Account Section */}
+      <section>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Account</h2>
+        <div className="space-y-6">
+          <StatsCards listsCount={listsCount} investorsCount={investorsCount} />
+          <ActivityTimeline />
+        </div>
+      </section>
 
-      <StatsCards listsCount={listsCount} investorsCount={investorsCount} />
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-4">
+      {/* Database Metrics Section */}
+      <section>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Database Metrics</h2>
+        <div className="grid gap-6 md:grid-cols-2">
           <InvestorDistributionChart data={investorTypes} />
           <TransactionsChart />
         </div>
-        <ActivityTimeline />
-      </div>
+      </section>
     </div>
   );
 };
