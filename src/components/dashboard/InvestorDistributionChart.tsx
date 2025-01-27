@@ -1,16 +1,16 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Updated monochromatic purple color palette
+// Updated monochromatic purple color palette with darker shades
 const COLORS = [
-  '#9b87f5', // Primary Purple
-  '#7E69AB', // Secondary Purple
-  '#6E59A5', // Tertiary Purple
-  '#1A1F2C', // Dark Purple
-  '#D6BCFA', // Light Purple
-  '#E5DEFF', // Soft Purple
+  '#6E59A5', // Dark Purple
   '#8B5CF6', // Vivid Purple
-  '#6E59A5'  // Additional Tertiary Purple
+  '#7E69AB', // Medium Purple
+  '#1A1F2C', // Deep Dark Purple
+  '#9B87F5', // Primary Purple
+  '#7C3AED', // Rich Purple
+  '#5B21B6', // Deep Purple
+  '#4C1D95'  // Royal Purple
 ];
 
 interface CustomTooltipProps {
