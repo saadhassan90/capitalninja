@@ -1,4 +1,4 @@
-export type InvestorFilterType = string | null;
+export type InvestorFilterType = string | ((type: string) => boolean) | null;
 export type AUMRange = [number, number] | null;
 
 export interface ListFilters {

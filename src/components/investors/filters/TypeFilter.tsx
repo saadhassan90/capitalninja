@@ -11,6 +11,8 @@ export function TypeFilter({ onTypeChange }: TypeFilterProps) {
     "Endowment",
     "Foundation",
     "Family Office",
+    "Single Family Office",
+    "Multi Family Office",
     "Fund of Funds",
     "Insurance Company",
     "Asset Manager",
@@ -24,8 +26,27 @@ export function TypeFilter({ onTypeChange }: TypeFilterProps) {
     "Other"
   ];
 
+  const handleTypeChange = (value: string) => {
+    if (value === '_all') {
+      onTypeChange(null);
+      return;
+    }
+
+    // Special handling for Family Office types
+    if (value === 'Family Office') {
+      onTypeChange((type) => 
+        type === 'Family Office' || 
+        type === 'Single Family Office' || 
+        type === 'Multi Family Office'
+      );
+      return;
+    }
+
+    onTypeChange(value);
+  };
+
   return (
-    <Select onValueChange={(value) => onTypeChange(value === '_all' ? null : value)}>
+    <Select onValueChange={handleTypeChange}>
       <SelectTrigger className="w-[200px]">
         <SelectValue placeholder="Filter by Type" />
       </SelectTrigger>

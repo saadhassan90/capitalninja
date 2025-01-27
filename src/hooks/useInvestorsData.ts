@@ -41,7 +41,12 @@ async function fetchInvestors({
   }
 
   if (selectedType && selectedType !== '_all') {
-    query = query.eq('limited_partner_type', selectedType);
+    if (typeof selectedType === 'function') {
+      // Handle Family Office filter
+      query = query.or('limited_partner_type.eq.Family Office,limited_partner_type.eq.Single Family Office,limited_partner_type.eq.Multi Family Office');
+    } else {
+      query = query.eq('limited_partner_type', selectedType);
+    }
   }
 
   if (selectedLocation && selectedLocation !== '_all') {
@@ -81,7 +86,6 @@ export function useInvestorsData(params: UseInvestorsDataParams) {
     queryKey: ['investors', params],
     queryFn: () => fetchInvestors(params),
     retry: (failureCount, error: any) => {
-      // Don't retry on rate limit errors
       if (error?.message?.includes('rate limit')) {
         return false;
       }
