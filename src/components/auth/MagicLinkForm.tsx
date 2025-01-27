@@ -1,10 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Mail } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { EmailField } from "./EmailField";
+import { SignupFormFields } from "./SignupFormFields";
+import { SubmitButton } from "./SubmitButton";
 
 interface MagicLinkFormProps {
   email: string;
@@ -69,96 +66,28 @@ export function MagicLinkForm({
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor={id}>Email</Label>
-        <Input
-          id={id}
-          type="email"
-          placeholder="m@example.com"
-          value={email}
-          onChange={(e) => onEmailChange(e.target.value)}
-          required
-          className="h-12"
-        />
-      </div>
+      <EmailField
+        id={id}
+        email={email}
+        onEmailChange={onEmailChange}
+      />
 
       {type === "signup" && (
-        <>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-                placeholder="John"
-                className="h-12"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-                placeholder="Doe"
-                className="h-12"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="company">Company</Label>
-            <Input
-              id="company"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              required
-              placeholder="Acme Inc."
-              className="h-12"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              placeholder="Software Engineer"
-              className="h-12"
-            />
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="terms" 
-              checked={acceptedTerms}
-              onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
-              required
-            />
-            <Label htmlFor="terms" className="text-sm font-normal">
-              I accept the{" "}
-              <Link to="/terms" className="text-primary hover:underline">
-                terms and conditions
-              </Link>
-            </Label>
-          </div>
-        </>
+        <SignupFormFields
+          firstName={firstName}
+          lastName={lastName}
+          company={company}
+          title={title}
+          acceptedTerms={acceptedTerms}
+          onFirstNameChange={setFirstName}
+          onLastNameChange={setLastName}
+          onCompanyChange={setCompany}
+          onTitleChange={setTitle}
+          onAcceptedTermsChange={setAcceptedTerms}
+        />
       )}
 
-      <Button
-        type="submit"
-        className="w-full h-12 mt-6"
-        disabled={loading || !isFormValid}
-      >
-        <Mail className="mr-2" />
-        {loading ? "Sending magic link..." : "Continue with Email"}
-      </Button>
+      <SubmitButton loading={loading} isFormValid={isFormValid} />
     </form>
   );
 }
