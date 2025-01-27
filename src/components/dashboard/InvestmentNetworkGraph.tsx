@@ -16,7 +16,7 @@ interface NetworkData {
   edges: Edge[];
 }
 
-const InvestmentNetworkGraph = () => {
+export const InvestmentNetworkGraph = () => {
   const { data: networkData, isLoading } = useQuery({
     queryKey: ["networkData"],
     queryFn: async () => {
@@ -116,5 +116,3 @@ const InvestmentNetworkGraph = () => {
     </Card>
   );
 };
-
-export default InvestmentNetworkGraph;
