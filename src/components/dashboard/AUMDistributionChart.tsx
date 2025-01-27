@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { supabase } from "@/integrations/supabase/client";
-import { formatTooltipValue, formatYAxis } from "@/utils/formatters";
+import { formatTooltipValue } from "@/utils/formatters";
 
 interface AUMRange {
   range: string;
@@ -66,7 +66,7 @@ export const AUMDistributionChart = () => {
       <CardHeader className="space-y-1">
         <CardTitle className="text-base font-medium">AUM Distribution</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Distribution of Assets Under Management
+          Number of Limited Partners by AUM Range
         </p>
       </CardHeader>
       <CardContent>
@@ -82,14 +82,26 @@ export const AUMDistributionChart = () => {
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="range" />
-              <YAxis tickFormatter={formatYAxis} />
+              <XAxis 
+                dataKey="range"
+                tick={{ fill: '#666' }}
+              />
+              <YAxis 
+                tick={{ fill: '#666' }}
+                label={{ 
+                  value: 'Number of LPs',
+                  angle: -90,
+                  position: 'insideLeft',
+                  style: { fill: '#666' }
+                }}
+              />
               <Tooltip content={<CustomTooltip />} />
               <Bar
-                dataKey="totalAUM"
+                dataKey="count"
                 fill="#8ca6bd"
                 radius={[8, 8, 0, 0]}
                 barSize={32}
+                className="hover:animate-chart-hover"
               />
             </BarChart>
           </ResponsiveContainer>
