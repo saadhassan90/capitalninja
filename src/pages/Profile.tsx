@@ -1,14 +1,13 @@
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
 import { UserDetailsSection } from "@/components/profile/UserDetailsSection";
+import { CompanyDetailsSection } from "@/components/profile/CompanyDetailsSection";
+import { FundraisingSection } from "@/components/profile/FundraisingSection";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -21,8 +20,6 @@ const Profile = () => {
   const [raisingDescription, setRaisingDescription] = useState("");
   const [raisingStage, setRaisingStage] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  
-  // New state variables for user details
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [title, setTitle] = useState("");
@@ -159,74 +156,23 @@ const Profile = () => {
             setBio={setBio}
           />
 
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold tracking-tight">Company Details</h2>
-            
-            <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input
-                id="companyName"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="companyDescription">Company Description</Label>
-              <Textarea
-                id="companyDescription"
-                value={companyDescription}
-                onChange={(e) => setCompanyDescription(e.target.value)}
-                rows={4}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="companyWebsite">Company Website</Label>
-              <Input
-                id="companyWebsite"
-                type="url"
-                value={companyWebsite}
-                onChange={(e) => setCompanyWebsite(e.target.value)}
-              />
-            </div>
-          </div>
+          <CompanyDetailsSection
+            companyName={companyName}
+            setCompanyName={setCompanyName}
+            companyDescription={companyDescription}
+            setCompanyDescription={setCompanyDescription}
+            companyWebsite={companyWebsite}
+            setCompanyWebsite={setCompanyWebsite}
+          />
 
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold tracking-tight">Raising Capital</h2>
-            
-            <div className="space-y-2">
-              <Label htmlFor="raisingAmount">Target Amount ($)</Label>
-              <Input
-                id="raisingAmount"
-                type="number"
-                value={raisingAmount}
-                onChange={(e) => setRaisingAmount(e.target.value)}
-                placeholder="e.g. 1000000"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="raisingStage">Stage</Label>
-              <Input
-                id="raisingStage"
-                value={raisingStage}
-                onChange={(e) => setRaisingStage(e.target.value)}
-                placeholder="e.g. Seed, Series A, etc."
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="raisingDescription">Description</Label>
-              <Textarea
-                id="raisingDescription"
-                value={raisingDescription}
-                onChange={(e) => setRaisingDescription(e.target.value)}
-                rows={4}
-                placeholder="Describe your fundraising goals and plans..."
-              />
-            </div>
-          </div>
+          <FundraisingSection
+            raisingAmount={raisingAmount}
+            setRaisingAmount={setRaisingAmount}
+            raisingStage={raisingStage}
+            setRaisingStage={setRaisingStage}
+            raisingDescription={raisingDescription}
+            setRaisingDescription={setRaisingDescription}
+          />
 
           <Button type="submit">Update Profile</Button>
         </form>
