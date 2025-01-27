@@ -21,38 +21,44 @@ export function CanadaMap({ regionData, onRegionHover, onMouseMove }: MapProps) 
       >
         <Geographies geography={canadaGeoUrl}>
           {({ geographies }) =>
-            geographies.map((geo) => (
-              <Geography
-                key={geo.rsmKey}
-                geography={geo}
-                fill={getRegionColor(geo, regionData, true)}
-                stroke="#94A3B8"
-                strokeWidth={0.75}
-                style={{
-                  default: {
-                    outline: "none",
-                  },
-                  hover: {
-                    fill: "#0EA5E9",
-                    outline: "none",
-                    cursor: "pointer",
-                  },
-                }}
-                onMouseEnter={() => {
-                  const provinceName = geo.properties.name;
-                  const regionInfo = regionData?.find(d => 
-                    d.region === provinceName || 
-                    d.region === geo.properties.code
-                  );
-                  if (regionInfo) {
-                    onRegionHover(regionInfo);
-                  }
-                }}
-                onMouseLeave={() => {
-                  onRegionHover(null);
-                }}
-              />
-            ))
+            geographies.map((geo) => {
+              const provinceName = geo.properties.name;
+              const regionInfo = regionData?.find(d => 
+                d.region === provinceName || 
+                d.region === geo.properties.code
+              );
+              const isActive = !!regionInfo;
+
+              return (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  fill={getRegionColor(geo, regionData, true)}
+                  stroke="#94A3B8"
+                  strokeWidth={0.75}
+                  style={{
+                    default: {
+                      outline: "none",
+                      transition: "all 250ms",
+                    },
+                    hover: {
+                      fill: isActive ? "#0EA5E9" : "#E2E8F0",
+                      outline: "none",
+                      cursor: isActive ? "pointer" : "default",
+                      transition: "all 250ms",
+                    },
+                  }}
+                  onMouseEnter={() => {
+                    if (regionInfo) {
+                      onRegionHover(regionInfo);
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    onRegionHover(null);
+                  }}
+                />
+              );
+            })
           }
         </Geographies>
       </ComposableMap>
