@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { supabase } from "@/integrations/supabase/client";
 import { formatTooltipValue } from "@/utils/formatters";
 
@@ -31,7 +31,6 @@ export const AUMDistributionChart = () => {
   const { data: aumDistribution, isLoading } = useQuery({
     queryKey: ['aum-distribution'],
     queryFn: async () => {
-      // First, get total count of LPs
       const { count: totalLPs } = await supabase
         .from('limited_partners')
         .select('*', { count: 'exact' });
@@ -108,6 +107,7 @@ export const AUMDistributionChart = () => {
                 left: 20,
                 bottom: 5,
               }}
+              barCategoryGap={40}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
@@ -129,8 +129,15 @@ export const AUMDistributionChart = () => {
                 fill="#8ca6bd"
                 radius={[8, 8, 0, 0]}
                 barSize={32}
-                className="hover:animate-chart-hover"
-              />
+              >
+                {aumDistribution?.distribution.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    id={`bar-${index}`}
+                    className="origin-center transition-transform duration-200 hover:animate-chart-hover"
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
