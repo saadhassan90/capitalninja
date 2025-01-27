@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Bug } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AuthHeader } from "@/components/auth/AuthHeader";
+import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
+import { TestLoginButton } from "@/components/auth/TestLoginButton";
 
 export default function Auth() {
   const [loading, setLoading] = useState(false);
@@ -102,14 +101,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md space-y-8 p-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold tracking-tight">
-            Welcome to the app
-          </h2>
-          <p className="text-sm text-muted-foreground mt-2">
-            Sign in to your account or create a new one using magic link
-          </p>
-        </div>
+        <AuthHeader />
 
         <Tabs defaultValue="signin" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -118,77 +110,27 @@ export default function Auth() {
           </TabsList>
           
           <TabsContent value="signin">
-            <form onSubmit={handleSignIn} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="signin-email">Email</Label>
-                <Input
-                  id="signin-email"
-                  type="email"
-                  placeholder="m@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
-                <Mail className="mr-2" />
-                {loading ? "Sending magic link..." : "Send magic link"}
-              </Button>
-            </form>
+            <MagicLinkForm
+              type="signin"
+              email={email}
+              loading={loading}
+              onEmailChange={setEmail}
+              onSubmit={handleSignIn}
+            />
           </TabsContent>
           
           <TabsContent value="signup">
-            <form onSubmit={handleSignUp} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="signup-email">Email</Label>
-                <Input
-                  id="signup-email"
-                  type="email"
-                  placeholder="m@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
-                <Mail className="mr-2" />
-                {loading ? "Sending magic link..." : "Send magic link"}
-              </Button>
-            </form>
+            <MagicLinkForm
+              type="signup"
+              email={email}
+              loading={loading}
+              onEmailChange={setEmail}
+              onSubmit={handleSignUp}
+            />
           </TabsContent>
         </Tabs>
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              For testing only
-            </span>
-          </div>
-        </div>
-
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          onClick={handleTestLogin}
-          disabled={loading}
-        >
-          <Bug className="mr-2" />
-          Test Login (Dev Only)
-        </Button>
+        <TestLoginButton loading={loading} onClick={handleTestLogin} />
       </div>
     </div>
   );
