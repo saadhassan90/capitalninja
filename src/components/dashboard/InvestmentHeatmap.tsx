@@ -3,57 +3,54 @@ import { Treemap, ResponsiveContainer, Tooltip } from "recharts";
 
 const COLORS = ['#8ca6bd', '#7199bc', '#5b7b98', '#718597', '#556573', '#465f75'];
 
-// Total market size in millions for calculating percentages
-const TOTAL_MARKET_SIZE = 4000;
-
 const data = {
   name: "Investment Distribution",
   children: [
     {
       name: "Private Equity (PE)",
-      size: 30,
+      size: 1150,
       value: 1150,
       percentage: 30,
       color: COLORS[0]
     },
     {
       name: "Venture Capital (VC)",
-      size: 15,
+      size: 600,
       value: 600,
       percentage: 15,
       color: COLORS[1]
     },
     {
       name: "Real Estate (RE)",
-      size: 23,
+      size: 900,
       value: 900,
       percentage: 23,
       color: COLORS[2]
     },
     {
       name: "Infrastructure",
-      size: 12,
+      size: 450,
       value: 450,
       percentage: 12,
       color: COLORS[3]
     },
     {
       name: "Private Credit (PC)",
-      size: 18,
+      size: 700,
       value: 700,
       percentage: 18,
       color: COLORS[4]
     },
     {
       name: "Commodities",
-      size: 3,
+      size: 120,
       value: 120,
       percentage: 3,
       color: COLORS[5]
     },
     {
       name: "Energy",
-      size: 2,
+      size: 80,
       value: 80,
       percentage: 2,
       color: COLORS[5]
