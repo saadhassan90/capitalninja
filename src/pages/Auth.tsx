@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AuthHeader } from "@/components/auth/AuthHeader";
-import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
+import { MagicLinkForm, SignupFormData } from "@/components/auth/MagicLinkForm";
 import { TestLoginButton } from "@/components/auth/TestLoginButton";
 import { AuthPageHeader } from "@/components/auth/AuthPageHeader";
 import { BackgroundElements } from "@/components/auth/BackgroundElements";
@@ -15,19 +15,36 @@ export default function Auth() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent, formData: SignupFormData) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         options: {
           emailRedirectTo: window.location.origin,
+          data: {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+          },
         },
       });
       
-      if (error) throw error;
+      if (signUpError) throw signUpError;
+
+      // Update profile with additional information
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          company_name: formData.company,
+          title: formData.title,
+        })
+        .eq("email", email);
+      
+      if (profileError) throw profileError;
       
       toast({
         title: "Success",
