@@ -78,13 +78,13 @@ export const AssetClassHeatmap = () => {
             dataKey="size"
             aspectRatio={1}
             stroke="#fff"
+            className="[&_.recharts-surface]:!important"
           >
             {({ root }) => {
               if (!root) return null;
               
               return root.children?.map((node: any, index: number) => {
                 const { x, y, width, height, name, percentage } = node;
-                const color = HEATMAP_COLORS[index];
                 
                 return (
                   <g key={name}>
@@ -93,9 +93,10 @@ export const AssetClassHeatmap = () => {
                       y={y}
                       width={width}
                       height={height}
-                      fill={color}
+                      fill={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
                       stroke="#fff"
                       strokeWidth={2}
+                      style={{ fill: HEATMAP_COLORS[index % HEATMAP_COLORS.length] }}
                       className="transition-colors duration-200 hover:opacity-90"
                     />
                     {width > 60 && height > 40 && (
