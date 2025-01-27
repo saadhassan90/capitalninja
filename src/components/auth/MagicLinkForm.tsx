@@ -52,7 +52,7 @@ export function MagicLinkForm({
   };
   
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor={id}>Email</Label>
         <Input
@@ -62,6 +62,7 @@ export function MagicLinkForm({
           value={email}
           onChange={(e) => onEmailChange(e.target.value)}
           required
+          className="h-12"
         />
       </div>
 
@@ -76,6 +77,7 @@ export function MagicLinkForm({
                 onChange={(e) => setFirstName(e.target.value)}
                 required
                 placeholder="John"
+                className="h-12"
               />
             </div>
             
@@ -87,6 +89,7 @@ export function MagicLinkForm({
                 onChange={(e) => setLastName(e.target.value)}
                 required
                 placeholder="Doe"
+                className="h-12"
               />
             </div>
           </div>
@@ -99,6 +102,7 @@ export function MagicLinkForm({
               onChange={(e) => setCompany(e.target.value)}
               required
               placeholder="Acme Inc."
+              className="h-12"
             />
           </div>
 
@@ -110,6 +114,7 @@ export function MagicLinkForm({
               onChange={(e) => setTitle(e.target.value)}
               required
               placeholder="Software Engineer"
+              className="h-12"
             />
           </div>
 
@@ -120,7 +125,7 @@ export function MagicLinkForm({
               onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
               required
             />
-            <Label htmlFor="terms" className="text-sm">
+            <Label htmlFor="terms" className="text-sm font-normal">
               I accept the{" "}
               <Link to="/terms" className="text-primary hover:underline">
                 terms and conditions
@@ -132,11 +137,11 @@ export function MagicLinkForm({
 
       <Button
         type="submit"
-        className="w-full"
+        className="w-full h-12 mt-6"
         disabled={loading || (type === "signup" && !acceptedTerms)}
       >
         <Mail className="mr-2" />
-        {loading ? "Sending magic link..." : "Send magic link"}
+        {loading ? "Sending magic link..." : "Continue with Email"}
       </Button>
     </form>
   );
