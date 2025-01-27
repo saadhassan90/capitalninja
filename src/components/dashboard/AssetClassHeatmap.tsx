@@ -84,6 +84,7 @@ export const AssetClassHeatmap = () => {
             dataKey="size"
             aspectRatio={1}
             stroke="#fff"
+            fill="#8ca6bd"
           >
             {({ root }) => {
               return root?.children?.map((node: any, index: number) => {
@@ -99,7 +100,7 @@ export const AssetClassHeatmap = () => {
                       y={y}
                       width={width}
                       height={height}
-                      fill={HEATMAP_COLORS[index]}
+                      fill={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
                       stroke="#fff"
                       strokeWidth={2}
                       className="transition-colors duration-200"
