@@ -9,10 +9,16 @@ export function LocationFilter({ onLocationChange }: LocationFilterProps) {
   const locations = [
     { label: "United States", value: "US" },
     { label: "Canada", value: "Canada" },
-    { label: "Europe", value: "Europe" },
+    { label: "United Kingdom", value: "UK" },
+    { label: "Germany", value: "Germany" },
+    { label: "France", value: "France" },
+    { label: "Switzerland", value: "Switzerland" },
+    { label: "Netherlands", value: "Netherlands" },
+    { label: "Nordic Countries", value: "Nordic" },
     { label: "Middle East & North Africa", value: "MENA" },
-    { label: "Asia", value: "Asia" },
+    { label: "Asia Pacific", value: "APAC" },
     { label: "Latin America", value: "LatAm" },
+    { label: "Other Europe", value: "Europe" },
     { label: "Other", value: "Other" }
   ];
 

@@ -14,6 +14,12 @@ export function AssetClassFilter({ onAssetClassChange }: AssetClassFilterProps) 
     "Infrastructure",
     "Energy",
     "Fund of Funds",
+    "Special Opportunities",
+    "Private Debt",
+    "Natural Resources",
+    "Secondaries",
+    "Co-Investment",
+    "Impact Investing",
     "Other"
   ];
 

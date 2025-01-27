@@ -14,6 +14,13 @@ export function TypeFilter({ onTypeChange }: TypeFilterProps) {
     "Fund of Funds",
     "Insurance Company",
     "Asset Manager",
+    "Sovereign Wealth Fund",
+    "Bank",
+    "Corporate",
+    "Development Finance Institution",
+    "Investment Company",
+    "Investment Bank",
+    "Private Investment Office",
     "Other"
   ];
 
