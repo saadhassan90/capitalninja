@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 interface MagicLinkFormProps {
@@ -35,6 +35,22 @@ export function MagicLinkForm({
   const [company, setCompany] = useState("");
   const [title, setTitle] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    if (type === "signup") {
+      setIsFormValid(
+        email.trim() !== "" &&
+        firstName.trim() !== "" &&
+        lastName.trim() !== "" &&
+        company.trim() !== "" &&
+        title.trim() !== "" &&
+        acceptedTerms
+      );
+    } else {
+      setIsFormValid(email.trim() !== "");
+    }
+  }, [email, firstName, lastName, company, title, acceptedTerms, type]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,7 +154,7 @@ export function MagicLinkForm({
       <Button
         type="submit"
         className="w-full h-12 mt-6"
-        disabled={loading || (type === "signup" && !acceptedTerms)}
+        disabled={loading || !isFormValid}
       >
         <Mail className="mr-2" />
         {loading ? "Sending magic link..." : "Continue with Email"}
