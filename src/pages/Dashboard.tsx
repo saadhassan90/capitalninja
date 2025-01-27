@@ -55,7 +55,7 @@ export default function Dashboard() {
   });
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
+    <div className="flex-1 space-y-8 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>
@@ -65,22 +65,28 @@ export default function Dashboard() {
         investorsCount={stats?.investorsCount ?? 0} 
       />
 
-      <div className="grid gap-6">
-        {/* First row - Full width geographic distribution */}
-        <GeographicDistributionChart />
-        
-        {/* Second row - Two charts side by side on larger screens */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <InvestorDistributionChart data={investorTypes ?? []} />
-          <AUMDistributionChart />
+      {/* Account Activity Section */}
+      <section className="space-y-6">
+        <h3 className="text-xl font-semibold tracking-tight">Account Activity</h3>
+        <ActivityTimeline />
+      </section>
+
+      {/* Database Analytics Section */}
+      <section className="space-y-6">
+        <h3 className="text-xl font-semibold tracking-tight">Database Analytics</h3>
+        <div className="grid gap-6">
+          <GeographicDistributionChart />
+          
+          <div className="grid gap-6 md:grid-cols-2">
+            <InvestorDistributionChart data={investorTypes ?? []} />
+            <AUMDistributionChart />
+          </div>
+          
+          <div className="grid gap-6 md:grid-cols-2">
+            <TransactionsChart />
+          </div>
         </div>
-        
-        {/* Third row - Two charts side by side on larger screens */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <TransactionsChart />
-          <ActivityTimeline />
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
