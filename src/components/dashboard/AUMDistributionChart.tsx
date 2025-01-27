@@ -128,7 +128,7 @@ export const AUMDistributionChart = () => {
                 dataKey="count"
                 fill="#8ca6bd"
                 radius={[8, 8, 0, 0]}
-                barSize={32}
+                barSize={48}
               >
                 {aumDistribution?.distribution.map((entry, index) => (
                   <Cell
