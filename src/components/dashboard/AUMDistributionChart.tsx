@@ -36,12 +36,6 @@ export const AUMDistributionChart = () => {
         .from('limited_partners')
         .select('*', { count: 'exact' });
 
-      // Then get count of LPs with null AUM
-      const { count: nullAumCount } = await supabase
-        .from('limited_partners')
-        .select('*', { count: 'exact' })
-        .is('aum', null);
-
       const ranges = [
         { min: 0, max: 1000000000, label: '0-1B' },
         { min: 1000000000, max: 5000000000, label: '1B-5B' },
@@ -52,11 +46,15 @@ export const AUMDistributionChart = () => {
 
       const { data: lps } = await supabase
         .from('limited_partners')
-        .select('aum')
-        .not('aum', 'is', null);
+        .select('aum');
 
       const distribution: AUMRange[] = ranges.map(range => {
-        const filtered = lps?.filter(lp => {
+        let filtered = lps?.filter(lp => {
+          // Special case for 1B-5B range: include null AUM values
+          if (range.min === 1000000000 && range.max === 5000000000) {
+            return !lp.aum || (lp.aum >= range.min && lp.aum < range.max);
+          }
+          // Normal case for other ranges
           const aum = Number(lp.aum);
           return aum >= range.min && (range.max === null || aum < range.max);
         }) || [];
@@ -64,14 +62,13 @@ export const AUMDistributionChart = () => {
         return {
           range: range.label,
           count: filtered.length,
-          totalAUM: filtered.reduce((sum, lp) => sum + Number(lp.aum), 0)
+          totalAUM: filtered.reduce((sum, lp) => sum + (Number(lp.aum) || 0), 0)
         };
       });
 
       return {
         distribution,
         totalLPs,
-        nullAumCount
       };
     },
   });
@@ -96,8 +93,7 @@ export const AUMDistributionChart = () => {
         <div className="text-sm text-muted-foreground space-y-1">
           <p>Number of Limited Partners by AUM Range</p>
           <p className="text-xs">
-            Total LPs: {aumDistribution?.totalLPs} 
-            {aumDistribution?.nullAumCount ? ` (${aumDistribution.nullAumCount} without AUM data)` : ''}
+            Total LPs: {aumDistribution?.totalLPs}
           </p>
         </div>
       </CardHeader>
