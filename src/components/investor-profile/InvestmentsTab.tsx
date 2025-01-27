@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tables } from "@/integrations/supabase/types";
+import { ProcessedInvestorData } from "@/types/processedInvestor";
 
 type DirectInvestment = {
   company_name: string;
@@ -17,7 +17,7 @@ type DirectInvestment = {
 
 type InvestmentsTabProps = {
   investments: DirectInvestment[];
-  investor: Tables<"limited_partners">;
+  investor: ProcessedInvestorData;
 };
 
 export function InvestmentsTab({ investments, investor }: InvestmentsTabProps) {

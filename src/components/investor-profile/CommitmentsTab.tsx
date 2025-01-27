@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tables } from "@/integrations/supabase/types";
+import { ProcessedInvestorData } from "@/types/processedInvestor";
 import { getAssetClassStyle } from "@/utils/assetClassColors";
 
 type FundCommitment = {
@@ -18,7 +18,7 @@ type FundCommitment = {
 
 type CommitmentsTabProps = {
   commitments: FundCommitment[];
-  investor: Tables<"limited_partners">;
+  investor: ProcessedInvestorData;
 };
 
 export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
