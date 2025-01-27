@@ -1,11 +1,11 @@
-import { Home, Users, ListChecks, BookOpen, FileText } from "lucide-react";
+import { Home, Users, ListChecks, Sparkle, Download } from "lucide-react";
 
 export const menuItems = [
   { title: "Dashboard", icon: Home, url: "/" },
   { title: "Investors", icon: Users, url: "/investors" },
   { title: "Lists", icon: ListChecks, url: "/lists" },
-  { title: "Enrichment", icon: BookOpen, url: "/enrichment" },
-  { title: "Exports", icon: FileText, url: "/exports" },
+  { title: "Enrichment", icon: Sparkle, url: "/enrichment" },
+  { title: "Exports", icon: Download, url: "/exports" },
 ];
 
 export const userMenuItems = [
