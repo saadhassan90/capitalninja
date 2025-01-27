@@ -43,100 +43,91 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-// Fetch lists count
-const { data: listsCount } = useQuery({
-  queryKey: ['listsCount'],
-  queryFn: async () => {
-    const { count } = await supabase
-      .from('lists')
-      .select('*', { count: 'exact' });
-    return count || 0;
-  },
-});
+const Dashboard = () => {
+  // Moved hooks inside the component
+  const { data: listsCount } = useQuery({
+    queryKey: ['listsCount'],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('lists')
+        .select('*', { count: 'exact' });
+      return count || 0;
+    },
+  });
 
-// Fetch investor types distribution
-const { data: investorTypes } = useQuery({
-  queryKey: ['investorTypes'],
-  queryFn: async () => {
-    const { data } = await supabase
-      .from('limited_partners')
-      .select('limited_partner_type');
-    
-    // Initialize counters for each category
-    const typeCounts: Record<string, number> = Object.keys(INVESTOR_CATEGORIES).reduce((acc, key) => {
-      acc[key] = 0;
-      return acc;
-    }, {} as Record<string, number>);
+  const { data: investorTypes } = useQuery({
+    queryKey: ['investorTypes'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('limited_partners')
+        .select('limited_partner_type');
+      
+      const typeCounts: Record<string, number> = Object.keys(INVESTOR_CATEGORIES).reduce((acc, key) => {
+        acc[key] = 0;
+        return acc;
+      }, {} as Record<string, number>);
 
-    // Count investors by type
-    data?.forEach(investor => {
-      const type = investor.limited_partner_type || '';
-      let matched = false;
+      data?.forEach(investor => {
+        const type = investor.limited_partner_type || '';
+        let matched = false;
 
-      // Handle Family Offices first
-      if (type.toLowerCase().includes('family office')) {
-        if (type.toLowerCase().includes('single') || 
-            type.toLowerCase().includes('sfo')) {
-          typeCounts['Single Family Offices']++;
-          matched = true;
-        } else if (type.toLowerCase().includes('multi') || 
-                  type.toLowerCase().includes('mfo')) {
-          typeCounts['Multi Family Offices']++;
-          matched = true;
-        } else {
-          // If it's just "Family Office" without specification, count as Single
-          typeCounts['Single Family Offices']++;
-          matched = true;
-        }
-      }
-
-      // If not a family office, check other categories
-      if (!matched) {
-        for (const [category, keywords] of Object.entries(INVESTOR_CATEGORIES)) {
-          // Skip Other and Family Office categories in this loop
-          if (category === 'Other' || category.includes('Family Office')) continue;
-          
-          if (keywords.some(keyword => 
-            type.toLowerCase().includes(keyword.toLowerCase())
-          )) {
-            typeCounts[category]++;
+        if (type.toLowerCase().includes('family office')) {
+          if (type.toLowerCase().includes('single') || 
+              type.toLowerCase().includes('sfo')) {
+            typeCounts['Single Family Offices']++;
             matched = true;
-            break;
+          } else if (type.toLowerCase().includes('multi') || 
+                    type.toLowerCase().includes('mfo')) {
+            typeCounts['Multi Family Offices']++;
+            matched = true;
+          } else {
+            typeCounts['Single Family Offices']++;
+            matched = true;
           }
         }
 
-        // If still no match, increment Other category
         if (!matched) {
-          typeCounts['Other']++;
+          for (const [category, keywords] of Object.entries(INVESTOR_CATEGORIES)) {
+            if (category === 'Other' || category.includes('Family Office')) continue;
+            
+            if (keywords.some(keyword => 
+              type.toLowerCase().includes(keyword.toLowerCase())
+            )) {
+              typeCounts[category]++;
+              matched = true;
+              break;
+            }
+          }
+
+          if (!matched) {
+            typeCounts['Other']++;
+          }
         }
-      }
-    });
+      });
 
-    const total = Object.values(typeCounts).reduce((sum, count) => sum + count, 0);
-    
-    return Object.entries(typeCounts)
-      .map(([name, value]) => ({
-        name,
-        value,
-        total,
-      }))
-      .filter(entry => entry.value > 0) // Only include categories with values
-      .sort((a, b) => b.value - a.value); // Sort by value in descending order
-  },
-});
+      const total = Object.values(typeCounts).reduce((sum, count) => sum + count, 0);
+      
+      return Object.entries(typeCounts)
+        .map(([name, value]) => ({
+          name,
+          value,
+          total,
+        }))
+        .filter(entry => entry.value > 0)
+        .sort((a, b) => b.value - a.value);
+    },
+  });
 
-// Fetch total investors count
-const { data: investorsCount } = useQuery({
-  queryKey: ['investorsCount'],
-  queryFn: async () => {
-    const { count } = await supabase
-      .from('limited_partners')
-      .select('*', { count: 'exact' });
-    return count || 0;
-  },
-});
+  const { data: investorsCount } = useQuery({
+    queryKey: ['investorsCount'],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('limited_partners')
+        .select('*', { count: 'exact' });
+      return count || 0;
+    },
+  });
 
-const Dashboard = () => {
   return (
     <div className="flex-1 p-8 space-y-8">
       <div>
@@ -144,7 +135,6 @@ const Dashboard = () => {
         <p className="text-gray-500 mt-1">Welcome to your investor management dashboard</p>
       </div>
 
-      {/* Section 1: Key Metrics */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -177,7 +167,6 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Section 2: Analytics */}
       <div className="grid gap-4">
         <Card>
           <CardHeader>
