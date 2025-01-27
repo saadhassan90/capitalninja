@@ -38,15 +38,15 @@ export const InvestorDistributionChart = ({ data }: InvestorDistributionChartPro
         <CardTitle className="text-base font-medium">Investor Types</CardTitle>
         <p className="text-sm text-muted-foreground">Distribution by investor category</p>
       </CardHeader>
-      <CardContent className="h-[500px]">
+      <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}
               cx="50%"
               cy="50%"
-              innerRadius={100}
-              outerRadius={175}
+              innerRadius={80}
+              outerRadius={140}
               fill="#8884d8"
               dataKey="value"
               paddingAngle={2}
