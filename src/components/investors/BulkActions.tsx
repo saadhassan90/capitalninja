@@ -4,6 +4,17 @@ import { X, Trash, Copy, ArrowRight } from "lucide-react";
 import { AddToListDialog } from "./AddToListDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface BulkActionsProps {
   selectedCount: number;
@@ -15,8 +26,8 @@ interface BulkActionsProps {
 export function BulkActions({ selectedCount, selectedInvestors, onClearSelection, listId }: BulkActionsProps) {
   const [showAddToList, setShowAddToList] = useState(false);
   const [showMoveToList, setShowMoveToList] = useState(false);
-  const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
 
   const handleDelete = async () => {
     try {
@@ -67,15 +78,33 @@ export function BulkActions({ selectedCount, selectedInvestors, onClearSelection
           <ArrowRight className="h-4 w-4 mr-2" />
           Move to List
         </Button>
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={handleDelete}
-          disabled={isDeleting}
-        >
-          <Trash className="h-4 w-4 mr-2" />
-          Delete
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={isDeleting}
+            >
+              <Trash className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will remove {selectedCount} investor{selectedCount !== 1 ? 's' : ''} from this list. 
+                This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete}>
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         <Button
           variant="ghost"
           size="sm"

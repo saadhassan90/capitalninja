@@ -5,12 +5,24 @@ import { formatDistanceToNow } from "date-fns";
 import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface List {
   id: string;
@@ -23,10 +35,12 @@ interface List {
 
 interface ListCardProps {
   list: List;
+  onDelete?: () => void;
 }
 
-export function ListCard({ list }: ListCardProps) {
+export function ListCard({ list, onDelete }: ListCardProps) {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: investorCount } = useQuery({
     queryKey: ['listInvestorsCount', list.id],
@@ -40,6 +54,30 @@ export function ListCard({ list }: ListCardProps) {
       return count || 0;
     }
   });
+
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('lists')
+        .delete()
+        .eq('id', list.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "List deleted successfully",
+      });
+
+      onDelete?.();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete list",
+        variant: "destructive",
+      });
+    }
+  };
 
   const getLastUpdatedText = () => {
     const date = list.type === 'dynamic' && list.last_refreshed_at 
@@ -73,12 +111,38 @@ export function ListCard({ list }: ListCardProps) {
                   <span className="sr-only">Open menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                 <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
                 <DropdownMenuItem>Edit</DropdownMenuItem>
                 <DropdownMenuItem>Clone</DropdownMenuItem>
                 <DropdownMenuItem>Export</DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <DropdownMenuItem
+                      className="text-destructive"
+                      onSelect={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
+                      Delete
+                    </DropdownMenuItem>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete the list "{list.name}" and remove all associated data.
+                        This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDelete}>
+                        Delete List
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
