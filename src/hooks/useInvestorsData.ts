@@ -49,9 +49,8 @@ async function fetchInvestors({
         'limited_partner_type.eq.Multi Family Office'
       );
     } else {
-      // Ensure selectedType is treated as a string when used in the query
-      const typeValue = String(selectedType);
-      query = query.eq('limited_partner_type', typeValue);
+      // Convert selectedType to string explicitly
+      query = query.eq('limited_partner_type', String(selectedType));
     }
   }
 
@@ -61,16 +60,16 @@ async function fetchInvestors({
     } else if (selectedLocation === 'MENA') {
       query = query.or('hqlocation.ilike.%Middle East%,hqlocation.ilike.%North Africa%');
     } else {
-      query = query.ilike('hqlocation', `%${selectedLocation}%`);
+      query = query.ilike('hqlocation', `%${String(selectedLocation)}%`);
     }
   }
 
   if (selectedAssetClass && selectedAssetClass !== '_all') {
-    query = query.ilike('preferred_fund_type', `%${selectedAssetClass}%`);
+    query = query.ilike('preferred_fund_type', `%${String(selectedAssetClass)}%`);
   }
 
   if (selectedFirstTimeFunds && selectedFirstTimeFunds !== '_all') {
-    query = query.eq('open_to_first_time_funds', selectedFirstTimeFunds);
+    query = query.eq('open_to_first_time_funds', String(selectedFirstTimeFunds));
   }
 
   if (selectedAUMRange) {
