@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { format, parseISO, isAfter } from "date-fns";
+import { format, parseISO, isAfter, startOfYear } from "date-fns";
 import { getChartColors } from "@/utils/chartColors";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -78,7 +78,7 @@ export const TransactionsChart = () => {
     const date = parseISO(item.date);
     switch (timeScale) {
       case 'since2010':
-        return isAfter(date, new Date('2010-01-01'));
+        return isAfter(date, startOfYear(new Date(2010, 0, 1)));
       case 'since2020':
         return isAfter(date, new Date('2020-01-01'));
       default:
