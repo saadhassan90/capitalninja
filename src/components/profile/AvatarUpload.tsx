@@ -1,11 +1,11 @@
 import { useState, useRef } from "react";
-import ReactCrop, { Crop } from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
+import { Crop } from 'react-image-crop';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { AvatarCropDialog } from "./AvatarCropDialog";
+import { getCroppedImg } from "@/utils/imageUtils";
 
 interface AvatarUploadProps {
   currentAvatarUrl?: string | null;
@@ -36,40 +36,6 @@ export function AvatarUpload({ currentAvatarUrl, userId, onAvatarUpdate }: Avata
       };
       reader.readAsDataURL(e.target.files[0]);
     }
-  };
-
-  const getCroppedImg = async (image: HTMLImageElement, crop: Crop): Promise<Blob> => {
-    console.log("Starting image crop process");
-    const canvas = document.createElement('canvas');
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
-    canvas.width = crop.width;
-    canvas.height = crop.height;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      throw new Error('No 2d context');
-    }
-
-    ctx.drawImage(
-      image,
-      crop.x * scaleX,
-      crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
-      0,
-      0,
-      crop.width,
-      crop.height
-    );
-
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        if (!blob) throw new Error('Canvas is empty');
-        console.log("Image cropped successfully", { blobSize: blob.size });
-        resolve(blob);
-      }, 'image/jpeg', 1);
-    });
   };
 
   const uploadAvatar = async () => {
@@ -138,37 +104,15 @@ export function AvatarUpload({ currentAvatarUrl, userId, onAvatarUpdate }: Avata
         </label>
       </Button>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Crop Avatar</DialogTitle>
-          </DialogHeader>
-          {selectedImage && (
-            <div className="flex flex-col gap-4">
-              <ReactCrop
-                crop={crop}
-                onChange={c => setCrop(c)}
-                aspect={1}
-              >
-                <img
-                  ref={imageRef}
-                  src={selectedImage}
-                  alt="Crop preview"
-                  style={{ maxWidth: '100%' }}
-                />
-              </ReactCrop>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={uploadAvatar}>
-                  Save
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <AvatarCropDialog
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        selectedImage={selectedImage}
+        crop={crop}
+        setCrop={setCrop}
+        imageRef={imageRef}
+        onSave={uploadAvatar}
+      />
     </div>
   );
 }
