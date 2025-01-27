@@ -49,7 +49,10 @@ export function GeographicDistributionChart() {
   return (
     <Card className="col-span-2">
       <CardHeader>
-        <CardTitle>Geographic Distribution (North America)</CardTitle>
+        <CardTitle className="text-base font-medium">Geographic Distribution</CardTitle>
+        <div className="text-sm text-muted-foreground">
+          Distribution of Limited Partners across North America
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
