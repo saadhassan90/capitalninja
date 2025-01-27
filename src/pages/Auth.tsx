@@ -103,38 +103,53 @@ export default function Auth() {
     <div className="min-h-screen bg-[#1A1F2C]">
       <AuthPageHeader />
       
-      <div className="pt-32 flex items-center justify-center">
-        <div className="w-full max-w-md space-y-8 p-8 bg-white rounded-xl shadow-lg">
-          <AuthHeader />
+      <div className="container mx-auto pt-32">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Column - Hero Content */}
+          <div className="text-white space-y-6 max-w-xl">
+            <h1 className="text-5xl font-bold leading-tight">
+              Connect with the Right
+              <span className="text-[#9b87f5]"> Investors</span>
+            </h1>
+            <p className="text-xl text-gray-300">
+              CapitalNinja helps you find and connect with investors that match your needs. 
+              Save time and make better investment decisions with our powerful platform.
+            </p>
+          </div>
 
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="signin">
-              <MagicLinkForm
-                type="signin"
-                email={email}
-                loading={loading}
-                onEmailChange={setEmail}
-                onSubmit={handleSignIn}
-              />
-            </TabsContent>
-            
-            <TabsContent value="signup">
-              <MagicLinkForm
-                type="signup"
-                email={email}
-                loading={loading}
-                onEmailChange={setEmail}
-                onSubmit={handleSignUp}
-              />
-            </TabsContent>
-          </Tabs>
+          {/* Right Column - Auth Form */}
+          <div className="bg-white rounded-xl shadow-lg p-8 space-y-8">
+            <AuthHeader />
 
-          <TestLoginButton loading={loading} onClick={handleTestLogin} />
+            <Tabs defaultValue="signin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="signin">Sign In</TabsTrigger>
+                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="signin">
+                <MagicLinkForm
+                  type="signin"
+                  email={email}
+                  loading={loading}
+                  onEmailChange={setEmail}
+                  onSubmit={handleSignIn}
+                />
+              </TabsContent>
+              
+              <TabsContent value="signup">
+                <MagicLinkForm
+                  type="signup"
+                  email={email}
+                  loading={loading}
+                  onEmailChange={setEmail}
+                  onSubmit={handleSignUp}
+                />
+              </TabsContent>
+            </Tabs>
+
+            <TestLoginButton loading={loading} onClick={handleTestLogin} />
+          </div>
         </div>
       </div>
     </div>
