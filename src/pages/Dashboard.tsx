@@ -4,16 +4,16 @@ import { Activity, ListTodo, Database } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { supabase } from "@/integrations/supabase/client";
 
-// Updated color palette with navy and deep purple monochromatic scheme
+// Updated monochromatic purple color palette
 const COLORS = [
-  '#1A1F2C', // Dark Purple/Navy
+  '#9b87f5', // Primary Purple
   '#7E69AB', // Secondary Purple
   '#6E59A5', // Tertiary Purple
-  '#403E43', // Dark Navy
-  '#2A2438', // Deep Purple
-  '#352F44', // Navy Purple
-  '#4A4458', // Medium Purple
-  '#5D5B6A'  // Light Navy
+  '#1A1F2C', // Dark Purple
+  '#D6BCFA', // Light Purple
+  '#E5DEFF', // Soft Purple
+  '#8B5CF6', // Vivid Purple
+  '#6E59A5'  // Additional Tertiary Purple
 ];
 
 const INVESTOR_CATEGORIES = {
