@@ -1,16 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, ResponsiveContainer, Treemap } from "recharts";
-
-// Define the custom color palette with specific blue-grey colors
-const HEATMAP_COLORS = [
-  '#8ca6bd',  // Light Blue Grey
-  '#7199bc',  // Medium Blue Grey
-  '#5b7b98',  // Blue Grey
-  '#718597',  // Grey Blue
-  '#556573',  // Dark Grey Blue
-  '#465f75',  // Deep Grey Blue
-  '#465f75'   // Reuse last color for 7th item if needed
-];
+import { assetClassColors } from "@/utils/assetClassColors";
 
 const CHART_DATA = {
   "name": "Asset Classes",
@@ -83,26 +73,27 @@ export const AssetClassHeatmap = () => {
             data={CHART_DATA.children}
             dataKey="size"
             aspectRatio={1}
-            stroke="#fff"
+            stroke="white"
+            fill="#8884d8"
           >
             {({ root }) => {
-              return root?.children?.map((node: any, index: number) => {
+              if (!root) return null;
+              
+              return root.children?.map((node: any) => {
                 const { x, y, width, height, name, percentage } = node;
+                const assetClass = name.split(' ')[0].toLowerCase();
                 
                 return (
-                  <g 
-                    key={name}
-                    className="transform origin-center transition-transform duration-200 hover:scale-[1.02]"
-                  >
+                  <g key={name}>
                     <rect
                       x={x}
                       y={y}
                       width={width}
                       height={height}
-                      fill={HEATMAP_COLORS[index]}
-                      stroke="#fff"
+                      fill={assetClassColors[assetClass]?.bg || '#6C757D'}
+                      stroke="white"
                       strokeWidth={2}
-                      className="transition-colors duration-200"
+                      className="transition-colors duration-200 hover:opacity-90"
                     />
                     {width > 60 && height > 40 && (
                       <>
@@ -110,7 +101,7 @@ export const AssetClassHeatmap = () => {
                           x={x + width / 2}
                           y={y + height / 2 - 8}
                           textAnchor="middle"
-                          fill="#fff"
+                          fill="white"
                           className="text-xs font-medium"
                         >
                           {name.split(' ')[0]}
@@ -119,7 +110,7 @@ export const AssetClassHeatmap = () => {
                           x={x + width / 2}
                           y={y + height / 2 + 8}
                           textAnchor="middle"
-                          fill="#fff"
+                          fill="white"
                           className="text-xs"
                         >
                           {percentage}%
