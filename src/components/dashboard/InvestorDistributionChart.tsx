@@ -34,8 +34,9 @@ interface InvestorDistributionChartProps {
 export const InvestorDistributionChart = ({ data }: InvestorDistributionChartProps) => {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Investor Types Distribution</CardTitle>
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-base font-medium">Investor Types</CardTitle>
+        <p className="text-sm text-muted-foreground">Distribution by investor category</p>
       </CardHeader>
       <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
@@ -76,7 +77,6 @@ export const InvestorDistributionChart = ({ data }: InvestorDistributionChartPro
               iconType="circle"
               wrapperStyle={{
                 paddingLeft: "40px",
-                color: "#000000",
                 fontSize: "12px",
                 fontWeight: "500"
               }}

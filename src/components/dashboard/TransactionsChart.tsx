@@ -35,9 +35,10 @@ export const TransactionsChart = () => {
   const colors = getChartColors(1);
 
   return (
-    <Card className="col-span-3">
-      <CardHeader>
-        <CardTitle>Investment Volume Over Time</CardTitle>
+    <Card>
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-base font-medium">Investment Volume</CardTitle>
+        <p className="text-sm text-muted-foreground">Annual investment trends</p>
       </CardHeader>
       <CardContent>
         <div className="h-[400px]">

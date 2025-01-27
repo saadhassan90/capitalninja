@@ -58,19 +58,29 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="flex-1 p-8 space-y-12">
+    <div className="flex-1 space-y-8 p-8 pt-6">
       {/* Account Section */}
-      <section>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Account</h2>
-        <div className="space-y-6">
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">Account Overview</h2>
+          <p className="text-sm text-muted-foreground">
+            Monitor your account activity and key metrics
+          </p>
+        </div>
+        <div className="space-y-4">
           <StatsCards listsCount={listsCount} investorsCount={investorsCount} />
           <ActivityTimeline />
         </div>
       </section>
 
       {/* Database Metrics Section */}
-      <section>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Database Metrics</h2>
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">Database Metrics</h2>
+          <p className="text-sm text-muted-foreground">
+            Analyze investor distribution and investment trends
+          </p>
+        </div>
         <div className="grid gap-6 md:grid-cols-2">
           <InvestorDistributionChart data={investorTypes} />
           <TransactionsChart />
