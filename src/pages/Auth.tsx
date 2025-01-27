@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AuthHeader } from "@/components/auth/AuthHeader";
 import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 import { TestLoginButton } from "@/components/auth/TestLoginButton";
+import { AuthPageHeader } from "@/components/auth/AuthPageHeader";
 
 export default function Auth() {
   const [loading, setLoading] = useState(false);
@@ -99,38 +100,42 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="w-full max-w-md space-y-8 p-8">
-        <AuthHeader />
+    <div className="min-h-screen bg-[#1A1F2C]">
+      <AuthPageHeader />
+      
+      <div className="pt-32 flex items-center justify-center">
+        <div className="w-full max-w-md space-y-8 p-8 bg-white rounded-xl shadow-lg">
+          <AuthHeader />
 
-        <Tabs defaultValue="signin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="signin">
-            <MagicLinkForm
-              type="signin"
-              email={email}
-              loading={loading}
-              onEmailChange={setEmail}
-              onSubmit={handleSignIn}
-            />
-          </TabsContent>
-          
-          <TabsContent value="signup">
-            <MagicLinkForm
-              type="signup"
-              email={email}
-              loading={loading}
-              onEmailChange={setEmail}
-              onSubmit={handleSignUp}
-            />
-          </TabsContent>
-        </Tabs>
+          <Tabs defaultValue="signin" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="signin">Sign In</TabsTrigger>
+              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="signin">
+              <MagicLinkForm
+                type="signin"
+                email={email}
+                loading={loading}
+                onEmailChange={setEmail}
+                onSubmit={handleSignIn}
+              />
+            </TabsContent>
+            
+            <TabsContent value="signup">
+              <MagicLinkForm
+                type="signup"
+                email={email}
+                loading={loading}
+                onEmailChange={setEmail}
+                onSubmit={handleSignUp}
+              />
+            </TabsContent>
+          </Tabs>
 
-        <TestLoginButton loading={loading} onClick={handleTestLogin} />
+          <TestLoginButton loading={loading} onClick={handleTestLogin} />
+        </div>
       </div>
     </div>
   );
