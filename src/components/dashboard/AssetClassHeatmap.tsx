@@ -1,15 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, ResponsiveContainer, Treemap } from "recharts";
 
-// Define the custom color palette
+// Define the custom color palette with specific blue-grey colors
 const HEATMAP_COLORS = [
-  '#8ca6bd',
-  '#7199bc', 
-  '#5b7b98',
-  '#718597',
-  '#556573',
-  '#465f75',
-  '#465f75', // Reuse last color for 7th item
+  '#8ca6bd',  // Light Blue Grey
+  '#7199bc',  // Medium Blue Grey
+  '#5b7b98',  // Blue Grey
+  '#718597',  // Grey Blue
+  '#556573',  // Dark Grey Blue
+  '#465f75',  // Deep Grey Blue
+  '#465f75'   // Reuse last color for 7th item if needed
 ];
 
 const CHART_DATA = {
