@@ -1,79 +1,73 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { StatsCards } from "@/components/dashboard/StatsCards";
-import { InvestorDistributionChart } from "@/components/dashboard/InvestorDistributionChart";
 import { TransactionsChart } from "@/components/dashboard/TransactionsChart";
+import { InvestorDistributionChart } from "@/components/dashboard/InvestorDistributionChart";
 import { ActivityTimeline } from "@/components/dashboard/ActivityTimeline";
-import { INVESTOR_CATEGORIES, categorizeInvestorType } from "@/utils/investorCategories";
+import { LoadingState } from "@/components/ui/loading-state";
 
 const Dashboard = () => {
-  const { data: listsCount } = useQuery({
-    queryKey: ['listsCount'],
+  const { data: listsCount, isLoading: listsLoading } = useQuery({
+    queryKey: ['lists-count'],
     queryFn: async () => {
       const { count } = await supabase
         .from('lists')
-        .select('*', { count: 'exact' });
-      return count || 0;
+        .select('*', { count: 'exact', head: true });
+      return count;
     },
   });
 
-  const { data: investorTypes } = useQuery({
-    queryKey: ['investorTypes'],
+  const { data: investorsCount, isLoading: investorsLoading } = useQuery({
+    queryKey: ['investors-count'],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('limited_partners')
+        .select('*', { count: 'exact', head: true });
+      return count;
+    },
+  });
+
+  const { data: investorTypes, isLoading: typesLoading } = useQuery({
+    queryKey: ['investor-types'],
     queryFn: async () => {
       const { data } = await supabase
         .from('limited_partners')
         .select('limited_partner_type');
       
-      const typeCounts: Record<string, number> = Object.keys(INVESTOR_CATEGORIES).reduce((acc, key) => {
-        acc[key] = 0;
+      const types = data?.reduce((acc: Record<string, number>, curr) => {
+        const type = curr.limited_partner_type || 'Other';
+        acc[type] = (acc[type] || 0) + 1;
         return acc;
-      }, {} as Record<string, number>);
+      }, {});
 
-      data?.forEach(investor => {
-        const category = categorizeInvestorType(investor.limited_partner_type);
-        typeCounts[category]++;
-      });
+      const total = Object.values(types || {}).reduce((a, b) => a + b, 0);
 
-      const total = Object.values(typeCounts).reduce((sum, count) => sum + count, 0);
-      
-      return Object.entries(typeCounts)
-        .map(([name, value]) => ({
-          name,
-          value,
-          total,
-        }))
-        .filter(entry => entry.value > 0)
-        .sort((a, b) => b.value - a.value);
+      return Object.entries(types || {}).map(([name, value]) => ({
+        name,
+        value,
+        total,
+      }));
     },
   });
 
-  const { data: investorsCount } = useQuery({
-    queryKey: ['investorsCount'],
-    queryFn: async () => {
-      const { count } = await supabase
-        .from('limited_partners')
-        .select('*', { count: 'exact' });
-      return count || 0;
-    },
-  });
+  const isLoading = listsLoading || investorsLoading || typesLoading;
 
   return (
-    <div className="flex-1 p-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Welcome to your investor management dashboard</p>
-      </div>
-
-      <StatsCards listsCount={listsCount} investorsCount={investorsCount} />
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-4">
-          <InvestorDistributionChart data={investorTypes} />
+    <LoadingState loading={isLoading}>
+      <div className="p-8 space-y-8">
+        <StatsCards
+          listsCount={listsCount}
+          investorsCount={investorsCount}
+        />
+        <div className="grid gap-8 grid-cols-1 lg:grid-cols-4">
           <TransactionsChart />
+          <ActivityTimeline />
         </div>
-        <ActivityTimeline />
+        <div className="grid gap-8 grid-cols-1 lg:grid-cols-3">
+          <InvestorDistributionChart data={investorTypes || []} />
+        </div>
       </div>
-    </div>
+    </LoadingState>
   );
 };
 

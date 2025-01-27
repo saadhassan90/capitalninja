@@ -1,17 +1,24 @@
-import { InvestorsTable } from "@/components/InvestorsTable";
+import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
+import { LoadingState } from "@/components/ui/loading-state";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Investors = () => {
+  const { data: investors, isLoading } = useQuery({
+    queryKey: ['investors'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('limited_partners')
+        .select('*');
+      return data;
+    },
+  });
+
   return (
-    <div className="flex-1 p-8 flex flex-col h-screen">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Investors</h1>
-          <p className="text-gray-500 mt-1">Find and connect with investors</p>
-        </div>
-      </div>
-      <div className="flex-1 overflow-hidden">
-        <InvestorsTable />
-      </div>
+    <div className="p-8">
+      <LoadingState loading={isLoading}>
+        <InvestorsTableView investors={investors || []} />
+      </LoadingState>
     </div>
   );
 };
