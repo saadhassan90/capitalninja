@@ -11,7 +11,7 @@ export function USMap({ regionData, onRegionHover, onMouseMove }: MapProps) {
       <ComposableMap
         projection="geoAlbersUsa"
         projectionConfig={{
-          scale: 1000
+          scale: 1200
         }}
         style={{
           width: "100%",
