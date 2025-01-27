@@ -8,7 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+// GeoJSON for North America (states/provinces)
+const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/united-states/us-states.json";
 
 interface RegionData {
   region: string;
@@ -25,21 +26,28 @@ export function GeographicDistributionChart() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('limited_partners')
-        .select('hqcountry, aum')
-        .not('hqcountry', 'is', null);
+        .select('hqstate_province, hqcountry, aum')
+        .not('hqstate_province', 'is', null);
 
       if (error) throw error;
 
       const regions = new Map<string, RegionData>();
       
       data.forEach(investor => {
-        const region = investor.hqcountry?.trim() || 'Unknown';
-        const existing = regions.get(region) || { region, count: 0, totalAum: 0 };
-        regions.set(region, {
-          region,
-          count: existing.count + 1,
-          totalAum: existing.totalAum + (investor.aum || 0)
-        });
+        // Only process if it's in North America
+        if (investor.hqcountry === 'United States' || 
+            investor.hqcountry === 'USA' || 
+            investor.hqcountry === 'Canada' || 
+            investor.hqcountry === 'Mexico') {
+          
+          const region = investor.hqstate_province?.trim() || 'Unknown';
+          const existing = regions.get(region) || { region, count: 0, totalAum: 0 };
+          regions.set(region, {
+            region,
+            count: existing.count + 1,
+            totalAum: existing.totalAum + (investor.aum || 0)
+          });
+        }
       });
 
       return Array.from(regions.values());
@@ -47,8 +55,13 @@ export function GeographicDistributionChart() {
   });
 
   const getRegionColor = (geo: any) => {
-    const countryName = geo.properties.name;
-    const regionInfo = regionData?.find(d => d.region === countryName);
+    const stateName = geo.properties.name;
+    const regionInfo = regionData?.find(d => {
+      // Match state names or abbreviations
+      return d.region === stateName || 
+             d.region === geo.properties.postal || 
+             d.region === geo.properties.abbreviation;
+    });
     
     if (!regionInfo) return "#F4F4F5"; // Light gray for regions with no data
     
@@ -72,7 +85,7 @@ export function GeographicDistributionChart() {
   return (
     <Card className="col-span-2">
       <CardHeader>
-        <CardTitle>Geographic Distribution</CardTitle>
+        <CardTitle>Geographic Distribution (North America)</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -82,8 +95,10 @@ export function GeographicDistributionChart() {
         ) : (
           <div className="relative" onMouseMove={handleMouseMove}>
             <ComposableMap
+              projection="geoAlbers"
               projectionConfig={{
-                scale: 147,
+                scale: 800,
+                center: [-96, 36], // Centered on continental US
               }}
               width={800}
               height={400}
@@ -91,9 +106,11 @@ export function GeographicDistributionChart() {
               <Geographies geography={geoUrl}>
                 {({ geographies }) =>
                   geographies.map((geo) => {
-                    const countryName = geo.properties.name;
-                    const regionInfo = regionData?.find(
-                      d => d.region === countryName
+                    const stateName = geo.properties.name;
+                    const regionInfo = regionData?.find(d => 
+                      d.region === stateName || 
+                      d.region === geo.properties.postal || 
+                      d.region === geo.properties.abbreviation
                     );
 
                     return (
