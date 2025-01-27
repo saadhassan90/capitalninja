@@ -130,7 +130,7 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
             listId={listId}
           />
         ) : (
-          <div /> {/* Empty div to maintain spacing */}
+          <div /> /* Empty div to maintain spacing */
         )}
         <Button 
           onClick={handleRefresh}
