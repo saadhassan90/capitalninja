@@ -45,7 +45,7 @@ export const ActivityTimeline = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[200px] w-full" orientation="horizontal">
+        <ScrollArea className="h-[200px] w-full">
           <div className="flex gap-8 pb-6 px-2 min-w-max">
             {activities?.map((activity, index) => (
               <div key={activity.id} className="relative flex flex-col items-center">
