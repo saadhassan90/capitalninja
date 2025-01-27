@@ -4,7 +4,17 @@ import { Activity, ListTodo, Database } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { supabase } from "@/integrations/supabase/client";
 
-const COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5', '#9A77CF', '#A8A8A8'];
+// Updated color palette with navy and deep purple monochromatic scheme
+const COLORS = [
+  '#1A1F2C', // Dark Purple/Navy
+  '#7E69AB', // Secondary Purple
+  '#6E59A5', // Tertiary Purple
+  '#403E43', // Dark Navy
+  '#2A2438', // Deep Purple
+  '#352F44', // Navy Purple
+  '#4A4458', // Medium Purple
+  '#5D5B6A'  // Light Navy
+];
 
 const INVESTOR_CATEGORIES = {
   'Single Family Offices': ['Single Family Office', 'SFO', 'Single-Family Office'],
@@ -33,100 +43,100 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const Dashboard = () => {
-  // Fetch lists count
-  const { data: listsCount } = useQuery({
-    queryKey: ['listsCount'],
-    queryFn: async () => {
-      const { count } = await supabase
-        .from('lists')
-        .select('*', { count: 'exact' });
-      return count || 0;
-    },
-  });
+// Fetch lists count
+const { data: listsCount } = useQuery({
+  queryKey: ['listsCount'],
+  queryFn: async () => {
+    const { count } = await supabase
+      .from('lists')
+      .select('*', { count: 'exact' });
+    return count || 0;
+  },
+});
 
-  // Fetch investor types distribution
-  const { data: investorTypes } = useQuery({
-    queryKey: ['investorTypes'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('limited_partners')
-        .select('limited_partner_type');
-      
-      // Initialize counters for each category
-      const typeCounts: Record<string, number> = Object.keys(INVESTOR_CATEGORIES).reduce((acc, key) => {
-        acc[key] = 0;
-        return acc;
-      }, {} as Record<string, number>);
+// Fetch investor types distribution
+const { data: investorTypes } = useQuery({
+  queryKey: ['investorTypes'],
+  queryFn: async () => {
+    const { data } = await supabase
+      .from('limited_partners')
+      .select('limited_partner_type');
+    
+    // Initialize counters for each category
+    const typeCounts: Record<string, number> = Object.keys(INVESTOR_CATEGORIES).reduce((acc, key) => {
+      acc[key] = 0;
+      return acc;
+    }, {} as Record<string, number>);
 
-      // Count investors by type
-      data?.forEach(investor => {
-        const type = investor.limited_partner_type || '';
-        let matched = false;
+    // Count investors by type
+    data?.forEach(investor => {
+      const type = investor.limited_partner_type || '';
+      let matched = false;
 
-        // Handle Family Offices first
-        if (type.toLowerCase().includes('family office')) {
-          if (type.toLowerCase().includes('single') || 
-              type.toLowerCase().includes('sfo')) {
-            typeCounts['Single Family Offices']++;
+      // Handle Family Offices first
+      if (type.toLowerCase().includes('family office')) {
+        if (type.toLowerCase().includes('single') || 
+            type.toLowerCase().includes('sfo')) {
+          typeCounts['Single Family Offices']++;
+          matched = true;
+        } else if (type.toLowerCase().includes('multi') || 
+                  type.toLowerCase().includes('mfo')) {
+          typeCounts['Multi Family Offices']++;
+          matched = true;
+        } else {
+          // If it's just "Family Office" without specification, count as Single
+          typeCounts['Single Family Offices']++;
+          matched = true;
+        }
+      }
+
+      // If not a family office, check other categories
+      if (!matched) {
+        for (const [category, keywords] of Object.entries(INVESTOR_CATEGORIES)) {
+          // Skip Other and Family Office categories in this loop
+          if (category === 'Other' || category.includes('Family Office')) continue;
+          
+          if (keywords.some(keyword => 
+            type.toLowerCase().includes(keyword.toLowerCase())
+          )) {
+            typeCounts[category]++;
             matched = true;
-          } else if (type.toLowerCase().includes('multi') || 
-                    type.toLowerCase().includes('mfo')) {
-            typeCounts['Multi Family Offices']++;
-            matched = true;
-          } else {
-            // If it's just "Family Office" without specification, count as Single
-            typeCounts['Single Family Offices']++;
-            matched = true;
+            break;
           }
         }
 
-        // If not a family office, check other categories
+        // If still no match, increment Other category
         if (!matched) {
-          for (const [category, keywords] of Object.entries(INVESTOR_CATEGORIES)) {
-            // Skip Other and Family Office categories in this loop
-            if (category === 'Other' || category.includes('Family Office')) continue;
-            
-            if (keywords.some(keyword => 
-              type.toLowerCase().includes(keyword.toLowerCase())
-            )) {
-              typeCounts[category]++;
-              matched = true;
-              break;
-            }
-          }
-
-          // If still no match, increment Other category
-          if (!matched) {
-            typeCounts['Other']++;
-          }
+          typeCounts['Other']++;
         }
-      });
+      }
+    });
 
-      const total = Object.values(typeCounts).reduce((sum, count) => sum + count, 0);
-      
-      return Object.entries(typeCounts)
-        .map(([name, value]) => ({
-          name,
-          value,
-          total,
-        }))
-        .filter(entry => entry.value > 0) // Only include categories with values
-        .sort((a, b) => b.value - a.value); // Sort by value in descending order
-    },
-  });
+    const total = Object.values(typeCounts).reduce((sum, count) => sum + count, 0);
+    
+    return Object.entries(typeCounts)
+      .map(([name, value]) => ({
+        name,
+        value,
+        total,
+      }))
+      .filter(entry => entry.value > 0) // Only include categories with values
+      .sort((a, b) => b.value - a.value); // Sort by value in descending order
+  },
+});
 
-  // Fetch total investors count
-  const { data: investorsCount } = useQuery({
-    queryKey: ['investorsCount'],
-    queryFn: async () => {
-      const { count } = await supabase
-        .from('limited_partners')
-        .select('*', { count: 'exact' });
-      return count || 0;
-    },
-  });
+// Fetch total investors count
+const { data: investorsCount } = useQuery({
+  queryKey: ['investorsCount'],
+  queryFn: async () => {
+    const { count } = await supabase
+      .from('limited_partners')
+      .select('*', { count: 'exact' });
+    return count || 0;
+  },
+});
 
+const Dashboard = () => {
   return (
     <div className="flex-1 p-8 space-y-8">
       <div>
