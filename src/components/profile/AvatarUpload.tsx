@@ -16,7 +16,13 @@ interface AvatarUploadProps {
 export function AvatarUpload({ currentAvatarUrl, userId, onAvatarUpdate }: AvatarUploadProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [crop, setCrop] = useState<Crop>();
+  const [crop, setCrop] = useState<Crop>({
+    unit: '%',
+    width: 100,
+    height: 100,
+    x: 0,
+    y: 0,
+  });
   const imageRef = useRef<HTMLImageElement | null>(null);
   const { toast } = useToast();
 
@@ -127,7 +133,6 @@ export function AvatarUpload({ currentAvatarUrl, userId, onAvatarUpdate }: Avata
                 crop={crop}
                 onChange={c => setCrop(c)}
                 aspect={1}
-                circularCrop
               >
                 <img
                   ref={imageRef}

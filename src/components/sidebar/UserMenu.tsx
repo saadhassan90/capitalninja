@@ -9,8 +9,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 const menuItems = [
   { title: "Profile", url: "/profile", icon: User },
@@ -23,6 +24,21 @@ export function UserMenu() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user?.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/auth");
@@ -33,7 +49,7 @@ export function UserMenu() {
     .slice(0, 2)
     .toUpperCase() || "??";
 
-  const displayName = user?.email?.split("@")[0] || "User";
+  const displayName = profile?.company_name || user?.email?.split("@")[0] || "User";
 
   return (
     <SidebarFooter className="border-t border-border/50">
@@ -75,6 +91,7 @@ export function UserMenu() {
         >
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
+              <AvatarImage src={profile?.avatar_url} />
               <AvatarFallback>{userInitials}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-start text-left">
