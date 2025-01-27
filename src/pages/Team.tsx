@@ -5,6 +5,7 @@ import { UserPlus } from "lucide-react";
 import { InviteUserDialog } from "@/components/team/InviteUserDialog";
 import { TeamMembersTable } from "@/components/team/TeamMembersTable";
 import { supabase } from "@/integrations/supabase/client";
+import { TeamMember } from "@/types/team";
 
 export default function Team() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
@@ -15,14 +16,18 @@ export default function Team() {
       const { data, error } = await supabase
         .from("team_members")
         .select(`
-          *,
+          id,
+          user_id,
+          role,
+          created_at,
           profiles:user_id (
             first_name,
             last_name,
             email,
             avatar_url
           )
-        `);
+        `)
+        .returns<TeamMember[]>();
 
       if (error) throw error;
       return data;

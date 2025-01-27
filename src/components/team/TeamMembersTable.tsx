@@ -17,22 +17,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Database } from "@/integrations/supabase/types";
-
-type Role = "owner" | "administrator" | "viewer";
-
-type TeamMember = {
-  id: string;
-  user_id: string;
-  role: Role;
-  created_at: string;
-  profiles: {
-    first_name: string | null;
-    last_name: string | null;
-    email: string;
-    avatar_url: string | null;
-  };
-};
+import { TeamMember, Role } from "@/types/team";
 
 interface TeamMembersTableProps {
   members: TeamMember[];
