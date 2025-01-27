@@ -155,7 +155,7 @@ export default function Auth() {
           <div className="w-full max-w-md space-y-8">
             <AuthHeader />
 
-            <Tabs defaultValue="signin" className="w-full">
+            <Tabs defaultValue="signup" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>

@@ -572,6 +572,12 @@ export type Database = {
         }
         Returns: unknown
       }
+      is_team_member: {
+        Args: {
+          user_id: string
+        }
+        Returns: boolean
+      }
       refresh_dynamic_lists: {
         Args: Record<PropertyKey, never>
         Returns: undefined
