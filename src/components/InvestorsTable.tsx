@@ -93,23 +93,28 @@ export function InvestorsTable({ listId }: { listId?: string }) {
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center gap-2">
-        <InvestorsSearch 
-          value={searchTerm}
-          onChange={(value) => {
-            setSearchTerm(value);
-            setCurrentPage(1);
-          }}
-          onFilterChange={handleFilterChange}
-        />
-        {selectedInvestors.length > 0 && (
-          <BulkActions 
-            selectedCount={selectedInvestors.length}
-            selectedInvestors={selectedInvestors}
-            onClearSelection={() => setSelectedInvestors([])}
-            listId={listId}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <InvestorsSearch 
+            value={searchTerm}
+            onChange={(value) => {
+              setSearchTerm(value);
+              setCurrentPage(1);
+            }}
+            onFilterChange={handleFilterChange}
           />
-        )}
+          {selectedInvestors.length > 0 && (
+            <BulkActions 
+              selectedCount={selectedInvestors.length}
+              selectedInvestors={selectedInvestors}
+              onClearSelection={() => setSelectedInvestors([])}
+              listId={listId}
+            />
+          )}
+        </div>
+        <div className="text-sm text-muted-foreground">
+          Total Investors: {investorsData?.count ?? 0}
+        </div>
       </div>
       
       <InvestorsTableView 

@@ -122,16 +122,20 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        {selectedInvestors.length > 0 ? (
-          <BulkActions
-            selectedCount={selectedInvestors.length}
-            selectedInvestors={selectedInvestors}
-            onClearSelection={() => setSelectedInvestors([])}
-            listId={listId}
-          />
-        ) : (
-          <div /> /* Empty div to maintain spacing */
-        )}
+        <div>
+          {selectedInvestors.length > 0 ? (
+            <BulkActions
+              selectedCount={selectedInvestors.length}
+              selectedInvestors={selectedInvestors}
+              onClearSelection={() => setSelectedInvestors([])}
+              listId={listId}
+            />
+          ) : (
+            <div className="text-sm text-muted-foreground">
+              Total Investors: {investorsData?.count ?? 0}
+            </div>
+          )}
+        </div>
         <Button 
           onClick={handleRefresh}
           variant="outline"
