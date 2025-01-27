@@ -3,13 +3,13 @@ import {
   ComposableMap,
   Geographies,
   Geography,
-  Tooltip,
 } from "react-simple-maps";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
+// Using a more reliable source for the world map data
+const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/main/world-countries.json";
 
 interface RegionData {
   region: string;
@@ -19,8 +19,9 @@ interface RegionData {
 
 export function GeographicDistributionChart() {
   const [tooltipContent, setTooltipContent] = useState<RegionData | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
-  const { data: regionData, isLoading } = useQuery({
+  const { data: regionData = [], isLoading } = useQuery({
     queryKey: ['geographic-distribution'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -63,6 +64,10 @@ export function GeographicDistributionChart() {
     return `$${aum.toFixed(0)}`;
   };
 
+  const handleMouseMove = (event: React.MouseEvent) => {
+    setTooltipPosition({ x: event.clientX, y: event.clientY });
+  };
+
   return (
     <Card className="col-span-2">
       <CardHeader>
@@ -74,7 +79,7 @@ export function GeographicDistributionChart() {
             Loading map data...
           </div>
         ) : (
-          <div className="relative">
+          <div className="relative" onMouseMove={handleMouseMove}>
             <ComposableMap
               projectionConfig={{
                 scale: 147,
@@ -125,6 +130,9 @@ export function GeographicDistributionChart() {
               <div
                 style={{
                   position: "absolute",
+                  left: tooltipPosition.x + 10,
+                  top: tooltipPosition.y - 70,
+                  transform: "translateX(-50%)",
                   backgroundColor: "white",
                   padding: "8px",
                   borderRadius: "4px",
