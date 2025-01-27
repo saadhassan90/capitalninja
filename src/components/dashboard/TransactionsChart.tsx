@@ -23,12 +23,18 @@ export const TransactionsChart = () => {
         .not('deal_date', 'is', null)
         .order('deal_date');
 
+      // Log the raw direct investments data
+      console.log('Raw Direct Investments:', directInvestments);
+
       // Fetch fund commitments
       const { data: fundCommitments } = await supabase
         .from('fund_commitments')
         .select('commitment_date, commitment')
         .not('commitment_date', 'is', null)
         .order('commitment_date');
+
+      // Log the raw fund commitments data
+      console.log('Raw Fund Commitments:', fundCommitments);
 
       // Combine and process the data
       const transactionsByDate = new Map<string, TransactionData>();
@@ -61,8 +67,14 @@ export const TransactionsChart = () => {
         transactionsByDate.set(date, existing);
       });
 
-      return Array.from(transactionsByDate.values())
+      const sortedData = Array.from(transactionsByDate.values())
         .sort((a, b) => a.date.localeCompare(b.date));
+
+      // Log the processed data
+      console.log('Processed Data:', sortedData);
+      console.log('Most recent transaction date:', sortedData[sortedData.length - 1]?.date);
+
+      return sortedData;
     },
   });
 
