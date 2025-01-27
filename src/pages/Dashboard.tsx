@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { InvestorDistributionChart } from "@/components/dashboard/InvestorDistributionChart";
 import { TransactionsChart } from "@/components/dashboard/TransactionsChart";
-import { AssetClassHeatmap } from "@/components/dashboard/AssetClassHeatmap";
 import { ActivityTimeline } from "@/components/dashboard/ActivityTimeline";
 import { INVESTOR_CATEGORIES, categorizeInvestorType } from "@/utils/investorCategories";
 
@@ -82,10 +81,9 @@ const Dashboard = () => {
             Analyze investor distribution and investment trends
           </p>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           <InvestorDistributionChart data={investorTypes} />
           <TransactionsChart />
-          <AssetClassHeatmap />
         </div>
       </section>
     </div>
