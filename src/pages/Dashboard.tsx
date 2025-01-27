@@ -7,8 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 const COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5', '#9A77CF', '#A8A8A8'];
 
 const INVESTOR_CATEGORIES = {
-  'Single Family Offices': ['SFO', 'Single Family Office', 'Single-Family Office'],
-  'Multi Family Offices': ['MFO', 'Multi Family Office', 'Multi-Family Office'],
+  'Single Family Offices': ['Single Family Office', 'SFO', 'Single-Family Office'],
+  'Multi Family Offices': ['Multi Family Office', 'MFO', 'Multi-Family Office'],
   'Pensions': ['Pension', 'Pension Fund', 'Public Pension'],
   'Insurance Companies': ['Insurance', 'Insurance Company'],
   'Endowments': ['Endowment'],
@@ -64,24 +64,27 @@ const Dashboard = () => {
         const type = investor.limited_partner_type || '';
         let matched = false;
 
-        // First check for Family Office types specifically
+        // Handle Family Offices first
         if (type.toLowerCase().includes('family office')) {
-          if (type.toLowerCase().includes('single')) {
+          if (type.toLowerCase().includes('single') || 
+              type.toLowerCase().includes('sfo')) {
             typeCounts['Single Family Offices']++;
             matched = true;
-          } else if (type.toLowerCase().includes('multi')) {
+          } else if (type.toLowerCase().includes('multi') || 
+                    type.toLowerCase().includes('mfo')) {
             typeCounts['Multi Family Offices']++;
             matched = true;
           } else {
-            // Generic "Family Office" without specific type - categorize as Single
+            // If it's just "Family Office" without specification, count as Single
             typeCounts['Single Family Offices']++;
             matched = true;
           }
         }
 
-        // If not a family office, try other categories
+        // If not a family office, check other categories
         if (!matched) {
           for (const [category, keywords] of Object.entries(INVESTOR_CATEGORIES)) {
+            // Skip Other and Family Office categories in this loop
             if (category === 'Other' || category.includes('Family Office')) continue;
             
             if (keywords.some(keyword => 
@@ -103,12 +106,13 @@ const Dashboard = () => {
       const total = Object.values(typeCounts).reduce((sum, count) => sum + count, 0);
       
       return Object.entries(typeCounts)
-        .filter(([_, value]) => value > 0) // Only include categories with values
         .map(([name, value]) => ({
           name,
           value,
           total,
-        }));
+        }))
+        .filter(entry => entry.value > 0) // Only include categories with values
+        .sort((a, b) => b.value - a.value); // Sort by value in descending order
     },
   });
 
