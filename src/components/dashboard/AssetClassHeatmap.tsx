@@ -78,6 +78,7 @@ export const AssetClassHeatmap = () => {
             dataKey="size"
             aspectRatio={1}
             stroke="#fff"
+            padding={4}
           >
             {({ root }) => {
               if (!root) return null;
@@ -95,6 +96,8 @@ export const AssetClassHeatmap = () => {
                       fill={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
                       stroke="#fff"
                       strokeWidth={2}
+                      rx={8}
+                      ry={8}
                       style={{ fill: HEATMAP_COLORS[index % HEATMAP_COLORS.length] }}
                       className="origin-center transition-transform duration-200 hover:scale-[1.02]"
                       id={`sector-${index}`}
