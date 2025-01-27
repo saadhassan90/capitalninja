@@ -1,13 +1,11 @@
-// Consistent purple color palette for all charts
+// Monochromatic color palette for all charts
 export const CHART_COLORS = [
-  '#6E59A5', // Dark Purple
-  '#8B5CF6', // Vivid Purple
-  '#7E69AB', // Medium Purple
-  '#1A1F2C', // Deep Dark Purple
-  '#9B87F5', // Primary Purple
-  '#7C3AED', // Rich Purple
-  '#5B21B6', // Deep Purple
-  '#4C1D95'  // Royal Purple
+  '#8ca6bd', // Light Blue Grey
+  '#7199bc', // Medium Blue Grey
+  '#5b7b98', // Blue Grey
+  '#718597', // Grey Blue
+  '#556573', // Dark Grey Blue
+  '#465f75'  // Deep Grey Blue
 ] as const;
 
 // Helper function to get colors for charts
