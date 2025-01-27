@@ -19,7 +19,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Database } from "@/integrations/supabase/types";
 
-type TeamMember = Database["public"]["Tables"]["team_members"]["Row"] & {
+type Role = "owner" | "administrator" | "viewer";
+
+type TeamMember = {
+  id: string;
+  user_id: string;
+  role: Role;
+  created_at: string;
   profiles: {
     first_name: string | null;
     last_name: string | null;
@@ -36,7 +42,7 @@ interface TeamMembersTableProps {
 export function TeamMembersTable({ members, isLoading }: TeamMembersTableProps) {
   const { toast } = useToast();
 
-  const handleRoleChange = async (memberId: string, newRole: "owner" | "administrator" | "viewer") => {
+  const handleRoleChange = async (memberId: string, newRole: Role) => {
     const { error } = await supabase
       .from("team_members")
       .update({ role: newRole })
@@ -90,9 +96,7 @@ export function TeamMembersTable({ members, isLoading }: TeamMembersTableProps) 
             <TableCell>
               <Select
                 defaultValue={member.role}
-                onValueChange={(value: "owner" | "administrator" | "viewer") => 
-                  handleRoleChange(member.id, value)
-                }
+                onValueChange={(value: Role) => handleRoleChange(member.id, value)}
               >
                 <SelectTrigger className="w-32">
                   <SelectValue />

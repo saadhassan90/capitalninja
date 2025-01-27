@@ -5,9 +5,14 @@ import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { InviteUserDialog } from "@/components/team/InviteUserDialog";
 import { TeamMembersTable } from "@/components/team/TeamMembersTable";
-import { Database } from "@/integrations/supabase/types";
 
-type TeamMember = Database["public"]["Tables"]["team_members"]["Row"] & {
+type Role = "owner" | "administrator" | "viewer";
+
+type TeamMember = {
+  id: string;
+  user_id: string;
+  role: Role;
+  created_at: string;
   profiles: {
     first_name: string | null;
     last_name: string | null;
