@@ -7,6 +7,7 @@ import { AuthHeader } from "@/components/auth/AuthHeader";
 import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 import { TestLoginButton } from "@/components/auth/TestLoginButton";
 import { AuthPageHeader } from "@/components/auth/AuthPageHeader";
+import { BackgroundElements } from "@/components/auth/BackgroundElements";
 
 export default function Auth() {
   const [loading, setLoading] = useState(false);
@@ -100,10 +101,11 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background">
+      <BackgroundElements />
       <AuthPageHeader />
       
-      <div className="container mx-auto pt-32">
+      <div className="container relative mx-auto pt-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Hero Content */}
           <div className="space-y-6 max-w-xl">
@@ -118,7 +120,7 @@ export default function Auth() {
           </div>
 
           {/* Right Column - Auth Form */}
-          <div className="bg-card rounded-xl shadow-lg p-8 space-y-8 border">
+          <div className="bg-card rounded-xl shadow-lg p-8 space-y-8 border relative z-10">
             <AuthHeader />
 
             <Tabs defaultValue="signin" className="w-full">
