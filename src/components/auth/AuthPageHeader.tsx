@@ -6,7 +6,7 @@ export function AuthPageHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-background border-b flex items-center justify-between px-6 z-50">
       <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg">
           <img
             src="/lovable-uploads/f5a05f58-4b3d-4f7b-8f79-ce224a93999d.png"
             alt="CapitalNinja Logo"
