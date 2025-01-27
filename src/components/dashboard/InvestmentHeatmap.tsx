@@ -68,7 +68,7 @@ interface CustomContentProps {
 }
 
 const CustomContent = ({ x, y, width, height, name, percentage }: CustomContentProps) => {
-  const fontSize = Math.min(width / 16, height / 6); // Further reduced base font size
+  const fontSize = Math.min(width / 16, height / 6);
   const shouldShowText = width > 60 && height > 40;
 
   return (
@@ -93,7 +93,7 @@ const CustomContent = ({ x, y, width, height, name, percentage }: CustomContentP
             textAnchor="middle"
             fill="#fff"
             fontSize={fontSize}
-            fontWeight="400" // Further reduced from "500" to "400" for regular weight
+            fontWeight="400"
           >
             {name}
           </text>
@@ -102,7 +102,7 @@ const CustomContent = ({ x, y, width, height, name, percentage }: CustomContentP
             y={y + height / 2 + fontSize + 2}
             textAnchor="middle"
             fill="#fff"
-            fontSize={fontSize * 0.7} // Further reduced percentage size
+            fontSize={fontSize * 0.7}
           >
             {percentage}%
           </text>
@@ -119,7 +119,7 @@ const CustomTooltip = ({ active, payload }: any) => {
       <div className="bg-white p-3 border rounded-lg shadow-sm">
         <p className="font-medium">{data.name}</p>
         <p className="text-sm text-muted-foreground">
-          Investment: ${data.value}B
+          Investment: ${data.value}M
         </p>
         <p className="text-sm text-muted-foreground">
           Allocation: {data.percentage}%
