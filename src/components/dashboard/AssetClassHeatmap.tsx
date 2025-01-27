@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, ResponsiveContainer, Treemap } from "recharts";
-import { assetClassColors } from "@/utils/assetClassColors";
+import { CHART_COLORS } from "@/utils/chartColors";
 
 const CHART_DATA = {
   "name": "Asset Classes",
@@ -74,14 +74,13 @@ export const AssetClassHeatmap = () => {
             dataKey="size"
             aspectRatio={1}
             stroke="white"
-            fill="#8884d8"
           >
             {({ root }) => {
               if (!root) return null;
               
-              return root.children?.map((node: any) => {
+              return root.children?.map((node: any, index: number) => {
                 const { x, y, width, height, name, percentage } = node;
-                const assetClass = name.split(' ')[0].toLowerCase();
+                const color = CHART_COLORS[index % CHART_COLORS.length];
                 
                 return (
                   <g key={name}>
@@ -90,7 +89,7 @@ export const AssetClassHeatmap = () => {
                       y={y}
                       width={width}
                       height={height}
-                      fill={assetClassColors[assetClass]?.bg || '#6C757D'}
+                      fill={color}
                       stroke="white"
                       strokeWidth={2}
                       className="transition-colors duration-200 hover:opacity-90"
