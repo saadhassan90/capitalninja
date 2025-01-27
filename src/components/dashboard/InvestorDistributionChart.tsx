@@ -13,7 +13,7 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
       <div className="bg-white p-3 border rounded-lg shadow-sm">
         <p className="font-medium text-sm">{payload[0].name}</p>
         <p className="text-sm text-gray-600">
-          Count: {payload[0].value}
+          Count: {payload[0].value.toLocaleString()}
           <br />
           Percentage: {((payload[0].value / payload[0].payload.total) * 100).toFixed(1)}%
         </p>
@@ -50,13 +50,21 @@ export const InvestorDistributionChart = ({ data }: InvestorDistributionChartPro
               dataKey="value"
               paddingAngle={2}
               cornerRadius={8}
+              onMouseEnter={(data, index) => {
+                document.querySelector(`#sector-${index}`)?.classList.add('animate-chart-hover');
+              }}
+              onMouseLeave={(data, index) => {
+                document.querySelector(`#sector-${index}`)?.classList.remove('animate-chart-hover');
+              }}
             >
               {data?.map((entry, index) => (
                 <Cell 
-                  key={`cell-${index}`} 
+                  key={`cell-${index}`}
+                  id={`sector-${index}`}
                   fill={CHART_COLORS[index % CHART_COLORS.length]}
                   stroke="white"
                   strokeWidth={2}
+                  className="transition-all duration-200"
                 />
               ))}
             </Pie>
