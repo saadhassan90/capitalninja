@@ -42,10 +42,10 @@ async function fetchInvestors({
 
   if (selectedType && selectedType !== '_all') {
     if (typeof selectedType === 'function') {
-      // Handle Family Office filter
+      // For Family Office filter, use an OR condition for all family office types
       query = query.or('limited_partner_type.eq.Family Office,limited_partner_type.eq.Single Family Office,limited_partner_type.eq.Multi Family Office');
     } else {
-      query = query.eq('limited_partner_type', selectedType);
+      query = query.eq('limited_partner_type', selectedType as string);
     }
   }
 
