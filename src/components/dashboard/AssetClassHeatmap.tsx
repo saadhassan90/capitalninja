@@ -1,68 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, ResponsiveContainer, Treemap } from "recharts";
-
-// Define specific colors for the heatmap
-const HEATMAP_COLORS = [
-  '#8ca6bd', // Light Blue Grey
-  '#7199bc', // Medium Blue Grey
-  '#5b7b98', // Blue Grey
-  '#718597', // Grey Blue
-  '#556573', // Dark Grey Blue
-  '#465f75'  // Deep Grey Blue
-] as const;
-
-const CHART_DATA = {
-  "name": "Asset Classes",
-  "children": [
-    {
-      "name": "Private Equity (PE)",
-      "size": 1150,
-      "percentage": 30
-    },
-    {
-      "name": "Venture Capital (VC)",
-      "size": 600,
-      "percentage": 15
-    },
-    {
-      "name": "Real Estate (RE)",
-      "size": 900,
-      "percentage": 23
-    },
-    {
-      "name": "Infrastructure",
-      "size": 450,
-      "percentage": 12
-    },
-    {
-      "name": "Private Credit (PC)",
-      "size": 700,
-      "percentage": 18
-    },
-    {
-      "name": "Energy",
-      "size": 120,
-      "percentage": 2
-    }
-  ]
-};
-
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length > 0) {
-    const data = payload[0].payload;
-    return (
-      <div className="bg-white p-3 border rounded-lg shadow-sm">
-        <p className="font-medium text-sm">{data.name}</p>
-        <p className="text-sm text-gray-600">
-          Invested: ${data.size}B
-          <br />
-          Share: {data.percentage}%
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
+import { CustomTooltip } from "./heatmap/CustomTooltip";
+import { TreemapContent } from "./heatmap/TreemapContent";
+import { CHART_DATA } from "./heatmap/constants";
 
 export const AssetClassHeatmap = () => {
   return (
@@ -78,64 +18,8 @@ export const AssetClassHeatmap = () => {
             dataKey="size"
             aspectRatio={1}
             stroke="#fff"
-            gap={8}
           >
-            {({ root }) => {
-              if (!root) return null;
-              
-              return root.children?.map((node: any, index: number) => {
-                const { x, y, width, height, name, percentage } = node;
-                
-                return (
-                  <g key={name}>
-                    <rect
-                      x={x}
-                      y={y}
-                      width={width}
-                      height={height}
-                      fill={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
-                      stroke="#fff"
-                      strokeWidth={2}
-                      rx={8}
-                      ry={8}
-                      style={{ fill: HEATMAP_COLORS[index % HEATMAP_COLORS.length] }}
-                      className="origin-center transition-transform duration-200 hover:scale-[1.02]"
-                      id={`sector-${index}`}
-                      onMouseEnter={() => {
-                        document.querySelector(`#sector-${index}`)?.classList.add('scale-[1.02]');
-                      }}
-                      onMouseLeave={() => {
-                        document.querySelector(`#sector-${index}`)?.classList.remove('scale-[1.02]');
-                      }}
-                    />
-                    {width > 60 && height > 40 && (
-                      <>
-                        <text
-                          x={x + width / 2}
-                          y={y + height / 2 - 8}
-                          textAnchor="middle"
-                          fill="white"
-                          className="text-xs font-medium select-none"
-                          style={{ paintOrder: 'stroke', strokeWidth: 0 }}
-                        >
-                          {name.split(' ')[0]}
-                        </text>
-                        <text
-                          x={x + width / 2}
-                          y={y + height / 2 + 8}
-                          textAnchor="middle"
-                          fill="white"
-                          className="text-xs select-none"
-                          style={{ paintOrder: 'stroke', strokeWidth: 0 }}
-                        >
-                          {percentage}%
-                        </text>
-                      </>
-                    )}
-                  </g>
-                );
-              });
-            }}
+            {({ root }) => <TreemapContent root={root} />}
             <Tooltip content={<CustomTooltip />} />
           </Treemap>
         </ResponsiveContainer>
