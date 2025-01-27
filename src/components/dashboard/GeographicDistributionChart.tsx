@@ -8,7 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
+const usGeoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
+const canadaGeoUrl = "https://cdn.jsdelivr.net/npm/canada-atlas@2/provinces.json";
 
 interface RegionData {
   region: string;
@@ -36,8 +37,7 @@ export function GeographicDistributionChart() {
         // Only process if it's in North America
         if (investor.hqcountry === 'United States' || 
             investor.hqcountry === 'USA' || 
-            investor.hqcountry === 'Canada' || 
-            investor.hqcountry === 'Mexico') {
+            investor.hqcountry === 'Canada') {
           
           const region = investor.hqstate_province?.trim() || 'Unknown';
           const existing = regions.get(region) || { region, count: 0, totalAum: 0 };
@@ -53,12 +53,12 @@ export function GeographicDistributionChart() {
     }
   });
 
-  const getRegionColor = (geo: any) => {
-    const stateName = geo.properties.name;
+  const getRegionColor = (geo: any, isCanada: boolean = false) => {
+    const regionName = isCanada ? geo.properties.name : geo.properties.name;
+    const regionCode = isCanada ? geo.properties.code : geo.properties.postal;
+    
     const regionInfo = regionData?.find(d => {
-      // Match state names or abbreviations
-      return d.region === stateName || 
-             d.region === geo.properties.postal;
+      return d.region === regionName || d.region === regionCode;
     });
     
     if (!regionInfo) return "#F4F4F5"; // Light gray for regions with no data
@@ -91,54 +91,112 @@ export function GeographicDistributionChart() {
             Loading map data...
           </div>
         ) : (
-          <div className="relative" onMouseMove={handleMouseMove}>
-            <ComposableMap
-              projection="geoAlbersUsa"
-              projectionConfig={{
-                scale: 1000
-              }}
-              style={{
-                width: "100%",
-                height: "400px"
-              }}
-            >
-              <Geographies geography={geoUrl}>
-                {({ geographies }) =>
-                  geographies.map((geo) => (
-                    <Geography
-                      key={geo.rsmKey}
-                      geography={geo}
-                      fill={getRegionColor(geo)}
-                      stroke="#FFF"
-                      strokeWidth={0.5}
-                      style={{
-                        default: {
-                          outline: "none",
-                        },
-                        hover: {
-                          fill: "#3B82F6",
-                          outline: "none",
-                          cursor: "pointer",
-                        },
-                      }}
-                      onMouseEnter={() => {
-                        const stateName = geo.properties.name;
-                        const regionInfo = regionData?.find(d => 
-                          d.region === stateName || 
-                          d.region === geo.properties.postal
-                        );
-                        if (regionInfo) {
-                          setTooltipContent(regionInfo);
-                        }
-                      }}
-                      onMouseLeave={() => {
-                        setTooltipContent(null);
-                      }}
-                    />
-                  ))
-                }
-              </Geographies>
-            </ComposableMap>
+          <div className="grid grid-cols-2 gap-4">
+            {/* US Map */}
+            <div className="relative" onMouseMove={handleMouseMove}>
+              <h3 className="text-sm font-medium mb-2">United States</h3>
+              <ComposableMap
+                projection="geoAlbersUsa"
+                projectionConfig={{
+                  scale: 600
+                }}
+                style={{
+                  width: "100%",
+                  height: "300px"
+                }}
+              >
+                <Geographies geography={usGeoUrl}>
+                  {({ geographies }) =>
+                    geographies.map((geo) => (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        fill={getRegionColor(geo)}
+                        stroke="#FFF"
+                        strokeWidth={0.5}
+                        style={{
+                          default: {
+                            outline: "none",
+                          },
+                          hover: {
+                            fill: "#3B82F6",
+                            outline: "none",
+                            cursor: "pointer",
+                          },
+                        }}
+                        onMouseEnter={() => {
+                          const stateName = geo.properties.name;
+                          const regionInfo = regionData?.find(d => 
+                            d.region === stateName || 
+                            d.region === geo.properties.postal
+                          );
+                          if (regionInfo) {
+                            setTooltipContent(regionInfo);
+                          }
+                        }}
+                        onMouseLeave={() => {
+                          setTooltipContent(null);
+                        }}
+                      />
+                    ))
+                  }
+                </Geographies>
+              </ComposableMap>
+            </div>
+
+            {/* Canada Map */}
+            <div className="relative" onMouseMove={handleMouseMove}>
+              <h3 className="text-sm font-medium mb-2">Canada</h3>
+              <ComposableMap
+                projection="geoMercator"
+                projectionConfig={{
+                  scale: 600,
+                  center: [-96, 60]
+                }}
+                style={{
+                  width: "100%",
+                  height: "300px"
+                }}
+              >
+                <Geographies geography={canadaGeoUrl}>
+                  {({ geographies }) =>
+                    geographies.map((geo) => (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        fill={getRegionColor(geo, true)}
+                        stroke="#FFF"
+                        strokeWidth={0.5}
+                        style={{
+                          default: {
+                            outline: "none",
+                          },
+                          hover: {
+                            fill: "#3B82F6",
+                            outline: "none",
+                            cursor: "pointer",
+                          },
+                        }}
+                        onMouseEnter={() => {
+                          const provinceName = geo.properties.name;
+                          const regionInfo = regionData?.find(d => 
+                            d.region === provinceName || 
+                            d.region === geo.properties.code
+                          );
+                          if (regionInfo) {
+                            setTooltipContent(regionInfo);
+                          }
+                        }}
+                        onMouseLeave={() => {
+                          setTooltipContent(null);
+                        }}
+                      />
+                    ))
+                  }
+                </Geographies>
+              </ComposableMap>
+            </div>
+
             {tooltipContent && (
               <div
                 style={{
