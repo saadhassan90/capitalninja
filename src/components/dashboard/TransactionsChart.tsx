@@ -2,8 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isAfter } from "date-fns";
 import { getChartColors } from "@/utils/chartColors";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 interface TransactionData {
   date: string;
@@ -12,7 +15,11 @@ interface TransactionData {
   total: number;
 }
 
+type TimeScale = 'all' | 'since2010' | 'since2020';
+
 export const TransactionsChart = () => {
+  const [timeScale, setTimeScale] = useState<TimeScale>('all');
+
   const { data: transactionsData } = useQuery({
     queryKey: ['transactions-timeline'],
     queryFn: async () => {
@@ -66,6 +73,18 @@ export const TransactionsChart = () => {
     },
   });
 
+  const filteredData = transactionsData?.filter(item => {
+    const date = parseISO(item.date);
+    switch (timeScale) {
+      case 'since2010':
+        return isAfter(date, new Date('2010-01-01'));
+      case 'since2020':
+        return isAfter(date, new Date('2020-01-01'));
+      default:
+        return true;
+    }
+  });
+
   const formatYAxis = (value: number) => {
     if (value >= 1e9) return `$${(value / 1e9).toFixed(1)}B`;
     if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
@@ -86,13 +105,33 @@ export const TransactionsChart = () => {
   return (
     <Card className="col-span-3">
       <CardHeader>
-        <CardTitle>Transaction Volume Over Time</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>Transaction Volume Over Time</CardTitle>
+          <RadioGroup
+            value={timeScale}
+            onValueChange={(value) => setTimeScale(value as TimeScale)}
+            className="flex space-x-4"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="all" id="all" />
+              <Label htmlFor="all">All Time</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="since2010" id="since2010" />
+              <Label htmlFor="since2010">Since 2010</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="since2020" id="since2020" />
+              <Label htmlFor="since2020">Since 2020</Label>
+            </div>
+          </RadioGroup>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={transactionsData}
+              data={filteredData}
               margin={{
                 top: 5,
                 right: 30,
