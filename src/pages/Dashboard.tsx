@@ -7,14 +7,14 @@ import { supabase } from "@/integrations/supabase/client";
 const COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5', '#9A77CF', '#A8A8A8'];
 
 const INVESTOR_CATEGORIES = {
-  'SFO': 'Single Family Offices',
-  'MFO': 'Multi Family Offices',
-  'Pension': 'Pensions',
-  'Insurance': 'Insurance Companies',
-  'Endowment': 'Endowments',
-  'Foundation': 'Foundations',
-  'Wealth Manager': 'Wealth Managers',
-  'Other': 'Other'
+  'Single Family Offices': ['SFO', 'Single Family Office', 'Single-Family Office'],
+  'Multi Family Offices': ['MFO', 'Multi Family Office', 'Multi-Family Office'],
+  'Pensions': ['Pension', 'Pension Fund', 'Public Pension'],
+  'Insurance Companies': ['Insurance', 'Insurance Company'],
+  'Endowments': ['Endowment'],
+  'Foundations': ['Foundation'],
+  'Wealth Managers': ['Wealth Manager', 'Wealth Management'],
+  'Other': []
 };
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -55,25 +55,32 @@ const Dashboard = () => {
       
       // Initialize counters for each category
       const typeCounts: Record<string, number> = Object.keys(INVESTOR_CATEGORIES).reduce((acc, key) => {
-        acc[INVESTOR_CATEGORIES[key as keyof typeof INVESTOR_CATEGORIES]] = 0;
+        acc[key] = 0;
         return acc;
       }, {} as Record<string, number>);
 
       // Count investors by type
       data?.forEach(investor => {
-        let type = investor.limited_partner_type || 'Unknown';
-        let category = 'Other';
+        const type = investor.limited_partner_type || '';
+        let matched = false;
 
-        // Map the type to our categories
-        if (type.includes('SFO') || type.includes('Single Family')) category = 'Single Family Offices';
-        else if (type.includes('MFO') || type.includes('Multi Family')) category = 'Multi Family Offices';
-        else if (type.includes('Pension')) category = 'Pensions';
-        else if (type.includes('Insurance')) category = 'Insurance Companies';
-        else if (type.includes('Endowment')) category = 'Endowments';
-        else if (type.includes('Foundation')) category = 'Foundations';
-        else if (type.includes('Wealth')) category = 'Wealth Managers';
+        // Try to match the type with our predefined categories
+        for (const [category, keywords] of Object.entries(INVESTOR_CATEGORIES)) {
+          if (category === 'Other') continue; // Skip Other category in matching
+          
+          if (keywords.some(keyword => 
+            type.toLowerCase().includes(keyword.toLowerCase())
+          )) {
+            typeCounts[category]++;
+            matched = true;
+            break;
+          }
+        }
 
-        typeCounts[category]++;
+        // If no match found, increment Other category
+        if (!matched) {
+          typeCounts['Other']++;
+        }
       });
 
       const total = Object.values(typeCounts).reduce((sum, count) => sum + count, 0);
