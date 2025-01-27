@@ -64,7 +64,6 @@ export const TransactionsChart = () => {
                 fill={colors[0]}
                 radius={[8, 8, 0, 0]}
                 barSize={32}
-                className="transition-all duration-200"
                 onMouseEnter={(data, index) => {
                   document.querySelector(`#bar-${index}`)?.classList.add('animate-chart-hover');
                 }}
@@ -77,6 +76,7 @@ export const TransactionsChart = () => {
                     key={`cell-${index}`}
                     id={`bar-${index}`}
                     fill={colors[0]}
+                    className="origin-bottom transition-transform duration-200"
                   />
                 ))}
               </Bar>

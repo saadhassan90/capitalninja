@@ -64,7 +64,7 @@ export const InvestorDistributionChart = ({ data }: InvestorDistributionChartPro
                   fill={CHART_COLORS[index % CHART_COLORS.length]}
                   stroke="white"
                   strokeWidth={2}
-                  className="transition-all duration-200"
+                  className="origin-center transition-transform duration-200"
                 />
               ))}
             </Pie>
