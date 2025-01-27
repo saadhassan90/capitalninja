@@ -74,18 +74,21 @@ export default function Dashboard() {
       <section className="space-y-6">
         <h3 className="text-xl font-semibold tracking-tight">Database Analytics</h3>
         <div className="grid gap-6 grid-cols-1">
-          <GeographicDistributionChart />
+          <div className="h-[500px]">
+            <GeographicDistributionChart />
+          </div>
           
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <div className="col-span-1 md:col-span-1 lg:col-span-2">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+            <div className="h-[450px]">
               <InvestorDistributionChart data={investorTypes ?? []} />
             </div>
-            <div className="col-span-1 md:col-span-1 lg:col-span-2">
+            <div className="h-[450px]">
               <AUMDistributionChart />
             </div>
-            <div className="col-span-1 md:col-span-2 lg:col-span-4">
-              <TransactionsChart />
-            </div>
+          </div>
+          
+          <div className="h-[450px]">
+            <TransactionsChart />
           </div>
         </div>
       </section>
