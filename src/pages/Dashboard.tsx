@@ -44,7 +44,6 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 const Dashboard = () => {
-  // Moved hooks inside the component
   const { data: listsCount } = useQuery({
     queryKey: ['listsCount'],
     queryFn: async () => {
@@ -186,6 +185,7 @@ const Dashboard = () => {
                       fill="#8884d8"
                       dataKey="value"
                       paddingAngle={2}
+                      cornerRadius={4}
                     >
                       {investorTypes?.map((entry, index) => (
                         <Cell 
