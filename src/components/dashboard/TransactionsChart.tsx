@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { format, parseISO } from "date-fns";
 import { getChartColors } from "@/utils/chartColors";
 import { fetchTransactionData } from "@/utils/transactionData";
@@ -22,7 +22,7 @@ export const TransactionsChart = () => {
       <CardContent>
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart
+            <BarChart
               data={transactionsData}
               margin={{
                 top: 5,
@@ -44,15 +44,14 @@ export const TransactionsChart = () => {
                 ]}
                 labelFormatter={(label) => format(parseISO(label), 'yyyy')}
               />
-              <Line
-                type="monotone"
+              <Bar
                 dataKey="total"
                 name="Total Investment"
-                stroke={colors[0]}
-                strokeWidth={2}
-                dot={false}
+                fill={colors[0]}
+                radius={[8, 8, 0, 0]}
+                barSize={32}
               />
-            </LineChart>
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </CardContent>
