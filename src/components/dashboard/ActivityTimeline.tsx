@@ -39,24 +39,39 @@ export const ActivityTimeline = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Account Activity</CardTitle>
+        <CardTitle className="text-base font-medium">Account Activity</CardTitle>
+        <div className="text-sm text-muted-foreground">
+          Recent actions and updates in your account
+        </div>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[300px] pr-4">
-          <div className="space-y-8">
-            {activities?.map((activity) => (
-              <div key={activity.id} className="flex gap-4 items-start">
-                <div className="mt-1 w-2 h-2 rounded-full bg-primary shrink-0" />
-                <div className="space-y-1">
-                  <p className="text-sm text-gray-800">{activity.description}</p>
-                  <p className="text-xs text-gray-500">
-                    {format(new Date(activity.created_at), "MMM d, yyyy 'at' h:mm a")}
+        <ScrollArea className="h-[200px] w-full" orientation="horizontal">
+          <div className="flex gap-8 pb-6 px-2 min-w-max">
+            {activities?.map((activity, index) => (
+              <div key={activity.id} className="relative flex flex-col items-center">
+                {/* Connector Line */}
+                {index !== activities.length - 1 && (
+                  <div className="absolute top-2 left-full w-8 h-[2px] bg-border" />
+                )}
+                
+                {/* Timeline Node */}
+                <div className="w-4 h-4 rounded-full bg-primary mb-2 relative z-10" />
+                
+                {/* Content */}
+                <div className="flex flex-col items-center text-center w-48">
+                  <p className="text-sm font-medium text-gray-800 mb-1">
+                    {activity.description}
                   </p>
+                  <time className="text-xs text-gray-500">
+                    {format(new Date(activity.created_at), "MMM d, h:mm a")}
+                  </time>
                 </div>
               </div>
             ))}
             {(!activities || activities.length === 0) && (
-              <p className="text-sm text-gray-500">No recent activity</p>
+              <div className="flex items-center justify-center w-full">
+                <p className="text-sm text-gray-500">No recent activity</p>
+              </div>
             )}
           </div>
         </ScrollArea>
