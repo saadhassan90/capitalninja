@@ -33,7 +33,7 @@ interface InvestorDistributionChartProps {
 
 export const InvestorDistributionChart = ({ data }: InvestorDistributionChartProps) => {
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader className="space-y-1">
         <CardTitle className="text-base font-medium">Investor Types</CardTitle>
         <p className="text-sm text-muted-foreground">Distribution by investor category</p>
