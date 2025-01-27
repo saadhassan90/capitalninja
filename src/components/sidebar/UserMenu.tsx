@@ -44,12 +44,13 @@ export function UserMenu() {
     navigate("/auth");
   };
 
-  const userInitials = user?.email
-    ?.split("@")[0]
-    .slice(0, 2)
-    .toUpperCase() || "??";
+  const userInitials = profile?.first_name && profile?.last_name
+    ? `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase()
+    : user?.email?.slice(0, 2).toUpperCase() || "??";
 
-  const displayName = profile?.company_name || user?.email?.split("@")[0] || "User";
+  const displayName = profile?.first_name && profile?.last_name
+    ? `${profile.first_name} ${profile.last_name}`
+    : profile?.company_name || user?.email?.split("@")[0] || "User";
 
   return (
     <SidebarFooter className="border-t border-border/50">
@@ -95,7 +96,7 @@ export function UserMenu() {
               <AvatarFallback>{userInitials}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-start text-left">
-              <span className="text-sm font-medium capitalize text-[hsl(var(--sidebar-foreground))]">{displayName}</span>
+              <span className="text-sm font-medium text-[hsl(var(--sidebar-foreground))]">{displayName}</span>
               <span className="text-xs text-[hsl(var(--sidebar-muted-foreground))]">{user?.email}</span>
             </div>
           </div>
