@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Using a reliable source for the world map data
-const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/main/world-countries-sans-antarctica.json";
+const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 interface RegionData {
   region: string;
