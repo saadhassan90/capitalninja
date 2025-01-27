@@ -1,6 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, ResponsiveContainer, Treemap } from "recharts";
-import { CHART_COLORS } from "@/utils/chartColors";
+
+// Define the custom color palette
+const HEATMAP_COLORS = [
+  '#8ca6bd',
+  '#7199bc', 
+  '#5b7b98',
+  '#718597',
+  '#556573',
+  '#465f75',
+  '#465f75', // Reuse last color for 7th item
+];
 
 const CHART_DATA = {
   "name": "Asset Classes",
@@ -74,7 +84,6 @@ export const AssetClassHeatmap = () => {
             dataKey="size"
             aspectRatio={1}
             stroke="#fff"
-            fill={CHART_COLORS[0]}
           >
             {({ root }) => {
               return root?.children?.map((node: any, index: number) => {
@@ -90,7 +99,7 @@ export const AssetClassHeatmap = () => {
                       y={y}
                       width={width}
                       height={height}
-                      fill={CHART_COLORS[index % CHART_COLORS.length]}
+                      fill={HEATMAP_COLORS[index]}
                       stroke="#fff"
                       strokeWidth={2}
                       className="transition-colors duration-200"
