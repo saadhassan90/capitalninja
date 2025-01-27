@@ -83,7 +83,10 @@ const CustomContent = ({ x, y, width, height, name, percentage }: CustomContentP
           stroke: "#fff",
           strokeWidth: 2,
           cursor: "pointer",
+          transformOrigin: `${x + width/2}px ${y + height/2}px`,
+          transition: "transform 0.2s ease-out"
         }}
+        className="hover:scale-[1.02]"
       />
       {shouldShowText && (
         <>
@@ -94,6 +97,11 @@ const CustomContent = ({ x, y, width, height, name, percentage }: CustomContentP
             fill="#fff"
             fontSize={fontSize}
             fontWeight="400"
+            style={{
+              transformOrigin: `${x + width/2}px ${y + height/2}px`,
+              transition: "transform 0.2s ease-out"
+            }}
+            className="hover:scale-[1.02]"
           >
             {name}
           </text>
@@ -103,6 +111,11 @@ const CustomContent = ({ x, y, width, height, name, percentage }: CustomContentP
             textAnchor="middle"
             fill="#fff"
             fontSize={fontSize * 0.7}
+            style={{
+              transformOrigin: `${x + width/2}px ${y + height/2}px`,
+              transition: "transform 0.2s ease-out"
+            }}
+            className="hover:scale-[1.02]"
           >
             {percentage}%
           </text>
