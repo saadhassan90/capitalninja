@@ -14,6 +14,7 @@ const mainColors = {
   fundOfFunds: '#A78BFA',     // Light Purple
   distressed: '#EF4444',      // Red
   mezzanine: '#10B981',       // Emerald
+  commodities: '#6C757D',     // Neutral Gray
   other: '#6C757D',          // Neutral Gray
 };
 
@@ -89,6 +90,10 @@ export const assetClassColors = {
     bg: mainColors.mezzanine,
     text: 'white'
   },
+  commodities: {
+    bg: mainColors.commodities,
+    text: 'white'
+  },
   other: {
     bg: mainColors.other,
     text: 'white'
@@ -131,6 +136,7 @@ export const mapFundTypeToAssetClass = (type: string): AssetClass => {
   if (type.includes('mezzanine')) return 'mezzanine';
   if (type.includes('credit') || type.includes('debt')) return 'debtFunds';
   if (type.includes('private equity') || type.includes('pe')) return 'privateEquity';
+  if (type.includes('commodities')) return 'commodities';
   
   return 'other';
 };

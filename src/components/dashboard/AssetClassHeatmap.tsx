@@ -101,7 +101,7 @@ export const AssetClassHeatmap = () => {
                           x={x + width / 2}
                           y={y + height / 2 - 8}
                           textAnchor="middle"
-                          fill="white"
+                          fill={assetClassColors[assetClass]?.text || 'white'}
                           className="text-xs font-medium"
                         >
                           {name.split(' ')[0]}
@@ -110,7 +110,7 @@ export const AssetClassHeatmap = () => {
                           x={x + width / 2}
                           y={y + height / 2 + 8}
                           textAnchor="middle"
-                          fill="white"
+                          fill={assetClassColors[assetClass]?.text || 'white'}
                           className="text-xs"
                         >
                           {percentage}%
