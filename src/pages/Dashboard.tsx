@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { InvestorDistributionChart } from "@/components/dashboard/InvestorDistributionChart";
 import { TransactionsChart } from "@/components/dashboard/TransactionsChart";
+import { ActivityTimeline } from "@/components/dashboard/ActivityTimeline";
 import { INVESTOR_CATEGORIES, categorizeInvestorType } from "@/utils/investorCategories";
 
 const Dashboard = () => {
@@ -65,9 +66,12 @@ const Dashboard = () => {
 
       <StatsCards listsCount={listsCount} investorsCount={investorsCount} />
 
-      <div className="grid gap-4 md:grid-cols-1">
-        <InvestorDistributionChart data={investorTypes} />
-        <TransactionsChart />
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-4">
+          <InvestorDistributionChart data={investorTypes} />
+          <TransactionsChart />
+        </div>
+        <ActivityTimeline />
       </div>
     </div>
   );
