@@ -40,13 +40,8 @@ const CHART_DATA = {
       "percentage": 18
     },
     {
-      "name": "Commodities",
-      "size": 120,
-      "percentage": 3
-    },
-    {
       "name": "Energy",
-      "size": 100,
+      "size": 120,
       "percentage": 2
     }
   ]
@@ -82,14 +77,15 @@ export const AssetClassHeatmap = () => {
             data={CHART_DATA.children}
             dataKey="size"
             aspectRatio={1}
-            stroke="white"
+            stroke="#fff"
+            fill="none"
           >
             {({ root }) => {
               if (!root) return null;
               
               return root.children?.map((node: any, index: number) => {
                 const { x, y, width, height, name, percentage } = node;
-                const color = HEATMAP_COLORS[index % HEATMAP_COLORS.length];
+                const color = HEATMAP_COLORS[index];
                 
                 return (
                   <g key={name}>
@@ -99,7 +95,7 @@ export const AssetClassHeatmap = () => {
                       width={width}
                       height={height}
                       fill={color}
-                      stroke="white"
+                      stroke="#fff"
                       strokeWidth={2}
                       className="transition-colors duration-200 hover:opacity-90"
                     />
