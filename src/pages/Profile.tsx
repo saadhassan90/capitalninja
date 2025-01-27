@@ -32,7 +32,6 @@ const Profile = () => {
 
       if (error) throw error;
       
-      // Update local state with profile data
       setCompanyName(data.company_name || "");
       setCompanyDescription(data.company_description || "");
       setCompanyWebsite(data.company_website || "");
@@ -100,103 +99,107 @@ const Profile = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex-1 space-y-4 p-8 pt-6">Loading...</div>;
   }
 
   return (
-    <div className="container max-w-2xl py-8">
-      <h1 className="text-2xl font-bold mb-8">Profile Settings</h1>
-      
-      <div className="mb-8">
-        <AvatarUpload
-          currentAvatarUrl={avatarUrl}
-          userId={user?.id || ""}
-          onAvatarUpdate={handleAvatarUpdate}
-        />
+    <div className="flex-1 space-y-4 p-8 pt-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">Profile Settings</h1>
       </div>
-
-      <form onSubmit={handleUpdateProfile} className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+      
+      <div className="grid gap-6">
+        <div className="rounded-lg border bg-card p-8">
+          <AvatarUpload
+            currentAvatarUrl={avatarUrl}
+            userId={user?.id || ""}
+            onAvatarUpdate={handleAvatarUpdate}
           />
         </div>
 
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Company Details</h2>
-          
+        <form onSubmit={handleUpdateProfile} className="rounded-lg border bg-card p-8 space-y-8">
           <div className="space-y-2">
-            <Label htmlFor="companyName">Company Name</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
-              id="companyName"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="companyDescription">Company Description</Label>
-            <Textarea
-              id="companyDescription"
-              value={companyDescription}
-              onChange={(e) => setCompanyDescription(e.target.value)}
-              rows={4}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="companyWebsite">Company Website</Label>
-            <Input
-              id="companyWebsite"
-              type="url"
-              value={companyWebsite}
-              onChange={(e) => setCompanyWebsite(e.target.value)}
-            />
-          </div>
-        </div>
 
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Raising Capital</h2>
-          
-          <div className="space-y-2">
-            <Label htmlFor="raisingAmount">Target Amount ($)</Label>
-            <Input
-              id="raisingAmount"
-              type="number"
-              value={raisingAmount}
-              onChange={(e) => setRaisingAmount(e.target.value)}
-              placeholder="e.g. 1000000"
-            />
+          <div className="space-y-4">
+            <h2 className="text-2xl font-semibold tracking-tight">Company Details</h2>
+            
+            <div className="space-y-2">
+              <Label htmlFor="companyName">Company Name</Label>
+              <Input
+                id="companyName"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="companyDescription">Company Description</Label>
+              <Textarea
+                id="companyDescription"
+                value={companyDescription}
+                onChange={(e) => setCompanyDescription(e.target.value)}
+                rows={4}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="companyWebsite">Company Website</Label>
+              <Input
+                id="companyWebsite"
+                type="url"
+                value={companyWebsite}
+                onChange={(e) => setCompanyWebsite(e.target.value)}
+              />
+            </div>
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="raisingStage">Stage</Label>
-            <Input
-              id="raisingStage"
-              value={raisingStage}
-              onChange={(e) => setRaisingStage(e.target.value)}
-              placeholder="e.g. Seed, Series A, etc."
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="raisingDescription">Description</Label>
-            <Textarea
-              id="raisingDescription"
-              value={raisingDescription}
-              onChange={(e) => setRaisingDescription(e.target.value)}
-              rows={4}
-              placeholder="Describe your fundraising goals and plans..."
-            />
-          </div>
-        </div>
 
-        <Button type="submit">Update Profile</Button>
-      </form>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-semibold tracking-tight">Raising Capital</h2>
+            
+            <div className="space-y-2">
+              <Label htmlFor="raisingAmount">Target Amount ($)</Label>
+              <Input
+                id="raisingAmount"
+                type="number"
+                value={raisingAmount}
+                onChange={(e) => setRaisingAmount(e.target.value)}
+                placeholder="e.g. 1000000"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="raisingStage">Stage</Label>
+              <Input
+                id="raisingStage"
+                value={raisingStage}
+                onChange={(e) => setRaisingStage(e.target.value)}
+                placeholder="e.g. Seed, Series A, etc."
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="raisingDescription">Description</Label>
+              <Textarea
+                id="raisingDescription"
+                value={raisingDescription}
+                onChange={(e) => setRaisingDescription(e.target.value)}
+                rows={4}
+                placeholder="Describe your fundraising goals and plans..."
+              />
+            </div>
+          </div>
+
+          <Button type="submit">Update Profile</Button>
+        </form>
+      </div>
     </div>
   );
 };
