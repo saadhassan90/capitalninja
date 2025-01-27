@@ -78,7 +78,7 @@ export const AssetClassHeatmap = () => {
             dataKey="size"
             aspectRatio={1}
             stroke="#fff"
-            padding={4}
+            gap={8}
           >
             {({ root }) => {
               if (!root) return null;
