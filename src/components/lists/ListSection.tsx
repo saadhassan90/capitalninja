@@ -1,5 +1,6 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ListCard } from "./ListCard";
+import { useState } from "react";
 
 interface List {
   id: string;
@@ -25,7 +26,13 @@ function EmptySection({ type }: { type: string }) {
   );
 }
 
-export function ListSection({ title, lists }: ListSectionProps) {
+export function ListSection({ title, lists: initialLists }: ListSectionProps) {
+  const [lists, setLists] = useState(initialLists);
+
+  const handleDelete = (deletedListId: string) => {
+    setLists(currentLists => currentLists.filter(list => list.id !== deletedListId));
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-card-foreground">{title}</h2>
@@ -34,7 +41,11 @@ export function ListSection({ title, lists }: ListSectionProps) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {lists.map((list) => (
-            <ListCard key={list.id} list={list} />
+            <ListCard 
+              key={list.id} 
+              list={list} 
+              onDelete={() => handleDelete(list.id)}
+            />
           ))}
         </div>
       )}

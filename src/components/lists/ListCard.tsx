@@ -69,7 +69,10 @@ export function ListCard({ list, onDelete }: ListCardProps) {
         description: "List deleted successfully",
       });
 
-      onDelete?.();
+      // Call the onDelete callback to update parent component state
+      if (onDelete) {
+        onDelete();
+      }
     } catch (error: any) {
       toast({
         title: "Error",
