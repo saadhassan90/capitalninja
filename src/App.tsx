@@ -12,6 +12,8 @@ import Lists from "./pages/Lists";
 import ListView from "./pages/ListView";
 import Profile from "./pages/Profile";
 import Team from "./pages/Team";
+import Enrichment from "./pages/Enrichment";
+import Exports from "./pages/Exports";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,8 @@ const App = () => (
               <Route path="lists/:listId" element={<ListView />} />
               <Route path="profile" element={<Profile />} />
               <Route path="team" element={<Team />} />
+              <Route path="enrichment" element={<Enrichment />} />
+              <Route path="exports" element={<Exports />} />
             </Route>
           </Routes>
         </AuthProvider>
