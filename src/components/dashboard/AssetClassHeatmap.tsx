@@ -73,8 +73,8 @@ export const AssetClassHeatmap = () => {
             data={CHART_DATA.children}
             dataKey="size"
             aspectRatio={1}
-            stroke="white"
-            fill="#8884d8"
+            stroke="#fff"
+            fill={CHART_COLORS[0]}
           >
             {({ root }) => {
               return root?.children?.map((node: any, index: number) => {
@@ -83,13 +83,7 @@ export const AssetClassHeatmap = () => {
                 return (
                   <g 
                     key={name}
-                    id={`segment-${index}`}
-                    onMouseEnter={() => {
-                      document.querySelector(`#segment-${index}`)?.classList.add('animate-chart-hover');
-                    }}
-                    onMouseLeave={() => {
-                      document.querySelector(`#segment-${index}`)?.classList.remove('animate-chart-hover');
-                    }}
+                    className="transform origin-center transition-transform duration-200 hover:scale-[1.02]"
                   >
                     <rect
                       x={x}
@@ -97,9 +91,9 @@ export const AssetClassHeatmap = () => {
                       width={width}
                       height={height}
                       fill={CHART_COLORS[index % CHART_COLORS.length]}
-                      stroke="white"
+                      stroke="#fff"
                       strokeWidth={2}
-                      className="transition-colors duration-200 hover:opacity-90 origin-center"
+                      className="transition-colors duration-200"
                     />
                     {width > 60 && height > 40 && (
                       <>
@@ -107,7 +101,7 @@ export const AssetClassHeatmap = () => {
                           x={x + width / 2}
                           y={y + height / 2 - 8}
                           textAnchor="middle"
-                          fill="white"
+                          fill="#fff"
                           className="text-xs font-medium"
                         >
                           {name.split(' ')[0]}
@@ -116,7 +110,7 @@ export const AssetClassHeatmap = () => {
                           x={x + width / 2}
                           y={y + height / 2 + 8}
                           textAnchor="middle"
-                          fill="white"
+                          fill="#fff"
                           className="text-xs"
                         >
                           {percentage}%
