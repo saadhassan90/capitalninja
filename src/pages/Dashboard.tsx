@@ -4,6 +4,7 @@ import { StatsCards } from "@/components/dashboard/StatsCards";
 import { InvestorDistributionChart } from "@/components/dashboard/InvestorDistributionChart";
 import { TransactionsChart } from "@/components/dashboard/TransactionsChart";
 import { InvestmentHeatmap } from "@/components/dashboard/InvestmentHeatmap";
+import { InvestmentNetworkGraph } from "@/components/dashboard/InvestmentNetworkGraph";
 import { ActivityTimeline } from "@/components/dashboard/ActivityTimeline";
 import { INVESTOR_CATEGORIES, categorizeInvestorType } from "@/utils/investorCategories";
 
@@ -86,6 +87,19 @@ const Dashboard = () => {
           <InvestorDistributionChart data={investorTypes} />
           <TransactionsChart />
           <InvestmentHeatmap />
+        </div>
+      </section>
+
+      {/* Network Analysis Section */}
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">Network Analysis</h2>
+          <p className="text-sm text-muted-foreground">
+            Visualize investment relationships and patterns
+          </p>
+        </div>
+        <div className="grid gap-6">
+          <InvestmentNetworkGraph />
         </div>
       </section>
     </div>
