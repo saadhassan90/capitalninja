@@ -20,7 +20,7 @@ export default function Team() {
           user_id,
           role,
           created_at,
-          profiles:user_id (
+          profiles:profiles!team_members_user_id_fkey (
             first_name,
             last_name,
             email,
