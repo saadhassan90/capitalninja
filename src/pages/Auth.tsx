@@ -20,7 +20,8 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
+      // First, send the magic link
+      const { error: otpError } = await supabase.auth.signInWithOtp({
         email,
         options: {
           emailRedirectTo: window.location.origin,
@@ -31,7 +32,7 @@ export default function Auth() {
         },
       });
       
-      if (signUpError) throw signUpError;
+      if (otpError) throw otpError;
 
       // Update profile with additional information
       const { error: profileError } = await supabase
