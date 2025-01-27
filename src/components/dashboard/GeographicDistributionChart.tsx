@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const usGeoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
-const canadaGeoUrl = "https://cdn.jsdelivr.net/npm/canada-atlas@2/provinces.json";
+const canadaGeoUrl = "https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/canada.geojson";
 
 interface RegionData {
   region: string;
