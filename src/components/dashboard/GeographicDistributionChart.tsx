@@ -8,8 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Using a more reliable source for the world map data
-const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/main/world-countries.json";
+// Using a reliable source for the world map data
+const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/main/world-countries-sans-antarctica.json";
 
 interface RegionData {
   region: string;
@@ -48,12 +48,12 @@ export function GeographicDistributionChart() {
   });
 
   const getRegionColor = (region: string) => {
-    const regionData = regionData?.find(d => d.region === region);
-    if (!regionData) return "#F4F4F5"; // Light gray for regions with no data
+    const regionInfo = regionData?.find(d => d.region === region);
+    if (!regionInfo) return "#F4F4F5"; // Light gray for regions with no data
     
     // Color scale based on investor count
     const maxCount = Math.max(...regionData.map(d => d.count));
-    const intensity = (regionData.count / maxCount) * 0.8; // Max 80% intensity
+    const intensity = (regionInfo.count / maxCount) * 0.8; // Max 80% intensity
     return `rgba(59, 130, 246, ${intensity})`; // Blue with varying opacity
   };
 
