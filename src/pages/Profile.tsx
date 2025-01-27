@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
+import { UserDetailsSection } from "@/components/profile/UserDetailsSection";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -20,6 +21,15 @@ const Profile = () => {
   const [raisingDescription, setRaisingDescription] = useState("");
   const [raisingStage, setRaisingStage] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  
+  // New state variables for user details
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [title, setTitle] = useState("");
+  const [phone, setPhone] = useState("");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [location, setLocation] = useState("");
+  const [bio, setBio] = useState("");
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", user?.id],
@@ -39,6 +49,13 @@ const Profile = () => {
       setRaisingDescription(data.raising_description || "");
       setRaisingStage(data.raising_stage || "");
       setAvatarUrl(data.avatar_url);
+      setFirstName(data.first_name || "");
+      setLastName(data.last_name || "");
+      setTitle(data.title || "");
+      setPhone(data.phone || "");
+      setLinkedinUrl(data.linkedin_url || "");
+      setLocation(data.location || "");
+      setBio(data.bio || "");
       
       return data;
     },
@@ -60,6 +77,13 @@ const Profile = () => {
           raising_amount: raisingAmount ? parseInt(raisingAmount) : null,
           raising_description: raisingDescription,
           raising_stage: raisingStage,
+          first_name: firstName,
+          last_name: lastName,
+          title,
+          phone,
+          linkedin_url: linkedinUrl,
+          location,
+          bio,
         })
         .eq("id", user.id);
 
@@ -118,15 +142,22 @@ const Profile = () => {
         </div>
 
         <form onSubmit={handleUpdateProfile} className="rounded-lg border bg-card p-8 space-y-8">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+          <UserDetailsSection
+            firstName={firstName}
+            setFirstName={setFirstName}
+            lastName={lastName}
+            setLastName={setLastName}
+            title={title}
+            setTitle={setTitle}
+            phone={phone}
+            setPhone={setPhone}
+            linkedinUrl={linkedinUrl}
+            setLinkedinUrl={setLinkedinUrl}
+            location={location}
+            setLocation={setLocation}
+            bio={bio}
+            setBio={setBio}
+          />
 
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold tracking-tight">Company Details</h2>
