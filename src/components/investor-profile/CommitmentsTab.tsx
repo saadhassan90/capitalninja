@@ -16,12 +16,25 @@ import {
 import { getAssetClassStyle } from "@/utils/assetClassColors";
 import { formatCurrency } from "@/utils/formatters";
 import { CommitmentsTabProps } from "@/types/investor-profile";
+import { AssetClass } from "@/utils/assetClassColors";
 
 export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
   const totalCommitments = commitments.reduce(
     (sum, commitment) => sum + (commitment.commitment || 0),
     0
   );
+
+  const mapToAssetClass = (type: string): AssetClass => {
+    const lowerType = type.toLowerCase();
+    if (lowerType.includes('private equity')) return 'privateEquity';
+    if (lowerType.includes('venture')) return 'venture';
+    if (lowerType.includes('real estate')) return 'realEstate';
+    if (lowerType.includes('debt')) return 'debtFunds';
+    if (lowerType.includes('fund of funds') || lowerType.includes('secondaries')) return 'fundOfFunds';
+    if (lowerType.includes('infrastructure')) return 'infrastructure';
+    if (lowerType.includes('energy')) return 'energy';
+    return 'other';
+  };
 
   return (
     <div className="space-y-6">
@@ -118,7 +131,7 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
                 count: investor.total_commitments_in_other_funds || 0,
               },
             ].map(({ type, count }) => {
-              const style = getAssetClassStyle(type.toLowerCase());
+              const style = getAssetClassStyle(mapToAssetClass(type));
               return count > 0 ? (
                 <div key={type} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">

@@ -12,3 +12,13 @@ export const formatTooltipValue = (value: number) => {
     maximumFractionDigits: 0,
   }).format(value);
 };
+
+export const formatCurrency = (value: number | null | undefined) => {
+  if (value == null) return 'N/A';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+};
