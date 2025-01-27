@@ -5,6 +5,26 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { supabase } from "@/integrations/supabase/client";
 import { format, eachDayOfInterval, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 
+interface InvestorType {
+  name: string;
+  value: number;
+}
+
+interface DayActivity {
+  date: Date;
+  value: number;
+  deals: number;
+  intensity: number;
+}
+
+interface MonthData {
+  month: string;
+  year: string;
+  days: DayActivity[];
+  totalValue: number;
+  totalDeals: number;
+}
+
 const Dashboard = () => {
   const { data: listsCount } = useQuery({
     queryKey: ['listsCount'],
@@ -17,7 +37,7 @@ const Dashboard = () => {
   });
 
   // Fetch investor types distribution
-  const { data: investorTypes } = useQuery({
+  const { data: investorTypes } = useQuery<InvestorType[]>({
     queryKey: ['investorTypes'],
     queryFn: async () => {
       const { data } = await supabase
@@ -49,7 +69,7 @@ const Dashboard = () => {
   });
 
   // Fetch asset class activity data with dates
-  const { data: assetClassActivity } = useQuery({
+  const { data: assetClassActivity } = useQuery<MonthData[]>({
     queryKey: ['assetClassActivity'],
     queryFn: async () => {
       const startDate = subMonths(new Date(), 18); // Show last 18 months
@@ -85,14 +105,15 @@ const Dashboard = () => {
 
       // Generate all dates in range
       const dates = eachDayOfInterval({ start: startDate, end: endDate });
-      const activityByDate = new Map();
+      const activityByDate = new Map<string, DayActivity>();
 
       // Initialize all dates with 0
       dates.forEach(date => {
         activityByDate.set(format(date, 'yyyy-MM-dd'), {
           date,
           value: 0,
-          deals: 0
+          deals: 0,
+          intensity: 0
         });
       });
 
@@ -100,7 +121,12 @@ const Dashboard = () => {
       commitments?.forEach((item) => {
         if (item.commitment_date) {
           const dateKey = format(new Date(item.commitment_date), 'yyyy-MM-dd');
-          const current = activityByDate.get(dateKey) || { date: new Date(item.commitment_date), value: 0, deals: 0 };
+          const current = activityByDate.get(dateKey) || { 
+            date: new Date(item.commitment_date), 
+            value: 0, 
+            deals: 0,
+            intensity: 0
+          };
           current.value += Number(item.commitment) || 0;
           current.deals += 1;
           activityByDate.set(dateKey, current);
@@ -111,7 +137,12 @@ const Dashboard = () => {
       investments?.forEach((item) => {
         if (item.deal_date) {
           const dateKey = format(new Date(item.deal_date), 'yyyy-MM-dd');
-          const current = activityByDate.get(dateKey) || { date: new Date(item.deal_date), value: 0, deals: 0 };
+          const current = activityByDate.get(dateKey) || { 
+            date: new Date(item.deal_date), 
+            value: 0, 
+            deals: 0,
+            intensity: 0
+          };
           current.value += Number(item.deal_size) || 0;
           current.deals += 1;
           activityByDate.set(dateKey, current);
@@ -119,7 +150,7 @@ const Dashboard = () => {
       });
 
       // Group by month for the calendar view
-      const monthlyData = Array.from(activityByDate.values()).reduce((acc, curr) => {
+      const monthlyData = Array.from(activityByDate.values()).reduce((acc: Record<string, MonthData>, curr) => {
         const monthKey = format(curr.date, 'yyyy-MM');
         if (!acc[monthKey]) {
           acc[monthKey] = {
@@ -131,9 +162,7 @@ const Dashboard = () => {
           };
         }
         acc[monthKey].days.push({
-          date: curr.date,
-          value: curr.value,
-          deals: curr.deals,
+          ...curr,
           intensity: curr.value > 0 ? Math.min(Math.log10(curr.value / 1e6) + 1, 4) : 0
         });
         acc[monthKey].totalValue += curr.value;
@@ -147,11 +176,6 @@ const Dashboard = () => {
 
   return (
     <div className="flex-1 p-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Welcome to your investor management dashboard</p>
-      </div>
-
       {/* Section 1: Key Metrics */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
@@ -203,7 +227,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* New Calendar Heatmap */}
+        {/* Calendar Heatmap */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Investment Activity Heatmap</CardTitle>
