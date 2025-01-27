@@ -9,7 +9,15 @@ import { formatYAxis, formatTooltipValue } from "@/utils/formatters";
 export const TransactionsChart = () => {
   const { data: transactionsData } = useQuery({
     queryKey: ['transactions-timeline'],
-    queryFn: fetchTransactionData,
+    queryFn: async () => {
+      const data = await fetchTransactionData();
+      console.log('Raw transactions data:', data);
+      if (data && data.length > 0) {
+        console.log('First transaction date:', data[0].date);
+        console.log('Last transaction date:', data[data.length - 1].date);
+      }
+      return data;
+    },
   });
 
   const colors = getChartColors(3);
