@@ -5,6 +5,7 @@ import { InvestorDistributionChart } from "@/components/dashboard/InvestorDistri
 import { TransactionsChart } from "@/components/dashboard/TransactionsChart";
 import { InvestmentHeatmap } from "@/components/dashboard/InvestmentHeatmap";
 import { ActivityTimeline } from "@/components/dashboard/ActivityTimeline";
+import { AUMDistributionChart } from "@/components/dashboard/AUMDistributionChart";
 import { INVESTOR_CATEGORIES, categorizeInvestorType } from "@/utils/investorCategories";
 
 const Dashboard = () => {
@@ -60,7 +61,6 @@ const Dashboard = () => {
 
   return (
     <div className="flex-1 space-y-8 p-8 pt-6">
-      {/* Account Section */}
       <section className="space-y-6">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">Account Overview</h2>
@@ -74,7 +74,6 @@ const Dashboard = () => {
         </div>
       </section>
 
-      {/* Database Metrics Section */}
       <section className="space-y-6">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">Database Metrics</h2>
@@ -82,8 +81,9 @@ const Dashboard = () => {
             Analyze investor distribution and investment trends
           </p>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           <InvestorDistributionChart data={investorTypes} />
+          <AUMDistributionChart />
           <TransactionsChart />
           <InvestmentHeatmap />
         </div>
