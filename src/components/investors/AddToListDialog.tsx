@@ -79,16 +79,28 @@ export function AddToListDialog({
         targetListId = newListData.id;
       }
 
-      const listInvestors = selectedInvestors.map(investorId => ({
-        list_id: targetListId,
-        investor_id: investorId,
-      }));
-
-      const { error: insertError } = await supabase
+      // First, get existing investors in the target list
+      const { data: existingInvestors } = await supabase
         .from("list_investors")
-        .insert(listInvestors);
+        .select("investor_id")
+        .eq("list_id", targetListId);
 
-      if (insertError) throw insertError;
+      // Filter out investors that are already in the list
+      const existingIds = new Set((existingInvestors || []).map(i => i.investor_id));
+      const newInvestors = selectedInvestors.filter(id => !existingIds.has(id));
+
+      if (newInvestors.length > 0) {
+        const listInvestors = newInvestors.map(investorId => ({
+          list_id: targetListId,
+          investor_id: investorId,
+        }));
+
+        const { error: insertError } = await supabase
+          .from("list_investors")
+          .insert(listInvestors);
+
+        if (insertError) throw insertError;
+      }
 
       // If this is a move operation, delete from the source list
       if (mode === "move" && sourceListId) {
@@ -101,9 +113,14 @@ export function AddToListDialog({
         if (deleteError) throw deleteError;
       }
 
+      const skippedCount = selectedInvestors.length - newInvestors.length;
+      const actionWord = mode === "move" ? "Moved" : "Copied";
+      
       toast({
         title: "Success",
-        description: `${mode === "move" ? "Moved" : "Copied"} ${selectedInvestors.length} investor${selectedInvestors.length === 1 ? "" : "s"} to the list.`,
+        description: `${actionWord} ${newInvestors.length} investor${newInvestors.length === 1 ? "" : "s"} to the list.${
+          skippedCount > 0 ? ` (${skippedCount} already in list)` : ""
+        }`,
       });
 
       onSuccess?.();

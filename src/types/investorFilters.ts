@@ -2,10 +2,10 @@ export type InvestorFilterType = string | ((type: string) => boolean) | null;
 export type AUMRange = [number, number] | null;
 
 export interface ListFilters {
-  type: InvestorFilterType;
-  location: InvestorFilterType;
-  assetClass: InvestorFilterType;
-  firstTimeFunds: InvestorFilterType;
+  type: string | null;  // Serialized version for storage
+  location: string | null;
+  assetClass: string | null;
+  firstTimeFunds: string | null;
   aumRange: AUMRange;
 }
 
