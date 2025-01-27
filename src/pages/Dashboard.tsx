@@ -4,13 +4,24 @@ import { Activity, ListTodo, Database } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { supabase } from "@/integrations/supabase/client";
 
-const COLORS = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c', '#d0ed57'];
+const COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5', '#9A77CF', '#A8A8A8'];
+
+const INVESTOR_CATEGORIES = {
+  'SFO': 'Single Family Offices',
+  'MFO': 'Multi Family Offices',
+  'Pension': 'Pensions',
+  'Insurance': 'Insurance Companies',
+  'Endowment': 'Endowments',
+  'Foundation': 'Foundations',
+  'Wealth Manager': 'Wealth Managers',
+  'Other': 'Other'
+};
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 border rounded shadow-sm">
-        <p className="font-medium">{payload[0].name}</p>
+      <div className="bg-white p-3 border rounded-lg shadow-sm">
+        <p className="font-medium text-sm">{payload[0].name}</p>
         <p className="text-sm text-gray-600">
           Count: {payload[0].value}
           <br />
@@ -42,19 +53,38 @@ const Dashboard = () => {
         .from('limited_partners')
         .select('limited_partner_type');
       
-      const typeCounts = data?.reduce((acc: Record<string, number>, curr) => {
-        const type = curr.limited_partner_type || 'Unknown';
-        acc[type] = (acc[type] || 0) + 1;
+      // Initialize counters for each category
+      const typeCounts: Record<string, number> = Object.keys(INVESTOR_CATEGORIES).reduce((acc, key) => {
+        acc[INVESTOR_CATEGORIES[key as keyof typeof INVESTOR_CATEGORIES]] = 0;
         return acc;
-      }, {});
+      }, {} as Record<string, number>);
 
-      const total = Object.values(typeCounts || {}).reduce((sum, count) => sum + count, 0);
+      // Count investors by type
+      data?.forEach(investor => {
+        let type = investor.limited_partner_type || 'Unknown';
+        let category = 'Other';
+
+        // Map the type to our categories
+        if (type.includes('SFO') || type.includes('Single Family')) category = 'Single Family Offices';
+        else if (type.includes('MFO') || type.includes('Multi Family')) category = 'Multi Family Offices';
+        else if (type.includes('Pension')) category = 'Pensions';
+        else if (type.includes('Insurance')) category = 'Insurance Companies';
+        else if (type.includes('Endowment')) category = 'Endowments';
+        else if (type.includes('Foundation')) category = 'Foundations';
+        else if (type.includes('Wealth')) category = 'Wealth Managers';
+
+        typeCounts[category]++;
+      });
+
+      const total = Object.values(typeCounts).reduce((sum, count) => sum + count, 0);
       
-      return Object.entries(typeCounts || {}).map(([name, value]) => ({
-        name,
-        value,
-        total, // Add total for percentage calculation in tooltip
-      }));
+      return Object.entries(typeCounts)
+        .filter(([_, value]) => value > 0) // Only include categories with values
+        .map(([name, value]) => ({
+          name,
+          value,
+          total,
+        }));
     },
   });
 
@@ -117,28 +147,36 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="h-[400px]">
             <div className="flex items-center justify-center h-full">
-              <div className="w-[60%] h-full">
+              <div className="w-[70%] h-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={investorTypes}
                       cx="50%"
                       cy="50%"
-                      outerRadius={150}
+                      innerRadius={80}
+                      outerRadius={140}
                       fill="#8884d8"
                       dataKey="value"
+                      paddingAngle={2}
                     >
                       {investorTypes?.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={COLORS[index % COLORS.length]}
+                          stroke="white"
+                          strokeWidth={2}
+                        />
                       ))}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
-                    <Legend 
-                      layout="vertical" 
+                    <Legend
+                      layout="vertical"
                       align="right"
                       verticalAlign="middle"
+                      iconType="circle"
                       wrapperStyle={{
-                        paddingLeft: "20px",
+                        paddingLeft: "40px",
                       }}
                     />
                   </PieChart>
