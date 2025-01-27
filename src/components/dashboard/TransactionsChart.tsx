@@ -74,6 +74,7 @@ export const TransactionsChart = () => {
   });
 
   const filteredData = transactionsData?.filter(item => {
+    if (!item.date) return false;
     const date = parseISO(item.date);
     switch (timeScale) {
       case 'since2010':
@@ -83,7 +84,7 @@ export const TransactionsChart = () => {
       default:
         return true;
     }
-  });
+  }) || [];
 
   const formatYAxis = (value: number) => {
     if (value >= 1e9) return `$${(value / 1e9).toFixed(1)}B`;
