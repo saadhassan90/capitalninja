@@ -25,15 +25,15 @@ export function GeographicDistributionChart() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('limited_partners')
-        .select('hqlocation, aum')
-        .not('hqlocation', 'is', null);
+        .select('hqcountry, aum')
+        .not('hqcountry', 'is', null);
 
       if (error) throw error;
 
       const regions = new Map<string, RegionData>();
       
       data.forEach(investor => {
-        const region = investor.hqlocation?.split(',').pop()?.trim() || 'Unknown';
+        const region = investor.hqcountry?.trim() || 'Unknown';
         const existing = regions.get(region) || { region, count: 0, totalAum: 0 };
         regions.set(region, {
           region,
@@ -46,8 +46,10 @@ export function GeographicDistributionChart() {
     }
   });
 
-  const getRegionColor = (region: string) => {
-    const regionInfo = regionData?.find(d => d.region === region);
+  const getRegionColor = (geo: any) => {
+    const countryName = geo.properties.name;
+    const regionInfo = regionData?.find(d => d.region === countryName);
+    
     if (!regionInfo) return "#F4F4F5"; // Light gray for regions with no data
     
     // Color scale based on investor count
@@ -89,16 +91,16 @@ export function GeographicDistributionChart() {
               <Geographies geography={geoUrl}>
                 {({ geographies }) =>
                   geographies.map((geo) => {
-                    const regionName = geo.properties.name;
+                    const countryName = geo.properties.name;
                     const regionInfo = regionData?.find(
-                      d => d.region === regionName
+                      d => d.region === countryName
                     );
 
                     return (
                       <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        fill={getRegionColor(regionName)}
+                        fill={getRegionColor(geo)}
                         stroke="#FFF"
                         strokeWidth={0.5}
                         style={{
