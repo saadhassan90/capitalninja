@@ -5,11 +5,19 @@ import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { InviteUserDialog } from "@/components/team/InviteUserDialog";
 import { TeamMembersTable } from "@/components/team/TeamMembersTable";
-import { useToast } from "@/components/ui/use-toast";
+import { Database } from "@/integrations/supabase/types";
+
+type TeamMember = Database["public"]["Tables"]["team_members"]["Row"] & {
+  profiles: {
+    first_name: string | null;
+    last_name: string | null;
+    email: string;
+    avatar_url: string | null;
+  };
+};
 
 export default function Team() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
-  const { toast } = useToast();
 
   const { data: teamMembers, isLoading } = useQuery({
     queryKey: ["team-members"],
@@ -25,7 +33,7 @@ export default function Team() {
             avatar_url
           )
         `)
-        .order("created_at", { ascending: false });
+        .returns<TeamMember[]>();
 
       if (error) throw error;
       return data;

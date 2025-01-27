@@ -17,18 +17,16 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Database } from "@/integrations/supabase/types";
 
-interface TeamMember {
-  id: string;
-  role: "owner" | "administrator" | "viewer";
-  user_id: string;
+type TeamMember = Database["public"]["Tables"]["team_members"]["Row"] & {
   profiles: {
     first_name: string | null;
     last_name: string | null;
     email: string;
     avatar_url: string | null;
   };
-}
+};
 
 interface TeamMembersTableProps {
   members: TeamMember[];
@@ -38,7 +36,7 @@ interface TeamMembersTableProps {
 export function TeamMembersTable({ members, isLoading }: TeamMembersTableProps) {
   const { toast } = useToast();
 
-  const handleRoleChange = async (memberId: string, newRole: string) => {
+  const handleRoleChange = async (memberId: string, newRole: "owner" | "administrator" | "viewer") => {
     const { error } = await supabase
       .from("team_members")
       .update({ role: newRole })
@@ -92,7 +90,9 @@ export function TeamMembersTable({ members, isLoading }: TeamMembersTableProps) 
             <TableCell>
               <Select
                 defaultValue={member.role}
-                onValueChange={(value) => handleRoleChange(member.id, value)}
+                onValueChange={(value: "owner" | "administrator" | "viewer") => 
+                  handleRoleChange(member.id, value)
+                }
               >
                 <SelectTrigger className="w-32">
                   <SelectValue />
