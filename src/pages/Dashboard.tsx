@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { InvestorDistributionChart } from "@/components/dashboard/InvestorDistributionChart";
 import { TransactionsChart } from "@/components/dashboard/TransactionsChart";
-import { InvestorsMap } from "@/components/dashboard/InvestorsMap";
+import InvestorsMap from "@/components/dashboard/InvestorsMap";
 import { INVESTOR_CATEGORIES, categorizeInvestorType } from "@/utils/investorCategories";
 
 const Dashboard = () => {
