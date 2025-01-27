@@ -71,6 +71,44 @@ const INVESTMENT_DATA = [
 export const InvestmentHeatmap = () => {
   const colors = getChartColors(INVESTMENT_DATA.length);
 
+  const CustomizedContent = (props: any) => {
+    const { x, y, width, height, index } = props;
+    const data = INVESTMENT_DATA[index];
+
+    return (
+      <g>
+        <rect
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          style={{
+            fill: colors[index % colors.length],
+            stroke: '#fff',
+            strokeWidth: 2,
+            strokeOpacity: 1
+          }}
+        />
+        {width > 50 && height > 50 && (
+          <text
+            x={x + width / 2}
+            y={y + height / 2}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            className="fill-white text-xs font-medium"
+          >
+            {data.asset_class}
+            {width > 90 && height > 90 && (
+              <tspan x={x + width / 2} y={y + height / 2 + 14}>
+                {data.percentage}%
+              </tspan>
+            )}
+          </text>
+        )}
+      </g>
+    );
+  };
+
   return (
     <Card>
       <CardHeader className="space-y-1">
@@ -90,39 +128,7 @@ export const InvestmentHeatmap = () => {
               <Treemap
                 key={`tree-${index}`}
                 dataKey="invested_billion"
-                fill={colors[index % colors.length]}
-                content={({ x, y, width, height, asset_class, percentage }) => (
-                  <g>
-                    <rect
-                      x={x}
-                      y={y}
-                      width={width}
-                      height={height}
-                      style={{
-                        fill: colors[index % colors.length],
-                        stroke: '#fff',
-                        strokeWidth: 2,
-                        strokeOpacity: 1
-                      }}
-                    />
-                    {width > 50 && height > 50 && (
-                      <text
-                        x={x + width / 2}
-                        y={y + height / 2}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        className="fill-white text-xs font-medium"
-                      >
-                        {entry.asset_class}
-                        {width > 90 && height > 90 && (
-                          <tspan x={x + width / 2} y={y + height / 2 + 14}>
-                            {entry.percentage}%
-                          </tspan>
-                        )}
-                      </text>
-                    )}
-                  </g>
-                )}
+                content={<CustomizedContent index={index} />}
               />
             ))}
             <Tooltip content={<CustomTooltip />} />
