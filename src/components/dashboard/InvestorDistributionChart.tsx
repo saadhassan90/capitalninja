@@ -38,47 +38,43 @@ export const InvestorDistributionChart = ({ data }: InvestorDistributionChartPro
         <CardTitle>Investor Types Distribution</CardTitle>
       </CardHeader>
       <CardContent className="h-[400px]">
-        <div className="flex items-center justify-center h-full">
-          <div className="w-[70%] h-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={data}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={80}
-                  outerRadius={140}
-                  fill="#8884d8"
-                  dataKey="value"
-                  paddingAngle={2}
-                  cornerRadius={8}
-                >
-                  {data?.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={CHART_COLORS[index % CHART_COLORS.length]}
-                      stroke="white"
-                      strokeWidth={2}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-                <Legend
-                  layout="vertical"
-                  align="right"
-                  verticalAlign="middle"
-                  iconType="circle"
-                  wrapperStyle={{
-                    paddingLeft: "40px",
-                    color: "#000000",
-                    fontSize: "12px",
-                    fontWeight: "500"
-                  }}
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius={80}
+              outerRadius={140}
+              fill="#8884d8"
+              dataKey="value"
+              paddingAngle={2}
+              cornerRadius={8}
+            >
+              {data?.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={CHART_COLORS[index % CHART_COLORS.length]}
+                  stroke="white"
+                  strokeWidth={2}
                 />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+            <Legend
+              layout="vertical"
+              align="right"
+              verticalAlign="middle"
+              iconType="circle"
+              wrapperStyle={{
+                paddingLeft: "40px",
+                color: "#000000",
+                fontSize: "12px",
+                fontWeight: "500"
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );
