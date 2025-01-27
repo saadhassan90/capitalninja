@@ -4,14 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Bug, Lock } from "lucide-react";
+import { Mail, Bug } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -20,16 +19,18 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signInWithOtp({
         email,
-        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+        },
       });
       
       if (error) throw error;
       
       toast({
         title: "Success",
-        description: "Check your email to confirm your account.",
+        description: "Check your email for the magic link to complete your signup.",
       });
     } catch (error: any) {
       toast({
@@ -47,19 +48,19 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithOtp({
         email,
-        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+        },
       });
       
       if (error) throw error;
       
       toast({
         title: "Success",
-        description: "You have been signed in.",
+        description: "Check your email for the magic link to sign in.",
       });
-      
-      navigate("/");
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -106,7 +107,7 @@ export default function Auth() {
             Welcome to the app
           </h2>
           <p className="text-sm text-muted-foreground mt-2">
-            Sign in to your account or create a new one
+            Sign in to your account or create a new one using magic link
           </p>
         </div>
 
@@ -129,17 +130,6 @@ export default function Auth() {
                   required
                 />
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="signin-password">Password</Label>
-                <Input
-                  id="signin-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
 
               <Button
                 type="submit"
@@ -147,7 +137,7 @@ export default function Auth() {
                 disabled={loading}
               >
                 <Mail className="mr-2" />
-                {loading ? "Signing in..." : "Sign in"}
+                {loading ? "Sending magic link..." : "Send magic link"}
               </Button>
             </form>
           </TabsContent>
@@ -165,25 +155,14 @@ export default function Auth() {
                   required
                 />
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="signup-password">Password</Label>
-                <Input
-                  id="signup-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
 
               <Button
                 type="submit"
                 className="w-full"
                 disabled={loading}
               >
-                <Lock className="mr-2" />
-                {loading ? "Creating account..." : "Create account"}
+                <Mail className="mr-2" />
+                {loading ? "Sending magic link..." : "Send magic link"}
               </Button>
             </form>
           </TabsContent>
