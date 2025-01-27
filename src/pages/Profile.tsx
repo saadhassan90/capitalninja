@@ -1,20 +1,17 @@
-import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
 import { UserDetailsSection } from "@/components/profile/UserDetailsSection";
 import { CompanyDetailsSection } from "@/components/profile/CompanyDetailsSection";
 import { FundraisingSection } from "@/components/profile/FundraisingSection";
+import { useProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/components/AuthProvider";
 
 const Profile = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const { profile, isLoading, updateProfile, updateAvatar } = useProfile();
   
-  const [email, setEmail] = useState(user?.email || "");
+  const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [companyDescription, setCompanyDescription] = useState("");
   const [companyWebsite, setCompanyWebsite] = useState("");
@@ -30,72 +27,25 @@ const Profile = () => {
   const [location, setLocation] = useState("");
   const [bio, setBio] = useState("");
 
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ["profile", user?.id],
-    queryFn: async () => {
-      console.log("Fetching profile data for user:", user?.id);
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user?.id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching profile:", error);
-        throw error;
-      }
-      
-      console.log("Fetched profile data:", data);
-      setCompanyName(data.company_name || "");
-      setCompanyDescription(data.company_description || "");
-      setCompanyWebsite(data.company_website || "");
-      setRaisingAmount(data.raising_amount?.toString() || "");
-      setRaisingDescription(data.raising_description || "");
-      setRaisingStage(data.raising_stage || "");
-      setAvatarUrl(data.avatar_url);
-      setFirstName(data.first_name || "");
-      setLastName(data.last_name || "");
-      setTitle(data.title || "");
-      setPhone(data.phone || "");
-      setLinkedinUrl(data.linkedin_url || "");
-      setLocation(data.location || "");
-      setBio(data.bio || "");
-      
-      return data;
-    },
-    enabled: !!user?.id,
-  });
-
-  const updateProfileMutation = useMutation({
-    mutationFn: async (profileData: any) => {
-      console.log("Updating profile with data:", profileData);
-      const { data, error } = await supabase
-        .from("profiles")
-        .update(profileData)
-        .eq("id", user?.id);
-
-      if (error) {
-        console.error("Error updating profile:", error);
-        throw error;
-      }
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
-      toast({
-        title: "Profile updated",
-        description: "Your profile has been updated successfully.",
-      });
-    },
-    onError: (error) => {
-      console.error("Mutation error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+  useEffect(() => {
+    if (profile) {
+      setEmail(user?.email || "");
+      setCompanyName(profile.company_name || "");
+      setCompanyDescription(profile.company_description || "");
+      setCompanyWebsite(profile.company_website || "");
+      setRaisingAmount(profile.raising_amount?.toString() || "");
+      setRaisingDescription(profile.raising_description || "");
+      setRaisingStage(profile.raising_stage || "");
+      setAvatarUrl(profile.avatar_url);
+      setFirstName(profile.first_name || "");
+      setLastName(profile.last_name || "");
+      setTitle(profile.title || "");
+      setPhone(profile.phone || "");
+      setLinkedinUrl(profile.linkedin_url || "");
+      setLocation(profile.location || "");
+      setBio(profile.bio || "");
+    }
+  }, [profile, user?.email]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,30 +69,12 @@ const Profile = () => {
     };
 
     console.log("Submitting profile update:", profileData);
-    updateProfileMutation.mutate(profileData);
+    updateProfile.mutate(profileData);
   };
 
   const handleAvatarUpdate = async (url: string) => {
-    if (!user) return;
-    
-    try {
-      console.log("Updating avatar URL:", url);
-      const { error } = await supabase
-        .from("profiles")
-        .update({ avatar_url: url })
-        .eq("id", user.id);
-
-      if (error) throw error;
-      setAvatarUrl(url);
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
-    } catch (error) {
-      console.error("Avatar update error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update avatar URL.",
-        variant: "destructive",
-      });
-    }
+    setAvatarUrl(url);
+    await updateAvatar(url);
   };
 
   if (isLoading) {
