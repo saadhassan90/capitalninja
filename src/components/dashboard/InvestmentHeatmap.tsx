@@ -3,6 +3,9 @@ import { Treemap, ResponsiveContainer, Tooltip } from "recharts";
 
 const COLORS = ['#8ca6bd', '#7199bc', '#5b7b98', '#718597', '#556573', '#465f75'];
 
+// Total market size in millions for calculating percentages
+const TOTAL_MARKET_SIZE = 4000;
+
 const data = {
   name: "Investment Distribution",
   children: [
@@ -51,7 +54,7 @@ const data = {
     {
       name: "Energy",
       size: 2,
-      value: 100,
+      value: 80,
       percentage: 2,
       color: COLORS[5]
     }
