@@ -121,7 +121,7 @@ export default function Auth() {
     <div className="min-h-screen bg-background flex">
       {/* Left Column */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary p-12 text-primary-foreground">
-        <div className="max-w-xl">
+        <div className="max-w-xl mx-auto flex flex-col justify-center h-full">
           <h1 className="text-5xl font-bold mb-6">
             Connect with the Right Investors
           </h1>
