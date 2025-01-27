@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/components/AuthProvider";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -13,45 +14,25 @@ import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
-const router = createBrowserRouter([
-  {
-    path: "/auth",
-    element: <Auth />,
-  },
-  {
-    path: "/",
-    element: <Index />,
-    children: [
-      {
-        index: true,
-        element: <Dashboard />,
-      },
-      {
-        path: "investors",
-        element: <Investors />,
-      },
-      {
-        path: "lists",
-        element: <Lists />,
-      },
-      {
-        path: "lists/:listId",
-        element: <ListView />,
-      },
-      {
-        path: "profile",
-        element: <Profile />,
-      },
-    ],
-  },
-]);
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <RouterProvider router={router} />
       <Toaster />
       <Sonner />
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/" element={<Index />}>
+              <Route index element={<Dashboard />} />
+              <Route path="investors" element={<Investors />} />
+              <Route path="lists" element={<Lists />} />
+              <Route path="lists/:listId" element={<ListView />} />
+              <Route path="profile" element={<Profile />} />
+            </Route>
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
