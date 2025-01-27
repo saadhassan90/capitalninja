@@ -6,6 +6,22 @@ import { supabase } from "@/integrations/supabase/client";
 
 const COLORS = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c', '#d0ed57'];
 
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-2 border rounded shadow-sm">
+        <p className="font-medium">{payload[0].name}</p>
+        <p className="text-sm text-gray-600">
+          Count: {payload[0].value}
+          <br />
+          Percentage: {((payload[0].value / payload[0].payload.total) * 100).toFixed(1)}%
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 const Dashboard = () => {
   // Fetch lists count
   const { data: listsCount } = useQuery({
@@ -32,9 +48,12 @@ const Dashboard = () => {
         return acc;
       }, {});
 
+      const total = Object.values(typeCounts || {}).reduce((sum, count) => sum + count, 0);
+      
       return Object.entries(typeCounts || {}).map(([name, value]) => ({
         name,
         value,
+        total, // Add total for percentage calculation in tooltip
       }));
     },
   });
@@ -103,8 +122,6 @@ const Dashboard = () => {
                   data={investorTypes}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                   outerRadius={150}
                   fill="#8884d8"
                   dataKey="value"
@@ -113,7 +130,7 @@ const Dashboard = () => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
