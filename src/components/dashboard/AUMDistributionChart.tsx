@@ -28,9 +28,20 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export const AUMDistributionChart = () => {
-  const { data: aumDistribution } = useQuery({
+  const { data: aumDistribution, isLoading } = useQuery({
     queryKey: ['aum-distribution'],
     queryFn: async () => {
+      // First, get total count of LPs
+      const { count: totalLPs } = await supabase
+        .from('limited_partners')
+        .select('*', { count: 'exact' });
+
+      // Then get count of LPs with null AUM
+      const { count: nullAumCount } = await supabase
+        .from('limited_partners')
+        .select('*', { count: 'exact' })
+        .is('aum', null);
+
       const ranges = [
         { min: 0, max: 1000000000, label: '0-1B' },
         { min: 1000000000, max: 5000000000, label: '1B-5B' },
@@ -57,23 +68,44 @@ export const AUMDistributionChart = () => {
         };
       });
 
-      return distribution;
+      return {
+        distribution,
+        totalLPs,
+        nullAumCount
+      };
     },
   });
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="h-4 w-48 bg-gray-200 rounded animate-pulse" />
+        </CardHeader>
+        <CardContent>
+          <div className="h-[400px] bg-gray-100 rounded animate-pulse" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
       <CardHeader className="space-y-1">
         <CardTitle className="text-base font-medium">AUM Distribution</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Number of Limited Partners by AUM Range
-        </p>
+        <div className="text-sm text-muted-foreground space-y-1">
+          <p>Number of Limited Partners by AUM Range</p>
+          <p className="text-xs">
+            Total LPs: {aumDistribution?.totalLPs} 
+            {aumDistribution?.nullAumCount ? ` (${aumDistribution.nullAumCount} without AUM data)` : ''}
+          </p>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={aumDistribution}
+              data={aumDistribution?.distribution}
               margin={{
                 top: 5,
                 right: 30,
