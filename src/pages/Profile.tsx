@@ -1,5 +1,8 @@
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -108,8 +111,12 @@ const Profile = () => {
 
   // Show browser warning when closing/refreshing with unsaved changes
   useBeforeUnload(
-    hasUnsavedChanges,
-    "You have unsaved changes. Are you sure you want to leave?"
+    (event) => {
+      if (hasUnsavedChanges) {
+        event.preventDefault();
+        return "You have unsaved changes. Are you sure you want to leave?";
+      }
+    }
   );
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
