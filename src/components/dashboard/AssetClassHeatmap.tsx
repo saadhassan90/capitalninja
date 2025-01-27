@@ -78,7 +78,6 @@ export const AssetClassHeatmap = () => {
             dataKey="size"
             aspectRatio={1}
             stroke="#fff"
-            className="[&_.recharts-surface]:!important"
           >
             {({ root }) => {
               if (!root) return null;
@@ -97,7 +96,14 @@ export const AssetClassHeatmap = () => {
                       stroke="#fff"
                       strokeWidth={2}
                       style={{ fill: HEATMAP_COLORS[index % HEATMAP_COLORS.length] }}
-                      className="transition-colors duration-200 hover:opacity-90"
+                      className="origin-center transition-transform duration-200 hover:scale-[1.02]"
+                      id={`sector-${index}`}
+                      onMouseEnter={() => {
+                        document.querySelector(`#sector-${index}`)?.classList.add('scale-[1.02]');
+                      }}
+                      onMouseLeave={() => {
+                        document.querySelector(`#sector-${index}`)?.classList.remove('scale-[1.02]');
+                      }}
                     />
                     {width > 60 && height > 40 && (
                       <>
@@ -106,7 +112,8 @@ export const AssetClassHeatmap = () => {
                           y={y + height / 2 - 8}
                           textAnchor="middle"
                           fill="white"
-                          className="text-xs font-medium"
+                          className="text-xs font-medium select-none"
+                          style={{ paintOrder: 'stroke', strokeWidth: 0 }}
                         >
                           {name.split(' ')[0]}
                         </text>
@@ -115,7 +122,8 @@ export const AssetClassHeatmap = () => {
                           y={y + height / 2 + 8}
                           textAnchor="middle"
                           fill="white"
-                          className="text-xs"
+                          className="text-xs select-none"
+                          style={{ paintOrder: 'stroke', strokeWidth: 0 }}
                         >
                           {percentage}%
                         </text>
