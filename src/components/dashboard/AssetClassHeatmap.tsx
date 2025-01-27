@@ -75,43 +75,55 @@ export const AssetClassHeatmap = () => {
             aspectRatio={1}
             stroke="white"
             fill="#8884d8"
-            content={({ root, depth, x, y, width, height, name, percentage }) => (
-              <g>
-                <rect
-                  x={x}
-                  y={y}
-                  width={width}
-                  height={height}
-                  fill={assetClassColors[name.split(' ')[0].toLowerCase()]?.bg || '#6C757D'}
-                  stroke="white"
-                  strokeWidth={2}
-                  className="transition-colors duration-200 hover:opacity-90"
-                />
-                {width > 60 && height > 40 && (
-                  <>
-                    <text
-                      x={x + width / 2}
-                      y={y + height / 2 - 8}
-                      textAnchor="middle"
-                      fill="white"
-                      className="text-xs font-medium"
-                    >
-                      {name.split(' ')[0]}
-                    </text>
-                    <text
-                      x={x + width / 2}
-                      y={y + height / 2 + 8}
-                      textAnchor="middle"
-                      fill="white"
-                      className="text-xs"
-                    >
-                      {percentage}%
-                    </text>
-                  </>
-                )}
-              </g>
-            )}
-          />
+            content={(props) => {
+              const { x, y, width, height, root } = props;
+              // Only render if we have valid dimensions and data
+              if (!width || !height || !root?.name) return null;
+              
+              const name = root.name;
+              const percentage = root.percentage;
+              const assetClass = name.split(' ')[0].toLowerCase();
+              
+              return (
+                <g>
+                  <rect
+                    x={x}
+                    y={y}
+                    width={width}
+                    height={height}
+                    fill={assetClassColors[assetClass]?.bg || '#6C757D'}
+                    stroke="white"
+                    strokeWidth={2}
+                    className="transition-colors duration-200 hover:opacity-90"
+                  />
+                  {width > 60 && height > 40 && (
+                    <>
+                      <text
+                        x={x + width / 2}
+                        y={y + height / 2 - 8}
+                        textAnchor="middle"
+                        fill="white"
+                        className="text-xs font-medium"
+                      >
+                        {name.split(' ')[0]}
+                      </text>
+                      <text
+                        x={x + width / 2}
+                        y={y + height / 2 + 8}
+                        textAnchor="middle"
+                        fill="white"
+                        className="text-xs"
+                      >
+                        {percentage}%
+                      </text>
+                    </>
+                  )}
+                </g>
+              );
+            }}
+          >
+            <Tooltip content={<CustomTooltip />} />
+          </Treemap>
         </ResponsiveContainer>
       </CardContent>
     </Card>
