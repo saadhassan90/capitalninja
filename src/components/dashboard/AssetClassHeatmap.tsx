@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, ResponsiveContainer, Treemap } from "recharts";
-import { assetClassColors } from "@/utils/assetClassColors";
+import { CHART_COLORS } from "@/utils/chartColors";
 
 const CHART_DATA = {
   "name": "Asset Classes",
@@ -77,23 +77,29 @@ export const AssetClassHeatmap = () => {
             fill="#8884d8"
           >
             {({ root }) => {
-              if (!root) return null;
-              
-              return root.children?.map((node: any) => {
+              return root?.children?.map((node: any, index: number) => {
                 const { x, y, width, height, name, percentage } = node;
-                const assetClass = name.split(' ')[0].toLowerCase();
                 
                 return (
-                  <g key={name}>
+                  <g 
+                    key={name}
+                    id={`segment-${index}`}
+                    onMouseEnter={() => {
+                      document.querySelector(`#segment-${index}`)?.classList.add('animate-chart-hover');
+                    }}
+                    onMouseLeave={() => {
+                      document.querySelector(`#segment-${index}`)?.classList.remove('animate-chart-hover');
+                    }}
+                  >
                     <rect
                       x={x}
                       y={y}
                       width={width}
                       height={height}
-                      fill={assetClassColors[assetClass]?.bg || '#6C757D'}
+                      fill={CHART_COLORS[index % CHART_COLORS.length]}
                       stroke="white"
                       strokeWidth={2}
-                      className="transition-colors duration-200 hover:opacity-90"
+                      className="transition-colors duration-200 hover:opacity-90 origin-center"
                     />
                     {width > 60 && height > 40 && (
                       <>
@@ -101,7 +107,7 @@ export const AssetClassHeatmap = () => {
                           x={x + width / 2}
                           y={y + height / 2 - 8}
                           textAnchor="middle"
-                          fill={assetClassColors[assetClass]?.text || 'white'}
+                          fill="white"
                           className="text-xs font-medium"
                         >
                           {name.split(' ')[0]}
@@ -110,7 +116,7 @@ export const AssetClassHeatmap = () => {
                           x={x + width / 2}
                           y={y + height / 2 + 8}
                           textAnchor="middle"
-                          fill={assetClassColors[assetClass]?.text || 'white'}
+                          fill="white"
                           className="text-xs"
                         >
                           {percentage}%
