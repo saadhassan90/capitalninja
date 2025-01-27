@@ -69,7 +69,7 @@ export default {
         },
         'chart-hover': {
           '0%': { transform: 'scale(1)' },
-          '100%': { transform: 'scale(1.05) translate(0, 0)' }
+          '100%': { transform: 'scale(1.05)' }
         }
       },
       animation: {

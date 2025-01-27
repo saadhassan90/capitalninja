@@ -134,7 +134,7 @@ export const AUMDistributionChart = () => {
                   <Cell
                     key={`cell-${index}`}
                     id={`bar-${index}`}
-                    className="origin-center transition-transform duration-200 hover:animate-chart-hover"
+                    className="origin-[50%_50%] transition-transform duration-200 hover:animate-chart-hover"
                   />
                 ))}
               </Bar>
