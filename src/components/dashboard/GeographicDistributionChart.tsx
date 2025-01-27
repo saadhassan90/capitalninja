@@ -61,12 +61,12 @@ export function GeographicDistributionChart() {
       return d.region === regionName || d.region === regionCode;
     });
     
-    if (!regionInfo) return "#F4F4F5"; // Light gray for regions with no data
+    if (!regionInfo) return "#E2E8F0"; // Light gray for regions with no data
     
-    // Color scale based on investor count
+    // Color scale based on investor count using a more prominent blue
     const maxCount = Math.max(...regionData.map(d => d.count));
-    const intensity = (regionInfo.count / maxCount) * 0.8; // Max 80% intensity
-    return `rgba(59, 130, 246, ${intensity})`; // Blue with varying opacity
+    const intensity = (regionInfo.count / maxCount) * 0.9; // Max 90% intensity
+    return `rgba(14, 165, 233, ${intensity + 0.1})`; // Ocean Blue with minimum 10% opacity
   };
 
   const formatAUM = (aum: number) => {
@@ -112,14 +112,14 @@ export function GeographicDistributionChart() {
                         key={geo.rsmKey}
                         geography={geo}
                         fill={getRegionColor(geo)}
-                        stroke="#FFF"
-                        strokeWidth={0.5}
+                        stroke="#94A3B8" // Darker stroke for better visibility
+                        strokeWidth={0.75} // Slightly thicker stroke
                         style={{
                           default: {
                             outline: "none",
                           },
                           hover: {
-                            fill: "#3B82F6",
+                            fill: "#0EA5E9", // Bright blue on hover
                             outline: "none",
                             cursor: "pointer",
                           },
@@ -165,14 +165,14 @@ export function GeographicDistributionChart() {
                         key={geo.rsmKey}
                         geography={geo}
                         fill={getRegionColor(geo, true)}
-                        stroke="#FFF"
-                        strokeWidth={0.5}
+                        stroke="#94A3B8" // Darker stroke for better visibility
+                        strokeWidth={0.75} // Slightly thicker stroke
                         style={{
                           default: {
                             outline: "none",
                           },
                           hover: {
-                            fill: "#3B82F6",
+                            fill: "#0EA5E9", // Bright blue on hover
                             outline: "none",
                             cursor: "pointer",
                           },
