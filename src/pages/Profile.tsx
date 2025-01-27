@@ -1,18 +1,19 @@
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
 import { UserDetailsSection } from "@/components/profile/UserDetailsSection";
+import { useBeforeUnload, useBlocker } from "react-router-dom";
 
 const Profile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  
+  // Form state
   const [email, setEmail] = useState(user?.email || "");
   const [companyName, setCompanyName] = useState("");
   const [companyDescription, setCompanyDescription] = useState("");
@@ -21,8 +22,6 @@ const Profile = () => {
   const [raisingDescription, setRaisingDescription] = useState("");
   const [raisingStage, setRaisingStage] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  
-  // New state variables for user details
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [title, setTitle] = useState("");
@@ -31,6 +30,7 @@ const Profile = () => {
   const [location, setLocation] = useState("");
   const [bio, setBio] = useState("");
 
+  // Initial data from query
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
@@ -42,6 +42,7 @@ const Profile = () => {
 
       if (error) throw error;
       
+      // Set all form fields with initial data
       setCompanyName(data.company_name || "");
       setCompanyDescription(data.company_description || "");
       setCompanyWebsite(data.company_website || "");
@@ -61,6 +62,55 @@ const Profile = () => {
     },
     enabled: !!user?.id,
   });
+
+  // Check for unsaved changes by comparing current form values with initial data
+  useEffect(() => {
+    if (!profile) return;
+
+    const hasChanges = 
+      companyName !== (profile.company_name || "") ||
+      companyDescription !== (profile.company_description || "") ||
+      companyWebsite !== (profile.company_website || "") ||
+      raisingAmount !== (profile.raising_amount?.toString() || "") ||
+      raisingDescription !== (profile.raising_description || "") ||
+      raisingStage !== (profile.raising_stage || "") ||
+      firstName !== (profile.first_name || "") ||
+      lastName !== (profile.last_name || "") ||
+      title !== (profile.title || "") ||
+      phone !== (profile.phone || "") ||
+      linkedinUrl !== (profile.linkedin_url || "") ||
+      location !== (profile.location || "") ||
+      bio !== (profile.bio || "");
+
+    setHasUnsavedChanges(hasChanges);
+  }, [
+    profile,
+    companyName,
+    companyDescription,
+    companyWebsite,
+    raisingAmount,
+    raisingDescription,
+    raisingStage,
+    firstName,
+    lastName,
+    title,
+    phone,
+    linkedinUrl,
+    location,
+    bio,
+  ]);
+
+  // Block navigation if there are unsaved changes
+  useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      hasUnsavedChanges && currentLocation.pathname !== nextLocation.pathname
+  );
+
+  // Show browser warning when closing/refreshing with unsaved changes
+  useBeforeUnload(
+    hasUnsavedChanges,
+    "You have unsaved changes. Are you sure you want to leave?"
+  );
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,6 +139,7 @@ const Profile = () => {
 
       if (error) throw error;
 
+      setHasUnsavedChanges(false);
       toast({
         title: "Profile updated",
         description: "Your profile has been updated successfully.",
@@ -130,6 +181,11 @@ const Profile = () => {
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Profile Settings</h1>
+        {hasUnsavedChanges && (
+          <div className="text-yellow-500 font-medium">
+            You have unsaved changes
+          </div>
+        )}
       </div>
       
       <div className="grid gap-6">
@@ -228,7 +284,9 @@ const Profile = () => {
             </div>
           </div>
 
-          <Button type="submit">Update Profile</Button>
+          <Button type="submit">
+            {hasUnsavedChanges ? "Save Changes" : "Update Profile"}
+          </Button>
         </form>
       </div>
     </div>
