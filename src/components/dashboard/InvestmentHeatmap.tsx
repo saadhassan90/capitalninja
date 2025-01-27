@@ -68,7 +68,7 @@ interface CustomContentProps {
 }
 
 const CustomContent = ({ x, y, width, height, name, percentage }: CustomContentProps) => {
-  const fontSize = Math.min(width / 10, height / 4);
+  const fontSize = Math.min(width / 12, height / 5); // Reduced base font size
   const shouldShowText = width > 60 && height > 40;
 
   return (
@@ -93,7 +93,7 @@ const CustomContent = ({ x, y, width, height, name, percentage }: CustomContentP
             textAnchor="middle"
             fill="#fff"
             fontSize={fontSize}
-            fontWeight="bold"
+            fontWeight="500" // Changed from "bold" to "500" for medium weight
           >
             {name}
           </text>
@@ -102,7 +102,7 @@ const CustomContent = ({ x, y, width, height, name, percentage }: CustomContentP
             y={y + height / 2 + fontSize + 2}
             textAnchor="middle"
             fill="#fff"
-            fontSize={fontSize * 0.8}
+            fontSize={fontSize * 0.75} // Slightly reduced percentage size
           >
             {percentage}%
           </text>
