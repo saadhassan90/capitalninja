@@ -63,7 +63,7 @@ export function SignupFormFields({
           value={company}
           onChange={(e) => onCompanyChange(e.target.value)}
           required
-          placeholder="Acme Inc."
+          placeholder="Terra Capital"
           className="h-12"
         />
       </div>
@@ -75,7 +75,7 @@ export function SignupFormFields({
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
           required
-          placeholder="Software Engineer"
+          placeholder="Managing Partner"
           className="h-12"
         />
       </div>
