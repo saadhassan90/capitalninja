@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { format, parseISO } from "date-fns";
 import { getChartColors } from "@/utils/chartColors";
 import { fetchTransactionData } from "@/utils/transactionData";
@@ -9,23 +9,15 @@ import { formatYAxis, formatTooltipValue } from "@/utils/formatters";
 export const TransactionsChart = () => {
   const { data: transactionsData } = useQuery({
     queryKey: ['transactions-timeline'],
-    queryFn: async () => {
-      const data = await fetchTransactionData();
-      console.log('Raw transactions data:', data);
-      if (data && data.length > 0) {
-        console.log('First transaction date:', data[0].date);
-        console.log('Last transaction date:', data[data.length - 1].date);
-      }
-      return data;
-    },
+    queryFn: fetchTransactionData,
   });
 
-  const colors = getChartColors(3);
+  const colors = getChartColors(1);
 
   return (
     <Card className="col-span-3">
       <CardHeader>
-        <CardTitle>Transaction Volume Over Time</CardTitle>
+        <CardTitle>Investment Volume Over Time</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[400px]">
@@ -42,38 +34,21 @@ export const TransactionsChart = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="date"
-                tickFormatter={(date) => format(parseISO(date), 'MMM yyyy')}
+                tickFormatter={(date) => format(parseISO(date), 'yyyy')}
               />
               <YAxis tickFormatter={formatYAxis} />
               <Tooltip
-                formatter={(value: number, name: string) => [
+                formatter={(value: number) => [
                   formatTooltipValue(value),
-                  name.replace(/([A-Z])/g, ' $1').trim()
+                  'Total Investment'
                 ]}
-                labelFormatter={(label) => format(parseISO(label), 'MMMM d, yyyy')}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="directInvestments"
-                name="Direct Investments"
-                stroke={colors[0]}
-                strokeWidth={2}
-                dot={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="fundCommitments"
-                name="Fund Commitments"
-                stroke={colors[1]}
-                strokeWidth={2}
-                dot={false}
+                labelFormatter={(label) => format(parseISO(label), 'yyyy')}
               />
               <Line
                 type="monotone"
                 dataKey="total"
-                name="Total"
-                stroke={colors[2]}
+                name="Total Investment"
+                stroke={colors[0]}
                 strokeWidth={2}
                 dot={false}
               />

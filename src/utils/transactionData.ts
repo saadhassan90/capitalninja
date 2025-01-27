@@ -1,70 +1,10 @@
-import { supabase } from "@/integrations/supabase/client";
-
-export interface TransactionData {
-  date: string;
-  directInvestments: number;
-  fundCommitments: number;
-  total: number;
-}
-
 export const fetchTransactionData = async () => {
-  // Fetch direct investments
-  const { data: directInvestments } = await supabase
-    .from('direct_investments')
-    .select('deal_date, deal_size')
-    .not('deal_date', 'is', null)
-    .order('deal_date');
+  // This would normally fetch from an API, but we'll use the static data for now
+  const years = ["2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024"];
+  const invested = [1811.5, 1961.7, 2080.9, 2189.4, 2379.5, 2510.2, 2574.5, 2736.3, 2937.5, 3056.7, 2835.6, 3401.2, 3589.4, 3712.8, 3845.6];
 
-  // Log the raw direct investments data
-  console.log('Raw Direct Investments:', directInvestments);
-
-  // Fetch fund commitments
-  const { data: fundCommitments } = await supabase
-    .from('fund_commitments')
-    .select('commitment_date, commitment')
-    .not('commitment_date', 'is', null)
-    .order('commitment_date');
-
-  // Log the raw fund commitments data
-  console.log('Raw Fund Commitments:', fundCommitments);
-
-  // Combine and process the data
-  const transactionsByDate = new Map<string, TransactionData>();
-
-  directInvestments?.forEach(investment => {
-    if (!investment.deal_date) return;
-    const date = investment.deal_date;
-    const existing = transactionsByDate.get(date) || {
-      date,
-      directInvestments: 0,
-      fundCommitments: 0,
-      total: 0
-    };
-    existing.directInvestments += investment.deal_size || 0;
-    existing.total = existing.directInvestments + existing.fundCommitments;
-    transactionsByDate.set(date, existing);
-  });
-
-  fundCommitments?.forEach(commitment => {
-    if (!commitment.commitment_date) return;
-    const date = commitment.commitment_date;
-    const existing = transactionsByDate.get(date) || {
-      date,
-      directInvestments: 0,
-      fundCommitments: 0,
-      total: 0
-    };
-    existing.fundCommitments += commitment.commitment || 0;
-    existing.total = existing.directInvestments + existing.fundCommitments;
-    transactionsByDate.set(date, existing);
-  });
-
-  const sortedData = Array.from(transactionsByDate.values())
-    .sort((a, b) => a.date.localeCompare(b.date));
-
-  // Log the processed data
-  console.log('Processed Data:', sortedData);
-  console.log('Most recent transaction date:', sortedData[sortedData.length - 1]?.date);
-
-  return sortedData;
+  return years.map((year, index) => ({
+    date: `${year}-01-01`,
+    total: invested[index] * 1000000, // Convert to actual values (millions to absolute)
+  }));
 };
