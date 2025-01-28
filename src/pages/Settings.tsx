@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Team from "./Team";
 import { SecuritySection } from "@/components/settings/SecuritySection";
+import { NotificationsSection } from "@/components/settings/NotificationsSection";
 
 export default function Settings() {
   return (
@@ -41,10 +42,7 @@ export default function Settings() {
 
         <TabsContent value="notifications" className="space-y-4">
           <div className="rounded-lg border bg-card p-8">
-            <h2 className="text-lg font-semibold mb-4">Notification Preferences</h2>
-            <p className="text-muted-foreground">
-              Manage your notification settings
-            </p>
+            <NotificationsSection />
           </div>
         </TabsContent>
       </Tabs>

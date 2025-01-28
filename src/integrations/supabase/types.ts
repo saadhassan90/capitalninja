@@ -403,6 +403,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          email_notifications: boolean | null
+          id: string
+          investor_updates: boolean | null
+          list_updates: boolean | null
+          marketing_updates: boolean | null
+          security_alerts: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          investor_updates?: boolean | null
+          list_updates?: boolean | null
+          marketing_updates?: boolean | null
+          security_alerts?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          investor_updates?: boolean | null
+          list_updates?: boolean | null
+          marketing_updates?: boolean | null
+          security_alerts?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
