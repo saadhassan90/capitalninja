@@ -51,6 +51,8 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
 
       return { data: investors || [], count: count || 0 };
     },
+    staleTime: 1000 * 60 * 5, // Data stays fresh for 5 minutes
+    gcTime: 1000 * 60 * 30, // Cache garbage collection after 30 minutes
     meta: {
       onError: (error: any) => {
         if (error?.message?.includes('rate limit')) {
