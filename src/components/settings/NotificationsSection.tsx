@@ -1,96 +1,16 @@
-import { useEffect, useState } from "react";
-import { Switch } from "@/components/ui/switch";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/components/AuthProvider";
-
-interface NotificationPreferences {
-  email_notifications: boolean;
-  list_updates: boolean;
-  investor_updates: boolean;
-  security_alerts: boolean;
-  marketing_updates: boolean;
-}
-
-const defaultPreferences: NotificationPreferences = {
-  email_notifications: true,
-  list_updates: true,
-  investor_updates: true,
-  security_alerts: true,
-  marketing_updates: false,
-};
+import { useNotificationPreferences } from "@/hooks/useNotificationPreferences";
+import { NotificationToggle } from "./NotificationToggle";
+import { Loader2 } from "lucide-react";
 
 export function NotificationsSection() {
-  const [preferences, setPreferences] = useState<NotificationPreferences>(defaultPreferences);
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (user) {
-      fetchPreferences();
-    }
-  }, [user]);
-
-  const fetchPreferences = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("notification_preferences")
-        .select("*")
-        .eq("user_id", user?.id)
-        .maybeSingle();
-
-      if (error) throw error;
-
-      if (data) {
-        setPreferences(data);
-      } else {
-        // If no preferences exist, create them with default values
-        const { error: insertError } = await supabase
-          .from("notification_preferences")
-          .insert([{ user_id: user?.id, ...defaultPreferences }]);
-
-        if (insertError) throw insertError;
-        setPreferences(defaultPreferences);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching notification preferences:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to load notification preferences",
-      });
-      setLoading(false);
-    }
-  };
-
-  const updatePreference = async (key: keyof NotificationPreferences, value: boolean) => {
-    try {
-      const { error } = await supabase
-        .from("notification_preferences")
-        .update({ [key]: value })
-        .eq("user_id", user?.id);
-
-      if (error) throw error;
-
-      setPreferences((prev) => ({ ...prev, [key]: value }));
-      toast({
-        title: "Success",
-        description: "Notification preferences updated",
-      });
-    } catch (error) {
-      console.error("Error updating notification preferences:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update notification preferences",
-      });
-    }
-  };
+  const { preferences, loading, updatePreference } = useNotificationPreferences();
 
   if (loading) {
-    return <div className="space-y-4">Loading notification preferences...</div>;
+    return (
+      <div className="flex items-center justify-center py-6">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
   }
 
   return (
@@ -103,70 +23,40 @@ export function NotificationsSection() {
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <label className="text-sm font-medium">Email Notifications</label>
-            <p className="text-sm text-muted-foreground">
-              Receive notifications via email
-            </p>
-          </div>
-          <Switch
-            checked={preferences.email_notifications}
-            onCheckedChange={(checked) => updatePreference("email_notifications", checked)}
-          />
-        </div>
+        <NotificationToggle
+          title="Email Notifications"
+          description="Receive notifications via email"
+          checked={preferences.email_notifications}
+          onCheckedChange={(checked) => updatePreference("email_notifications", checked)}
+        />
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <label className="text-sm font-medium">List Updates</label>
-            <p className="text-sm text-muted-foreground">
-              Get notified when your lists are updated
-            </p>
-          </div>
-          <Switch
-            checked={preferences.list_updates}
-            onCheckedChange={(checked) => updatePreference("list_updates", checked)}
-          />
-        </div>
+        <NotificationToggle
+          title="List Updates"
+          description="Get notified when your lists are updated"
+          checked={preferences.list_updates}
+          onCheckedChange={(checked) => updatePreference("list_updates", checked)}
+        />
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <label className="text-sm font-medium">Investor Updates</label>
-            <p className="text-sm text-muted-foreground">
-              Receive updates about investors you follow
-            </p>
-          </div>
-          <Switch
-            checked={preferences.investor_updates}
-            onCheckedChange={(checked) => updatePreference("investor_updates", checked)}
-          />
-        </div>
+        <NotificationToggle
+          title="Investor Updates"
+          description="Receive updates about investors you follow"
+          checked={preferences.investor_updates}
+          onCheckedChange={(checked) => updatePreference("investor_updates", checked)}
+        />
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <label className="text-sm font-medium">Security Alerts</label>
-            <p className="text-sm text-muted-foreground">
-              Get notified about security-related events
-            </p>
-          </div>
-          <Switch
-            checked={preferences.security_alerts}
-            onCheckedChange={(checked) => updatePreference("security_alerts", checked)}
-          />
-        </div>
+        <NotificationToggle
+          title="Security Alerts"
+          description="Get notified about security-related events"
+          checked={preferences.security_alerts}
+          onCheckedChange={(checked) => updatePreference("security_alerts", checked)}
+        />
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <label className="text-sm font-medium">Marketing Updates</label>
-            <p className="text-sm text-muted-foreground">
-              Receive marketing and promotional emails
-            </p>
-          </div>
-          <Switch
-            checked={preferences.marketing_updates}
-            onCheckedChange={(checked) => updatePreference("marketing_updates", checked)}
-          />
-        </div>
+        <NotificationToggle
+          title="Marketing Updates"
+          description="Receive marketing and promotional emails"
+          checked={preferences.marketing_updates}
+          onCheckedChange={(checked) => updatePreference("marketing_updates", checked)}
+        />
       </div>
     </div>
   );
