@@ -20,7 +20,7 @@ export function App() {
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <AuthProvider>
             <Routes>
-              <Route element={<ProtectedRoute />}>
+              <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/investors" element={<Investors />} />
                 <Route path="/lists" element={<Lists />} />
