@@ -12,33 +12,46 @@ interface NotificationPreferences {
   marketing_updates: boolean;
 }
 
+const defaultPreferences: NotificationPreferences = {
+  email_notifications: true,
+  list_updates: true,
+  investor_updates: true,
+  security_alerts: true,
+  marketing_updates: false,
+};
+
 export function NotificationsSection() {
-  const [preferences, setPreferences] = useState<NotificationPreferences>({
-    email_notifications: true,
-    list_updates: true,
-    investor_updates: true,
-    security_alerts: true,
-    marketing_updates: false,
-  });
+  const [preferences, setPreferences] = useState<NotificationPreferences>(defaultPreferences);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { user } = useAuth();
 
   useEffect(() => {
-    fetchPreferences();
-  }, []);
+    if (user) {
+      fetchPreferences();
+    }
+  }, [user]);
 
   const fetchPreferences = async () => {
     try {
       const { data, error } = await supabase
         .from("notification_preferences")
         .select("*")
-        .single();
+        .eq("user_id", user?.id)
+        .maybeSingle();
 
       if (error) throw error;
 
       if (data) {
         setPreferences(data);
+      } else {
+        // If no preferences exist, create them with default values
+        const { error: insertError } = await supabase
+          .from("notification_preferences")
+          .insert([{ user_id: user?.id, ...defaultPreferences }]);
+
+        if (insertError) throw insertError;
+        setPreferences(defaultPreferences);
       }
       setLoading(false);
     } catch (error) {
