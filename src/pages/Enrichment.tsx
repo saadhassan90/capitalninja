@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Upload } from "lucide-react";
+import { Upload, Database } from "lucide-react";
 
 const Enrichment = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -40,11 +40,14 @@ const Enrichment = () => {
 
   return (
     <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Enrich Investor Data</h1>
-        <p className="text-gray-500 mt-2">
-          Upload a CSV file containing investor leads to enrich it with data from our database
-        </p>
+      <div className="flex items-center gap-2 mb-8">
+        <Database className="h-8 w-8" />
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Enrich Investor Data</h1>
+          <p className="text-gray-500 mt-2">
+            Upload a CSV file containing investor leads to enrich it with data from our database
+          </p>
+        </div>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-sm border">

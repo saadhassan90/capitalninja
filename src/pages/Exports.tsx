@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, Trash2 } from "lucide-react";
+import { Download, RefreshCw, Trash2, FileDown } from "lucide-react";
 
 const Exports = () => {
   // Mock data for demonstration
@@ -25,11 +25,14 @@ const Exports = () => {
 
   return (
     <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Exports History</h1>
-        <p className="text-gray-500 mt-2">
-          View and manage your data exports
-        </p>
+      <div className="flex items-center gap-2 mb-8">
+        <FileDown className="h-8 w-8" />
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Exports History</h1>
+          <p className="text-gray-500 mt-2">
+            View and manage your data exports
+          </p>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border">
