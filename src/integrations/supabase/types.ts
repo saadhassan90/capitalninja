@@ -71,6 +71,7 @@ export type Database = {
           name: string
           records: number | null
           status: string
+          team_id: string | null
           type: string
           updated_at: string
         }
@@ -82,6 +83,7 @@ export type Database = {
           name: string
           records?: number | null
           status?: string
+          team_id?: string | null
           type: string
           updated_at?: string
         }
@@ -93,10 +95,19 @@ export type Database = {
           name?: string
           records?: number | null
           status?: string
+          team_id?: string | null
           type?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "exports_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team_members"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fund_commitments: {
         Row: {
@@ -519,6 +530,38 @@ export type Database = {
           request_time?: string | null
         }
         Relationships: []
+      }
+      team_export_limits: {
+        Row: {
+          created_at: string
+          id: string
+          monthly_limit: number
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          monthly_limit?: number
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          monthly_limit?: number
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_export_limits_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team_members"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       team_invitations: {
         Row: {
