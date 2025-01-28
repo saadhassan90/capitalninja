@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Upload } from "lucide-react";
+import { Loader2, Upload, User } from "lucide-react";
 import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -141,74 +141,80 @@ export default function Profile() {
   }
 
   return (
-    <div className="container max-w-4xl space-y-8 py-8">
-      <h1 className="text-3xl font-bold">Profile Settings</h1>
+    <div className="flex-1 space-y-8">
+      <div className="flex items-center gap-2 mb-8">
+        <User className="h-8 w-8" />
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Profile Settings</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your account settings and profile information</p>
+        </div>
+      </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile Picture</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            {profile?.avatar_url ? (
-              <img
-                src={profile.avatar_url}
-                alt="Profile"
-                className="h-20 w-20 rounded-full object-cover"
-              />
-            ) : (
-              <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center">
-                <Upload className="h-8 w-8 text-muted-foreground" />
-              </div>
-            )}
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="max-w-xs"
-            />
-          </div>
-
-          {tempImage && (
-            <div className="space-y-4">
-              <ReactCrop
-                crop={crop}
-                onChange={c => setCrop(c)}
-                aspect={1}
-                circularCrop
-              >
-                <img
-                  src={tempImage}
-                  ref={(ref) => ref && setImageRef(ref)}
-                  alt="Upload preview"
-                  className="max-h-[400px]"
-                />
-              </ReactCrop>
-              <div className="flex gap-4">
-                <Button
-                  onClick={handleCropComplete}
-                  disabled={!crop || uploading}
-                >
-                  {uploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Save Image
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setTempImage(undefined);
-                    setCrop(undefined);
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile Picture</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-4">
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt="Profile"
+                    className="h-20 w-20 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center">
+                    <Upload className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                )}
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="max-w-xs"
+                />
+              </div>
+
+              {tempImage && (
+                <div className="space-y-4">
+                  <ReactCrop
+                    crop={crop}
+                    onChange={c => setCrop(c)}
+                    aspect={1}
+                    circularCrop
+                  >
+                    <img
+                      src={tempImage}
+                      ref={(ref) => ref && setImageRef(ref)}
+                      alt="Upload preview"
+                      className="max-h-[400px]"
+                    />
+                  </ReactCrop>
+                  <div className="flex gap-4">
+                    <Button
+                      onClick={handleCropComplete}
+                      disabled={!crop || uploading}
+                    >
+                      {uploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Save Image
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setTempImage(undefined);
+                        setCrop(undefined);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Personal Information</CardTitle>
