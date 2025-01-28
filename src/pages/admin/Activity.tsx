@@ -28,27 +28,38 @@ export default function Activity() {
   const { data: activities, isLoading } = useQuery({
     queryKey: ['admin-activity'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First get the activity logs
+      const { data: activityData, error: activityError } = await supabase
         .from('activity_logs')
-        .select(`
-          id,
-          action_type,
-          description,
-          created_at,
-          user_id,
-          profile:profiles!activity_logs_user_id_fkey (
-            email,
-            first_name,
-            last_name
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(100);
       
-      if (error) throw error;
-      return data as ActivityWithProfile[];
+      if (activityError) throw activityError;
+
+      // Then get the profiles for each user_id
+      const activitiesWithProfiles = await Promise.all(
+        activityData.map(async (activity) => {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('email, first_name, last_name')
+            .eq('id', activity.user_id)
+            .single();
+
+          return {
+            ...activity,
+            profile: profileData
+          };
+        })
+      );
+
+      return activitiesWithProfiles as ActivityWithProfile[];
     }
   });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="p-8">
