@@ -57,8 +57,8 @@ const Exports = () => {
 
   return (
     <div className="p-8">
-      <div className="flex items-center gap-2 mb-8">
-        <Download className="h-8 w-8" />
+      <div className="flex items-start gap-2 mb-8">
+        <Download className="h-8 w-8 mt-1" />
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Exports History</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-2">
