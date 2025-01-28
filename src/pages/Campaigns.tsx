@@ -1,17 +1,14 @@
 import { CampaignList } from "@/components/campaigns/CampaignList";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Mail, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export default function Campaigns() {
   return (
-    <div className="flex-1 p-8 pt-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Mail className="h-8 w-8" />
-            <h1 className="text-3xl font-bold tracking-tight">Campaigns</h1>
-          </div>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Campaigns</h1>
           <p className="text-muted-foreground">
             Create and manage your email campaigns
           </p>
