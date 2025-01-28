@@ -1,4 +1,4 @@
-import { User, Settings, LogOut, Moon, Sun } from "lucide-react";
+import { Settings, LogOut, Moon, Sun } from "lucide-react";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { useTheme } from "next-themes";
 
@@ -10,7 +10,6 @@ export function UserMenuItems({ onLogout }: UserMenuItemsProps) {
   const { theme, setTheme } = useTheme();
   
   const menuItems = [
-    { title: "Profile", url: "/settings", icon: User },
     { title: "Settings", url: "/settings", icon: Settings },
   ];
 
