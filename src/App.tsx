@@ -1,64 +1,115 @@
-import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "sonner";
-import { ThemeProvider } from "./components/theme-provider";
-import { AuthProvider } from "./components/AuthProvider";
-import { ProtectedRoute } from "./components/ProtectedRoute";
-import { Layout } from "./components/Layout";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import Dashboard from "./pages/Dashboard";
-import Investors from "./pages/Investors";
-import Lists from "./pages/Lists";
-import NewList from "./pages/NewList";
-import EditList from "./pages/EditList";
-import Campaigns from "./pages/Campaigns";
-import NewCampaign from "./pages/NewCampaign";
-import Settings from "./pages/Settings";
-import Profile from "./pages/Profile";
-import Security from "./pages/Security";
-import Notifications from "./pages/Notifications";
-import Team from "./pages/Team";
-import Billing from "./pages/Billing";
+import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/components/AuthProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import Index from "@/pages/Index";
+import Auth from "@/pages/Auth";
+import Dashboard from "@/pages/Dashboard";
+import Profile from "@/pages/Profile";
+import Investors from "@/pages/Investors";
+import Lists from "@/pages/Lists";
+import ListView from "@/pages/ListView";
+import Settings from "@/pages/Settings";
+import Enrichment from "@/pages/Enrichment";
+import Exports from "@/pages/Exports";
+import Campaigns from "@/pages/Campaigns";
+import Emails from "@/pages/Emails";
+import AdminLayout from "@/components/admin/AdminLayout";
+import AdminDashboard from "@/pages/admin/Dashboard";
+import AdminUsers from "@/pages/admin/Users";
+import AdminActivity from "@/pages/admin/Activity";
 
 const queryClient = new QueryClient();
 
-export function App() {
+const Root = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Router>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <AuthProvider>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
-                <Route element={<Layout />}>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/investors" element={<Investors />} />
-                  <Route path="/lists" element={<Lists />} />
-                  <Route path="/lists/new" element={<NewList />} />
-                  <Route path="/lists/:id" element={<EditList />} />
-                  <Route path="/campaigns" element={<Campaigns />} />
-                  <Route path="/campaigns/new" element={<NewCampaign />} />
-                  <Route path="/settings" element={<Settings />}>
-                    <Route path="profile" element={<Profile />} />
-                    <Route path="security" element={<Security />} />
-                    <Route path="notifications" element={<Notifications />} />
-                    <Route path="team" element={<Team />} />
-                    <Route path="billing" element={<Billing />} />
-                  </Route>
-                </Route>
-              </Route>
-            </Routes>
-          </AuthProvider>
-          <Toaster position="top-right" />
-        </ThemeProvider>
-      </QueryClientProvider>
-    </Router>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <AuthProvider>
+        {children}
+        <Toaster />
+      </AuthProvider>
+    </ThemeProvider>
+  );
+};
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root><Index /></Root>,
+    children: [
+      {
+        path: "/",
+        element: <Dashboard />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
+      },
+      {
+        path: "/investors",
+        element: <Investors />,
+      },
+      {
+        path: "/lists",
+        element: <Lists />,
+      },
+      {
+        path: "/lists/:id",
+        element: <ListView />,
+      },
+      {
+        path: "/settings",
+        element: <Settings />,
+      },
+      {
+        path: "/enrichment",
+        element: <Enrichment />,
+      },
+      {
+        path: "/exports",
+        element: <Exports />,
+      },
+      {
+        path: "/campaigns",
+        element: <Campaigns />,
+      },
+      {
+        path: "/emails",
+        element: <Emails />,
+      },
+      {
+        path: "admin",
+        element: <AdminLayout />,
+        children: [
+          {
+            path: "",
+            element: <AdminDashboard />,
+          },
+          {
+            path: "users",
+            element: <AdminUsers />,
+          },
+          {
+            path: "activity",
+            element: <AdminActivity />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "/auth",
+    element: <Root><Auth /></Root>,
+  },
+]);
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   );
 }
+
+export default App;
