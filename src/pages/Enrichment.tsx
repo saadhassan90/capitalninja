@@ -44,13 +44,13 @@ const Enrichment = () => {
         <Database className="h-8 w-8" />
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Enrich Investor Data</h1>
-          <p className="text-gray-500 mt-2">
+          <p className="text-gray-500 dark:text-gray-400 mt-2">
             Upload a CSV file containing investor leads to enrich it with data from our database
           </p>
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
+      <div className="bg-card p-6 rounded-lg shadow-sm border">
         <div className="space-y-4">
           <div className="flex items-center gap-4">
             <Input
@@ -70,14 +70,14 @@ const Enrichment = () => {
           </div>
           
           {file && (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Selected file: {file.name}
             </p>
           )}
           
-          <div className="bg-gray-50 p-4 rounded border">
+          <div className="bg-muted/50 p-4 rounded border">
             <h3 className="font-medium mb-2">How it works</h3>
-            <ul className="text-sm text-gray-600 space-y-2">
+            <ul className="text-sm text-muted-foreground space-y-2">
               <li>1. Upload a CSV file containing investor information</li>
               <li>2. Our system will match and enrich your data with our database</li>
               <li>3. Download the enriched CSV file with additional insights</li>
