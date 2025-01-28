@@ -1,55 +1,59 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/components/AuthProvider";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
-import Investors from "./pages/Investors";
-import Lists from "./pages/Lists";
-import ListView from "./pages/ListView";
-import Profile from "./pages/Profile";
-import Team from "./pages/Team";
-import Enrichment from "./pages/Enrichment";
-import Exports from "./pages/Exports";
+import Index from "@/pages/Index";
+import Auth from "@/pages/Auth";
+import Dashboard from "@/pages/Dashboard";
+import Investors from "@/pages/Investors";
+import Lists from "@/pages/Lists";
+import ListView from "@/pages/ListView";
+import Settings from "@/pages/Settings";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // Data stays fresh for 5 minutes
-      gcTime: 1000 * 60 * 30, // Cache garbage collection after 30 minutes
-      retry: 1, // Only retry failed requests once
-      refetchOnWindowFocus: false, // Don't refetch when window regains focus
-    },
+const queryClient = new QueryClient();
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Index />,
+    children: [
+      {
+        path: "/",
+        element: <Dashboard />,
+      },
+      {
+        path: "/investors",
+        element: <Investors />,
+      },
+      {
+        path: "/lists",
+        element: <Lists />,
+      },
+      {
+        path: "/lists/:id",
+        element: <ListView />,
+      },
+      {
+        path: "/settings",
+        element: <Settings />,
+      },
+    ],
   },
-});
+  {
+    path: "/auth",
+    element: <Auth />,
+  },
+]);
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<Index />}>
-              <Route index element={<Dashboard />} />
-              <Route path="investors" element={<Investors />} />
-              <Route path="lists" element={<Lists />} />
-              <Route path="lists/:listId" element={<ListView />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="team" element={<Team />} />
-              <Route path="enrichment" element={<Enrichment />} />
-              <Route path="exports" element={<Exports />} />
-            </Route>
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+        <Toaster />
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

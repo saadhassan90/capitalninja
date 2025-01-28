@@ -14,8 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 const menuItems = [
-  { title: "Profile", url: "/profile", icon: User },
-  { title: "Team", url: "/team", icon: Users },
+  { title: "Profile", url: "/settings", icon: User },
+  { title: "Team", url: "/settings?tab=team", icon: Users },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
