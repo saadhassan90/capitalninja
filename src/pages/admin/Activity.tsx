@@ -31,7 +31,11 @@ export default function Activity() {
       const { data, error } = await supabase
         .from('activity_logs')
         .select(`
-          *,
+          id,
+          action_type,
+          description,
+          created_at,
+          user_id,
           profile:profiles!activity_logs_user_id_fkey (
             email,
             first_name,
