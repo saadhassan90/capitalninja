@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 interface AuthContextType {
   user: User | null;
@@ -10,9 +9,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType>({ user: null, loading: true });
-
-// Create a client
-const queryClient = new QueryClient();
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -36,11 +32,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider value={{ user, loading }}>
-        {children}
-      </AuthContext.Provider>
-    </QueryClientProvider>
+    <AuthContext.Provider value={{ user, loading }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 

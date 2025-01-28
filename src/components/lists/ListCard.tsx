@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,7 +39,7 @@ interface ListCardProps {
   onDelete?: () => void;
 }
 
-export function ListCard({ list, onDelete }: ListCardProps) {
+function ListCardComponent({ list, onDelete }: ListCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -52,7 +53,9 @@ export function ListCard({ list, onDelete }: ListCardProps) {
       
       if (error) throw error;
       return count || 0;
-    }
+    },
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    cacheTime: 1000 * 60 * 30, // Keep in cache for 30 minutes
   });
 
   const handleDelete = async () => {
@@ -169,3 +172,6 @@ export function ListCard({ list, onDelete }: ListCardProps) {
     </Card>
   );
 }
+
+// Memoize the component to prevent unnecessary re-renders
+export const ListCard = memo(ListCardComponent);
