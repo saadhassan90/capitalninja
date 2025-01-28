@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Dashboard";
+import Profile from "@/pages/Profile";
 import Investors from "@/pages/Investors";
 import Lists from "@/pages/Lists";
 import ListView from "@/pages/ListView";
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Dashboard />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
       },
       {
         path: "/investors",
