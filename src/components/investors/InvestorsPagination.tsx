@@ -58,7 +58,7 @@ export function InvestorsPagination({
   };
 
   return (
-    <div className="bg-background border-t py-4 mt-auto">
+    <div className="sticky bottom-0 bg-background py-4 border-t shadow-sm z-10">
       <div className="container max-w-screen-2xl mx-auto px-4">
         <Pagination>
           <PaginationContent>
