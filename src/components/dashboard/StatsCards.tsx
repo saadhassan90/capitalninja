@@ -21,7 +21,7 @@ export const StatsCards = ({ listsCount, investorsCount }: StatsCardsProps) => {
     },
   });
 
-  // Query for monthly exports
+  // Query for monthly exports at team level
   const { data: monthlyExports } = useQuery({
     queryKey: ['monthly-exports'],
     queryFn: async () => {
@@ -29,9 +29,19 @@ export const StatsCards = ({ listsCount, investorsCount }: StatsCardsProps) => {
       startOfMonth.setDate(1);
       startOfMonth.setHours(0, 0, 0, 0);
 
+      // First get the user's team_id
+      const { data: teamMember } = await supabase
+        .from('team_members')
+        .select('id')
+        .single();
+
+      if (!teamMember) return 0;
+
+      // Then count exports for the team this month
       const { count } = await supabase
         .from('exports')
         .select('*', { count: 'exact', head: true })
+        .eq('team_id', teamMember.id)
         .gte('created_at', startOfMonth.toISOString());
 
       return count;
