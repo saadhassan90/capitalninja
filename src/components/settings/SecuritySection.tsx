@@ -7,24 +7,21 @@ export function SecuritySection() {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const handlePasswordReset = async () => {
+  const handleUpdateEmail = async () => {
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        user?.email || "",
-        {
-          redirectTo: `${window.location.origin}/auth?reset=true`,
-        }
-      );
+      const { error } = await supabase.auth.updateUser({
+        email: user?.email,
+      });
       if (error) throw error;
       
       toast({
-        title: "Password reset email sent",
-        description: "Check your email for the password reset link",
+        title: "Verification email sent",
+        description: "Check your email to verify your account",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to send password reset email",
+        description: "Failed to send verification email",
         variant: "destructive",
       });
     }
@@ -47,22 +44,18 @@ export function SecuritySection() {
             {user?.email_confirmed_at ? (
               <span className="ml-2 text-green-600">(Verified)</span>
             ) : (
-              <span className="ml-2 text-yellow-600">(Not verified)</span>
+              <span className="ml-2 text-yellow-600">
+                (Not verified - 
+                <button 
+                  onClick={handleUpdateEmail}
+                  className="text-primary hover:underline ml-1"
+                >
+                  Resend verification email
+                </button>
+                )
+              </span>
             )}
           </p>
-        </div>
-
-        <div className="grid gap-2">
-          <h4 className="font-medium">Password</h4>
-          <p className="text-sm text-muted-foreground">
-            Change your password to keep your account secure
-          </p>
-          <Button 
-            variant="outline" 
-            onClick={handlePasswordReset}
-          >
-            Change Password
-          </Button>
         </div>
 
         <div className="grid gap-2">
