@@ -562,7 +562,7 @@ export type Database = {
           created_at?: string
           email?: string
           first_name?: string | null
-          id?: string
+          id: string
           last_name?: string | null
           linkedin_url?: string | null
           location?: string | null
@@ -691,7 +691,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           device_info?: string | null
-          id?: string
+          id: string
           ip_address?: string | null
           is_active?: boolean | null
           last_active?: string | null
@@ -704,11 +704,87 @@ export type Database = {
           ip_address?: string | null
           is_active?: boolean | null
           last_active?: string | null
-          user_id?: string
+          user_id: string
         }
         Relationships: []
       }
-    }
+      campaigns: {
+        Row: {
+          id: string;
+          name: string;
+          subject: string;
+          content: string;
+          status: 'draft' | 'scheduled' | 'sending' | 'completed' | 'failed';
+          list_id: string | null;
+          scheduled_for: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+          sent_at: string | null;
+          total_recipients: number | null;
+          successful_sends: number | null;
+          failed_sends: number | null;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          subject: string;
+          content: string;
+          status?: 'draft' | 'scheduled' | 'sending' | 'completed' | 'failed';
+          list_id?: string | null;
+          scheduled_for?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          sent_at?: string | null;
+          total_recipients?: number | null;
+          successful_sends?: number | null;
+          failed_sends?: number | null;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          subject?: string;
+          content?: string;
+          status?: 'draft' | 'scheduled' | 'sending' | 'completed' | 'failed';
+          list_id?: string | null;
+          scheduled_for?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          sent_at?: string | null;
+          total_recipients?: number | null;
+          successful_sends?: number | null;
+          failed_sends?: number | null;
+        };
+      };
+      campaign_logs: {
+        Row: {
+          id: string;
+          campaign_id: string;
+          investor_id: number;
+          status: string;
+          error_message: string | null;
+          sent_at: string;
+        };
+        Insert: {
+          id?: string;
+          campaign_id: string;
+          investor_id: number;
+          status: string;
+          error_message?: string | null;
+          sent_at: string;
+        };
+        Update: {
+          id?: string;
+          campaign_id?: string;
+          investor_id?: number;
+          status?: string;
+          error_message?: string | null;
+          sent_at?: string;
+        };
+      };
+    };
     Views: {
       [_ in never]: never
     }
@@ -802,7 +878,7 @@ export type Tables<
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
         Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
@@ -814,10 +890,10 @@ export type Tables<
         PublicSchema["Views"])
     ? (PublicSchema["Tables"] &
         PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
+      Row: infer R
+    }
+    ? R
+    : never
     : never
 
 export type TablesInsert<
