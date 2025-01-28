@@ -20,12 +20,12 @@ export function MenuList({ items: propItems }: MenuListProps) {
   const items = propItems || useMenuItems();
 
   return (
-    <nav className="space-y-2">
+    <nav className="space-y-6">
       {items.map((item, index) => {
         if (item.items) {
           return (
             <div key={index} className="space-y-3">
-              <h4 className="text-sm font-medium leading-none text-muted-foreground px-4">
+              <h4 className="font-medium text-xs text-muted-foreground px-4 uppercase tracking-wider">
                 {item.title}
               </h4>
               <div className="space-y-1">
