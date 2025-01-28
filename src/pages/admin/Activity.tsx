@@ -17,7 +17,7 @@ type ActivityWithProfile = {
   description: string;
   created_at: string;
   user_id: string;
-  profiles: {
+  profile: {
     email: string;
     first_name: string | null;
     last_name: string | null;
@@ -32,7 +32,7 @@ export default function Activity() {
         .from('activity_logs')
         .select(`
           *,
-          profiles:user_id (
+          profile:profiles!activity_logs_user_id_fkey (
             email,
             first_name,
             last_name
@@ -69,7 +69,7 @@ export default function Activity() {
                 {format(new Date(activity.created_at), 'MMM d, yyyy HH:mm')}
               </TableCell>
               <TableCell>
-                {activity.profiles?.email}
+                {activity.profile?.email}
               </TableCell>
               <TableCell>{activity.action_type}</TableCell>
               <TableCell>{activity.description}</TableCell>
