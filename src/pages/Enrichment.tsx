@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sparkle } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 export default function Enrichment() {
   const [file, setFile] = useState<File | null>(null);
@@ -39,7 +39,7 @@ export default function Enrichment() {
   return (
     <div className="p-8">
       <div className="flex items-center gap-2 mb-8">
-        <Sparkle className="h-8 w-8" />
+        <Sparkles className="h-8 w-8" />
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Enrich Investor Data</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-2">
