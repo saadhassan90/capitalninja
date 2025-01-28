@@ -1,4 +1,4 @@
-import { User, Settings, Users, LogOut } from "lucide-react";
+import { User, Settings, LogOut } from "lucide-react";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
 interface UserMenuItemsProps {
@@ -8,7 +8,6 @@ interface UserMenuItemsProps {
 export function UserMenuItems({ onLogout }: UserMenuItemsProps) {
   const menuItems = [
     { title: "Profile", url: "/settings", icon: User },
-    { title: "Team", url: "/settings?tab=team", icon: Users },
     { title: "Settings", url: "/settings", icon: Settings },
   ];
 
