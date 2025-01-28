@@ -44,7 +44,7 @@ export default function Activity() {
             .from('profiles')
             .select('email, first_name, last_name')
             .eq('id', activity.user_id)
-            .single();
+            .maybeSingle();
 
           return {
             ...activity,
@@ -84,7 +84,7 @@ export default function Activity() {
                 {format(new Date(activity.created_at), 'MMM d, yyyy HH:mm')}
               </TableCell>
               <TableCell>
-                {activity.profile?.email}
+                {activity.profile?.email || 'Unknown User'}
               </TableCell>
               <TableCell>{activity.action_type}</TableCell>
               <TableCell>{activity.description}</TableCell>
