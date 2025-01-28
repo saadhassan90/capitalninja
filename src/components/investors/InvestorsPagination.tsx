@@ -58,47 +58,45 @@ export function InvestorsPagination({
   };
 
   return (
-    <div className="sticky bottom-0 bg-background py-4 border-t shadow-sm z-10">
-      <div className="container max-w-screen-2xl mx-auto px-4">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious 
-                onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-                className={`cursor-pointer ${currentPage <= 1 ? 'pointer-events-none opacity-50' : 'hover:bg-accent'}`}
-              />
-            </PaginationItem>
-            
-            {getVisiblePages(currentPage, totalPages).map((page, index) => {
-              if (page === -1) {
-                return (
-                  <PaginationItem key={`ellipsis-${index}`}>
-                    <span className="px-4">...</span>
-                  </PaginationItem>
-                );
-              }
+    <div className="py-4 border-t mt-4">
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious 
+              onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+              className={`cursor-pointer ${currentPage <= 1 ? 'pointer-events-none opacity-50' : 'hover:bg-accent'}`}
+            />
+          </PaginationItem>
+          
+          {getVisiblePages(currentPage, totalPages).map((page, index) => {
+            if (page === -1) {
               return (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    isActive={page === currentPage}
-                    onClick={() => onPageChange(page)}
-                    className="cursor-pointer hover:bg-accent"
-                  >
-                    {page}
-                  </PaginationLink>
+                <PaginationItem key={`ellipsis-${index}`}>
+                  <span className="px-4">...</span>
                 </PaginationItem>
               );
-            })}
+            }
+            return (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  isActive={page === currentPage}
+                  onClick={() => onPageChange(page)}
+                  className="cursor-pointer hover:bg-accent"
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            );
+          })}
 
-            <PaginationItem>
-              <PaginationNext 
-                onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
-                className={`cursor-pointer ${currentPage >= totalPages ? 'pointer-events-none opacity-50' : 'hover:bg-accent'}`}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+          <PaginationItem>
+            <PaginationNext 
+              onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+              className={`cursor-pointer ${currentPage >= totalPages ? 'pointer-events-none opacity-50' : 'hover:bg-accent'}`}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 }
