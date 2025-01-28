@@ -20,14 +20,8 @@ export default function Settings() {
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="team">Team</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="notifications" disabled className="relative">
+          <TabsTrigger value="notifications" disabled>
             Notifications
-            <div className="absolute -right-2 -top-2">
-              <Badge variant="secondary" className="flex items-center gap-1 text-xs bg-muted">
-                <Clock className="h-3 w-3" />
-                Coming Soon
-              </Badge>
-            </div>
           </TabsTrigger>
         </TabsList>
 
@@ -52,6 +46,13 @@ export default function Settings() {
 
         <TabsContent value="notifications" className="space-y-4">
           <div className="rounded-lg border bg-card p-8 opacity-50">
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="text-lg font-semibold">Notification Settings</h2>
+              <Badge variant="secondary" className="flex items-center gap-1 text-xs bg-muted">
+                <Clock className="h-3 w-3" />
+                Coming Soon
+              </Badge>
+            </div>
             <NotificationsSection />
           </div>
         </TabsContent>
