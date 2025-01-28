@@ -41,12 +41,12 @@ export function UserMenuItems({ onLogout }: UserMenuItemsProps) {
           {theme === "dark" ? (
             <>
               <Sun className="h-4 w-4" />
-              Switch to Light Mode
+              Light Mode
             </>
           ) : (
             <>
               <Moon className="h-4 w-4" />
-              Switch to Dark Mode
+              Dark Mode
             </>
           )}
         </SidebarMenuButton>
