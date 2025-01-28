@@ -8,8 +8,11 @@ import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useTheme } from "next-themes";
 
 export default function Settings() {
+  const { theme, setTheme } = useTheme();
+
   return (
     <div className="space-y-6">
       <div>
@@ -45,7 +48,7 @@ export default function Settings() {
                         Choose your preferred color theme
                       </p>
                     </div>
-                    <Select defaultValue="system">
+                    <Select value={theme} onValueChange={setTheme}>
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select theme" />
                       </SelectTrigger>
@@ -93,7 +96,7 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">
-          <div className="rounded-lg border bg-card p-8 opacity-50">
+          <div className="rounded-lg border bg-card p-8">
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-lg font-semibold">Notification Settings</h2>
               <Badge variant="secondary" className="flex items-center gap-1 text-xs bg-muted">
