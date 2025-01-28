@@ -11,6 +11,19 @@ import {
 import { Activity as ActivityIcon } from "lucide-react";
 import { format } from "date-fns";
 
+type ActivityWithProfile = {
+  id: string;
+  action_type: string;
+  description: string;
+  created_at: string;
+  user_id: string;
+  profiles: {
+    email: string;
+    first_name: string | null;
+    last_name: string | null;
+  } | null;
+}
+
 export default function Activity() {
   const { data: activities, isLoading } = useQuery({
     queryKey: ['admin-activity'],
@@ -29,7 +42,7 @@ export default function Activity() {
         .limit(100);
       
       if (error) throw error;
-      return data;
+      return data as ActivityWithProfile[];
     }
   });
 
