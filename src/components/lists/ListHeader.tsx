@@ -1,12 +1,13 @@
 import { RefreshListButton } from "./RefreshListButton";
 import { BulkActions } from "@/components/investors/BulkActions";
+import type { QueryObserverResult } from "@tanstack/react-query";
 
 interface ListHeaderProps {
   selectedInvestors: number[];
   totalInvestors: number;
   listId: string;
   onClearSelection: () => void;
-  onRefresh: () => Promise<void>;
+  onRefresh: () => Promise<QueryObserverResult<any, Error>>;
 }
 
 export function ListHeader({ 

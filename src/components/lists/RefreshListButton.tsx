@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { QueryObserverResult } from "@tanstack/react-query";
 
 interface RefreshListButtonProps {
-  onRefresh: () => Promise<void>;
+  onRefresh: () => Promise<QueryObserverResult<any, Error>>;
 }
 
 export function RefreshListButton({ onRefresh }: RefreshListButtonProps) {
