@@ -1,47 +1,74 @@
-import { LucideIcon } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useMenuItems } from "./MenuItems";
+import { Link } from "react-router-dom";
 
 interface MenuItem {
   title: string;
-  icon: LucideIcon;
-  url: string;
+  href?: string;
+  icon?: any;
+  items?: MenuItem[];
 }
 
 interface MenuListProps {
-  items: MenuItem[];
+  items?: MenuItem[];
 }
 
-export function MenuList({ items }: MenuListProps) {
+export function MenuList({ items: propItems }: MenuListProps) {
   const location = useLocation();
+  const items = propItems || useMenuItems();
 
   return (
-    <SidebarMenu>
-      {items.map((item) => {
-        const isActive = location.pathname === item.url;
-        
+    <nav className="space-y-2">
+      {items.map((item, index) => {
+        if (item.items) {
+          return (
+            <div key={index} className="space-y-3">
+              <h4 className="text-sm font-medium leading-none text-muted-foreground px-4">
+                {item.title}
+              </h4>
+              <div className="space-y-1">
+                {item.items.map((subItem, subIndex) => (
+                  <Button
+                    key={subIndex}
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-start",
+                      location.pathname === subItem.href && "bg-accent"
+                    )}
+                    asChild
+                  >
+                    <Link to={subItem.href || "#"}>
+                      {subItem.icon && (
+                        <subItem.icon className="mr-2 h-4 w-4" />
+                      )}
+                      {subItem.title}
+                    </Link>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
         return (
-          <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton asChild>
-              <a
-                href={item.url}
-                className={`flex items-center gap-3 rounded-md px-3 py-2 transition-colors hover:bg-gray-900/10 dark:hover:bg-gray-50/10 ${
-                  isActive
-                    ? "bg-black text-white dark:bg-black dark:text-white"
-                    : ""
-                }`}
-              >
-                <item.icon className="h-4 w-4" />
-                <span>{item.title}</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <Button
+            key={index}
+            variant="ghost"
+            className={cn(
+              "w-full justify-start",
+              location.pathname === item.href && "bg-accent"
+            )}
+            asChild
+          >
+            <Link to={item.href || "#"}>
+              {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+              {item.title}
+            </Link>
+          </Button>
         );
       })}
-    </SidebarMenu>
+    </nav>
   );
 }

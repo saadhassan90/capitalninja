@@ -13,10 +13,13 @@ import ListView from "@/pages/ListView";
 import Settings from "@/pages/Settings";
 import Enrichment from "@/pages/Enrichment";
 import Exports from "@/pages/Exports";
+import AdminLayout from "@/components/admin/AdminLayout";
+import AdminDashboard from "@/pages/admin/Dashboard";
+import AdminUsers from "@/pages/admin/Users";
+import AdminActivity from "@/pages/admin/Activity";
 
 const queryClient = new QueryClient();
 
-// Create a root component that provides auth context
 const Root = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
@@ -64,6 +67,24 @@ const router = createBrowserRouter([
       {
         path: "/exports",
         element: <Exports />,
+      },
+      {
+        path: "admin",
+        element: <AdminLayout />,
+        children: [
+          {
+            path: "",
+            element: <AdminDashboard />,
+          },
+          {
+            path: "users",
+            element: <AdminUsers />,
+          },
+          {
+            path: "activity",
+            element: <AdminActivity />,
+          },
+        ],
       },
     ],
   },

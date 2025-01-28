@@ -1,15 +1,89 @@
-import { Home, Users, ListChecks, Sparkles, Download, UserCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
+import {
+  LayoutDashboard,
+  Users,
+  List,
+  Settings,
+  Sparkles,
+  Download,
+  Shield,
+  Activity,
+} from "lucide-react";
 
 export const menuItems = [
-  { title: "Dashboard", icon: Home, url: "/" },
-  { title: "Profile", icon: UserCircle, url: "/profile" },
-  { title: "Investors", icon: Users, url: "/investors" },
-  { title: "Lists", icon: ListChecks, url: "/lists" },
-  { title: "Enrichment", icon: Sparkles, url: "/enrichment" },
-  { title: "Exports", icon: Download, url: "/exports" },
+  {
+    title: "Dashboard",
+    href: "/",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Investors",
+    href: "/investors",
+    icon: Users,
+  },
+  {
+    title: "Lists",
+    href: "/lists",
+    icon: List,
+  },
+  {
+    title: "Enrichment",
+    href: "/enrichment",
+    icon: Sparkles,
+  },
+  {
+    title: "Exports",
+    href: "/exports",
+    icon: Download,
+  },
 ];
 
-export const userMenuItems = [
-  { title: "Profile", url: "/profile", icon: Users },
-  { title: "Team", url: "/team", icon: Users },
-];
+export function useMenuItems() {
+  const { user } = useAuth();
+
+  const { data: isAdmin } = useQuery({
+    queryKey: ['is-admin', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('id', user?.id)
+        .eq('is_active', true)
+        .maybeSingle();
+      
+      if (error) throw error;
+      return !!data;
+    },
+    enabled: !!user
+  });
+
+  if (isAdmin) {
+    return [
+      ...menuItems,
+      {
+        title: "Admin",
+        items: [
+          {
+            title: "Dashboard",
+            href: "/admin",
+            icon: Shield,
+          },
+          {
+            title: "Users",
+            href: "/admin/users",
+            icon: Users,
+          },
+          {
+            title: "Activity",
+            href: "/admin/activity",
+            icon: Activity,
+          },
+        ],
+      },
+    ];
+  }
+
+  return menuItems;
+}
