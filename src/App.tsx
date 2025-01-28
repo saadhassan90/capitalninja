@@ -12,10 +12,20 @@ import Settings from "@/pages/Settings";
 
 const queryClient = new QueryClient();
 
+// Create a root component that provides auth context
+const Root = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <AuthProvider>
+      {children}
+      <Toaster />
+    </AuthProvider>
+  );
+};
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Index />,
+    element: <Root><Index /></Root>,
     children: [
       {
         path: "/",
@@ -41,17 +51,14 @@ const router = createBrowserRouter([
   },
   {
     path: "/auth",
-    element: <Auth />,
+    element: <Root><Auth /></Root>,
   },
 ]);
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster />
-      </AuthProvider>
+      <RouterProvider router={router} />
     </QueryClientProvider>
   );
 }
