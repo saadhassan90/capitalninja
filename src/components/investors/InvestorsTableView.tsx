@@ -67,9 +67,9 @@ export function InvestorsTableView({
   );
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="rounded-md border flex-1 overflow-hidden">
-        <div className="overflow-auto max-h-[calc(100vh-300px)]">
+    <div className="flex flex-col min-h-[calc(100vh-300px)]">
+      <div className="rounded-md border flex-1">
+        <div className="overflow-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -114,13 +114,11 @@ export function InvestorsTableView({
         </div>
       </div>
 
-      <div className="mt-4">
-        <InvestorsPagination 
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={onPageChange}
-        />
-      </div>
+      <InvestorsPagination 
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 }
