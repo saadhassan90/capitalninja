@@ -10,6 +10,7 @@ import {
   Download,
   Shield,
   Activity,
+  Mail,
 } from "lucide-react";
 
 export const menuItems = [
@@ -32,6 +33,11 @@ export const menuItems = [
     title: "Enrichment",
     href: "/enrichment",
     icon: Sparkles,
+  },
+  {
+    title: "Outreach",
+    href: "/outreach",
+    icon: Mail,
   },
   {
     title: "Exports",
