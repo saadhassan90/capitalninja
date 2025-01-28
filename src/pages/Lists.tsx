@@ -1,5 +1,5 @@
 import { ListSection } from "@/components/lists/ListSection";
-import { ListCheck } from "lucide-react";
+import { ListChecks } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -23,7 +23,6 @@ const Lists = () => {
       
       if (error) throw error;
       
-      // Type assertion to ensure the type field is correctly typed
       return (data as List[]) || [];
     }
   });
@@ -31,7 +30,7 @@ const Lists = () => {
   return (
     <div className="p-8">
       <div className="flex items-center gap-2 mb-8">
-        <ListCheck className="h-8 w-8" />
+        <ListChecks className="h-8 w-8" />
         <h1 className="text-3xl font-bold tracking-tight">Lists</h1>
       </div>
       

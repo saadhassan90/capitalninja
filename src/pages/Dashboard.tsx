@@ -6,18 +6,16 @@ import { InvestorDistributionChart } from "@/components/dashboard/InvestorDistri
 import { TransactionsChart } from "@/components/dashboard/TransactionsChart";
 import { ActivityTimeline } from "@/components/dashboard/ActivityTimeline";
 import { GeographicDistributionChart } from "@/components/dashboard/GeographicDistributionChart";
-import { LayoutDashboard } from "lucide-react";
+import { Home } from "lucide-react";
 
 export default function Dashboard() {
   const { data: stats } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
-      // Get lists count
       const { count: listsCount } = await supabase
         .from('lists')
         .select('*', { count: 'exact', head: true });
 
-      // Get investors count
       const { count: investorsCount } = await supabase
         .from('limited_partners')
         .select('*', { count: 'exact', head: true });
@@ -58,11 +56,10 @@ export default function Dashboard() {
   return (
     <div className="flex-1 space-y-8 p-4 md:p-8 pt-6">
       <div className="flex items-center gap-2 mb-8">
-        <LayoutDashboard className="h-8 w-8" />
+        <Home className="h-8 w-8" />
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
       </div>
       
-      {/* Account Activity Section */}
       <section className="space-y-6">
         <h3 className="text-xl font-semibold tracking-tight">Account Activity</h3>
         <StatsCards 
@@ -72,7 +69,6 @@ export default function Dashboard() {
         <ActivityTimeline />
       </section>
 
-      {/* Database Analytics Section */}
       <section className="space-y-6">
         <h3 className="text-xl font-semibold tracking-tight">Database Analytics</h3>
         <div className="flex flex-col space-y-6">

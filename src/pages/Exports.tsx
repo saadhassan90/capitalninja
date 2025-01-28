@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, Trash2, FileDown } from "lucide-react";
+import { Download, RefreshCw, Trash2 } from "lucide-react";
 
 const Exports = () => {
   // Mock data for demonstration
@@ -26,16 +26,16 @@ const Exports = () => {
   return (
     <div className="p-8">
       <div className="flex items-center gap-2 mb-8">
-        <FileDown className="h-8 w-8" />
+        <Download className="h-8 w-8" />
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Exports History</h1>
-          <p className="text-gray-500 mt-2">
+          <p className="text-gray-500 dark:text-gray-400 mt-2">
             View and manage your data exports
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border">
+      <div className="bg-card rounded-lg shadow-sm border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -55,7 +55,7 @@ const Exports = () => {
                 <TableCell>{export_.type}</TableCell>
                 <TableCell>{export_.records}</TableCell>
                 <TableCell>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
                     {export_.status}
                   </span>
                 </TableCell>
