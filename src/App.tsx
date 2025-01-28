@@ -11,6 +11,7 @@ import Lists from "@/pages/Lists";
 import ListView from "@/pages/ListView";
 import Settings from "@/pages/Settings";
 import Enrichment from "@/pages/Enrichment";
+import Exports from "@/pages/Exports";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
       {
         path: "/enrichment",
         element: <Enrichment />,
+      },
+      {
+        path: "/exports",
+        element: <Exports />,
       },
     ],
   },
