@@ -15,8 +15,6 @@ import { PersonalInfoSection } from "@/components/profile/PersonalInfoSection";
 import { CompanyInfoSection } from "@/components/profile/CompanyInfoSection";
 import { AdditionalInfoSection } from "@/components/profile/AdditionalInfoSection";
 import { profileFormSchema, type ProfileFormValues } from "@/types/profile";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, DollarSign } from "lucide-react";
 
 export default function Profile() {
   const { profile, isLoading, updateProfile, updateAvatar } = useProfile();
@@ -40,9 +38,6 @@ export default function Profile() {
       linkedin_url: profile?.linkedin_url || "",
       location: profile?.location || "",
       bio: profile?.bio || "",
-      raising_amount: profile?.raising_amount || undefined,
-      raising_description: profile?.raising_description || "",
-      raising_stage: profile?.raising_stage || "",
     },
   });
 
@@ -128,88 +123,37 @@ export default function Profile() {
     <div className="flex-1 space-y-8">
       <ProfileHeader />
       
-      <Tabs defaultValue="user" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="user" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            User
-          </TabsTrigger>
-          <TabsTrigger value="fundraising" className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4" />
-            Fundraising
-          </TabsTrigger>
-        </TabsList>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <AvatarSection
+            profile={profile}
+            uploading={uploading}
+            handleImageUpload={handleImageUpload}
+            handleCropComplete={handleCropComplete}
+            tempImage={tempImage}
+            crop={crop}
+            setCrop={setCrop}
+            setImageRef={setImageRef}
+            setTempImage={setTempImage}
+          />
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <TabsContent value="user" className="space-y-6">
-              <AvatarSection
-                profile={profile}
-                uploading={uploading}
-                handleImageUpload={handleImageUpload}
-                handleCropComplete={handleCropComplete}
-                tempImage={tempImage}
-                crop={crop}
-                setCrop={setCrop}
-                setImageRef={setImageRef}
-                setTempImage={setTempImage}
-              />
-              <PersonalInfoSection form={form} />
-              <CompanyInfoSection form={form} />
-              <AdditionalInfoSection form={form} />
-            </TabsContent>
+          <PersonalInfoSection form={form} />
+          <CompanyInfoSection form={form} />
+          <AdditionalInfoSection form={form} />
 
-            <TabsContent value="fundraising" className="space-y-6">
-              <div className="grid gap-6">
-                <div className="space-y-4">
-                  <h2 className="text-lg font-semibold">Fundraising Information</h2>
-                  <div className="grid gap-4">
-                    <div className="grid gap-2">
-                      <label htmlFor="raising_amount">Target Amount ($)</label>
-                      <input
-                        type="number"
-                        id="raising_amount"
-                        {...form.register("raising_amount")}
-                        className="w-full p-2 border rounded"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <label htmlFor="raising_stage">Stage</label>
-                      <input
-                        type="text"
-                        id="raising_stage"
-                        {...form.register("raising_stage")}
-                        className="w-full p-2 border rounded"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <label htmlFor="raising_description">Description</label>
-                      <textarea
-                        id="raising_description"
-                        {...form.register("raising_description")}
-                        className="w-full p-2 border rounded"
-                        rows={4}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                disabled={updateProfile.isPending}
-              >
-                {updateProfile.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Save Changes
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </Tabs>
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              disabled={updateProfile.isPending}
+            >
+              {updateProfile.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Save Changes
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }
