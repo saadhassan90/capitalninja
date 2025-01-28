@@ -10,6 +10,7 @@ import Investors from "@/pages/Investors";
 import Lists from "@/pages/Lists";
 import ListView from "@/pages/ListView";
 import Settings from "@/pages/Settings";
+import Enrichment from "@/pages/Enrichment";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "/settings",
         element: <Settings />,
+      },
+      {
+        path: "/enrichment",
+        element: <Enrichment />,
       },
     ],
   },
