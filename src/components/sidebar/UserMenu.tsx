@@ -1,23 +1,13 @@
 import { useState } from "react";
-import { ChevronDown, User, Settings, Users, LogOut } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SidebarFooter } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-
-const menuItems = [
-  { title: "Profile", url: "/settings", icon: User },
-  { title: "Team", url: "/settings?tab=team", icon: Users },
-  { title: "Settings", url: "/settings", icon: Settings },
-];
+import { UserAvatar } from "./user-menu/UserAvatar";
+import { UserMenuItems } from "./user-menu/UserMenuItems";
 
 export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,43 +51,21 @@ export function UserMenu() {
             isOpen ? "mb-2 max-h-[200px] opacity-100" : "max-h-0 opacity-0"
           )}
         >
-          <SidebarMenu>
-            {menuItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <a
-                    href={item.url}
-                    className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-foreground))]"
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {item.title}
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-destructive hover:bg-[hsl(var(--sidebar-accent))]"
-              >
-                <LogOut className="h-4 w-4" />
-                Log Out
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+          <UserMenuItems onLogout={handleLogout} />
         </div>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="flex w-full items-center justify-between rounded-md p-2 hover:bg-[hsl(var(--sidebar-accent))]"
         >
           <div className="flex items-center gap-3">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={profile?.avatar_url} />
-              <AvatarFallback>{userInitials}</AvatarFallback>
-            </Avatar>
+            <UserAvatar avatarUrl={profile?.avatar_url} userInitials={userInitials} />
             <div className="flex flex-col items-start text-left">
-              <span className="text-sm font-medium text-[hsl(var(--sidebar-foreground))]">{displayName}</span>
-              <span className="text-xs text-[hsl(var(--sidebar-muted-foreground))]">{user?.email}</span>
+              <span className="text-sm font-medium text-[hsl(var(--sidebar-foreground))]">
+                {displayName}
+              </span>
+              <span className="text-xs text-[hsl(var(--sidebar-muted-foreground))]">
+                {user?.email}
+              </span>
             </div>
           </div>
           <ChevronDown
