@@ -3,11 +3,13 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 import { MenuHeader } from "./sidebar/MenuHeader";
 import { MenuList } from "./sidebar/MenuList";
 import { menuItems } from "./sidebar/MenuItems";
 import { UserMenu } from "./sidebar/UserMenu";
+import { AdminButton } from "./sidebar/AdminButton";
 
 export function AppSidebar() {
   return (
@@ -20,7 +22,10 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <UserMenu />
+      <SidebarFooter className="space-y-2">
+        <AdminButton />
+        <UserMenu />
+      </SidebarFooter>
     </Sidebar>
   );
 }
