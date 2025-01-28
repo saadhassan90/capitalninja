@@ -38,8 +38,23 @@ export const StatsCards = ({ listsCount, investorsCount }: StatsCardsProps) => {
     },
   });
 
-  // Monthly limit is hardcoded for now - this could be moved to a subscription/plan table later
-  const monthlyLimit = 1000;
+  // Query for team export limit
+  const { data: teamExportLimit } = useQuery({
+    queryKey: ['team-export-limit'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('team_export_limits')
+        .select('monthly_limit')
+        .single();
+      
+      if (error) {
+        console.error('Error fetching team export limit:', error);
+        return 200; // Default to 200 if there's an error
+      }
+      
+      return data?.monthly_limit ?? 200;
+    },
+  });
 
   return (
     <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
@@ -96,7 +111,7 @@ export const StatsCards = ({ listsCount, investorsCount }: StatsCardsProps) => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {monthlyExports ?? 0}/{monthlyLimit}
+            {monthlyExports ?? 0}/{teamExportLimit ?? 200}
           </div>
           <p className="text-xs text-muted-foreground">
             {format(new Date(), 'MMMM yyyy')}
