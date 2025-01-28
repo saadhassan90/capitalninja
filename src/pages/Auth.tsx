@@ -18,7 +18,8 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      const { error: otpError } = await supabase.auth.signInWithOtp({
+      // First, sign up the user with Supabase Auth
+      const { error: signUpError } = await supabase.auth.signInWithOtp({
         email,
         options: {
           emailRedirectTo: window.location.origin,
@@ -29,8 +30,9 @@ export default function Auth() {
         },
       });
       
-      if (otpError) throw otpError;
+      if (signUpError) throw signUpError;
 
+      // Then, update their profile with additional information
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -38,6 +40,7 @@ export default function Auth() {
           last_name: formData.lastName,
           company_name: formData.company,
           title: formData.title,
+          email: email,
         })
         .eq("email", email);
       
