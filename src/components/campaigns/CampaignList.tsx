@@ -82,10 +82,10 @@ export function CampaignList() {
   );
 }
 
-function getStatusVariant(status: string) {
+function getStatusVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
   switch (status) {
     case "completed":
-      return "success";
+      return "outline";
     case "sending":
       return "default";
     case "scheduled":

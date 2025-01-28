@@ -11,6 +11,7 @@ import {
   Shield,
   Activity,
   Mail,
+  MessageSquare,
 } from "lucide-react";
 
 export const menuItems = [
@@ -36,8 +37,18 @@ export const menuItems = [
   },
   {
     title: "Outreach",
-    href: "/outreach",
-    icon: Mail,
+    items: [
+      {
+        title: "Campaigns",
+        href: "/campaigns",
+        icon: Mail,
+      },
+      {
+        title: "Emails",
+        href: "/emails",
+        icon: MessageSquare,
+      },
+    ],
   },
   {
     title: "Exports",

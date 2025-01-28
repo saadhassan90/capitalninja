@@ -13,7 +13,8 @@ import ListView from "@/pages/ListView";
 import Settings from "@/pages/Settings";
 import Enrichment from "@/pages/Enrichment";
 import Exports from "@/pages/Exports";
-import Outreach from "@/pages/Outreach";
+import Campaigns from "@/pages/Campaigns";
+import Emails from "@/pages/Emails";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminUsers from "@/pages/admin/Users";
@@ -70,8 +71,12 @@ const router = createBrowserRouter([
         element: <Exports />,
       },
       {
-        path: "/outreach",
-        element: <Outreach />,
+        path: "/campaigns",
+        element: <Campaigns />,
+      },
+      {
+        path: "/emails",
+        element: <Emails />,
       },
       {
         path: "admin",
