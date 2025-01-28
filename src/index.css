@@ -69,7 +69,7 @@
     --destructive-foreground: 210 40% 98%;
  
     --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 25.5%;
     --ring: 212.7 26.8% 83.9%;
 
     --sidebar: 222.2 84% 4.9%;
@@ -88,5 +88,8 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply dark:text-white;
   }
 }
