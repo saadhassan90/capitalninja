@@ -16,24 +16,34 @@ import {
 
 export const menuItems = [
   {
-    title: "Dashboard",
-    href: "/",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Investors",
-    href: "/investors",
-    icon: Users,
-  },
-  {
-    title: "Lists",
-    href: "/lists",
-    icon: List,
-  },
-  {
-    title: "Enrichment",
-    href: "/enrichment",
-    icon: Sparkles,
+    title: "Database",
+    items: [
+      {
+        title: "Dashboard",
+        href: "/",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "Investors",
+        href: "/investors",
+        icon: Users,
+      },
+      {
+        title: "Lists",
+        href: "/lists",
+        icon: List,
+      },
+      {
+        title: "Enrichment",
+        href: "/enrichment",
+        icon: Sparkles,
+      },
+      {
+        title: "Exports",
+        href: "/exports",
+        icon: Download,
+      },
+    ],
   },
   {
     title: "Outreach",
@@ -49,11 +59,6 @@ export const menuItems = [
         icon: MessageSquare,
       },
     ],
-  },
-  {
-    title: "Exports",
-    href: "/exports",
-    icon: Download,
   },
 ];
 
