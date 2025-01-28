@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export default function Enrichment() {
   const [file, setFile] = useState<File | null>(null);
@@ -41,7 +42,10 @@ export default function Enrichment() {
       <div className="flex items-center gap-2 mb-8">
         <Sparkles className="h-8 w-8" />
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Enrich Investor Data</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-bold tracking-tight">Enrich Investor Data</h1>
+            <Badge variant="secondary" className="ml-2">Coming Soon</Badge>
+          </div>
           <p className="text-gray-500 dark:text-gray-400 mt-2">
             Upload a CSV file containing investor leads to enrich it with data from our database
           </p>
