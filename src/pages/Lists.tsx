@@ -3,6 +3,15 @@ import { ListCheck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+interface List {
+  id: string;
+  name: string;
+  description: string;
+  created_at: string;
+  type: "static" | "dynamic";
+  last_refreshed_at: string | null;
+}
+
 const Lists = () => {
   const { data: lists, isLoading } = useQuery({
     queryKey: ['lists'],
@@ -13,7 +22,9 @@ const Lists = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data || [];
+      
+      // Type assertion to ensure the type field is correctly typed
+      return (data as List[]) || [];
     }
   });
 
