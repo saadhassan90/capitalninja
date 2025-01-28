@@ -1,27 +1,59 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, Trash2 } from "lucide-react";
+import { Download, RefreshCw, Trash2, Check, Loader, Clock, X } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 
 const Exports = () => {
-  // Mock data for demonstration
-  const exports = [
-    {
-      id: 1,
-      name: "Q1 Investors Export",
-      date: "2024-03-15",
-      status: "completed",
-      type: "Enriched Data",
-      records: 150,
-    },
-    {
-      id: 2,
-      name: "PE Firms Analysis",
-      date: "2024-03-10",
-      status: "completed",
-      type: "Raw Data",
-      records: 75,
-    },
-  ];
+  const { data: exports, isLoading } = useQuery({
+    queryKey: ['exports'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('exports')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const getStatusIcon = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'complete':
+        return <Check className="h-4 w-4 text-green-500" />;
+      case 'working':
+        return <Loader className="h-4 w-4 text-blue-500 animate-spin" />;
+      case 'error':
+        return <X className="h-4 w-4 text-red-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getStatusBadgeClass = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'complete':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100';
+      case 'working':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100';
+      case 'error':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100';
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="p-8">
+        <div className="flex items-center justify-center">
+          <Loader className="h-8 w-8 animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -48,26 +80,41 @@ const Exports = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {exports.map((export_) => (
+            {exports?.map((export_) => (
               <TableRow key={export_.id}>
                 <TableCell className="font-medium">{export_.name}</TableCell>
-                <TableCell>{new Date(export_.date).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  {format(new Date(export_.created_at), 'MMM d, yyyy')}
+                </TableCell>
                 <TableCell>{export_.type}</TableCell>
                 <TableCell>{export_.records}</TableCell>
                 <TableCell>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass(export_.status)}`}>
+                    {getStatusIcon(export_.status)}
                     {export_.status}
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={export_.status !== 'complete'}
+                    >
                       <Download className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={export_.status === 'working'}
+                    >
                       <RefreshCw className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={export_.status === 'working'}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
