@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
+import { AuthFormContainer } from "@/components/auth/AuthFormContainer";
 
 export default function ResetPassword() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <Button>Set New Password</Button>
-    </div>
+    <AuthFormContainer>
+      <div>Reset Password Form</div>
+    </AuthFormContainer>
   );
 }
