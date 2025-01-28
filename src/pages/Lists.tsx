@@ -1,7 +1,8 @@
 import { ListSection } from "@/components/lists/ListSection";
-import { ListChecks } from "lucide-react";
+import { ListChecks, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 interface List {
   id: string;
@@ -29,14 +30,20 @@ const Lists = () => {
 
   return (
     <div className="p-8">
-      <div className="flex items-center gap-2 mb-8">
-        <ListChecks className="h-8 w-8" />
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Lists</h1>
-          <p className="text-muted-foreground mt-2">
-            Create and manage static and dynamic investor lists
-          </p>
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-2">
+          <ListChecks className="h-8 w-8" />
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Lists</h1>
+            <p className="text-muted-foreground mt-2">
+              Create and manage static and dynamic investor lists
+            </p>
+          </div>
         </div>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          New List
+        </Button>
       </div>
       
       <div className="space-y-8">
