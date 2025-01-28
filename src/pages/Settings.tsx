@@ -2,6 +2,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Team from "./Team";
 import { SecuritySection } from "@/components/settings/SecuritySection";
 import { NotificationsSection } from "@/components/settings/NotificationsSection";
+import { Badge } from "@/components/ui/badge";
+import { Clock } from "lucide-react";
 
 export default function Settings() {
   return (
@@ -18,7 +20,15 @@ export default function Settings() {
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="team">Team</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="notifications" disabled className="relative">
+            Notifications
+            <div className="absolute -right-2 -top-2">
+              <Badge variant="secondary" className="flex items-center gap-1 text-xs bg-muted">
+                <Clock className="h-3 w-3" />
+                Coming Soon
+              </Badge>
+            </div>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-4">
@@ -41,7 +51,7 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">
-          <div className="rounded-lg border bg-card p-8">
+          <div className="rounded-lg border bg-card p-8 opacity-50">
             <NotificationsSection />
           </div>
         </TabsContent>
