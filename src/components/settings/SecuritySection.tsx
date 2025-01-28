@@ -81,13 +81,6 @@ export function SecuritySection() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium">Security Settings</h3>
-        <p className="text-sm text-muted-foreground">
-          Manage your account security settings
-        </p>
-      </div>
-
       <div className="space-y-4">
         <div className="grid gap-2">
           <h4 className="font-medium">Email Address</h4>

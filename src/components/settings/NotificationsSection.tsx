@@ -14,50 +14,41 @@ export function NotificationsSection() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium">Notification Preferences</h3>
-        <p className="text-sm text-muted-foreground">
-          Choose what notifications you want to receive
-        </p>
-      </div>
+    <div className="space-y-4">
+      <NotificationToggle
+        title="Email Notifications"
+        description="Receive notifications via email"
+        checked={preferences.email_notifications}
+        onCheckedChange={(checked) => updatePreference("email_notifications", checked)}
+      />
 
-      <div className="space-y-4">
-        <NotificationToggle
-          title="Email Notifications"
-          description="Receive notifications via email"
-          checked={preferences.email_notifications}
-          onCheckedChange={(checked) => updatePreference("email_notifications", checked)}
-        />
+      <NotificationToggle
+        title="List Updates"
+        description="Get notified when your lists are updated"
+        checked={preferences.list_updates}
+        onCheckedChange={(checked) => updatePreference("list_updates", checked)}
+      />
 
-        <NotificationToggle
-          title="List Updates"
-          description="Get notified when your lists are updated"
-          checked={preferences.list_updates}
-          onCheckedChange={(checked) => updatePreference("list_updates", checked)}
-        />
+      <NotificationToggle
+        title="Investor Updates"
+        description="Receive updates about investors you follow"
+        checked={preferences.investor_updates}
+        onCheckedChange={(checked) => updatePreference("investor_updates", checked)}
+      />
 
-        <NotificationToggle
-          title="Investor Updates"
-          description="Receive updates about investors you follow"
-          checked={preferences.investor_updates}
-          onCheckedChange={(checked) => updatePreference("investor_updates", checked)}
-        />
+      <NotificationToggle
+        title="Security Alerts"
+        description="Get notified about security-related events"
+        checked={preferences.security_alerts}
+        onCheckedChange={(checked) => updatePreference("security_alerts", checked)}
+      />
 
-        <NotificationToggle
-          title="Security Alerts"
-          description="Get notified about security-related events"
-          checked={preferences.security_alerts}
-          onCheckedChange={(checked) => updatePreference("security_alerts", checked)}
-        />
-
-        <NotificationToggle
-          title="Marketing Updates"
-          description="Receive marketing and promotional emails"
-          checked={preferences.marketing_updates}
-          onCheckedChange={(checked) => updatePreference("marketing_updates", checked)}
-        />
-      </div>
+      <NotificationToggle
+        title="Marketing Updates"
+        description="Receive marketing and promotional emails"
+        checked={preferences.marketing_updates}
+        onCheckedChange={(checked) => updatePreference("marketing_updates", checked)}
+      />
     </div>
   );
 }
