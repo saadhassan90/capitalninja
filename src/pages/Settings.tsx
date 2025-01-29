@@ -1,10 +1,9 @@
-import { Settings as SettingsIcon } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { NotificationsSection } from "@/components/settings/NotificationsSection";
 import { SecuritySection } from "@/components/settings/SecuritySection";
 import { TeamMembersTable } from "@/components/team/TeamMembersTable";
-import { Button } from "@/components/ui/button";
 import { InviteUserDialog } from "@/components/team/InviteUserDialog";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { TeamMember } from "@/types/team";
@@ -26,24 +25,25 @@ export default function Settings() {
         .select(`
           *,
           profiles:user_id (
+            email,
             first_name,
             last_name,
-            email,
             avatar_url
           )
-        `)
-        .order('created_at', { ascending: false });
-      
+        `);
+
       if (error) throw error;
-      return (data as TeamMember[]) || [];
+      return data as TeamMember[];
     }
   });
 
   return (
-    <div className="p-8 space-y-8">
-      <div className="flex items-center gap-2 mb-8">
-        <SettingsIcon className="h-8 w-8" />
+    <div className="container mx-auto py-8 space-y-6">
+      <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+        <p className="text-muted-foreground">
+          Manage your account preferences, team, security, and notification settings
+        </p>
       </div>
 
       <Accordion type="single" collapsible className="w-full space-y-4">
@@ -95,7 +95,7 @@ export default function Settings() {
       </Accordion>
       
       <InviteUserDialog 
-        open={inviteDialogOpen} 
+        open={inviteDialogOpen}
         onOpenChange={setInviteDialogOpen}
       />
     </div>
