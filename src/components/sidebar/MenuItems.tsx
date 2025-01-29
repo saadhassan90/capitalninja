@@ -54,7 +54,7 @@ export const menuItems = [
         icon: Mail,
       },
       {
-        title: "Emails",
+        title: "Outreach",
         href: "/emails",
         icon: MessageSquare,
       },
