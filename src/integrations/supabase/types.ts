@@ -809,6 +809,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_subscriptions: {
+        Row: {
+          created_at: string
+          id: string
+          instantly_api_key: string | null
+          instantly_email: string | null
+          instantly_password: string | null
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          instantly_api_key?: string | null
+          instantly_email?: string | null
+          instantly_password?: string | null
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          instantly_api_key?: string | null
+          instantly_email?: string | null
+          instantly_password?: string | null
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -893,6 +926,7 @@ export type Database = {
         | "sending"
         | "completed"
         | "failed"
+      subscription_plan: "free" | "basic" | "outreach" | "enterprise"
     }
     CompositeTypes: {
       [_ in never]: never
