@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 
 export default function Emails() {
   return (
@@ -6,21 +6,18 @@ export default function Emails() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Email Templates</h1>
         <p className="text-muted-foreground">
-          Manage your email templates for campaigns
+          Manage your email campaigns with Instantly.ai
         </p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Coming Soon</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Email template management will be available soon.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+
+      <Card className="w-full h-[calc(100vh-12rem)] overflow-hidden">
+        <iframe
+          src="https://app.instantly.ai"
+          className="w-full h-full border-0"
+          title="Instantly.ai"
+          allow="clipboard-write"
+        />
+      </Card>
     </div>
   );
 }
