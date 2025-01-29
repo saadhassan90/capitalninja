@@ -8,6 +8,12 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { TeamMember } from "@/types/team";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export default function Settings() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
@@ -40,16 +46,53 @@ export default function Settings() {
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
       </div>
 
-      <NotificationsSection />
-      <SecuritySection />
-      <TeamMembersTable 
-        members={members || []}
-        isLoading={isLoading}
-      />
-      
-      <Button onClick={() => setInviteDialogOpen(true)}>
-        Invite User
-      </Button>
+      <Accordion type="single" collapsible className="w-full space-y-4">
+        <AccordionItem value="general" className="border rounded-lg p-4">
+          <AccordionTrigger className="text-xl font-semibold">
+            General
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <SecuritySection />
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="team" className="border rounded-lg p-4">
+          <AccordionTrigger className="text-xl font-semibold">
+            Team Management
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <div className="space-y-4">
+              <Button onClick={() => setInviteDialogOpen(true)}>
+                Invite User
+              </Button>
+              <TeamMembersTable 
+                members={members || []}
+                isLoading={isLoading}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="privacy" className="border rounded-lg p-4">
+          <AccordionTrigger className="text-xl font-semibold">
+            Privacy
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <div className="text-muted-foreground">
+              Privacy settings coming soon...
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="notifications" className="border rounded-lg p-4">
+          <AccordionTrigger className="text-xl font-semibold">
+            Notifications
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <NotificationsSection />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
       
       <InviteUserDialog 
         open={inviteDialogOpen} 
