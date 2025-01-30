@@ -577,6 +577,63 @@ export type Database = {
         }
         Relationships: []
       }
+      master_leads: {
+        Row: {
+          company_name: string
+          confidence_score: number | null
+          created_at: string
+          enriched_data: Json | null
+          id: string
+          last_validated_at: string | null
+          matched_limited_partner_id: number | null
+          original_upload_id: string | null
+          raw_data: Json
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          company_name: string
+          confidence_score?: number | null
+          created_at?: string
+          enriched_data?: Json | null
+          id?: string
+          last_validated_at?: string | null
+          matched_limited_partner_id?: number | null
+          original_upload_id?: string | null
+          raw_data: Json
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          company_name?: string
+          confidence_score?: number | null
+          created_at?: string
+          enriched_data?: Json | null
+          id?: string
+          last_validated_at?: string | null
+          matched_limited_partner_id?: number | null
+          original_upload_id?: string | null
+          raw_data?: Json
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "master_leads_matched_limited_partner_id_fkey"
+            columns: ["matched_limited_partner_id"]
+            isOneToOne: false
+            referencedRelation: "limited_partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "master_leads_original_upload_id_fkey"
+            columns: ["original_upload_id"]
+            isOneToOne: false
+            referencedRelation: "user_uploaded_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           created_at: string | null
@@ -838,6 +895,48 @@ export type Database = {
           instantly_password?: string | null
           plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_uploaded_leads: {
+        Row: {
+          column_mapping: Json | null
+          created_at: string
+          error_message: string | null
+          id: string
+          matched_rows: number | null
+          original_filename: string
+          processed_status: string | null
+          raw_data: Json
+          total_rows: number | null
+          upload_date: string
+          user_id: string
+        }
+        Insert: {
+          column_mapping?: Json | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          matched_rows?: number | null
+          original_filename: string
+          processed_status?: string | null
+          raw_data: Json
+          total_rows?: number | null
+          upload_date?: string
+          user_id: string
+        }
+        Update: {
+          column_mapping?: Json | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          matched_rows?: number | null
+          original_filename?: string
+          processed_status?: string | null
+          raw_data?: Json
+          total_rows?: number | null
+          upload_date?: string
           user_id?: string
         }
         Relationships: []
