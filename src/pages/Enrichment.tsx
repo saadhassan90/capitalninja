@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
@@ -20,9 +19,36 @@ export default function Enrichment() {
     }
   };
 
+  const analyzeCSV = async (content: string) => {
+    const lines = content.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    
+    // Get a sample of the data (first 5 rows)
+    const sampleData = lines.slice(1, 6).map(line => {
+      const values = line.split(',');
+      return headers.reduce((obj, header, i) => {
+        obj[header] = values[i]?.trim();
+        return obj;
+      }, {} as Record<string, string>);
+    });
+
+    // Analyze columns using AI
+    const { data: analysis, error: analysisError } = await supabase
+      .functions.invoke('analyze-csv-columns', {
+        body: { headers, sampleData }
+      });
+
+    if (analysisError) {
+      console.error('Error analyzing CSV:', analysisError);
+      throw new Error('Failed to analyze CSV columns');
+    }
+
+    return analysis;
+  };
+
   const processCSV = async (content: string) => {
     try {
-      // Simple CSV parsing (you might want to use a library for more robust parsing)
+      // Simple CSV parsing
       const lines = content.split('\n');
       const headers = lines[0].split(',').map(h => h.trim());
       const rows = lines.slice(1).map(line => {
@@ -47,8 +73,17 @@ export default function Enrichment() {
     setProgress(0);
     
     try {
-      // Read and process the CSV file
+      // Read and analyze the CSV file
       const content = await file.text();
+      
+      setProgress(20);
+      
+      // Analyze CSV structure using AI
+      const columnMapping = await analyzeCSV(content);
+      
+      setProgress(40);
+      
+      // Process the CSV data
       const processedData = await processCSV(content);
 
       // Store the upload in user_uploaded_leads
@@ -57,13 +92,14 @@ export default function Enrichment() {
         .insert({
           original_filename: file.name,
           raw_data: processedData,
+          column_mapping: columnMapping
         })
         .select()
         .single();
 
       if (uploadError) throw uploadError;
 
-      setProgress(50);
+      setProgress(60);
 
       // Start processing the data
       const { data: processedResult, error: processError } = await supabase
@@ -144,8 +180,9 @@ export default function Enrichment() {
             <h3 className="font-medium mb-2">How it works</h3>
             <ul className="text-sm text-muted-foreground space-y-2">
               <li>1. Upload a CSV file containing investor information</li>
-              <li>2. Our system will match and enrich your data with our database</li>
-              <li>3. Download the enriched CSV file with additional insights</li>
+              <li>2. Our AI analyzes and maps your data columns</li>
+              <li>3. The system matches and enriches your data with our database</li>
+              <li>4. Download the enriched CSV file with additional insights</li>
             </ul>
           </div>
         </div>
