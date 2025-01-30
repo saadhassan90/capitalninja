@@ -29,7 +29,9 @@ interface Upload {
   created_at: string;
   error_message: string | null;
   raw_data: any[];
-  column_mapping: any;
+  column_mapping: {
+    enrichment_analysis?: string;
+  };
 }
 
 interface EnrichmentHistoryTableProps {
@@ -125,25 +127,6 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
     }
   };
 
-  const getEnrichmentAnalysis = (upload: Upload) => {
-    const matchRate = (upload.matched_rows / upload.total_rows) * 100;
-    const unmatchedRows = upload.total_rows - upload.matched_rows;
-
-    return {
-      summary: `Processed ${upload.total_rows} records with ${upload.matched_rows} successful matches (${matchRate.toFixed(1)}% match rate)`,
-      analytics: {
-        totalRecords: upload.total_rows,
-        matchedRecords: upload.matched_rows,
-        unmatchedRecords: unmatchedRows,
-        matchRate: matchRate,
-      },
-      insights: {
-        successful: "Records with exact company name matches and those from well-known institutions were easier to enrich.",
-        challenging: "Records with abbreviated names, misspellings, or alternative company names were more challenging to match accurately."
-      }
-    };
-  };
-
   return (
     <>
       <div className="rounded-md border">
@@ -226,7 +209,10 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
               <div>
                 <h3 className="text-lg font-semibold mb-2">Summary</h3>
                 <p className="text-muted-foreground">
-                  {getEnrichmentAnalysis(selectedUpload).summary}
+                  {selectedUpload.column_mapping?.enrichment_analysis || 
+                    `Processed ${selectedUpload.total_rows} records with ${selectedUpload.matched_rows} successful matches 
+                    (${((selectedUpload.matched_rows / selectedUpload.total_rows) * 100).toFixed(1)}% match rate)`
+                  }
                 </p>
               </div>
 
@@ -244,24 +230,6 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
                       {((selectedUpload.matched_rows / selectedUpload.total_rows) * 100).toFixed(1)}%
                     </p>
                     <p className="text-sm text-muted-foreground">Match Rate</p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Enrichment Insights</h3>
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-green-600 mb-1">Successfully Enriched Records</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {getEnrichmentAnalysis(selectedUpload).insights.successful}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-yellow-600 mb-1">Challenging Records</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {getEnrichmentAnalysis(selectedUpload).insights.challenging}
-                    </p>
                   </div>
                 </div>
               </div>
