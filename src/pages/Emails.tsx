@@ -2,19 +2,37 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/components/AuthProvider";
 import { Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Emails() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+
+  // Fetch user's Instantly credentials from user_subscriptions
+  const { data: subscription } = useQuery({
+    queryKey: ["user-subscription"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_subscriptions")
+        .select("instantly_email, instantly_api_key")
+        .eq("user_id", user?.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
 
   // Handle iframe load event
   const handleIframeLoad = () => {
     setLoading(false);
   };
 
-  // Construct the Instantly.ai URL with the user's email
-  const instantlyUrl = user?.email 
-    ? `https://app.instantly.ai/auth/login?email=${encodeURIComponent(user.email)}`
+  // Construct the Instantly.ai URL with proper authentication parameters
+  const instantlyUrl = subscription?.instantly_email && subscription?.instantly_api_key
+    ? `https://app.instantly.ai/auth/login?email=${encodeURIComponent(subscription.instantly_email)}&apiKey=${encodeURIComponent(subscription.instantly_api_key)}`
     : "https://app.instantly.ai";
 
   return (
