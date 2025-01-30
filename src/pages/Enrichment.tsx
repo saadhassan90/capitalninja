@@ -73,6 +73,13 @@ export default function Enrichment() {
     setProgress(0);
     
     try {
+      // Get the current user's ID
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       // Read and analyze the CSV file
       const content = await file.text();
       
@@ -90,9 +97,11 @@ export default function Enrichment() {
       const { data: uploadData, error: uploadError } = await supabase
         .from('user_uploaded_leads')
         .insert({
+          user_id: user.id,
           original_filename: file.name,
           raw_data: processedData,
-          column_mapping: columnMapping
+          column_mapping: columnMapping,
+          total_rows: processedData.length
         })
         .select()
         .single();
