@@ -29,7 +29,8 @@ export default function Emails() {
           src="https://app.instantly.ai"
           className="w-full h-full border-0"
           title="Instantly.ai"
-          allow="clipboard-write"
+          allow="clipboard-write; same-origin; forms; scripts; popups; modals; forms-submissions"
+          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-top-navigation"
           onLoad={handleIframeLoad}
         />
       </Card>
