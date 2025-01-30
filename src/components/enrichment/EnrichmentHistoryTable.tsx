@@ -19,6 +19,7 @@ import {
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { Json } from "@/integrations/supabase/types";
 
 interface Upload {
   id: string;
@@ -28,10 +29,10 @@ interface Upload {
   matched_rows: number;
   created_at: string;
   error_message: string | null;
-  raw_data: any[];
+  raw_data: Json;
   column_mapping: {
     enrichment_analysis?: string;
-  };
+  } | null;
 }
 
 interface EnrichmentHistoryTableProps {
