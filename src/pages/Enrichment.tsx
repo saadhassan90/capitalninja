@@ -141,6 +141,10 @@ export default function Enrichment() {
     }
   };
 
+  const handleDelete = () => {
+    refetchUploads();
+  };
+
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center gap-2 mb-8">
@@ -172,7 +176,10 @@ export default function Enrichment() {
 
       <div className="bg-card p-6 rounded-lg shadow-sm border">
         <h2 className="text-xl font-semibold mb-4">Upload History</h2>
-        <EnrichmentHistoryTable uploads={uploads || []} />
+        <EnrichmentHistoryTable 
+          uploads={uploads || []} 
+          onDelete={handleDelete}
+        />
       </div>
     </div>
   );
