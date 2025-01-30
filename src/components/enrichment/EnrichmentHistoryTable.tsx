@@ -6,20 +6,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
-import { Eye, Download, Trash2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
+import { EnrichmentStatusBadge } from "./EnrichmentStatusBadge";
+import { EnrichmentActions } from "./EnrichmentActions";
+import { EnrichmentDetailsDialog } from "./EnrichmentDetailsDialog";
+import { useState } from "react";
 
 interface Upload {
   id: string;
@@ -42,22 +36,8 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
   const [selectedUpload, setSelectedUpload] = useState<Upload | null>(null);
   const { toast } = useToast();
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return <Badge className="bg-green-500">Completed</Badge>;
-      case 'pending':
-        return <Badge className="bg-yellow-500">Processing</Badge>;
-      case 'failed':
-        return <Badge className="bg-red-500">Failed</Badge>;
-      default:
-        return <Badge className="bg-gray-500">{status}</Badge>;
-    }
-  };
-
   const handleDownload = async (upload: Upload) => {
     try {
-      // Get enriched data from master_leads
       const { data: enrichedData, error } = await supabase
         .from('master_leads')
         .select('*')
@@ -65,7 +45,6 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
 
       if (error) throw error;
 
-      // Convert to CSV
       const headers = ['company_name', 'matched_limited_partner_id', 'confidence_score', 'enriched_data'];
       const csvContent = [
         headers.join(','),
@@ -77,7 +56,6 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
         ].join(','))
       ].join('\n');
 
-      // Create and download file
       const blob = new Blob([csvContent], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -126,15 +104,6 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
     }
   };
 
-  const getEnrichmentAnalysis = (columnMapping: Json): string => {
-    if (typeof columnMapping === 'object' && columnMapping !== null) {
-      return (columnMapping as Record<string, unknown>).enrichment_analysis as string || 
-        `Processed ${selectedUpload?.total_rows || 0} records with ${selectedUpload?.matched_rows || 0} successful matches 
-        (${selectedUpload ? ((selectedUpload.matched_rows / selectedUpload.total_rows) * 100).toFixed(1) : 0}% match rate)`;
-    }
-    return `No analysis available`;
-  };
-
   return (
     <>
       <div className="rounded-md border">
@@ -164,7 +133,7 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
                     {upload.original_filename}
                   </TableCell>
                   <TableCell>
-                    {getStatusBadge(upload.processed_status || 'pending')}
+                    <EnrichmentStatusBadge status={upload.processed_status || 'pending'} />
                   </TableCell>
                   <TableCell>{upload.total_rows || 0}</TableCell>
                   <TableCell>{upload.matched_rows || 0}</TableCell>
@@ -175,29 +144,11 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
                     {upload.error_message || '-'}
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setSelectedUpload(upload)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDownload(upload)}
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(upload.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <EnrichmentActions
+                      onView={() => setSelectedUpload(upload)}
+                      onDownload={() => handleDownload(upload)}
+                      onDelete={() => handleDelete(upload.id)}
+                    />
                   </TableCell>
                 </TableRow>
               ))
@@ -206,42 +157,11 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
         </Table>
       </div>
 
-      <Dialog open={!!selectedUpload} onOpenChange={() => setSelectedUpload(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Enrichment Results</DialogTitle>
-          </DialogHeader>
-          
-          {selectedUpload && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Summary</h3>
-                <p className="text-muted-foreground">
-                  {getEnrichmentAnalysis(selectedUpload.column_mapping)}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Analytics</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-muted p-4 rounded-lg">
-                    <p className="text-2xl font-bold">
-                      {selectedUpload.matched_rows}
-                    </p>
-                    <p className="text-sm text-muted-foreground">Matched Records</p>
-                  </div>
-                  <div className="bg-muted p-4 rounded-lg">
-                    <p className="text-2xl font-bold">
-                      {((selectedUpload.matched_rows / selectedUpload.total_rows) * 100).toFixed(1)}%
-                    </p>
-                    <p className="text-sm text-muted-foreground">Match Rate</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <EnrichmentDetailsDialog
+        upload={selectedUpload}
+        open={!!selectedUpload}
+        onOpenChange={(open) => !open && setSelectedUpload(null)}
+      />
     </>
   );
 }
