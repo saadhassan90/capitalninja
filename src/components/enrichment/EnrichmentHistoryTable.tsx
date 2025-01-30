@@ -126,6 +126,15 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
     }
   };
 
+  const getEnrichmentAnalysis = (columnMapping: Json): string => {
+    if (typeof columnMapping === 'object' && columnMapping !== null) {
+      return (columnMapping as Record<string, unknown>).enrichment_analysis as string || 
+        `Processed ${selectedUpload?.total_rows || 0} records with ${selectedUpload?.matched_rows || 0} successful matches 
+        (${selectedUpload ? ((selectedUpload.matched_rows / selectedUpload.total_rows) * 100).toFixed(1) : 0}% match rate)`;
+    }
+    return `No analysis available`;
+  };
+
   return (
     <>
       <div className="rounded-md border">
@@ -208,10 +217,7 @@ export function EnrichmentHistoryTable({ uploads, onDelete }: EnrichmentHistoryT
               <div>
                 <h3 className="text-lg font-semibold mb-2">Summary</h3>
                 <p className="text-muted-foreground">
-                  {selectedUpload.column_mapping?.enrichment_analysis || 
-                    `Processed ${selectedUpload.total_rows} records with ${selectedUpload.matched_rows} successful matches 
-                    (${((selectedUpload.matched_rows / selectedUpload.total_rows) * 100).toFixed(1)}% match rate)`
-                  }
+                  {getEnrichmentAnalysis(selectedUpload.column_mapping)}
                 </p>
               </div>
 
