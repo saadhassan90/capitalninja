@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Progress } from "@/components/ui/progress";
+import { FileUploadSection } from "@/components/enrichment/FileUploadSection";
+import { ProgressSection } from "@/components/enrichment/ProgressSection";
+import { InstructionsSection } from "@/components/enrichment/InstructionsSection";
 
 export default function Enrichment() {
   const [file, setFile] = useState<File | null>(null);
@@ -23,7 +23,6 @@ export default function Enrichment() {
     const lines = content.split('\n');
     const headers = lines[0].split(',').map(h => h.trim());
     
-    // Get a sample of the data (first 5 rows)
     const sampleData = lines.slice(1, 6).map(line => {
       const values = line.split(',');
       return headers.reduce((obj, header, i) => {
@@ -32,7 +31,6 @@ export default function Enrichment() {
       }, {} as Record<string, string>);
     });
 
-    // Analyze columns using AI
     const { data: analysis, error: analysisError } = await supabase
       .functions.invoke('analyze-csv-columns', {
         body: { headers, sampleData }
@@ -47,23 +45,17 @@ export default function Enrichment() {
   };
 
   const processCSV = async (content: string) => {
-    try {
-      // Simple CSV parsing
-      const lines = content.split('\n');
-      const headers = lines[0].split(',').map(h => h.trim());
-      const rows = lines.slice(1).map(line => {
-        const values = line.split(',');
-        return headers.reduce((obj, header, i) => {
-          obj[header] = values[i]?.trim();
-          return obj;
-        }, {} as Record<string, string>);
-      });
+    const lines = content.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    const rows = lines.slice(1).map(line => {
+      const values = line.split(',');
+      return headers.reduce((obj, header, i) => {
+        obj[header] = values[i]?.trim();
+        return obj;
+      }, {} as Record<string, string>);
+    });
 
-      return rows;
-    } catch (error) {
-      console.error('Error processing CSV:', error);
-      throw new Error('Invalid CSV format');
-    }
+    return rows;
   };
 
   const handleUpload = async () => {
@@ -73,27 +65,20 @@ export default function Enrichment() {
     setProgress(0);
     
     try {
-      // Get the current user's ID
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
         throw new Error('User not authenticated');
       }
 
-      // Read and analyze the CSV file
       const content = await file.text();
-      
       setProgress(20);
       
-      // Analyze CSV structure using AI
       const columnMapping = await analyzeCSV(content);
-      
       setProgress(40);
       
-      // Process the CSV data
       const processedData = await processCSV(content);
 
-      // Store the upload in user_uploaded_leads
       const { data: uploadData, error: uploadError } = await supabase
         .from('user_uploaded_leads')
         .insert({
@@ -110,7 +95,6 @@ export default function Enrichment() {
 
       setProgress(60);
 
-      // Start processing the data
       const { data: processedResult, error: processError } = await supabase
         .functions.invoke('process-investor-leads', {
           body: { uploadId: uploadData.id }
@@ -125,7 +109,7 @@ export default function Enrichment() {
         description: `Matched ${processedResult.matchedCount} out of ${processedResult.totalRows} investors`,
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading file:', error);
       toast({
         title: "Error Processing File",
@@ -135,7 +119,6 @@ export default function Enrichment() {
     } finally {
       setIsProcessing(false);
       setFile(null);
-      // Reset progress after a delay
       setTimeout(() => setProgress(0), 2000);
     }
   };
@@ -154,46 +137,18 @@ export default function Enrichment() {
 
       <div className="bg-card p-6 rounded-lg shadow-sm border">
         <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <Input
-              type="file"
-              accept=".csv"
-              onChange={handleFileChange}
-              className="flex-1"
-              disabled={isProcessing}
-            />
-            <Button 
-              onClick={handleUpload}
-              disabled={!file || isProcessing}
-            >
-              {isProcessing ? "Processing..." : "Upload & Process"}
-            </Button>
-          </div>
-          
-          {file && (
-            <p className="text-sm text-muted-foreground">
-              Selected file: {file.name}
-            </p>
-          )}
-
-          {isProcessing && (
-            <div className="space-y-2">
-              <Progress value={progress} className="w-full" />
-              <p className="text-sm text-muted-foreground">
-                Processing your file... This may take a few minutes.
-              </p>
-            </div>
-          )}
-          
-          <div className="bg-muted/50 p-4 rounded border">
-            <h3 className="font-medium mb-2">How it works</h3>
-            <ul className="text-sm text-muted-foreground space-y-2">
-              <li>1. Upload a CSV file containing investor information</li>
-              <li>2. Our AI analyzes and maps your data columns</li>
-              <li>3. The system matches and enriches your data with our database</li>
-              <li>4. Download the enriched CSV file with additional insights</li>
-            </ul>
-          </div>
+          <FileUploadSection
+            file={file}
+            isProcessing={isProcessing}
+            onFileChange={handleFileChange}
+            onUpload={handleUpload}
+          />
+          <ProgressSection
+            file={file}
+            isProcessing={isProcessing}
+            progress={progress}
+          />
+          <InstructionsSection />
         </div>
       </div>
     </div>
