@@ -30,9 +30,7 @@ interface Upload {
   created_at: string;
   error_message: string | null;
   raw_data: Json;
-  column_mapping: {
-    enrichment_analysis?: string;
-  } | null;
+  column_mapping: Json;
 }
 
 interface EnrichmentHistoryTableProps {
