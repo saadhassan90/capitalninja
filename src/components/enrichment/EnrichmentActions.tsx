@@ -18,7 +18,7 @@ export function EnrichmentActions({ onView, onDownload, onDelete }: EnrichmentAc
         <Download className="h-4 w-4" />
         Download
       </Button>
-      <Button variant="secondary" size="sm" onClick={onDelete}>
+      <Button variant="destructive" size="sm" onClick={onDelete}>
         <Trash2 className="h-4 w-4" />
         Delete
       </Button>
