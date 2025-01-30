@@ -946,6 +946,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_admin_status: {
+        Args: {
+          user_id: string
+        }
+        Returns: boolean
+      }
       check_rate_limit: {
         Args: {
           user_ip: string
