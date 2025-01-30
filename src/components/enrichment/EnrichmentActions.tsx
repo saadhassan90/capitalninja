@@ -10,14 +10,17 @@ interface EnrichmentActionsProps {
 export function EnrichmentActions({ onView, onDownload, onDelete }: EnrichmentActionsProps) {
   return (
     <div className="flex gap-2">
-      <Button variant="ghost" size="icon" onClick={onView}>
+      <Button variant="secondary" size="sm" onClick={onView}>
         <Eye className="h-4 w-4" />
+        View
       </Button>
-      <Button variant="ghost" size="icon" onClick={onDownload}>
+      <Button variant="secondary" size="sm" onClick={onDownload}>
         <Download className="h-4 w-4" />
+        Download
       </Button>
-      <Button variant="ghost" size="icon" onClick={onDelete}>
+      <Button variant="secondary" size="sm" onClick={onDelete}>
         <Trash2 className="h-4 w-4" />
+        Delete
       </Button>
     </div>
   );
