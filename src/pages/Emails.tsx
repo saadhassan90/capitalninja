@@ -4,10 +4,12 @@ import { useAuth } from "@/components/AuthProvider";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Emails() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   // Fetch user's Instantly credentials from user_subscriptions
   const { data: subscription } = useQuery({
@@ -17,9 +19,16 @@ export default function Emails() {
         .from("user_subscriptions")
         .select("instantly_email, instantly_api_key")
         .eq("user_id", user?.id)
-        .single();
+        .maybeSingle();
       
-      if (error) throw error;
+      if (error) {
+        toast({
+          title: "Error fetching credentials",
+          description: "Unable to load your Instantly.ai credentials",
+          variant: "destructive",
+        });
+        throw error;
+      }
       return data;
     },
     enabled: !!user?.id,
@@ -29,6 +38,28 @@ export default function Emails() {
   const handleIframeLoad = () => {
     setLoading(false);
   };
+
+  // Show message if no credentials are found
+  if (!loading && !subscription?.instantly_email) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Email Templates</h1>
+          <p className="text-muted-foreground">
+            Manage your email campaigns with Instantly.ai
+          </p>
+        </div>
+        <Card className="p-6">
+          <div className="text-center">
+            <h2 className="text-lg font-semibold mb-2">No Instantly.ai Credentials Found</h2>
+            <p className="text-muted-foreground">
+              Please contact support to set up your Instantly.ai integration.
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   // Construct the Instantly.ai URL with proper authentication parameters
   const instantlyUrl = subscription?.instantly_email && subscription?.instantly_api_key
