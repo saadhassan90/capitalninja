@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Briefcase, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { RaiseCard } from "@/components/raise/RaiseCard";
 import { CreateRaiseDialog } from "@/components/raise/CreateRaiseDialog";
+import { RaiseTable } from "@/components/raise/RaiseTable";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -40,15 +40,10 @@ const Raise = () => {
         </Button>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {raises?.map((project) => (
-          <RaiseCard 
-            key={project.id} 
-            project={project}
-            onDelete={refetch}
-          />
-        ))}
-      </div>
+      <RaiseTable 
+        raises={raises || []}
+        onUpdate={refetch}
+      />
 
       <CreateRaiseDialog
         open={createDialogOpen}
