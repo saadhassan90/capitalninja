@@ -36,14 +36,18 @@ export function ListSection({ title, lists: initialLists }: ListSectionProps) {
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-foreground">{title}</h2>
-      {lists.length === 0 ? (
+      {!lists || lists.length === 0 ? (
         <EmptySection type={title.split(" ")[0]} />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {lists.map((list) => (
             <ListCard 
               key={list.id} 
-              list={list} 
+              list={{
+                ...list,
+                description: list.description || '',
+                last_refreshed_at: list.last_refreshed_at || null
+              }}
               onDelete={() => handleDelete(list.id)}
             />
           ))}

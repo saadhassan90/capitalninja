@@ -10,7 +10,7 @@ import { toast } from "sonner";
 interface List {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   created_at: string;
   type: "static" | "dynamic";
   last_refreshed_at: string | null;
@@ -19,7 +19,7 @@ interface List {
 const Lists = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
-  const { data: lists, isLoading, refetch } = useQuery({
+  const { data: lists, isLoading, error } = useQuery({
     queryKey: ['lists'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -29,11 +29,16 @@ const Lists = () => {
       
       if (error) throw error;
       
-      return (data as List[]) || [];
+      // Ensure we handle null values properly
+      return (data as List[] || []).map(list => ({
+        ...list,
+        description: list.description || '',
+        last_refreshed_at: list.last_refreshed_at || null
+      }));
     }
   });
 
-  const handleCreateList = async (listData: any) => {
+  const handleCreateList = async (listData: Partial<List>) => {
     try {
       const { error } = await supabase
         .from('lists')
@@ -42,11 +47,20 @@ const Lists = () => {
       if (error) throw error;
 
       toast.success("List created successfully");
-      refetch();
     } catch (error: any) {
       toast.error(error.message || "Failed to create list");
     }
   };
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="text-center text-destructive">
+          Failed to load lists. Please try again later.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -66,16 +80,20 @@ const Lists = () => {
         </Button>
       </div>
       
-      <div className="space-y-8">
-        <ListSection 
-          title="Static Lists" 
-          lists={lists?.filter(list => list.type === 'static') || []} 
-        />
-        <ListSection 
-          title="Dynamic Lists" 
-          lists={lists?.filter(list => list.type === 'dynamic') || []} 
-        />
-      </div>
+      {isLoading ? (
+        <div className="text-center text-muted-foreground">Loading lists...</div>
+      ) : (
+        <div className="space-y-8">
+          <ListSection 
+            title="Static Lists" 
+            lists={lists?.filter(list => list.type === 'static') || []} 
+          />
+          <ListSection 
+            title="Dynamic Lists" 
+            lists={lists?.filter(list => list.type === 'dynamic') || []} 
+          />
+        </div>
+      )}
 
       <CreateListDialog
         open={createDialogOpen}
