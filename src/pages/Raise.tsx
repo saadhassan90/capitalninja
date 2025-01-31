@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DollarSign, Plus } from "lucide-react";
+import { Briefcase, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RaiseCard } from "@/components/raise/RaiseCard";
 
@@ -36,7 +36,7 @@ const Raise = () => {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-2">
-          <DollarSign className="h-8 w-8" />
+          <Briefcase className="h-8 w-8" />
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Raise</h1>
             <p className="text-muted-foreground mt-2">
