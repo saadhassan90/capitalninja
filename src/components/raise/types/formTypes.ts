@@ -6,6 +6,7 @@ export interface FormData {
   targetAmount: string;
   raisedAmount: string;
   file: File | null;
+  pitchDeckUrl?: string;
 }
 
 export type MemoStatus = 'idle' | 'extracting' | 'analyzing' | 'creating' | 'complete' | 'failed';

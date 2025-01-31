@@ -3,7 +3,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { FormData, RaiseFormContextType, MemoStatus } from "./types/formTypes";
-import { validateStep, processFile, handleRaiseUpload } from "./utils/formUtils";
+import { validateStep } from "./utils/formUtils";
 import type { RaiseProject } from "./types";
 
 const RaiseFormContext = createContext<RaiseFormContextType>({} as RaiseFormContextType);
@@ -62,30 +62,29 @@ export function RaiseFormProvider({
     setUploadProgress(20);
 
     try {
-      const publicUrl = await processFile(formData.file, user.id, setUploadProgress, setMemoStatus);
-      
-      setUploadProgress(60);
-      setMemoStatus('creating');
+      const fileExt = formData.file.name.split('.').pop();
+      const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
-      const { data, error } = await supabase.functions.invoke('process-pitch-deck', {
-        body: { fileUrl: publicUrl },
-      });
+      const { error: uploadError } = await supabase.storage
+        .from('pitch_decks')
+        .upload(filePath, formData.file);
 
-      if (error) {
-        throw error;
-      }
+      if (uploadError) throw uploadError;
 
-      if (!data?.memo) {
-        throw new Error('No memo generated');
-      }
+      const { data: { publicUrl } } = supabase.storage
+        .from('pitch_decks')
+        .getPublicUrl(filePath);
 
       setUploadProgress(100);
       setMemoStatus('complete');
-      toast.success("Pitch deck processed successfully");
+      toast.success("File uploaded successfully");
+
+      // Store the URL for later use
+      updateFormData({ pitchDeckUrl: publicUrl });
     } catch (error: any) {
-      console.error('Error processing pitch deck:', error);
+      console.error('Error uploading file:', error);
       setMemoStatus('failed');
-      toast.error(error.message || "Failed to process pitch deck");
+      toast.error(error.message || "Failed to upload file");
     } finally {
       setIsProcessing(false);
     }
@@ -99,15 +98,22 @@ export function RaiseFormProvider({
       return;
     }
 
-    if (memoStatus !== 'complete') {
-      toast.error("Please process the pitch deck first");
-      return;
-    }
-
     setIsProcessing(true);
 
     try {
-      await handleRaiseUpload(formData, user.id);
+      const { error } = await supabase
+        .from('raises')
+        .insert({
+          user_id: user.id,
+          type: formData.type,
+          category: formData.category,
+          name: formData.name,
+          target_amount: parseInt(formData.targetAmount),
+          pitch_deck_url: formData.pitchDeckUrl,
+        });
+
+      if (error) throw error;
+
       toast.success("Raise created successfully");
       onCreateRaise?.();
       handleClose();
