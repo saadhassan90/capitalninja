@@ -22,7 +22,10 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [formData, setFormData] = useState({
     type: "" as "equity" | "debt",
-    category: "" as "fund_direct_deal" | "startup"
+    category: "" as "fund_direct_deal" | "startup",
+    name: "",
+    targetAmount: "",
+    raisedAmount: "",
   });
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -31,7 +34,7 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
   const progress = (step / 3) * 100;
 
   const handleClose = () => {
-    if (formData.type || formData.category || file) {
+    if (formData.type || formData.category || file || formData.name || formData.targetAmount || formData.raisedAmount) {
       setShowExitDialog(true);
     } else {
       onOpenChange(false);
@@ -42,7 +45,13 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
     setShowExitDialog(false);
     onOpenChange(false);
     setStep(1);
-    setFormData({ type: "" as "equity" | "debt", category: "" as "fund_direct_deal" | "startup" });
+    setFormData({
+      type: "" as "equity" | "debt",
+      category: "" as "fund_direct_deal" | "startup",
+      name: "",
+      targetAmount: "",
+      raisedAmount: "",
+    });
     setFile(null);
     setIsProcessing(false);
     setUploadProgress(0);
@@ -56,6 +65,16 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
 
   const handleUpload = async () => {
     if (!file || !user) return;
+
+    if (!formData.name) {
+      toast.error("Please enter a raise name");
+      return;
+    }
+
+    if (!formData.targetAmount) {
+      toast.error("Please enter a target amount");
+      return;
+    }
 
     setIsProcessing(true);
     setUploadProgress(0);
@@ -78,7 +97,8 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
         user_id: user.id,
         type: formData.type,
         category: formData.category,
-        name: `New ${formData.type} raise`,
+        name: formData.name,
+        target_amount: parseInt(formData.targetAmount),
         pitch_deck_url: publicUrl
       }).select().single();
 
@@ -146,8 +166,14 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
               file={file}
               isProcessing={isProcessing}
               uploadProgress={uploadProgress}
+              raiseName={formData.name}
+              targetAmount={formData.targetAmount}
+              raisedAmount={formData.raisedAmount}
               onFileChange={handleFileChange}
               onUpload={handleUpload}
+              onRaiseNameChange={(value) => setFormData({ ...formData, name: value })}
+              onTargetAmountChange={(value) => setFormData({ ...formData, targetAmount: value })}
+              onRaisedAmountChange={(value) => setFormData({ ...formData, raisedAmount: value })}
             />
           )}
 
