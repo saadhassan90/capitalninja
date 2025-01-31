@@ -1,6 +1,5 @@
 import { memo, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { RaiseCardMenu } from "./card/RaiseCardMenu";
 import { MemoDialog } from "./card/MemoDialog";
@@ -9,7 +8,6 @@ import { generateMemoPDF } from "./utils/pdfUtils";
 import type { RaiseCardProps } from "./types";
 
 function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [memoDialogOpen, setMemoDialogOpen] = useState(false);
 
@@ -52,10 +50,10 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
           onMemoClick={() => setMemoDialogOpen(true)}
           menu={
             <RaiseCardMenu
-              projectId={project.id}
-              projectName={project.name}
+              project={project}
               onDelete={handleDelete}
               onViewMemo={() => setMemoDialogOpen(true)}
+              onUpdate={onDelete}
             />
           }
         />
