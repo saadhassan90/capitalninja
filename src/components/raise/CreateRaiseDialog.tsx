@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +23,8 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
     type: "" as "equity" | "debt",
     category: "" as "fund_direct_deal" | "startup"
   });
+
+  const progress = (step / 2) * 100;
 
   const handleClose = () => {
     if (formData.type || formData.category) {
@@ -78,6 +81,8 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
           <DialogHeader>
             <DialogTitle>Create New Raise</DialogTitle>
           </DialogHeader>
+          
+          <Progress value={progress} className="mt-2" />
           
           {step === 1 && (
             <div className="space-y-4 py-4">
