@@ -25,12 +25,14 @@ serve(async (req) => {
     // Get the file content from storage
     const response = await fetch(fileUrl)
     if (!response.ok) {
+      console.error('Failed to fetch file:', response.statusText)
       throw new Error(`Failed to fetch file: ${response.statusText}`)
     }
     const fileContent = await response.text()
     console.log('File content length:', fileContent.length)
 
     // Process with OpenAI
+    console.log('Sending request to OpenAI...')
     const openAiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -38,7 +40,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4', // Using the correct model name
+        model: 'gpt-4o',
         messages: [
           {
             role: 'system',
