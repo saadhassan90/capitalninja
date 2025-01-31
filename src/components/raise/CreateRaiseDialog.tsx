@@ -8,6 +8,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { FileUploadSection } from "../enrichment/FileUploadSection";
+import { ProgressSection } from "../enrichment/ProgressSection";
 
 interface CreateRaiseDialogProps {
   open: boolean;
@@ -23,11 +25,14 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
     type: "" as "equity" | "debt",
     category: "" as "fund_direct_deal" | "startup"
   });
+  const [file, setFile] = useState<File | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  const progress = (step / 2) * 100;
+  const progress = (step / 3) * 100;
 
   const handleClose = () => {
-    if (formData.type || formData.category) {
+    if (formData.type || formData.category || file) {
       setShowExitDialog(true);
     } else {
       onOpenChange(false);
@@ -39,6 +44,55 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
     onOpenChange(false);
     setStep(1);
     setFormData({ type: "" as "equity" | "debt", category: "" as "fund_direct_deal" | "startup" });
+    setFile(null);
+    setIsProcessing(false);
+    setUploadProgress(0);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file || !user) return;
+
+    setIsProcessing(true);
+    setUploadProgress(0);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('pitch_decks')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('pitch_decks')
+        .getPublicUrl(filePath);
+
+      const { error } = await supabase.from('raises').insert({
+        user_id: user.id,
+        type: formData.type,
+        category: formData.category,
+        name: `New ${formData.type} raise`,
+        pitch_deck_url: publicUrl
+      });
+
+      if (error) throw error;
+
+      toast.success("Raise created successfully");
+      onCreateRaise?.();
+      handleExitConfirm();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create raise");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleNext = async () => {
@@ -47,29 +101,12 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
       return;
     }
 
-    if (step === 2) {
-      if (!formData.category) {
-        toast.error("Please select a category");
-        return;
-      }
+    if (step === 2 && !formData.category) {
+      toast.error("Please select a category");
+      return;
+    }
 
-      try {
-        const { error } = await supabase.from('raises').insert({
-          user_id: user?.id,
-          type: formData.type,
-          category: formData.category,
-          name: `New ${formData.type} raise`,
-        });
-
-        if (error) throw error;
-
-        toast.success("Raise created successfully");
-        onCreateRaise?.();
-        handleExitConfirm();
-      } catch (error: any) {
-        toast.error(error.message || "Failed to create raise");
-      }
-    } else {
+    if (step < 3) {
       setStep(step + 1);
     }
   };
@@ -132,6 +169,29 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
             </div>
           )}
 
+          {step === 3 && (
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>Upload Pitch Deck</Label>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Upload your pitch deck and we'll automatically create a project based on its contents.
+                  Supported formats: PDF, DOC, DOCX, PPT, PPTX
+                </p>
+                <FileUploadSection
+                  file={file}
+                  isProcessing={isProcessing}
+                  onFileChange={handleFileChange}
+                  onUpload={handleUpload}
+                />
+                <ProgressSection
+                  file={file}
+                  isProcessing={isProcessing}
+                  progress={uploadProgress}
+                />
+              </div>
+            </div>
+          )}
+
           <div className="flex justify-between mt-6">
             <Button
               variant="outline"
@@ -139,9 +199,11 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
             >
               Cancel
             </Button>
-            <Button onClick={handleNext}>
-              {step === 2 ? "Create" : "Next"}
-            </Button>
+            {step < 3 ? (
+              <Button onClick={handleNext}>
+                Next
+              </Button>
+            ) : null}
           </div>
         </DialogContent>
       </Dialog>

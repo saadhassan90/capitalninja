@@ -18,7 +18,7 @@ export function FileUploadSection({
     <div className="flex items-center gap-4">
       <Input
         type="file"
-        accept=".csv"
+        accept=".pdf,.doc,.docx,.ppt,.pptx"
         onChange={onFileChange}
         className="flex-1"
         disabled={isProcessing}

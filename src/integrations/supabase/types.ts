@@ -740,6 +740,7 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          pitch_deck_url: string | null
           status: string | null
           target_amount: number | null
           type: Database["public"]["Enums"]["raise_type"]
@@ -752,6 +753,7 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
+          pitch_deck_url?: string | null
           status?: string | null
           target_amount?: number | null
           type: Database["public"]["Enums"]["raise_type"]
@@ -764,6 +766,7 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+          pitch_deck_url?: string | null
           status?: string | null
           target_amount?: number | null
           type?: Database["public"]["Enums"]["raise_type"]
