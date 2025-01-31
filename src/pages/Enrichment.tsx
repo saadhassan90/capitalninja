@@ -12,6 +12,7 @@ export default function Enrichment() {
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [memoStatus, setMemoStatus] = useState<'idle' | 'extracting' | 'analyzing' | 'creating' | 'complete' | 'failed'>('idle');
   const { toast } = useToast();
 
   const { data: uploads, refetch: refetchUploads } = useQuery({
@@ -162,13 +163,15 @@ export default function Enrichment() {
           <FileUploadSection
             file={file}
             isProcessing={isProcessing}
+            memoStatus={memoStatus}
             onFileChange={handleFileChange}
-            onUpload={handleUpload}
+            onProcess={handleUpload}
           />
           <ProgressSection
             file={file}
             isProcessing={isProcessing}
             progress={progress}
+            memoStatus={memoStatus}
           />
           <InstructionsSection />
         </div>

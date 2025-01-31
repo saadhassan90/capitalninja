@@ -25,6 +25,7 @@ export function RaiseFormProvider({
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [memoStatus, setMemoStatus] = useState<'idle' | 'extracting' | 'analyzing' | 'creating' | 'complete' | 'failed'>('idle');
   const [formData, setFormData] = useState<FormData>(() => {
     if (editMode && project) {
       return {
@@ -49,6 +50,61 @@ export function RaiseFormProvider({
 
   const updateFormData = (data: Partial<FormData>) => {
     setFormData(prev => ({ ...prev, ...data }));
+  };
+
+  const handleProcess = async () => {
+    if (!formData.file || !user) return;
+
+    setIsProcessing(true);
+    setMemoStatus('extracting');
+    setUploadProgress(20);
+
+    try {
+      const fileExt = formData.file.name.split('.').pop();
+      const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('pitch_decks')
+        .upload(filePath, formData.file);
+
+      if (uploadError) throw uploadError;
+
+      setUploadProgress(40);
+      setMemoStatus('analyzing');
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('pitch_decks')
+        .getPublicUrl(filePath);
+
+      setUploadProgress(60);
+      setMemoStatus('creating');
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch('/functions/v1/process-pitch-deck', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({
+          fileUrl: publicUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to process pitch deck');
+      }
+
+      setUploadProgress(100);
+      setMemoStatus('complete');
+      toast.success("Pitch deck processed successfully");
+    } catch (error: any) {
+      console.error('Error processing pitch deck:', error);
+      setMemoStatus('failed');
+      toast.error(error.message || "Failed to process pitch deck");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const isStepValid = () => {
@@ -117,52 +173,28 @@ export function RaiseFormProvider({
       return;
     }
 
+    if (!formData.type || !formData.category) {
+      toast.error("Type and category are required");
+      return;
+    }
+
+    if (memoStatus !== 'complete') {
+      toast.error("Please process the pitch deck first");
+      return;
+    }
+
     setIsProcessing(true);
-    setUploadProgress(0);
 
     try {
-      console.log('Starting upload process...');
-      let pitchDeckUrl = project?.pitch_deck_url;
-
-      if (formData.file) {
-        console.log('Uploading pitch deck file...');
-        const fileExt = formData.file.name.split('.').pop();
-        const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('pitch_decks')
-          .upload(filePath, formData.file);
-
-        if (uploadError) {
-          console.error('Upload error:', uploadError);
-          throw uploadError;
-        }
-
-        console.log('File uploaded successfully, getting public URL...');
-        const { data: { publicUrl } } = supabase.storage
-          .from('pitch_decks')
-          .getPublicUrl(filePath);
-
-        pitchDeckUrl = publicUrl;
-        console.log('Public URL obtained:', pitchDeckUrl);
-      }
-
-      if (!formData.type || !formData.category) {
-        throw new Error("Type and category are required");
-      }
-
       const raiseData = {
         type: formData.type,
         category: formData.category,
         name: formData.name,
         target_amount: parseInt(formData.targetAmount),
-        pitch_deck_url: pitchDeckUrl,
-        user_id: user.id
+        user_id: user.id,
       };
 
-      console.log('Saving raise data to database...');
       let error;
-      let raiseId;
       
       if (editMode && formData.id) {
         const { error: updateError } = await supabase
@@ -170,51 +202,14 @@ export function RaiseFormProvider({
           .update(raiseData)
           .eq('id', formData.id);
         error = updateError;
-        raiseId = formData.id;
       } else {
-        const { data: insertData, error: insertError } = await supabase
+        const { error: insertError } = await supabase
           .from('raises')
-          .insert(raiseData)
-          .select()
-          .single();
+          .insert(raiseData);
         error = insertError;
-        raiseId = insertData?.id;
       }
 
-      if (error) {
-        console.error('Database error:', error);
-        throw error;
-      }
-
-      // Process the pitch deck with OpenAI if a file was uploaded
-      if (formData.file && pitchDeckUrl && raiseId) {
-        console.log('Calling process-pitch-deck function...');
-        try {
-          const { data: { session } } = await supabase.auth.getSession();
-          const response = await fetch('/functions/v1/process-pitch-deck', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${session?.access_token}`,
-            },
-            body: JSON.stringify({
-              raiseId,
-              fileUrl: pitchDeckUrl,
-            }),
-          });
-
-          if (!response.ok) {
-            console.error('Error processing pitch deck:', await response.text());
-            toast.error('Failed to process pitch deck');
-          } else {
-            console.log('Pitch deck processed successfully');
-          }
-        } catch (processError) {
-          console.error('Error calling process-pitch-deck:', processError);
-          // Don't throw here - we still want to save the raise even if processing fails
-          toast.error('Failed to process pitch deck');
-        }
-      }
+      if (error) throw error;
 
       toast.success(editMode ? "Raise updated successfully" : "Raise created successfully");
       onCreateRaise?.();
@@ -232,9 +227,11 @@ export function RaiseFormProvider({
     formData,
     isProcessing,
     uploadProgress,
+    memoStatus,
     setStep,
     updateFormData,
     handleUpload,
+    handleProcess,
     handleNext,
     handleBack,
     handleClose,

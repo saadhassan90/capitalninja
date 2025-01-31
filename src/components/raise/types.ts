@@ -31,9 +31,11 @@ export interface RaiseFormContextType {
   formData: FormData;
   isProcessing: boolean;
   uploadProgress: number;
+  memoStatus: 'idle' | 'extracting' | 'analyzing' | 'creating' | 'complete' | 'failed';
   setStep: (step: number) => void;
   updateFormData: (data: Partial<FormData>) => void;
   handleUpload: () => Promise<void>;
+  handleProcess: () => Promise<void>;
   handleNext: () => void;
   handleBack: () => void;
   handleClose: () => void;
