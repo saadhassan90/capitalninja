@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { CreateListDialog } from "@/components/lists/CreateListDialog";
 import { toast } from "sonner";
-import type { Json } from "@/integrations/supabase/types";
+import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
 interface List {
   id: string;
@@ -17,13 +17,20 @@ interface List {
   last_refreshed_at: string | null;
 }
 
-// Define the shape of data we accept from the create list dialog
+interface ListFilters {
+  type: InvestorFilterType;
+  location: InvestorFilterType;
+  assetClass: InvestorFilterType;
+  firstTimeFunds: InvestorFilterType;
+  aumRange: AUMRange;
+}
+
 interface CreateListData {
   name: string;
-  description?: string;
-  type?: "static" | "dynamic";
-  created_by?: string;
-  filters?: Json;
+  description: string;
+  type: "static" | "dynamic";
+  created_by: string;
+  filters?: ListFilters;
 }
 
 const Lists = () => {
@@ -39,7 +46,6 @@ const Lists = () => {
       
       if (error) throw error;
       
-      // Ensure we handle null values properly
       return (data as List[] || []).map(list => ({
         ...list,
         description: list.description || '',
@@ -52,7 +58,13 @@ const Lists = () => {
     try {
       const { error } = await supabase
         .from('lists')
-        .insert(listData);
+        .insert({
+          name: listData.name,
+          description: listData.description,
+          type: listData.type,
+          created_by: listData.created_by,
+          filters: listData.filters ? JSON.parse(JSON.stringify(listData.filters)) : null
+        });
 
       if (error) throw error;
 

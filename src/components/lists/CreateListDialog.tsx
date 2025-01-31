@@ -10,40 +10,46 @@ import { useAuth } from "@/components/AuthProvider";
 import { toast } from "sonner";
 import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
+interface ListFilters {
+  type: InvestorFilterType;
+  location: InvestorFilterType;
+  assetClass: InvestorFilterType;
+  firstTimeFunds: InvestorFilterType;
+  aumRange: AUMRange;
+}
+
+interface CreateListData {
+  name: string;
+  description: string;
+  type: "static" | "dynamic";
+  created_by: string;
+  filters?: ListFilters;
+}
+
 interface CreateListDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreateList: (list: {
-    name: string;
-    description: string;
-    type: "static" | "dynamic";
-    created_by: string;
-    filters?: {
-      type: InvestorFilterType;
-      location: InvestorFilterType;
-      assetClass: InvestorFilterType;
-      firstTimeFunds: InvestorFilterType;
-      aumRange: AUMRange;
-    };
-  }) => void;
+  onCreateList: (list: CreateListData) => void;
 }
 
 export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateListDialogProps) {
   const { user } = useAuth();
-  const [newList, setNewList] = useState({
+  const [newList, setNewList] = useState<CreateListData>({
     name: "",
     description: "",
-    type: "static" as "static" | "dynamic",
+    type: "static",
+    created_by: user?.id || "",
     filters: {
-      type: null as InvestorFilterType,
-      location: null as InvestorFilterType,
-      assetClass: null as InvestorFilterType,
-      firstTimeFunds: null as InvestorFilterType,
-      aumRange: null as AUMRange,
+      type: null,
+      location: null,
+      assetClass: null,
+      firstTimeFunds: null,
+      aumRange: null,
     },
   });
 
   const hasAtLeastOneFilter = () => {
+    if (!newList.filters) return false;
     const { type, location, assetClass, firstTimeFunds, aumRange } = newList.filters;
     return type !== null || location !== null || assetClass !== null || 
            firstTimeFunds !== null || (aumRange !== null && aumRange.length === 2);
@@ -57,21 +63,14 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
       return;
     }
 
-    const listData = {
-      name: newList.name,
-      description: newList.description,
-      type: newList.type,
-      created_by: user.id,
-      ...(newList.type === 'dynamic' && { filters: newList.filters }),
-    };
-    
-    onCreateList(listData);
+    onCreateList(newList);
     
     onOpenChange(false);
     setNewList({
       name: "",
       description: "",
       type: "static",
+      created_by: user.id,
       filters: {
         type: null,
         location: null,
