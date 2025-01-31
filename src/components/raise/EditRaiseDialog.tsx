@@ -95,6 +95,9 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit Raise</DialogTitle>
+          <p className="text-sm text-muted-foreground">
+            Editing details for <span className="font-medium text-foreground">{project.name}</span>
+          </p>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
