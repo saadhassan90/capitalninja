@@ -19,7 +19,7 @@ export const processFile = async (
   file: File,
   userId: string,
   setUploadProgress: (progress: number) => void,
-  setMemoStatus: (status: string) => void
+  setMemoStatus: (status: MemoStatus) => void
 ): Promise<string> => {
   const fileExt = file.name.split('.').pop();
   const filePath = `${userId}/${crypto.randomUUID()}.${fileExt}`;
@@ -44,6 +44,10 @@ export const handleRaiseUpload = async (
   formData: FormData,
   userId: string
 ): Promise<void> => {
+  if (!formData.type || !formData.category) {
+    throw new Error('Invalid form data');
+  }
+
   const raiseData = {
     type: formData.type,
     category: formData.category,
