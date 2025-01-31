@@ -14,12 +14,9 @@ interface CreateRaiseDialogProps {
   onCreateRaise?: () => void;
 }
 
-export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateRaiseDialogProps) {
+function CreateRaiseDialogContent() {
   const [showExitDialog, setShowExitDialog] = useState(false);
-  const { step, formData, isProcessing, handleClose, handleExitConfirm } = useRaiseForm({
-    onOpenChange,
-    onCreateRaise,
-  });
+  const { step, formData, handleClose, handleExitConfirm } = useRaiseForm();
 
   const progress = (step / 3) * 100;
 
@@ -33,21 +30,19 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
 
   return (
     <>
-      <Dialog open={open} onOpenChange={handleDialogClose}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Create New Raise</DialogTitle>
-          </DialogHeader>
-          
-          <Progress value={progress} className="mt-2" />
-          
-          {step === 1 && <RaiseTypeStep />}
-          {step === 2 && <CategoryStep />}
-          {step === 3 && <PitchDeckStep />}
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Create New Raise</DialogTitle>
+        </DialogHeader>
+        
+        <Progress value={progress} className="mt-2" />
+        
+        {step === 1 && <RaiseTypeStep />}
+        {step === 2 && <CategoryStep />}
+        {step === 3 && <PitchDeckStep />}
 
-          <DialogFooter />
-        </DialogContent>
-      </Dialog>
+        <DialogFooter />
+      </DialogContent>
 
       <ExitDialog
         open={showExitDialog}
@@ -55,5 +50,15 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
         onConfirm={handleExitConfirm}
       />
     </>
+  );
+}
+
+export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateRaiseDialogProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <RaiseFormProvider onOpenChange={onOpenChange} onCreateRaise={onCreateRaise}>
+        <CreateRaiseDialogContent />
+      </RaiseFormProvider>
+    </Dialog>
   );
 }

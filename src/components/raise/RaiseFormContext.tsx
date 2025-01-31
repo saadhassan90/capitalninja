@@ -22,6 +22,8 @@ interface RaiseFormContextType {
   handleUpload: () => Promise<void>;
   handleNext: () => void;
   handleBack: () => void;
+  handleClose: () => void;
+  handleExitConfirm: () => void;
   isStepValid: () => boolean;
 }
 
@@ -85,6 +87,25 @@ export function RaiseFormProvider({ children, onOpenChange, onCreateRaise }: Rai
     }
   };
 
+  const handleClose = () => {
+    onOpenChange(false);
+    setStep(1);
+    setFormData({
+      type: "",
+      category: "",
+      name: "",
+      targetAmount: "",
+      raisedAmount: "",
+      file: null,
+    });
+    setIsProcessing(false);
+    setUploadProgress(0);
+  };
+
+  const handleExitConfirm = () => {
+    handleClose();
+  };
+
   const handleUpload = async () => {
     if (!formData.file || !user) return;
 
@@ -115,22 +136,16 @@ export function RaiseFormProvider({ children, onOpenChange, onCreateRaise }: Rai
         .from('pitch_decks')
         .getPublicUrl(filePath);
 
-      const { data: raise, error } = await supabase.from('raises').insert({
-        user_id: user.id,
+      const { error } = await supabase.from('raises').insert({
         type: formData.type,
         category: formData.category,
         name: formData.name,
         target_amount: parseInt(formData.targetAmount),
-        pitch_deck_url: publicUrl
-      }).select().single();
-
-      if (error) throw error;
-
-      const { error: processError } = await supabase.functions.invoke('process-pitch-deck', {
-        body: { raiseId: raise.id, fileUrl: publicUrl }
+        pitch_deck_url: publicUrl,
+        user_id: user.id
       });
 
-      if (processError) throw processError;
+      if (error) throw error;
 
       toast.success("Raise created successfully");
       onCreateRaise?.();
@@ -140,21 +155,6 @@ export function RaiseFormProvider({ children, onOpenChange, onCreateRaise }: Rai
     } finally {
       setIsProcessing(false);
     }
-  };
-
-  const handleClose = () => {
-    onOpenChange(false);
-    setStep(1);
-    setFormData({
-      type: "",
-      category: "",
-      name: "",
-      targetAmount: "",
-      raisedAmount: "",
-      file: null,
-    });
-    setIsProcessing(false);
-    setUploadProgress(0);
   };
 
   const value = {
@@ -167,8 +167,9 @@ export function RaiseFormProvider({ children, onOpenChange, onCreateRaise }: Rai
     handleUpload,
     handleNext,
     handleBack,
-    isStepValid,
     handleClose,
+    handleExitConfirm,
+    isStepValid,
   };
 
   return (

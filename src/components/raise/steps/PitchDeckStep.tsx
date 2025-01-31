@@ -9,7 +9,8 @@ export function PitchDeckStep() {
     formData, 
     isProcessing, 
     uploadProgress, 
-    updateFormData 
+    updateFormData,
+    handleUpload 
   } = useRaiseForm();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +67,7 @@ export function PitchDeckStep() {
             file={formData.file}
             isProcessing={isProcessing}
             onFileChange={handleFileChange}
+            onUpload={handleUpload}
           />
           <ProgressSection
             file={formData.file}
