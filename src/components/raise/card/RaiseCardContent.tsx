@@ -24,7 +24,6 @@ export function RaiseCardContent({
   onMenuClick,
   menu,
   onMemoClick,
-  hasMemo
 }: RaiseCardContentProps) {
   return (
     <div className="p-6">
@@ -37,8 +36,22 @@ export function RaiseCardContent({
             </p>
           )}
         </div>
-        <div onClick={onMenuClick}>
-          {menu}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMemoClick?.();
+            }}
+          >
+            <FileText className="h-4 w-4" />
+            Deal Memo
+          </Button>
+          <div onClick={onMenuClick}>
+            {menu}
+          </div>
         </div>
       </div>
 
@@ -57,21 +70,6 @@ export function RaiseCardContent({
           Created: {new Date(createdAt).toLocaleDateString()}
         </div>
       </div>
-
-      {hasMemo && (
-        <Button
-          variant="secondary"
-          size="sm"
-          className="mt-4"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMemoClick?.();
-          }}
-        >
-          <FileText className="mr-2 h-4 w-4" />
-          View Memo
-        </Button>
-      )}
     </div>
   );
 }
