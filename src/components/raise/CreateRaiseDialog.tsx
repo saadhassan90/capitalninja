@@ -104,7 +104,6 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
 
       if (error) throw error;
 
-      // Process the pitch deck with OpenAI
       const { error: processError } = await supabase.functions.invoke('process-pitch-deck', {
         body: { raiseId: raise.id, fileUrl: publicUrl }
       });
@@ -121,14 +120,26 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
     }
   };
 
-  const handleNext = async () => {
-    if (step === 1 && !formData.type) {
-      toast.error("Please select a raise type");
-      return;
+  const isStepValid = () => {
+    switch (step) {
+      case 1:
+        return !!formData.type;
+      case 2:
+        return !!formData.category;
+      case 3:
+        return !!formData.name && !!formData.targetAmount && !!file;
+      default:
+        return false;
     }
+  };
 
-    if (step === 2 && !formData.category) {
-      toast.error("Please select a category");
+  const handleNext = async () => {
+    if (!isStepValid()) {
+      if (step === 1) {
+        toast.error("Please select a raise type");
+      } else if (step === 2) {
+        toast.error("Please select a category");
+      }
       return;
     }
 
@@ -185,13 +196,16 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
               Cancel
             </Button>
             {step < 3 ? (
-              <Button onClick={handleNext}>
+              <Button 
+                onClick={handleNext}
+                disabled={!isStepValid()}
+              >
                 Next
               </Button>
             ) : (
               <Button 
                 onClick={handleUpload}
-                disabled={!file || isProcessing}
+                disabled={!isStepValid() || isProcessing}
               >
                 {isProcessing ? "Processing..." : "Finish"}
               </Button>
