@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FileUploadSection } from "@/components/enrichment/FileUploadSection";
 import { ProgressSection } from "@/components/enrichment/ProgressSection";
+import { useAuth } from "@/components/AuthProvider";
 import type { RaiseProject } from "./types";
 
 interface EditRaiseDialogProps {
@@ -18,13 +19,14 @@ interface EditRaiseDialogProps {
 }
 
 export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditRaiseDialogProps) {
+  const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     type: project.type as "equity" | "debt",
     category: project.category as "fund_direct_deal" | "startup",
     name: project.name,
-    targetAmount: project.target_amount.toString(),
+    targetAmount: project.target_amount?.toString() || "0",
     file: null as File | null
   });
 
@@ -35,6 +37,8 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
   };
 
   const handleSubmit = async () => {
+    if (!user) return;
+    
     if (!formData.name || !formData.targetAmount) {
       toast.error("Please fill in all required fields");
       return;
@@ -48,7 +52,7 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
 
       if (formData.file) {
         const fileExt = formData.file.name.split('.').pop();
-        const filePath = `${project.user_id}/${crypto.randomUUID()}.${fileExt}`;
+        const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
           .from('pitch_decks')
