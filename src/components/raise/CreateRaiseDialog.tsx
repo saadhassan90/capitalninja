@@ -188,7 +188,14 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
               <Button onClick={handleNext}>
                 Next
               </Button>
-            ) : null}
+            ) : (
+              <Button 
+                onClick={handleUpload}
+                disabled={!file || isProcessing}
+              >
+                {isProcessing ? "Processing..." : "Finish"}
+              </Button>
+            )}
           </div>
         </DialogContent>
       </Dialog>
