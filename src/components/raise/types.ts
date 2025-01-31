@@ -6,6 +6,9 @@ export interface RaiseProject {
   created_at: string;
   status: string;
   memo?: string;
+  type: string;
+  category: string;
+  pitch_deck_url?: string;
 }
 
 export interface RaiseCardProps {

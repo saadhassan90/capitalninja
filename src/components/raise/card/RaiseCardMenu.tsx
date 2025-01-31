@@ -1,4 +1,4 @@
-import { Edit, Eye, FileText, Trash } from "lucide-react";
+import { Edit, FileText, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -45,10 +45,6 @@ export function RaiseCardMenu({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-        <DropdownMenuItem onClick={() => navigate(`/raise/${projectId}`)}>
-          <Eye className="mr-2 h-4 w-4" />
-          View
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate(`/raise/${projectId}/edit`)}>
           <Edit className="mr-2 h-4 w-4" />
           Edit

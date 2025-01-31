@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface FormData {
+  id?: string;
   type: "equity" | "debt" | "";
   category: "fund_direct_deal" | "startup" | "";
   name: string;
@@ -27,26 +28,45 @@ interface RaiseFormContextType {
   isStepValid: () => boolean;
 }
 
-const RaiseFormContext = createContext<RaiseFormContextType | undefined>(undefined);
-
 interface RaiseFormProviderProps {
   children: React.ReactNode;
   onOpenChange: (open: boolean) => void;
   onCreateRaise?: () => void;
+  editMode?: boolean;
+  project?: RaiseProject;
 }
 
-export function RaiseFormProvider({ children, onOpenChange, onCreateRaise }: RaiseFormProviderProps) {
+export function RaiseFormProvider({ 
+  children, 
+  onOpenChange, 
+  onCreateRaise,
+  editMode,
+  project 
+}: RaiseFormProviderProps) {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [formData, setFormData] = useState<FormData>({
-    type: "",
-    category: "",
-    name: "",
-    targetAmount: "",
-    raisedAmount: "",
-    file: null,
+  const [formData, setFormData] = useState<FormData>(() => {
+    if (editMode && project) {
+      return {
+        id: project.id,
+        type: project.type as "equity" | "debt" | "",
+        category: project.category as "fund_direct_deal" | "startup" | "",
+        name: project.name,
+        targetAmount: project.target_amount.toString(),
+        raisedAmount: "",
+        file: null,
+      };
+    }
+    return {
+      type: "",
+      category: "",
+      name: "",
+      targetAmount: "",
+      raisedAmount: "",
+      file: null,
+    };
   });
 
   const updateFormData = (data: Partial<FormData>) => {
@@ -107,7 +127,7 @@ export function RaiseFormProvider({ children, onOpenChange, onCreateRaise }: Rai
   };
 
   const handleUpload = async () => {
-    if (!formData.file || !user) return;
+    if (!user) return;
 
     if (!formData.name) {
       toast.error("Please enter a raise name");
@@ -123,42 +143,59 @@ export function RaiseFormProvider({ children, onOpenChange, onCreateRaise }: Rai
     setUploadProgress(0);
 
     try {
-      const fileExt = formData.file.name.split('.').pop();
-      const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
+      let pitchDeckUrl = project?.pitch_deck_url;
 
-      const { error: uploadError } = await supabase.storage
-        .from('pitch_decks')
-        .upload(filePath, formData.file);
+      if (formData.file) {
+        const fileExt = formData.file.name.split('.').pop();
+        const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
-      if (uploadError) throw uploadError;
+        const { error: uploadError } = await supabase.storage
+          .from('pitch_decks')
+          .upload(filePath, formData.file);
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('pitch_decks')
-        .getPublicUrl(filePath);
+        if (uploadError) throw uploadError;
 
-      // Ensure type and category are not empty before inserting
+        const { data: { publicUrl } } = supabase.storage
+          .from('pitch_decks')
+          .getPublicUrl(filePath);
+
+        pitchDeckUrl = publicUrl;
+      }
+
       if (!formData.type || !formData.category) {
         throw new Error("Type and category are required");
       }
 
-      const { error } = await supabase
-        .from('raises')
-        .insert({
-          type: formData.type,
-          category: formData.category,
-          name: formData.name,
-          target_amount: parseInt(formData.targetAmount),
-          pitch_deck_url: publicUrl,
-          user_id: user.id
-        });
+      const raiseData = {
+        type: formData.type,
+        category: formData.category,
+        name: formData.name,
+        target_amount: parseInt(formData.targetAmount),
+        pitch_deck_url: pitchDeckUrl,
+        user_id: user.id
+      };
+
+      let error;
+      if (editMode && formData.id) {
+        const { error: updateError } = await supabase
+          .from('raises')
+          .update(raiseData)
+          .eq('id', formData.id);
+        error = updateError;
+      } else {
+        const { error: insertError } = await supabase
+          .from('raises')
+          .insert(raiseData);
+        error = insertError;
+      }
 
       if (error) throw error;
 
-      toast.success("Raise created successfully");
+      toast.success(editMode ? "Raise updated successfully" : "Raise created successfully");
       onCreateRaise?.();
       handleClose();
     } catch (error: any) {
-      toast.error(error.message || "Failed to create raise");
+      toast.error(error.message || "Failed to save raise");
     } finally {
       setIsProcessing(false);
     }

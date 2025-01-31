@@ -7,11 +7,14 @@ import { DialogFooter } from "./DialogFooter";
 import { RaiseTypeStep } from "./steps/RaiseTypeStep";
 import { CategoryStep } from "./steps/CategoryStep";
 import { PitchDeckStep } from "./steps/PitchDeckStep";
+import type { RaiseProject } from "./types";
 
 interface CreateRaiseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreateRaise?: () => void;
+  editMode?: boolean;
+  project?: RaiseProject;
 }
 
 function CreateRaiseDialogContent() {
@@ -32,7 +35,7 @@ function CreateRaiseDialogContent() {
     <>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create New Raise</DialogTitle>
+          <DialogTitle>{formData.id ? 'Edit Raise' : 'Create New Raise'}</DialogTitle>
         </DialogHeader>
         
         <Progress value={progress} className="mt-2" />
@@ -53,10 +56,15 @@ function CreateRaiseDialogContent() {
   );
 }
 
-export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateRaiseDialogProps) {
+export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise, editMode, project }: CreateRaiseDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <RaiseFormProvider onOpenChange={onOpenChange} onCreateRaise={onCreateRaise}>
+      <RaiseFormProvider 
+        onOpenChange={onOpenChange} 
+        onCreateRaise={onCreateRaise}
+        editMode={editMode}
+        project={project}
+      >
         <CreateRaiseDialogContent />
       </RaiseFormProvider>
     </Dialog>
