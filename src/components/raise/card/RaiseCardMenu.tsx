@@ -23,7 +23,6 @@ import {
 interface RaiseCardMenuProps {
   projectId: string;
   projectName: string;
-  hasMemo: boolean;
   onDelete: () => Promise<void>;
   onViewMemo: () => void;
 }
