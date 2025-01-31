@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { RaiseCardContent } from "./card/RaiseCardContent";
 import { RaiseCardMenu } from "./card/RaiseCardMenu";
 import { MemoDialog } from "./card/MemoDialog";
-import { EditRaiseDialog } from "./EditRaiseDialog";
+import { EditRaiseDialog } from "./edit/EditRaiseDialog";
 import { toast } from "sonner";
 import type { RaiseProject } from "./types";
 import html2pdf from "html2pdf.js";
