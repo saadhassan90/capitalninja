@@ -15,6 +15,7 @@ import Enrichment from "@/pages/Enrichment";
 import Exports from "@/pages/Exports";
 import Campaigns from "@/pages/Campaigns";
 import Emails from "@/pages/Emails";
+import Raise from "@/pages/Raise";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminUsers from "@/pages/admin/Users";
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: "/lists/:id",
         element: <ListView />,
+      },
+      {
+        path: "/raise",
+        element: <Raise />,
       },
       {
         path: "/settings",

@@ -1,6 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/components/AuthProvider";
 import {
   LayoutDashboard,
   Users,
@@ -12,6 +9,7 @@ import {
   Activity,
   Mail,
   MessageSquare,
+  DollarSign,
 } from "lucide-react";
 
 export const menuItems = [
@@ -32,6 +30,11 @@ export const menuItems = [
         title: "Lists",
         href: "/lists",
         icon: List,
+      },
+      {
+        title: "Raise",
+        href: "/raise",
+        icon: DollarSign,
       },
       {
         title: "Enrichment",
