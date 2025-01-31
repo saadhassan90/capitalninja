@@ -1,19 +1,17 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useRaiseForm } from "../RaiseFormContext";
 
-interface RaiseTypeStepProps {
-  type: "equity" | "debt";
-  onTypeChange: (value: "equity" | "debt") => void;
-}
+export function RaiseTypeStep() {
+  const { formData, updateFormData } = useRaiseForm();
 
-export function RaiseTypeStep({ type, onTypeChange }: RaiseTypeStepProps) {
   return (
     <div className="space-y-4 py-4">
       <div className="space-y-2">
         <Label>Select Raise Type</Label>
         <RadioGroup
-          value={type}
-          onValueChange={onTypeChange}
+          value={formData.type}
+          onValueChange={(value) => updateFormData({ type: value as "equity" | "debt" })}
           className="flex flex-col space-y-2"
         >
           <div className="flex items-center space-x-2">

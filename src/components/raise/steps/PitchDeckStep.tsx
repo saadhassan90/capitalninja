@@ -2,34 +2,22 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { FileUploadSection } from "@/components/enrichment/FileUploadSection";
 import { ProgressSection } from "@/components/enrichment/ProgressSection";
+import { useRaiseForm } from "../RaiseFormContext";
 
-interface PitchDeckStepProps {
-  file: File | null;
-  isProcessing: boolean;
-  uploadProgress: number;
-  raiseName: string;
-  targetAmount: string;
-  raisedAmount: string;
-  onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onUpload: () => void;
-  onRaiseNameChange: (value: string) => void;
-  onTargetAmountChange: (value: string) => void;
-  onRaisedAmountChange: (value: string) => void;
-}
+export function PitchDeckStep() {
+  const { 
+    formData, 
+    isProcessing, 
+    uploadProgress, 
+    updateFormData 
+  } = useRaiseForm();
 
-export function PitchDeckStep({
-  file,
-  isProcessing,
-  uploadProgress,
-  raiseName,
-  targetAmount,
-  raisedAmount,
-  onFileChange,
-  onUpload,
-  onRaiseNameChange,
-  onTargetAmountChange,
-  onRaisedAmountChange,
-}: PitchDeckStepProps) {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      updateFormData({ file: event.target.files[0] });
+    }
+  };
+
   return (
     <div className="space-y-4 py-4">
       <div className="space-y-4">
@@ -37,8 +25,8 @@ export function PitchDeckStep({
           <Label htmlFor="raiseName">Raise Name</Label>
           <Input
             id="raiseName"
-            value={raiseName}
-            onChange={(e) => onRaiseNameChange(e.target.value)}
+            value={formData.name}
+            onChange={(e) => updateFormData({ name: e.target.value })}
             placeholder="Enter raise name"
             disabled={isProcessing}
           />
@@ -49,8 +37,8 @@ export function PitchDeckStep({
           <Input
             id="targetAmount"
             type="number"
-            value={targetAmount}
-            onChange={(e) => onTargetAmountChange(e.target.value)}
+            value={formData.targetAmount}
+            onChange={(e) => updateFormData({ targetAmount: e.target.value })}
             placeholder="Enter target amount"
             disabled={isProcessing}
           />
@@ -61,8 +49,8 @@ export function PitchDeckStep({
           <Input
             id="raisedAmount"
             type="number"
-            value={raisedAmount}
-            onChange={(e) => onRaisedAmountChange(e.target.value)}
+            value={formData.raisedAmount}
+            onChange={(e) => updateFormData({ raisedAmount: e.target.value })}
             placeholder="Enter amount raised"
             disabled={isProcessing}
           />
@@ -75,13 +63,12 @@ export function PitchDeckStep({
             Supported formats: PDF, DOC, DOCX, PPT, PPTX
           </p>
           <FileUploadSection
-            file={file}
+            file={formData.file}
             isProcessing={isProcessing}
-            onFileChange={onFileChange}
-            onUpload={onUpload}
+            onFileChange={handleFileChange}
           />
           <ProgressSection
-            file={file}
+            file={formData.file}
             isProcessing={isProcessing}
             progress={uploadProgress}
           />

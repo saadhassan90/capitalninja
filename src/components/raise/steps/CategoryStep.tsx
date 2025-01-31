@@ -1,19 +1,17 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useRaiseForm } from "../RaiseFormContext";
 
-interface CategoryStepProps {
-  category: "fund_direct_deal" | "startup";
-  onCategoryChange: (value: "fund_direct_deal" | "startup") => void;
-}
+export function CategoryStep() {
+  const { formData, updateFormData } = useRaiseForm();
 
-export function CategoryStep({ category, onCategoryChange }: CategoryStepProps) {
   return (
     <div className="space-y-4 py-4">
       <div className="space-y-2">
         <Label>Select Category</Label>
         <RadioGroup
-          value={category}
-          onValueChange={onCategoryChange}
+          value={formData.category}
+          onValueChange={(value) => updateFormData({ category: value as "fund_direct_deal" | "startup" })}
           className="flex flex-col space-y-2"
         >
           <div className="flex items-center space-x-2">
