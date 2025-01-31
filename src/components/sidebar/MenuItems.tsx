@@ -11,6 +11,9 @@ import {
   MessageSquare,
   DollarSign,
 } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const menuItems = [
   {
