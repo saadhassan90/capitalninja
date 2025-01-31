@@ -15,20 +15,14 @@ export function FileUploadSection({
   onUpload 
 }: FileUploadSectionProps) {
   return (
-    <div className="flex items-center gap-4">
+    <div>
       <Input
         type="file"
         accept=".pdf,.doc,.docx,.ppt,.pptx"
         onChange={onFileChange}
-        className="flex-1"
+        className="w-full"
         disabled={isProcessing}
       />
-      <Button 
-        onClick={onUpload}
-        disabled={!file || isProcessing}
-      >
-        {isProcessing ? "Processing..." : "Upload & Process"}
-      </Button>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { FileUploadSection } from "@/components/enrichment/FileUploadSection";
 import { ProgressSection } from "@/components/enrichment/ProgressSection";
 
@@ -86,6 +87,15 @@ export function PitchDeckStep({
             progress={uploadProgress}
           />
         </div>
+      </div>
+      
+      <div className="flex justify-end mt-6">
+        <Button 
+          onClick={onUpload}
+          disabled={!file || isProcessing}
+        >
+          {isProcessing ? "Processing..." : "Finish"}
+        </Button>
       </div>
     </div>
   );
