@@ -4,13 +4,16 @@ import { useRaiseForm } from "./RaiseFormContext";
 export function DialogFooter() {
   const { 
     step, 
-    isProcessing, 
+    isProcessing,
+    memoStatus, 
     handleClose, 
     handleBack, 
     handleNext, 
     handleUpload,
     isStepValid 
   } = useRaiseForm();
+
+  const canFinish = step === 3 && isStepValid() && memoStatus === 'complete';
 
   return (
     <div className="flex justify-between mt-6">
@@ -40,7 +43,7 @@ export function DialogFooter() {
       ) : (
         <Button 
           onClick={handleUpload}
-          disabled={!isStepValid() || isProcessing}
+          disabled={!canFinish || isProcessing}
           variant="default"
         >
           {isProcessing ? "Processing..." : "Finish"}

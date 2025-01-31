@@ -7,10 +7,11 @@ import { useRaiseForm } from "../RaiseFormContext";
 export function PitchDeckStep() {
   const { 
     formData, 
-    isProcessing, 
+    isProcessing,
+    memoStatus,
     uploadProgress, 
     updateFormData,
-    handleUpload 
+    handleProcess
   } = useRaiseForm();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,13 +67,15 @@ export function PitchDeckStep() {
           <FileUploadSection
             file={formData.file}
             isProcessing={isProcessing}
+            memoStatus={memoStatus}
             onFileChange={handleFileChange}
-            onUpload={handleUpload}
+            onProcess={handleProcess}
           />
           <ProgressSection
             file={formData.file}
             isProcessing={isProcessing}
             progress={uploadProgress}
+            memoStatus={memoStatus}
           />
         </div>
       </div>
