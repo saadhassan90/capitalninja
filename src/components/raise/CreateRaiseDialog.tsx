@@ -148,6 +148,12 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
     }
   };
 
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
   return (
     <>
       <Dialog open={open} onOpenChange={handleClose}>
@@ -189,12 +195,22 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
           )}
 
           <div className="flex justify-between mt-6">
-            <Button
-              variant="outline"
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+              {step > 1 && (
+                <Button
+                  variant="outline"
+                  onClick={handleBack}
+                >
+                  Back
+                </Button>
+              )}
+            </div>
             {step < 3 ? (
               <Button 
                 onClick={handleNext}
@@ -206,6 +222,7 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
               <Button 
                 onClick={handleUpload}
                 disabled={!isStepValid() || isProcessing}
+                variant="default"
               >
                 {isProcessing ? "Processing..." : "Finish"}
               </Button>
