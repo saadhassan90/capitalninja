@@ -13,6 +13,9 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
   const { toast } = useToast();
   const [memoDialogOpen, setMemoDialogOpen] = useState(false);
 
+  console.log("Project memo:", project.memo);
+  console.log("Has memo:", Boolean(project.memo));
+
   const handleDelete = async () => {
     try {
       // TODO: Implement delete functionality
@@ -42,6 +45,11 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
     }
   };
 
+  const handleMemoClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setMemoDialogOpen(true);
+  };
+
   return (
     <>
       <Card 
@@ -56,14 +64,14 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
           createdAt={project.created_at}
           onMenuClick={(e) => e.stopPropagation()}
           hasMemo={Boolean(project.memo)}
-          onMemoClick={() => setMemoDialogOpen(true)}
+          onMemoClick={handleMemoClick}
           menu={
             <RaiseCardMenu
               projectId={project.id}
               projectName={project.name}
               hasMemo={Boolean(project.memo)}
               onDelete={handleDelete}
-              onViewMemo={() => setMemoDialogOpen(true)}
+              onViewMemo={handleMemoClick}
             />
           }
         />
