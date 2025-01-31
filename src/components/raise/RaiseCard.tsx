@@ -13,9 +13,6 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
   const { toast } = useToast();
   const [memoDialogOpen, setMemoDialogOpen] = useState(false);
 
-  console.log("Project memo:", project.memo);
-  console.log("Has memo:", Boolean(project.memo));
-
   const handleDelete = async () => {
     try {
       // TODO: Implement delete functionality
@@ -39,15 +36,11 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
   };
 
   const handleDownloadMemo = () => {
+    if (!project.memo) return;
     const element = document.getElementById('memo-content');
     if (element) {
       generateMemoPDF(element, project.name);
     }
-  };
-
-  const handleMemoClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setMemoDialogOpen(true);
   };
 
   return (
@@ -64,14 +57,14 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
           createdAt={project.created_at}
           onMenuClick={(e) => e.stopPropagation()}
           hasMemo={Boolean(project.memo)}
-          onMemoClick={handleMemoClick}
+          onMemoClick={() => setMemoDialogOpen(true)}
           menu={
             <RaiseCardMenu
               projectId={project.id}
               projectName={project.name}
               hasMemo={Boolean(project.memo)}
               onDelete={handleDelete}
-              onViewMemo={handleMemoClick}
+              onViewMemo={() => setMemoDialogOpen(true)}
             />
           }
         />

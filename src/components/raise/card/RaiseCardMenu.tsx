@@ -31,11 +31,9 @@ interface RaiseCardMenuProps {
 export function RaiseCardMenu({ 
   projectId, 
   projectName, 
-  hasMemo, 
   onDelete, 
   onViewMemo 
 }: RaiseCardMenuProps) {
-  console.log("Menu hasMemo:", hasMemo);
   const navigate = useNavigate();
 
   return (
@@ -55,15 +53,10 @@ export function RaiseCardMenu({
           <Edit className="mr-2 h-4 w-4" />
           Edit
         </DropdownMenuItem>
-        {hasMemo && (
-          <DropdownMenuItem onClick={(e) => {
-            e.stopPropagation();
-            onViewMemo();
-          }}>
-            <FileText className="mr-2 h-4 w-4" />
-            View Memo
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem onClick={onViewMemo}>
+          <FileText className="mr-2 h-4 w-4" />
+          View Memo
+        </DropdownMenuItem>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <DropdownMenuItem
