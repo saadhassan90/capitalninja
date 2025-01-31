@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { RaiseCardMenu } from "./card/RaiseCardMenu";
 import { MemoDialog } from "./card/MemoDialog";
 import { RaiseCardContent } from "./card/RaiseCardContent";
+import { CreateRaiseDialog } from "./CreateRaiseDialog";
 import { generateMemoPDF } from "./utils/pdfUtils";
 import type { RaiseCardProps } from "./types";
 
@@ -12,6 +13,7 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [memoDialogOpen, setMemoDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const handleDelete = async () => {
     try {
@@ -56,6 +58,7 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
               projectName={project.name}
               onDelete={handleDelete}
               onViewMemo={() => setMemoDialogOpen(true)}
+              onEdit={() => setEditDialogOpen(true)}
             />
           }
         />
@@ -67,6 +70,14 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
         projectName={project.name}
         memo={project.memo || ''}
         onDownload={handleDownloadMemo}
+      />
+
+      <CreateRaiseDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        onCreateRaise={onDelete}
+        editMode={true}
+        project={project}
       />
     </>
   );

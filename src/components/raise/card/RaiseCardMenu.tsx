@@ -25,13 +25,15 @@ interface RaiseCardMenuProps {
   projectName: string;
   onDelete: () => Promise<void>;
   onViewMemo: () => void;
+  onEdit: () => void;
 }
 
 export function RaiseCardMenu({ 
   projectId, 
   projectName, 
   onDelete, 
-  onViewMemo 
+  onViewMemo,
+  onEdit
 }: RaiseCardMenuProps) {
   const navigate = useNavigate();
 
@@ -44,7 +46,7 @@ export function RaiseCardMenu({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-        <DropdownMenuItem onClick={() => navigate(`/raise/${projectId}/edit`)}>
+        <DropdownMenuItem onClick={onEdit}>
           <Edit className="mr-2 h-4 w-4" />
           Edit
         </DropdownMenuItem>
