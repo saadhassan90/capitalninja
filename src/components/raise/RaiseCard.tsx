@@ -80,14 +80,45 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
     const element = document.getElementById('memo-content');
     if (element) {
       const opt = {
-        margin: 1,
+        margin: [0.75, 0.75],
         filename: `${project.name}-memo.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
       };
 
-      html2pdf().set(opt).from(element).save();
+      // Clone the element to modify it for PDF generation
+      const clonedElement = element.cloneNode(true) as HTMLElement;
+      
+      // Add PDF-specific styling
+      clonedElement.style.fontFamily = 'Arial, sans-serif';
+      clonedElement.style.color = '#1a1a1a';
+      clonedElement.style.padding = '20px';
+      
+      // Style headers
+      const headers = clonedElement.querySelectorAll('h1, h2, h3, h4');
+      headers.forEach(header => {
+        (header as HTMLElement).style.borderBottom = '1px solid #e5e7eb';
+        (header as HTMLElement).style.paddingBottom = '8px';
+        (header as HTMLElement).style.marginBottom = '16px';
+        (header as HTMLElement).style.color = '#111827';
+      });
+
+      // Style paragraphs
+      const paragraphs = clonedElement.querySelectorAll('p');
+      paragraphs.forEach(p => {
+        (p as HTMLElement).style.marginBottom = '12px';
+        (p as HTMLElement).style.lineHeight = '1.6';
+      });
+
+      // Style lists
+      const lists = clonedElement.querySelectorAll('ul, ol');
+      lists.forEach(list => {
+        (list as HTMLElement).style.marginBottom = '16px';
+        (list as HTMLElement).style.paddingLeft = '24px';
+      });
+
+      html2pdf().set(opt).from(clonedElement).save();
     }
   };
 
@@ -190,18 +221,35 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
       </Card>
 
       <Dialog open={memoDialogOpen} onOpenChange={setMemoDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Deal Memo - {project.name}</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold">Deal Memo - {project.name}</DialogTitle>
           </DialogHeader>
-          <div id="memo-content" className="prose prose-sm dark:prose-invert max-w-none mt-4">
-            <ReactMarkdown>{project.memo || ''}</ReactMarkdown>
+          <div id="memo-content" className="prose prose-slate dark:prose-invert max-w-none mt-4 px-4">
+            <div className="bg-card rounded-lg p-6 shadow-sm">
+              <ReactMarkdown
+                components={{
+                  h1: ({ children }) => <h1 className="text-2xl font-bold mb-4 pb-2 border-b">{children}</h1>,
+                  h2: ({ children }) => <h2 className="text-xl font-semibold mt-6 mb-3">{children}</h2>,
+                  h3: ({ children }) => <h3 className="text-lg font-medium mt-4 mb-2">{children}</h3>,
+                  p: ({ children }) => <p className="mb-4 leading-relaxed">{children}</p>,
+                  ul: ({ children }) => <ul className="list-disc pl-6 mb-4 space-y-2">{children}</ul>,
+                  ol: ({ children }) => <ol className="list-decimal pl-6 mb-4 space-y-2">{children}</ol>,
+                  li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                  blockquote: ({ children }) => (
+                    <blockquote className="border-l-4 border-gray-200 pl-4 italic my-4">{children}</blockquote>
+                  ),
+                }}
+              >
+                {project.memo || ''}
+              </ReactMarkdown>
+            </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="mt-6">
             <Button variant="outline" onClick={() => setMemoDialogOpen(false)}>
               Close
             </Button>
-            <Button onClick={handleDownloadMemo}>
+            <Button onClick={handleDownloadMemo} className="ml-2">
               <Download className="mr-2 h-4 w-4" />
               Download PDF
             </Button>
