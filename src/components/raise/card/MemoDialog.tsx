@@ -4,18 +4,17 @@ import { PdfLightbox } from "../PdfLightbox";
 interface MemoDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  project: {
-    pitch_deck_url?: string;
-    memo?: string;
-  };
+  projectName: string;
+  memo: string;
+  onDownload: () => void;
 }
 
-export function MemoDialog({ open, onOpenChange, project }: MemoDialogProps) {
+export function MemoDialog({ open, onOpenChange, projectName, memo, onDownload }: MemoDialogProps) {
   return (
     <PdfLightbox
       open={open}
       onOpenChange={onOpenChange}
-      pdfUrl={project.pitch_deck_url}
+      pdfUrl={memo}
     />
   );
 }

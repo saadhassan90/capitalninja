@@ -171,7 +171,7 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
             open={memoDialogOpen}
             onOpenChange={setMemoDialogOpen}
             projectName={selectedRaise.name}
-            memo={selectedRaise.memo || ''}
+            memo={selectedRaise.pitch_deck_url || ''}
             onDownload={handleDownloadMemo}
           />
         </>
