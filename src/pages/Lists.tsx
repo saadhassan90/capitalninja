@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { CreateListDialog } from "@/components/lists/CreateListDialog";
 import { toast } from "sonner";
+import type { Json } from "@/integrations/supabase/types";
 
 interface List {
   id: string;
@@ -14,6 +15,15 @@ interface List {
   created_at: string;
   type: "static" | "dynamic";
   last_refreshed_at: string | null;
+}
+
+// Define the shape of data we accept from the create list dialog
+interface CreateListData {
+  name: string;
+  description?: string;
+  type?: "static" | "dynamic";
+  created_by?: string;
+  filters?: Json;
 }
 
 const Lists = () => {
@@ -38,7 +48,7 @@ const Lists = () => {
     }
   });
 
-  const handleCreateList = async (listData: Partial<List>) => {
+  const handleCreateList = async (listData: CreateListData) => {
     try {
       const { error } = await supabase
         .from('lists')
