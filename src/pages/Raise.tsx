@@ -2,35 +2,25 @@ import { useState } from "react";
 import { Briefcase, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RaiseCard } from "@/components/raise/RaiseCard";
-
-// Temporary mock data - will be replaced with actual data from Supabase
-const mockProjects = [
-  {
-    id: "1",
-    name: "Series A Fundraising",
-    description: "Raising capital for expansion into new markets",
-    target_amount: 5000000,
-    created_at: "2024-01-15T10:00:00Z",
-    status: "active",
-  },
-  {
-    id: "2",
-    name: "Seed Round",
-    description: "Initial fundraising for product development",
-    target_amount: 1000000,
-    created_at: "2024-02-01T15:30:00Z",
-    status: "draft",
-  },
-];
+import { CreateRaiseDialog } from "@/components/raise/CreateRaiseDialog";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Raise = () => {
-  const [projects, setProjects] = useState(mockProjects);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
-  const handleDelete = (deletedProjectId: string) => {
-    setProjects(currentProjects => 
-      currentProjects.filter(project => project.id !== deletedProjectId)
-    );
-  };
+  const { data: raises, refetch } = useQuery({
+    queryKey: ['raises'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('raises')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
 
   return (
     <div className="p-8">
@@ -44,21 +34,27 @@ const Raise = () => {
             </p>
           </div>
         </div>
-        <Button>
+        <Button onClick={() => setCreateDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           New Project
         </Button>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {projects.map((project) => (
+        {raises?.map((project) => (
           <RaiseCard 
             key={project.id} 
             project={project}
-            onDelete={() => handleDelete(project.id)}
+            onDelete={refetch}
           />
         ))}
       </div>
+
+      <CreateRaiseDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onCreateRaise={refetch}
+      />
     </div>
   );
 };

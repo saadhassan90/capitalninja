@@ -733,6 +733,45 @@ export type Database = {
         }
         Relationships: []
       }
+      raises: {
+        Row: {
+          category: Database["public"]["Enums"]["investment_category"]
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          status: string | null
+          target_amount: number | null
+          type: Database["public"]["Enums"]["raise_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["investment_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          status?: string | null
+          target_amount?: number | null
+          type: Database["public"]["Enums"]["raise_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["investment_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          status?: string | null
+          target_amount?: number | null
+          type?: Database["public"]["Enums"]["raise_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       request_logs: {
         Row: {
           client_ip: string
@@ -1031,6 +1070,8 @@ export type Database = {
         | "sending"
         | "completed"
         | "failed"
+      investment_category: "fund_direct_deal" | "startup"
+      raise_type: "equity" | "debt"
       subscription_plan: "free" | "basic" | "outreach" | "enterprise"
     }
     CompositeTypes: {
