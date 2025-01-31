@@ -154,20 +154,46 @@ export function RaiseFormProvider({
       };
 
       let error;
+      let raiseId;
+      
       if (editMode && formData.id) {
         const { error: updateError } = await supabase
           .from('raises')
           .update(raiseData)
           .eq('id', formData.id);
         error = updateError;
+        raiseId = formData.id;
       } else {
-        const { error: insertError } = await supabase
+        const { data: insertData, error: insertError } = await supabase
           .from('raises')
-          .insert(raiseData);
+          .insert(raiseData)
+          .select()
+          .single();
         error = insertError;
+        raiseId = insertData?.id;
       }
 
       if (error) throw error;
+
+      // Process the pitch deck with OpenAI if a file was uploaded
+      if (formData.file && pitchDeckUrl && raiseId) {
+        const response = await fetch('/functions/v1/process-pitch-deck', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            raiseId,
+            fileUrl: pitchDeckUrl,
+          }),
+        });
+
+        if (!response.ok) {
+          console.error('Error processing pitch deck:', await response.text());
+          toast.error('Failed to process pitch deck');
+        }
+      }
 
       toast.success(editMode ? "Raise updated successfully" : "Raise created successfully");
       onCreateRaise?.();
