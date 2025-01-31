@@ -103,6 +103,7 @@ export function EditRaiseForm({
           file={formData.file}
           isProcessing={isProcessing}
           onFileChange={onFileChange}
+          onUpload={() => {}} // Added empty function since upload is handled by parent
         />
         <ProgressSection
           file={formData.file}
