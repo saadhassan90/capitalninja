@@ -14,14 +14,14 @@ interface MemoDialogProps {
   onOpenChange: (open: boolean) => void;
   projectName: string;
   memo: string;
-  onDownload: () => void;
+  onDownload?: () => void;
 }
 
 export function MemoDialog({ 
   open, 
   onOpenChange, 
   projectName, 
-  memo, 
+  memo,
   onDownload 
 }: MemoDialogProps) {
   return (
@@ -60,7 +60,7 @@ export function MemoDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Close
           </Button>
-          {memo && (
+          {memo && onDownload && (
             <Button onClick={onDownload} className="ml-2">
               <Download className="mr-2 h-4 w-4" />
               Download PDF

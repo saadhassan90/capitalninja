@@ -8,6 +8,7 @@ import { FileUploadSection } from "@/components/enrichment/FileUploadSection";
 import { ProgressSection } from "@/components/enrichment/ProgressSection";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
 import type { RaiseProject } from "./types";
 
 interface EditRaiseDialogProps {
@@ -18,6 +19,7 @@ interface EditRaiseDialogProps {
 }
 
 export function EditRaiseDialog({ open, onOpenChange, project, onSave }: EditRaiseDialogProps) {
+  const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
@@ -35,6 +37,11 @@ export function EditRaiseDialog({ open, onOpenChange, project, onSave }: EditRai
   };
 
   const handleSave = async () => {
+    if (!user) {
+      toast.error("You must be logged in to update a raise");
+      return;
+    }
+
     if (!formData.name || !formData.targetAmount) {
       toast.error("Please fill in all required fields");
       return;
@@ -48,7 +55,7 @@ export function EditRaiseDialog({ open, onOpenChange, project, onSave }: EditRai
 
       if (formData.file) {
         const fileExt = formData.file.name.split('.').pop();
-        const filePath = `${project.user_id}/${crypto.randomUUID()}.${fileExt}`;
+        const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
           .from('pitch_decks')
