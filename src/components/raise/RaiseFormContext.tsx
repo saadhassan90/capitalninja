@@ -67,18 +67,16 @@ export function RaiseFormProvider({
       setUploadProgress(60);
       setMemoStatus('creating');
 
-      const { data: { session } } = await supabase.auth.getSession();
-      const response = await fetch('/functions/v1/process-pitch-deck', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({ fileUrl: publicUrl }),
+      const { data, error } = await supabase.functions.invoke('process-pitch-deck', {
+        body: { fileUrl: publicUrl },
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to process pitch deck');
+      if (error) {
+        throw error;
+      }
+
+      if (!data?.memo) {
+        throw new Error('No memo generated');
       }
 
       setUploadProgress(100);
