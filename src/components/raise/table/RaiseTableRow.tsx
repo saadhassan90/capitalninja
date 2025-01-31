@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, FileText, Trash } from "lucide-react";
+import { Eye, FileText, Trash2 } from "lucide-react";
 import { formatCurrency } from "@/utils/formatters";
 import {
   AlertDialog,
@@ -56,23 +56,26 @@ export function RaiseTableRow({
       <TableCell>
         <div className="flex items-center gap-2">
           <Button
-            variant="ghost"
+            variant="secondary"
             size="sm"
             onClick={onView}
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-4 w-4 mr-1" />
+            View
           </Button>
           <Button
-            variant="ghost"
+            variant="secondary"
             size="sm"
             onClick={onMemo}
           >
-            <FileText className="h-4 w-4" />
+            <FileText className="h-4 w-4 mr-1" />
+            Memo
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <Trash className="h-4 w-4" />
+              <Button variant="destructive" size="sm">
+                <Trash2 className="h-4 w-4 mr-1" />
+                Delete
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
