@@ -30,6 +30,7 @@ interface RaiseProject {
   target_amount: number;
   created_at: string;
   status: string;
+  memo?: string;
 }
 
 interface RaiseCardProps {
@@ -150,6 +151,11 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
           <span>Created:</span>
           <span>{formatDistanceToNow(new Date(project.created_at), { addSuffix: true })}</span>
         </div>
+        {project.memo && (
+          <div className="mt-4 prose prose-sm max-w-none">
+            <div dangerouslySetInnerHTML={{ __html: project.memo }} />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

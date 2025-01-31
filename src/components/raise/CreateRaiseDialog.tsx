@@ -74,15 +74,22 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
         .from('pitch_decks')
         .getPublicUrl(filePath);
 
-      const { error } = await supabase.from('raises').insert({
+      const { data: raise, error } = await supabase.from('raises').insert({
         user_id: user.id,
         type: formData.type,
         category: formData.category,
         name: `New ${formData.type} raise`,
         pitch_deck_url: publicUrl
-      });
+      }).select().single();
 
       if (error) throw error;
+
+      // Process the pitch deck with OpenAI
+      const { error: processError } = await supabase.functions.invoke('process-pitch-deck', {
+        body: { raiseId: raise.id, fileUrl: publicUrl }
+      });
+
+      if (processError) throw processError;
 
       toast.success("Raise created successfully");
       onCreateRaise?.();
