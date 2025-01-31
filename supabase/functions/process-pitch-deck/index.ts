@@ -7,6 +7,7 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -15,10 +16,14 @@ serve(async (req) => {
     const { fileUrl } = await req.json()
     console.log('Processing pitch deck:', fileUrl)
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    if (!fileUrl) {
+      throw new Error('No file URL provided')
+    }
+
+    const openAiApiKey = Deno.env.get('OPENAI_API_KEY')
+    if (!openAiApiKey) {
+      throw new Error('OpenAI API key not configured')
+    }
 
     // Fetch the file content
     console.log('Fetching file content...')
@@ -35,11 +40,11 @@ serve(async (req) => {
     const openAiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${openAiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
