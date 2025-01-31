@@ -25,14 +25,32 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured')
     }
 
-    // Step 1: Fetch and parse PDF content
-    console.log('Fetching file content...')
-    const response = await fetch(fileUrl)
-    if (!response.ok) {
-      throw new Error(`Failed to fetch file: ${response.statusText}`)
+    // Create Supabase client to get file
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const supabase = createClient(supabaseUrl!, supabaseKey!)
+
+    // Get the file path from the URL
+    const filePath = fileUrl.split('/').slice(-2).join('/')
+    console.log('Fetching file from storage:', filePath)
+
+    // Download file from Supabase storage
+    const { data: fileData, error: downloadError } = await supabase
+      .storage
+      .from('pitch_decks')
+      .download(filePath)
+
+    if (downloadError) {
+      console.error('Download error:', downloadError)
+      throw new Error(`Failed to download file: ${downloadError.message}`)
     }
 
-    const arrayBuffer = await response.arrayBuffer()
+    if (!fileData) {
+      throw new Error('No file data received')
+    }
+
+    // Convert Blob to ArrayBuffer
+    const arrayBuffer = await fileData.arrayBuffer()
     const buffer = new Uint8Array(arrayBuffer)
     
     // Parse PDF content
@@ -41,7 +59,7 @@ serve(async (req) => {
     const textContent = data.text
     console.log('Extracted text length:', textContent.length)
 
-    // Step 2: Process with OpenAI
+    // Process with OpenAI
     console.log('Sending extracted text to OpenAI...')
     const openAiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
