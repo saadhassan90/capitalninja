@@ -27,6 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import type { RaiseProject } from "./types";
+import html2pdf from 'html2pdf.js';
 
 interface RaiseTableProps {
   raises: RaiseProject[];
@@ -104,6 +105,23 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
     } else {
       setSelectedRaises(prev => prev.filter(raiseId => raiseId !== id));
     }
+  };
+
+  const handleDownloadMemo = () => {
+    if (!selectedRaise) return;
+
+    const element = document.getElementById('memo-content');
+    if (!element) return;
+
+    const opt = {
+      margin: 1,
+      filename: `${selectedRaise.name}-memo.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
   };
 
   return (
@@ -244,6 +262,7 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
             onOpenChange={setMemoDialogOpen}
             projectName={selectedRaise.name}
             memo={selectedRaise.memo || ''}
+            onDownload={handleDownloadMemo}
           />
         </>
       )}
