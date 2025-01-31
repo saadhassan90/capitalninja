@@ -1,14 +1,18 @@
-import { formatDistanceToNow } from "date-fns";
-import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency } from "@/utils/formatters";
+import { Badge } from "@/components/ui/badge";
+import { FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface RaiseCardContentProps {
   name: string;
   description?: string;
-  status: string;
-  targetAmount: number;
+  status?: string;
+  targetAmount?: number;
   createdAt: string;
   onMenuClick: (e: React.MouseEvent) => void;
   menu: React.ReactNode;
+  onMemoClick?: () => void;
+  hasMemo?: boolean;
 }
 
 export function RaiseCardContent({
@@ -18,51 +22,56 @@ export function RaiseCardContent({
   targetAmount,
   createdAt,
   onMenuClick,
-  menu
+  menu,
+  onMemoClick,
+  hasMemo
 }: RaiseCardContentProps) {
-  const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      notation: 'compact',
-      maximumFractionDigits: 1,
-    }).format(amount);
-  };
-
   return (
-    <>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{name}</CardTitle>
-          <div className="flex items-center gap-2">
-            <span className={`px-2 py-1 text-xs rounded-md ${
-              status === "active"
-                ? "bg-green-100 text-green-700"
-                : "bg-gray-100 text-gray-700"
-            }`}>
-              {status}
-            </span>
-            <div onClick={onMenuClick}>
-              {menu}
-            </div>
-          </div>
+    <div className="p-6">
+      <div className="flex items-start justify-between">
+        <div>
+          <h3 className="text-lg font-semibold">{name}</h3>
+          {description && (
+            <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+              {description}
+            </p>
+          )}
         </div>
-        {description && (
-          <CardDescription className="text-muted-foreground mt-2">
-            {description}
-          </CardDescription>
+        <div onClick={onMenuClick}>
+          {menu}
+        </div>
+      </div>
+
+      <div className="mt-4 space-y-2">
+        {status && (
+          <Badge variant={status === 'draft' ? 'secondary' : 'default'}>
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </Badge>
         )}
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>Target Amount:</span>
-          <span>{formatAmount(targetAmount)}</span>
+        {targetAmount && (
+          <div className="text-sm text-muted-foreground">
+            Target: {formatCurrency(targetAmount)}
+          </div>
+        )}
+        <div className="text-sm text-muted-foreground">
+          Created: {new Date(createdAt).toLocaleDateString()}
         </div>
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>Created:</span>
-          <span>{formatDistanceToNow(new Date(createdAt), { addSuffix: true })}</span>
-        </div>
-      </CardContent>
-    </>
+      </div>
+
+      {hasMemo && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            onMemoClick?.();
+          }}
+        >
+          <FileText className="mr-2 h-4 w-4" />
+          View Memo
+        </Button>
+      )}
+    </div>
   );
 }
