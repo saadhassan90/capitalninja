@@ -20,11 +20,10 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Get the file content from storage
-    console.log('Fetching file from URL...')
+    // Fetch the file content
+    console.log('Fetching file content...')
     const response = await fetch(fileUrl)
     if (!response.ok) {
-      console.error('Failed to fetch file:', response.statusText)
       throw new Error(`Failed to fetch file: ${response.statusText}`)
     }
 
@@ -44,7 +43,27 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert financial analyst. Create a concise deal memo based on the pitch deck.'
+            content: `You are an expert financial analyst and investment professional. Create a detailed deal memo based on the pitch deck content provided. Focus on:
+
+1. Deal Overview
+- Investment type and structure
+- Key terms and valuation
+- Team background and track record
+
+2. Investment Thesis
+- Market opportunity and growth drivers
+- Competitive advantages
+- Business model and strategy
+
+3. Risk Analysis
+- Market and competitive risks
+- Operational and execution risks
+- Financial risks
+
+4. Return Potential
+- Expected returns and growth metrics
+- Exit opportunities
+- Strategic value and synergies`
           },
           {
             role: 'user',
@@ -52,34 +71,39 @@ serve(async (req) => {
           }
         ],
         temperature: 0.7,
-        max_tokens: 2000,
-      }),
+        max_tokens: 2000
+      })
     })
 
     if (!openAiResponse.ok) {
-      const error = await openAiResponse.json()
+      const error = await openAiResponse.text()
       console.error('OpenAI API error:', error)
-      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`)
+      throw new Error(`OpenAI API error: ${error}`)
     }
 
-    const aiResult = await openAiResponse.json()
     console.log('OpenAI Response received')
+    const aiResult = await openAiResponse.json()
     const memo = aiResult.choices[0].message.content
 
     return new Response(
       JSON.stringify({ success: true, memo }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        } 
+      }
     )
   } catch (error) {
-    console.error('Error processing pitch deck:', error)
+    console.error('Error:', error)
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        details: error.toString()
-      }),
+      JSON.stringify({ success: false, error: error.message }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
-        status: 500 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        },
+        status: 500
       }
     )
   }
