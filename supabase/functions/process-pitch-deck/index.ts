@@ -23,13 +23,16 @@ serve(async (req) => {
     )
 
     // Get the file content from storage
+    console.log('Fetching file from URL...')
     const response = await fetch(fileUrl)
     if (!response.ok) {
       console.error('Failed to fetch file:', response.statusText)
       throw new Error(`Failed to fetch file: ${response.statusText}`)
     }
+
     const fileContent = await response.text()
     console.log('File content length:', fileContent.length)
+    console.log('First 500 characters of content:', fileContent.substring(0, 500))
 
     // Process with OpenAI
     console.log('Sending request to OpenAI...')

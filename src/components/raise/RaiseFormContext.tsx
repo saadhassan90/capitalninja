@@ -121,9 +121,11 @@ export function RaiseFormProvider({
     setUploadProgress(0);
 
     try {
+      console.log('Starting upload process...');
       let pitchDeckUrl = project?.pitch_deck_url;
 
       if (formData.file) {
+        console.log('Uploading pitch deck file...');
         const fileExt = formData.file.name.split('.').pop();
         const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
@@ -131,13 +133,18 @@ export function RaiseFormProvider({
           .from('pitch_decks')
           .upload(filePath, formData.file);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          throw uploadError;
+        }
 
+        console.log('File uploaded successfully, getting public URL...');
         const { data: { publicUrl } } = supabase.storage
           .from('pitch_decks')
           .getPublicUrl(filePath);
 
         pitchDeckUrl = publicUrl;
+        console.log('Public URL obtained:', pitchDeckUrl);
       }
 
       if (!formData.type || !formData.category) {
@@ -153,6 +160,7 @@ export function RaiseFormProvider({
         user_id: user.id
       };
 
+      console.log('Saving raise data to database...');
       let error;
       let raiseId;
       
@@ -173,10 +181,14 @@ export function RaiseFormProvider({
         raiseId = insertData?.id;
       }
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
 
       // Process the pitch deck with OpenAI if a file was uploaded
       if (formData.file && pitchDeckUrl && raiseId) {
+        console.log('Calling process-pitch-deck function...');
         const response = await fetch('/functions/v1/process-pitch-deck', {
           method: 'POST',
           headers: {
@@ -192,6 +204,8 @@ export function RaiseFormProvider({
         if (!response.ok) {
           console.error('Error processing pitch deck:', await response.text());
           toast.error('Failed to process pitch deck');
+        } else {
+          console.log('Pitch deck processed successfully');
         }
       }
 
@@ -199,6 +213,7 @@ export function RaiseFormProvider({
       onCreateRaise?.();
       handleClose();
     } catch (error: any) {
+      console.error('Error in handleUpload:', error);
       toast.error(error.message || "Failed to save raise");
     } finally {
       setIsProcessing(false);
