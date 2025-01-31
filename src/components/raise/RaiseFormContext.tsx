@@ -190,11 +190,12 @@ export function RaiseFormProvider({
       if (formData.file && pitchDeckUrl && raiseId) {
         console.log('Calling process-pitch-deck function...');
         try {
+          const { data: { session } } = await supabase.auth.getSession();
           const response = await fetch('/functions/v1/process-pitch-deck', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${supabase.auth.session()?.access_token}`,
+              'Authorization': `Bearer ${session?.access_token}`,
             },
             body: JSON.stringify({
               raiseId,
