@@ -9,7 +9,7 @@ import {
   Activity,
   Mail,
   MessageSquare,
-  DollarSign,
+  Briefcase,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
@@ -35,11 +35,6 @@ export const menuItems = [
         icon: List,
       },
       {
-        title: "Raise",
-        href: "/raise",
-        icon: DollarSign,
-      },
-      {
         title: "Enrichment",
         href: "/enrichment",
         icon: Sparkles,
@@ -54,6 +49,11 @@ export const menuItems = [
   {
     title: "Outreach",
     items: [
+      {
+        title: "Raise",
+        href: "/raise",
+        icon: Briefcase,
+      },
       {
         title: "Campaigns",
         href: "/campaigns",
