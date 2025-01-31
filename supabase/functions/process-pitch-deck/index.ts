@@ -32,7 +32,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini', // Fixed the model name from gpt-4o to gpt-4o-mini
         messages: [
           {
             role: 'system',
@@ -80,6 +80,7 @@ ${fileContent}`
     })
 
     const aiResult = await openAiResponse.json()
+    console.log('OpenAI Response:', aiResult) // Added logging for debugging
     const memo = aiResult.choices[0].message.content
 
     // Update the raise with the generated memo
@@ -88,7 +89,10 @@ ${fileContent}`
       .update({ memo })
       .eq('id', raiseId)
 
-    if (updateError) throw updateError
+    if (updateError) {
+      console.error('Error updating raise:', updateError) // Added logging for debugging
+      throw updateError
+    }
 
     return new Response(
       JSON.stringify({ success: true, memo }),
