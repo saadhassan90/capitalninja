@@ -189,23 +189,29 @@ export function RaiseFormProvider({
       // Process the pitch deck with OpenAI if a file was uploaded
       if (formData.file && pitchDeckUrl && raiseId) {
         console.log('Calling process-pitch-deck function...');
-        const response = await fetch('/functions/v1/process-pitch-deck', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            raiseId,
-            fileUrl: pitchDeckUrl,
-          }),
-        });
+        try {
+          const response = await fetch('/functions/v1/process-pitch-deck', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabase.auth.session()?.access_token}`,
+            },
+            body: JSON.stringify({
+              raiseId,
+              fileUrl: pitchDeckUrl,
+            }),
+          });
 
-        if (!response.ok) {
-          console.error('Error processing pitch deck:', await response.text());
+          if (!response.ok) {
+            console.error('Error processing pitch deck:', await response.text());
+            toast.error('Failed to process pitch deck');
+          } else {
+            console.log('Pitch deck processed successfully');
+          }
+        } catch (processError) {
+          console.error('Error calling process-pitch-deck:', processError);
+          // Don't throw here - we still want to save the raise even if processing fails
           toast.error('Failed to process pitch deck');
-        } else {
-          console.log('Pitch deck processed successfully');
         }
       }
 
