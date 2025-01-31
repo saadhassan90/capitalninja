@@ -136,16 +136,21 @@ export function RaiseFormProvider({ children, onOpenChange, onCreateRaise }: Rai
         .from('pitch_decks')
         .getPublicUrl(filePath);
 
+      // Ensure type and category are not empty before inserting
+      if (!formData.type || !formData.category) {
+        throw new Error("Type and category are required");
+      }
+
       const { error } = await supabase
         .from('raises')
-        .insert([{
+        .insert({
           type: formData.type,
           category: formData.category,
           name: formData.name,
           target_amount: parseInt(formData.targetAmount),
           pitch_deck_url: publicUrl,
           user_id: user.id
-        }]);
+        });
 
       if (error) throw error;
 
