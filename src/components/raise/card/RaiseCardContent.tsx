@@ -60,7 +60,7 @@ export function RaiseCardContent({
 
       {hasMemo && (
         <Button
-          variant="outline"
+          variant="secondary"
           size="sm"
           className="mt-4"
           onClick={(e) => {
