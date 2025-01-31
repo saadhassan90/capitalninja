@@ -14,6 +14,8 @@ serve(async (req) => {
 
   try {
     const { raiseId, fileUrl } = await req.json()
+    console.log('Processing raise:', raiseId)
+    console.log('File URL:', fileUrl)
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -22,7 +24,11 @@ serve(async (req) => {
 
     // Get the file content from storage
     const response = await fetch(fileUrl)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch file: ${response.statusText}`)
+    }
     const fileContent = await response.text()
+    console.log('File content length:', fileContent.length)
 
     // Process with OpenAI
     const openAiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -32,7 +38,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini', // Fixed the model name from gpt-4o to gpt-4o-mini
+        model: 'gpt-4', // Using the correct model name
         messages: [
           {
             role: 'system',
@@ -76,11 +82,18 @@ ${fileContent}`
           }
         ],
         temperature: 0.7,
+        max_tokens: 2000,
       }),
     })
 
+    if (!openAiResponse.ok) {
+      const error = await openAiResponse.json()
+      console.error('OpenAI API error:', error)
+      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`)
+    }
+
     const aiResult = await openAiResponse.json()
-    console.log('OpenAI Response:', aiResult) // Added logging for debugging
+    console.log('OpenAI Response received')
     const memo = aiResult.choices[0].message.content
 
     // Update the raise with the generated memo
@@ -90,7 +103,7 @@ ${fileContent}`
       .eq('id', raiseId)
 
     if (updateError) {
-      console.error('Error updating raise:', updateError) // Added logging for debugging
+      console.error('Error updating raise:', updateError)
       throw updateError
     }
 
@@ -101,8 +114,14 @@ ${fileContent}`
   } catch (error) {
     console.error('Error processing pitch deck:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      JSON.stringify({ 
+        error: error.message,
+        details: error.toString()
+      }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+        status: 500 
+      }
     )
   }
 })
