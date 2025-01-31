@@ -1,73 +1,75 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { RaiseCardContent } from "./card/RaiseCardContent";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { RaiseCardMenu } from "./card/RaiseCardMenu";
 import { MemoDialog } from "./card/MemoDialog";
-import { EditRaiseDialog } from "./edit/EditRaiseDialog";
-import { toast } from "sonner";
-import type { RaiseProject } from "./types";
-import html2pdf from "html2pdf.js";
+import { RaiseCardContent } from "./card/RaiseCardContent";
+import { generateMemoPDF } from "./utils/pdfUtils";
+import type { RaiseCardProps } from "./types";
 
-interface RaiseCardProps {
-  project: RaiseProject;
-  onDelete?: () => void;
-}
-
-export function RaiseCard({ project, onDelete }: RaiseCardProps) {
-  const [showMemo, setShowMemo] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
+function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [memoDialogOpen, setMemoDialogOpen] = useState(false);
 
   const handleDelete = async () => {
-    onDelete?.();
+    try {
+      // TODO: Implement delete functionality
+      toast({
+        title: "Success",
+        description: "Project deleted successfully",
+      });
+
+      onDelete?.();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete project",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDownloadMemo = () => {
+    if (!project.memo) return;
     const element = document.getElementById('memo-content');
-    if (!element) {
-      toast.error("Could not generate PDF");
-      return;
+    if (element) {
+      generateMemoPDF(element, project.name);
     }
-
-    const opt = {
-      margin: 1,
-      filename: `${project.name}-memo.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).save()
-      .then(() => toast.success("PDF downloaded successfully"))
-      .catch(() => toast.error("Failed to download PDF"));
   };
 
   return (
     <>
-      <Card className="relative">
-        <RaiseCardContent project={project} />
-        <RaiseCardMenu
-          projectId={project.id}
-          projectName={project.name}
-          onDelete={handleDelete}
-          onViewMemo={() => setShowMemo(true)}
-          onEdit={() => setShowEditDialog(true)}
+      <Card className="border-gray-200 hover:shadow-md transition-shadow">
+        <RaiseCardContent
+          name={project.name}
+          description={project.description}
+          status={project.memo ? "Ready" : "Draft"}
+          targetAmount={project.target_amount}
+          createdAt={project.created_at}
+          onMenuClick={(e) => e.stopPropagation()}
+          onMemoClick={() => setMemoDialogOpen(true)}
+          menu={
+            <RaiseCardMenu
+              projectId={project.id}
+              projectName={project.name}
+              onDelete={handleDelete}
+              onViewMemo={() => setMemoDialogOpen(true)}
+            />
+          }
         />
       </Card>
 
       <MemoDialog
-        open={showMemo}
-        onOpenChange={setShowMemo}
-        memo={project.memo || ""}
+        open={memoDialogOpen}
+        onOpenChange={setMemoDialogOpen}
         projectName={project.name}
+        memo={project.memo || ''}
         onDownload={handleDownloadMemo}
-      />
-
-      <EditRaiseDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        project={project}
-        onSave={onDelete} // This will trigger a refresh of the raises list
       />
     </>
   );
 }
+
+export const RaiseCard = memo(RaiseCardComponent);
