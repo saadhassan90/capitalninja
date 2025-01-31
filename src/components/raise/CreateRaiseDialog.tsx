@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileUploadSection } from "../enrichment/FileUploadSection";
-import { ProgressSection } from "../enrichment/ProgressSection";
+import { RaiseTypeStep } from "./steps/RaiseTypeStep";
+import { CategoryStep } from "./steps/CategoryStep";
+import { PitchDeckStep } from "./steps/PitchDeckStep";
+import { ExitDialog } from "./ExitDialog";
 
 interface CreateRaiseDialogProps {
   open: boolean;
@@ -122,74 +121,27 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
           <Progress value={progress} className="mt-2" />
           
           {step === 1 && (
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Select Raise Type</Label>
-                <RadioGroup
-                  value={formData.type}
-                  onValueChange={(value: "equity" | "debt") => 
-                    setFormData({ ...formData, type: value })
-                  }
-                  className="flex flex-col space-y-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="equity" id="equity" />
-                    <Label htmlFor="equity">Equity</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="debt" id="debt" />
-                    <Label htmlFor="debt">Debt</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            </div>
+            <RaiseTypeStep
+              type={formData.type}
+              onTypeChange={(value) => setFormData({ ...formData, type: value })}
+            />
           )}
 
           {step === 2 && (
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Select Category</Label>
-                <RadioGroup
-                  value={formData.category}
-                  onValueChange={(value: "fund_direct_deal" | "startup") => 
-                    setFormData({ ...formData, category: value })
-                  }
-                  className="flex flex-col space-y-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="fund_direct_deal" id="fund_direct_deal" />
-                    <Label htmlFor="fund_direct_deal">Fund/Direct Deal</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="startup" id="startup" />
-                    <Label htmlFor="startup">Startup</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            </div>
+            <CategoryStep
+              category={formData.category}
+              onCategoryChange={(value) => setFormData({ ...formData, category: value })}
+            />
           )}
 
           {step === 3 && (
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label>Upload Pitch Deck</Label>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Upload your pitch deck and we'll automatically create a project based on its contents.
-                  Supported formats: PDF, DOC, DOCX, PPT, PPTX
-                </p>
-                <FileUploadSection
-                  file={file}
-                  isProcessing={isProcessing}
-                  onFileChange={handleFileChange}
-                  onUpload={handleUpload}
-                />
-                <ProgressSection
-                  file={file}
-                  isProcessing={isProcessing}
-                  progress={uploadProgress}
-                />
-              </div>
-            </div>
+            <PitchDeckStep
+              file={file}
+              isProcessing={isProcessing}
+              uploadProgress={uploadProgress}
+              onFileChange={handleFileChange}
+              onUpload={handleUpload}
+            />
           )}
 
           <div className="flex justify-between mt-6">
@@ -208,20 +160,11 @@ export function CreateRaiseDialog({ open, onOpenChange, onCreateRaise }: CreateR
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to exit?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Your progress will be lost if you exit now.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleExitConfirm}>Exit</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ExitDialog
+        open={showExitDialog}
+        onOpenChange={setShowExitDialog}
+        onConfirm={handleExitConfirm}
+      />
     </>
   );
 }
