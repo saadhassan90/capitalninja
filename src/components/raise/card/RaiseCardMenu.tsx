@@ -55,10 +55,7 @@ export function RaiseCardMenu({
           Edit
         </DropdownMenuItem>
         {hasMemo && (
-          <DropdownMenuItem onClick={(e) => {
-            e.preventDefault();
-            onViewMemo();
-          }}>
+          <DropdownMenuItem onClick={onViewMemo}>
             <FileText className="mr-2 h-4 w-4" />
             View Memo
           </DropdownMenuItem>
