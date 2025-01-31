@@ -739,6 +739,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          memo: string | null
           name: string
           pitch_deck_url: string | null
           status: string | null
@@ -752,6 +753,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          memo?: string | null
           name: string
           pitch_deck_url?: string | null
           status?: string | null
@@ -765,6 +767,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          memo?: string | null
           name?: string
           pitch_deck_url?: string | null
           status?: string | null

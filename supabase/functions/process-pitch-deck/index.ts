@@ -43,31 +43,33 @@ serve(async (req) => {
             content: `Please analyze this pitch deck and create a deal memo following this format:
 
 1. Deal Overview
-- Investment Type
-- Sector & Asset Class
-- Sponsor / Company
-- Investment Terms
-- Liquidity & Exit Plan
+- Investment Type (Equity, Debt, Fund, Direct Deal, etc.)
+- Sector & Asset Class (Real Estate, Private Equity, Infrastructure, etc.)
+- Sponsor / Company (Who is leading the deal? Key team members and their track record.)
+- Investment Terms (Ownership %, valuation, IRR for equity; interest rate, maturity, covenants for debt.)
+- Liquidity & Exit Plan (Expected investment horizon, planned exit routes.)
 
 2. Why Invest? (Investment Thesis)
-- Market Opportunity
-- Business Model / Investment Strategy
-- Competitive Advantage
-- Track Record & Sponsor Strength
-- Attractive Returns & Downside Protection
+- Market Opportunity (Industry trends, growth potential, demand drivers.)
+- Business Model / Investment Strategy (How does this investment generate returns?)
+- Competitive Advantage (Unique value proposition, differentiation from competitors.)
+- Track Record & Sponsor Strength (Past performance, execution ability, investor confidence.)
+- Attractive Returns & Downside Protection (Projected IRR, risk mitigation strategies.)
 
-3. Key Risks
-- Market Risks
-- Execution Risks
-- Financial Risks
-- Competitive Risks
-- Liquidity Risks
+3. Key Risks (Why NOT Invest?)
+- Market Risks (Economic downturns, regulatory changes, industry saturation.)
+- Execution Risks (Operational challenges, dependency on key personnel.)
+- Financial Risks (Over-leverage, unsustainable cash flow, dilution risk.)
+- Competitive Risks (Emerging competitors, technology shifts, market entry barriers.)
+- Liquidity Risks (Long capital lock-up, unclear exit strategy.)
 
-4. Potential Upside
-- Strong Returns & Growth Potential
-- Market Positioning
-- Strategic Investor Fit
-- Alignment of Interest
+4. Potential Upside (Why You SHOULD Invest?)
+- Strong Returns & Growth Potential (Favorable IRR, revenue expansion.)
+- Market Positioning (First-mover advantage, high barriers to entry.)
+- Strategic Investor Fit (Synergies, co-investment potential, alignment with investor mandates.)
+- Alignment of Interest (Skin in the game from founders, investor-friendly terms.)
+
+Use only the provided pitch deck data to create the memo. Do not make assumptions beyond what is available in the deck. Focus on the most critical investment details. Keep the memo structured and professional.
 
 Here's the pitch deck content:
 ${fileContent}`
