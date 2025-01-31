@@ -110,13 +110,13 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
           targetAmount={project.target_amount}
           createdAt={project.created_at}
           onMenuClick={(e) => e.stopPropagation()}
-          hasMemo={!!project.memo}
+          hasMemo={Boolean(project.memo)}
           onMemoClick={() => setMemoDialogOpen(true)}
           menu={
             <RaiseCardMenu
               projectId={project.id}
               projectName={project.name}
-              hasMemo={!!project.memo}
+              hasMemo={Boolean(project.memo)}
               onDelete={handleDelete}
               onViewMemo={() => setMemoDialogOpen(true)}
             />
