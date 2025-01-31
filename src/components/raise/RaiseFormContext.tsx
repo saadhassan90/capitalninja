@@ -2,7 +2,9 @@ import { createContext, useContext, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import type { FormData, RaiseFormContextType, RaiseProject } from "./types";
+import { FormData, RaiseFormContextType, MemoStatus } from "./types/formTypes";
+import { validateStep, processFile, handleRaiseUpload } from "./utils/formUtils";
+import type { RaiseProject } from "./types";
 
 const RaiseFormContext = createContext<RaiseFormContextType>({} as RaiseFormContextType);
 
@@ -25,7 +27,7 @@ export function RaiseFormProvider({
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [memoStatus, setMemoStatus] = useState<'idle' | 'extracting' | 'analyzing' | 'creating' | 'complete' | 'failed'>('idle');
+  const [memoStatus, setMemoStatus] = useState<MemoStatus>('idle');
   const [formData, setFormData] = useState<FormData>(() => {
     if (editMode && project) {
       return {
@@ -60,22 +62,8 @@ export function RaiseFormProvider({
     setUploadProgress(20);
 
     try {
-      const fileExt = formData.file.name.split('.').pop();
-      const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('pitch_decks')
-        .upload(filePath, formData.file);
-
-      if (uploadError) throw uploadError;
-
-      setUploadProgress(40);
-      setMemoStatus('analyzing');
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('pitch_decks')
-        .getPublicUrl(filePath);
-
+      const publicUrl = await processFile(formData.file, user.id, setUploadProgress, setMemoStatus);
+      
       setUploadProgress(60);
       setMemoStatus('creating');
 
@@ -86,9 +74,7 @@ export function RaiseFormProvider({
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token}`,
         },
-        body: JSON.stringify({
-          fileUrl: publicUrl,
-        }),
+        body: JSON.stringify({ fileUrl: publicUrl }),
       });
 
       if (!response.ok) {
@@ -107,31 +93,41 @@ export function RaiseFormProvider({
     }
   };
 
-  const isStepValid = () => {
-    switch (step) {
-      case 1:
-        return !!formData.type;
-      case 2:
-        return !!formData.category;
-      case 3:
-        return !!formData.name && !!formData.targetAmount && !!formData.file;
-      default:
-        return false;
-    }
-  };
+  const handleUpload = async () => {
+    if (!user) return;
 
-  const handleNext = () => {
-    if (!isStepValid()) {
-      if (step === 1) {
-        toast.error("Please select a raise type");
-      } else if (step === 2) {
-        toast.error("Please select a category");
-      }
+    if (!formData.name || !formData.targetAmount || !formData.type || !formData.category) {
+      toast.error("Please fill in all required fields");
       return;
     }
 
-    if (step < 3) {
+    if (memoStatus !== 'complete') {
+      toast.error("Please process the pitch deck first");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      await handleRaiseUpload(formData, user.id);
+      toast.success("Raise created successfully");
+      onCreateRaise?.();
+      handleClose();
+    } catch (error: any) {
+      console.error('Error in handleUpload:', error);
+      toast.error(error.message || "Failed to save raise");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const isStepValid = () => validateStep(step, formData);
+
+  const handleNext = () => {
+    if (isStepValid() && step < 3) {
       setStep(step + 1);
+    } else if (!isStepValid()) {
+      toast.error(step === 1 ? "Please select a raise type" : "Please select a category");
     }
   };
 
@@ -158,68 +154,6 @@ export function RaiseFormProvider({
 
   const handleExitConfirm = () => {
     handleClose();
-  };
-
-  const handleUpload = async () => {
-    if (!user) return;
-
-    if (!formData.name) {
-      toast.error("Please enter a raise name");
-      return;
-    }
-
-    if (!formData.targetAmount) {
-      toast.error("Please enter a target amount");
-      return;
-    }
-
-    if (!formData.type || !formData.category) {
-      toast.error("Type and category are required");
-      return;
-    }
-
-    if (memoStatus !== 'complete') {
-      toast.error("Please process the pitch deck first");
-      return;
-    }
-
-    setIsProcessing(true);
-
-    try {
-      const raiseData = {
-        type: formData.type,
-        category: formData.category,
-        name: formData.name,
-        target_amount: parseInt(formData.targetAmount),
-        user_id: user.id,
-      };
-
-      let error;
-      
-      if (editMode && formData.id) {
-        const { error: updateError } = await supabase
-          .from('raises')
-          .update(raiseData)
-          .eq('id', formData.id);
-        error = updateError;
-      } else {
-        const { error: insertError } = await supabase
-          .from('raises')
-          .insert(raiseData);
-        error = insertError;
-      }
-
-      if (error) throw error;
-
-      toast.success(editMode ? "Raise updated successfully" : "Raise created successfully");
-      onCreateRaise?.();
-      handleClose();
-    } catch (error: any) {
-      console.error('Error in handleUpload:', error);
-      toast.error(error.message || "Failed to save raise");
-    } finally {
-      setIsProcessing(false);
-    }
   };
 
   const value = {
