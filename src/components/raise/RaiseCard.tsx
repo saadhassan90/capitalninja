@@ -31,10 +31,6 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
     }
   };
 
-  const handleView = () => {
-    navigate(`/raise/${project.id}`);
-  };
-
   const handleDownloadMemo = () => {
     if (!project.memo) return;
     const element = document.getElementById('memo-content');
@@ -45,24 +41,19 @@ function RaiseCardComponent({ project, onDelete }: RaiseCardProps) {
 
   return (
     <>
-      <Card 
-        className="border-gray-200 hover:shadow-md transition-shadow cursor-pointer" 
-        onClick={handleView}
-      >
+      <Card className="border-gray-200 hover:shadow-md transition-shadow">
         <RaiseCardContent
           name={project.name}
           description={project.description}
-          status={project.status}
+          status={project.memo ? "Ready" : "Draft"}
           targetAmount={project.target_amount}
           createdAt={project.created_at}
           onMenuClick={(e) => e.stopPropagation()}
-          hasMemo={Boolean(project.memo)}
           onMemoClick={() => setMemoDialogOpen(true)}
           menu={
             <RaiseCardMenu
               projectId={project.id}
               projectName={project.name}
-              hasMemo={Boolean(project.memo)}
               onDelete={handleDelete}
               onViewMemo={() => setMemoDialogOpen(true)}
             />

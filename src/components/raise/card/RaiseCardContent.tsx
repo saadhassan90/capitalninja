@@ -12,7 +12,6 @@ interface RaiseCardContentProps {
   onMenuClick: (e: React.MouseEvent) => void;
   menu: React.ReactNode;
   onMemoClick?: () => void;
-  hasMemo?: boolean;
 }
 
 export function RaiseCardContent({
@@ -41,10 +40,7 @@ export function RaiseCardContent({
             variant="outline"
             size="sm"
             className="flex items-center gap-2"
-            onClick={(e) => {
-              e.stopPropagation();
-              onMemoClick?.();
-            }}
+            onClick={onMemoClick}
           >
             <FileText className="h-4 w-4" />
             Deal Memo
@@ -57,8 +53,8 @@ export function RaiseCardContent({
 
       <div className="mt-4 space-y-2">
         {status && (
-          <Badge variant={status === 'draft' ? 'secondary' : 'default'}>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+          <Badge variant={status === 'Draft' ? 'secondary' : 'default'}>
+            {status}
           </Badge>
         )}
         {targetAmount && (
