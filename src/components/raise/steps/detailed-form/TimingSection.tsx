@@ -6,7 +6,12 @@ export function TimingSection() {
   const { formData, updateFormData } = useRaiseForm();
 
   const handleDateChange = (field: 'raise_open_date' | 'close_date' | 'first_close') => (date: Date | undefined) => {
-    updateFormData({ [field]: date });
+    if (date) {
+      const newDate = new Date(date);
+      updateFormData({ [field]: newDate });
+    } else {
+      updateFormData({ [field]: null });
+    }
   };
 
   return (
@@ -15,7 +20,7 @@ export function TimingSection() {
         <div className="space-y-2">
           <Label>Raise Open Date</Label>
           <DatePicker
-            date={formData.raise_open_date instanceof Date ? formData.raise_open_date : undefined}
+            date={formData.raise_open_date ? new Date(formData.raise_open_date) : null}
             onSelect={handleDateChange('raise_open_date')}
           />
         </div>
@@ -23,7 +28,7 @@ export function TimingSection() {
         <div className="space-y-2">
           <Label>Close Date</Label>
           <DatePicker
-            date={formData.close_date instanceof Date ? formData.close_date : undefined}
+            date={formData.close_date ? new Date(formData.close_date) : null}
             onSelect={handleDateChange('close_date')}
           />
         </div>
@@ -31,7 +36,7 @@ export function TimingSection() {
         <div className="space-y-2">
           <Label>First Close</Label>
           <DatePicker
-            date={formData.first_close instanceof Date ? formData.first_close : undefined}
+            date={formData.first_close ? new Date(formData.first_close) : null}
             onSelect={handleDateChange('first_close')}
           />
         </div>
