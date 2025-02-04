@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { X, Trash, Copy, ArrowRight } from "lucide-react";
+import { X, Trash, ArrowRight } from "lucide-react";
 import { AddToListDialog } from "./AddToListDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +24,6 @@ interface BulkActionsProps {
 }
 
 export function BulkActions({ selectedCount, selectedInvestors, onClearSelection, listId }: BulkActionsProps) {
-  const [showAddToList, setShowAddToList] = useState(false);
   const [showMoveToList, setShowMoveToList] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
@@ -62,14 +61,6 @@ export function BulkActions({ selectedCount, selectedInvestors, onClearSelection
         {selectedCount} investor{selectedCount !== 1 ? 's' : ''} selected
       </span>
       <div className="flex items-center gap-2">
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() => setShowAddToList(true)}
-        >
-          <Copy className="h-4 w-4 mr-2" />
-          Copy to List
-        </Button>
         <Button
           variant="secondary"
           size="sm"
@@ -114,14 +105,6 @@ export function BulkActions({ selectedCount, selectedInvestors, onClearSelection
           <X className="h-4 w-4" />
         </Button>
       </div>
-
-      <AddToListDialog
-        open={showAddToList}
-        onOpenChange={setShowAddToList}
-        selectedInvestors={selectedInvestors}
-        onSuccess={onClearSelection}
-        mode="copy"
-      />
 
       <AddToListDialog
         open={showMoveToList}

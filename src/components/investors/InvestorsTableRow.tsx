@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Eye, Plus } from "lucide-react";
+import { Eye, ArrowRight } from "lucide-react";
 import { getAssetClassStyle } from "@/utils/assetClassColors";
 import { AddToListDialog } from "./AddToListDialog";
 import type { LimitedPartner } from "@/types/investor";
@@ -12,15 +12,17 @@ interface InvestorsTableRowProps {
   onViewInvestor: (id: number) => void;
   selected: boolean;
   onSelect: (id: number, checked: boolean) => void;
+  listId?: string;
 }
 
 export function InvestorsTableRow({ 
   investor, 
   onViewInvestor, 
   selected, 
-  onSelect 
+  onSelect,
+  listId 
 }: InvestorsTableRowProps) {
-  const [showAddToList, setShowAddToList] = useState(false);
+  const [showMoveToList, setShowMoveToList] = useState(false);
 
   const renderFundTypes = (fundTypes: string | null) => {
     if (!fundTypes) return 'N/A';
@@ -100,22 +102,28 @@ export function InvestorsTableRow({
             <Eye className="h-4 w-4" />
             View
           </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setShowAddToList(true)}
-            className="transition-colors hover:bg-black hover:text-white"
-          >
-            <Plus className="h-4 w-4" />
-            Add to List
-          </Button>
+          {listId && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setShowMoveToList(true)}
+              className="transition-colors hover:bg-black hover:text-white"
+            >
+              <ArrowRight className="h-4 w-4" />
+              Move to List
+            </Button>
+          )}
         </div>
 
-        <AddToListDialog
-          open={showAddToList}
-          onOpenChange={setShowAddToList}
-          selectedInvestors={[investor.id]}
-        />
+        {showMoveToList && (
+          <AddToListDialog
+            open={showMoveToList}
+            onOpenChange={setShowMoveToList}
+            selectedInvestors={[investor.id]}
+            mode="move"
+            sourceListId={listId}
+          />
+        )}
       </TableCell>
     </TableRow>
   );

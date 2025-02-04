@@ -81,6 +81,7 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
         selectedInvestors={selectedInvestors}
         onSelectAll={handleSelectAll}
         onSelectInvestor={handleSelectInvestor}
+        listId={listId}
       />
 
       {selectedInvestorId && (
