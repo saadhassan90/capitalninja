@@ -4,12 +4,14 @@ import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
 import { ListHeader } from "./ListHeader";
 import { useListInvestors } from "@/hooks/useListInvestors";
 import type { SortConfig } from "@/types/sorting";
+import { useToast } from "@/hooks/use-toast";
 
 interface ListInvestorsTableProps {
   listId: string;
 }
 
 export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
+  const { toast } = useToast();
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,11 +20,20 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
     direction: 'asc'
   });
 
-  const { data: investorsData, isLoading, refetch } = useListInvestors({
+  const { data: investorsData, isLoading, error, refetch } = useListInvestors({
     listId,
     currentPage,
     sortConfig,
   });
+
+  if (error) {
+    console.error('Error in ListInvestorsTable:', error);
+    toast({
+      title: "Error",
+      description: "Failed to load investors. Please try again.",
+      variant: "destructive",
+    });
+  }
 
   const handleSort = (column: string) => {
     setSortConfig(prevConfig => ({
@@ -48,6 +59,14 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
       setSelectedInvestors(prev => prev.filter(investorId => investorId !== id));
     }
   };
+
+  console.log('ListInvestorsTable render:', {
+    listId,
+    investorsCount: investorsData?.count,
+    currentPage,
+    isLoading,
+    error
+  });
 
   return (
     <div className="flex flex-col">
