@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { useRaiseForm } from "../../RaiseFormContext";
-import type { AssetClassType, GeographicRegionType } from "../../RaiseFormContext";
+import type { AssetClassType } from "../../RaiseFormContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MultiCombobox } from "@/components/ui/multi-combobox";
 import { geographyOptions } from "@/data/geography-options";
@@ -66,10 +66,10 @@ export function InvestmentDetailsSection() {
       <div className="col-span-2 space-y-2">
         <Label>Geographic Focus</Label>
         <MultiCombobox
-          options={geographyOptions as GeographicRegionType[]}
+          options={geographyOptions}
           selected={formData.geographic_focus}
-          onChange={(values: GeographicRegionType[]) => updateFormData({ geographic_focus: values })}
-          placeholder="Select regions or cities..."
+          onChange={(values) => updateFormData({ geographic_focus: values })}
+          placeholder="Select regions..."
         />
       </div>
     </div>
