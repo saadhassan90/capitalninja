@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MultiSelect } from "@/components/ui/multi-select";
 import { useRaiseForm } from "../../RaiseFormContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const capitalStackOptions = [
   "General Partner",
@@ -12,6 +12,10 @@ const capitalStackOptions = [
 
 export function FinancialDetailsSection() {
   const { formData, updateFormData } = useRaiseForm();
+
+  const handleCapitalStackChange = (value: string) => {
+    updateFormData({ capital_stack: [value] });
+  };
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -28,12 +32,21 @@ export function FinancialDetailsSection() {
 
       <div className="space-y-2">
         <Label>Capital Stack</Label>
-        <MultiSelect
-          options={capitalStackOptions}
-          selected={formData.capital_stack || []}
-          onChange={(value) => updateFormData({ capital_stack: value })}
-          placeholder="Select capital stack positions"
-        />
+        <Select 
+          value={formData.capital_stack?.[0] || ""} 
+          onValueChange={handleCapitalStackChange}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select capital stack position" />
+          </SelectTrigger>
+          <SelectContent>
+            {capitalStackOptions.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">
