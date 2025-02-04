@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { RaiseProject } from "./types";
-import { RaiseDialogHeader } from "./dialog/RaiseDialogHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DetailedFormStep } from "./steps/DetailedFormStep";
 import { RaiseFormProvider, useRaiseForm } from "./RaiseFormContext";
 import type { RaiseType, RaiseCategory } from "./types/raiseTypes";
 import { uploadPitchDeck } from "./services/fileUploadService";
+import { EditRaiseDialogHeader } from "./dialog/EditRaiseDialogHeader";
+import { EditRaiseDialogFooter } from "./dialog/EditRaiseDialogFooter";
 
 interface EditRaiseDialogProps {
   open: boolean;
@@ -112,7 +112,7 @@ function EditRaiseDialogContent({
 
   return (
     <>
-      <RaiseDialogHeader step={1} totalSteps={1} />
+      <EditRaiseDialogHeader />
       
       <ScrollArea className="flex-1 px-6">
         <div className="py-4">
@@ -120,21 +120,11 @@ function EditRaiseDialogContent({
         </div>
       </ScrollArea>
 
-      <div className="flex justify-end p-6 border-t">
-        <Button
-          variant="outline"
-          onClick={() => onOpenChange(false)}
-          className="mr-2"
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={handleSave}
-          disabled={isProcessing}
-        >
-          {isProcessing ? "Saving..." : "Save Changes"}
-        </Button>
-      </div>
+      <EditRaiseDialogFooter
+        isProcessing={isProcessing}
+        onCancel={() => onOpenChange(false)}
+        onSave={handleSave}
+      />
     </>
   );
 }
