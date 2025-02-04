@@ -10,7 +10,7 @@ export function TimingSection() {
       <div className="space-y-2">
         <Label>Raise Open Date</Label>
         <DatePicker
-          date={formData.raise_open_date}
+          date={formData.raise_open_date ? new Date(formData.raise_open_date) : undefined}
           onSelect={(date) => updateFormData({ raise_open_date: date })}
         />
       </div>
@@ -18,7 +18,7 @@ export function TimingSection() {
       <div className="space-y-2">
         <Label>Close Date</Label>
         <DatePicker
-          date={formData.close_date}
+          date={formData.close_date ? new Date(formData.close_date) : undefined}
           onSelect={(date) => updateFormData({ close_date: date })}
         />
       </div>

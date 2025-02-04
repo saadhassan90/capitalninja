@@ -72,6 +72,18 @@ export function FinancialDetailsSection() {
           placeholder="Enter carried interest percentage"
         />
       </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="asset_management_fee">Asset Management Fee (%)</Label>
+        <Input
+          id="asset_management_fee"
+          type="number"
+          step="0.01"
+          value={formData.asset_management_fee || ""}
+          onChange={(e) => updateFormData({ asset_management_fee: e.target.value })}
+          placeholder="Enter asset management fee percentage"
+        />
+      </div>
     </div>
   );
 }
