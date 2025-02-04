@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { MoreVertical, Eye, Trash2, Edit } from "lucide-react";
+import { MoreVertical, Eye, Trash2, Edit, StickyNote } from "lucide-react";
 import { formatCurrency } from "@/utils/formatters";
 import {
   DropdownMenu,
@@ -61,7 +61,16 @@ export function RaiseTableRow({
         </span>
       </TableCell>
       <TableCell>{new Date(raise.created_at).toLocaleDateString()}</TableCell>
-      <TableCell>
+      <TableCell className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={onMemo}
+        >
+          <StickyNote className="h-4 w-4" />
+          <span className="sr-only">View memo</span>
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8">
