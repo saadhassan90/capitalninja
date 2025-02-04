@@ -53,7 +53,7 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
     gp_capital: '',
     carried_interest: '',
     asset_management_fee: '',
-    assetClass: 'Other', // Default to 'Other' as it's a valid AssetClassType
+    assetClass: 'Other' as AssetClassType,
     investment_type: '',
     city: '',
     state: '',
@@ -113,22 +113,22 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
             <div className="space-y-6">
               <BasicInfoSection
                 formData={formData}
-                onChange={(data) => setFormData(prev => ({ ...prev, ...data }))}
+                onChange={(data: Partial<FormDataState>) => setFormData(prev => ({ ...prev, ...data }))}
               />
               
               <ContactSection
                 formData={formData}
-                onChange={(data) => setFormData(prev => ({ ...prev, ...data }))}
+                onChange={(data: Partial<FormDataState>) => setFormData(prev => ({ ...prev, ...data }))}
               />
 
               <FinancialDetailsSection
                 formData={formData}
-                onChange={(data) => setFormData(prev => ({ ...prev, ...data }))}
+                onChange={(data: Partial<FormDataState>) => setFormData(prev => ({ ...prev, ...data }))}
               />
 
               <InvestmentDetailsSection
                 formData={formData}
-                onChange={(data) => setFormData(prev => ({ ...prev, ...data }))}
+                onChange={(data: Partial<FormDataState>) => setFormData(prev => ({ ...prev, ...data }))}
               />
             </div>
           </ScrollArea>
