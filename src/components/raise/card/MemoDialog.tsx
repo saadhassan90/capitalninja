@@ -30,45 +30,7 @@ export function MemoDialog({
   const [showRenderedView, setShowRenderedView] = useState(false);
 
   const handleGenerateMemo = async () => {
-    setIsGenerating(true);
-    try {
-      console.log('Fetching raise data for memo generation...');
-      const { data: raiseData, error: raiseError } = await supabase
-        .from('raise_equity')
-        .select('*')
-        .eq('id', project.id)
-        .maybeSingle();
-
-      if (raiseError) throw raiseError;
-      if (!raiseData) {
-        toast.error('Could not find raise data');
-        return;
-      }
-
-      console.log('Calling generate-deal-memo function...');
-      const { data, error } = await supabase.functions.invoke('generate-deal-memo', {
-        body: { raiseData }
-      });
-
-      if (error) throw error;
-
-      console.log('Updating raise with generated memo...');
-      const { error: updateError } = await supabase
-        .from('raises')
-        .update({ memo: data.memo })
-        .eq('id', project.id);
-
-      if (updateError) throw updateError;
-
-      setEditedMemo(data.memo);
-      toast.success('Deal memo generated successfully');
-      setShowRenderedView(true);
-    } catch (error: any) {
-      console.error('Error generating memo:', error);
-      toast.error(error.message || 'Failed to generate deal memo');
-    } finally {
-      setIsGenerating(false);
-    }
+    toast.error("Deal memo generation is currently disabled");
   };
 
   const handleSaveEdit = async () => {
@@ -113,14 +75,13 @@ export function MemoDialog({
             <FileText className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No Deal Memo Yet</h3>
             <p className="text-sm text-muted-foreground mb-6 max-w-md">
-              Generate a comprehensive deal memo using AI. This will analyze your project details
-              and create a structured investment memorandum.
+              Deal memo generation is currently disabled. Please check back later.
             </p>
             <Button 
               onClick={handleGenerateMemo} 
-              disabled={isGenerating}
+              disabled={true}
             >
-              {isGenerating ? 'Generating...' : 'Generate Deal Memo'}
+              Generate Deal Memo
             </Button>
           </div>
         ) : (
