@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { CategoryStep } from "./steps/CategoryStep";
@@ -54,6 +54,13 @@ export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Create New Raise</DialogTitle>
+          <p className="text-sm text-muted-foreground">
+            Set up your fundraising project in just a few steps
+          </p>
+        </DialogHeader>
+
         <RaiseFormProvider>
           <div className="space-y-6">
             <div className="space-y-2">
