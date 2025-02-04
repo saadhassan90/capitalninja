@@ -34,7 +34,7 @@ const ListView = () => {
       console.log('Fetched list:', data);
       return data;
     },
-    retry: false,
+    enabled: !!listId,
   });
 
   if (isLoading) {
