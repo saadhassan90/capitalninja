@@ -53,7 +53,7 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
     gp_capital: '',
     carried_interest: '',
     asset_management_fee: '',
-    assetClass: 'Other', // Default to 'Other' as it's a valid AssetClassType
+    assetClass: 'Other', // This is now correctly typed as AssetClassType
     investment_type: '',
     city: '',
     state: '',
