@@ -1,188 +1,76 @@
 import { useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { RaiseCardContent } from "./card/RaiseCardContent";
+import { RaiseCardMenu } from "./card/RaiseCardMenu";
+import { Card } from "@/components/ui/card";
 import { EditRaiseDialog } from "./EditRaiseDialog";
 import { MemoDialog } from "./card/MemoDialog";
-import { BulkActions } from "./table/BulkActions";
-import { RaiseTableRow } from "./table/RaiseTableRow";
 import type { RaiseProject } from "./types";
 
 interface RaiseTableProps {
   raises: RaiseProject[];
-  onUpdate: () => void;
+  onUpdate?: () => void;
 }
 
 export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
-  const [selectedRaises, setSelectedRaises] = useState<string[]>([]);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [memoDialogOpen, setMemoDialogOpen] = useState(false);
   const [selectedRaise, setSelectedRaise] = useState<RaiseProject | null>(null);
-  const { toast } = useToast();
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showMemoDialog, setShowMemoDialog] = useState(false);
+  const [viewMode, setViewMode] = useState<'edit' | 'view'>('view');
 
-  const handleDelete = async (id: string) => {
-    try {
-      // Delete from both tables to maintain consistency
-      const { error: raiseError } = await supabase
-        .from('raises')
-        .delete()
-        .eq('id', id);
-
-      if (raiseError) throw raiseError;
-
-      const { error: raiseEquityError } = await supabase
-        .from('raise_equity')
-        .delete()
-        .eq('id', id);
-
-      if (raiseEquityError) throw raiseEquityError;
-
-      toast({
-        title: "Success",
-        description: "Project deleted successfully",
-      });
-
-      onUpdate();
-      setSelectedRaises(prev => prev.filter(raiseId => raiseId !== id));
-    } catch (error: any) {
-      console.error('Error deleting raise:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete project",
-        variant: "destructive",
-      });
-    }
+  const handleView = (raise: RaiseProject) => {
+    setSelectedRaise(raise);
+    setViewMode('view');
+    setShowEditDialog(true);
   };
 
-  const handleBulkDelete = async () => {
-    try {
-      // Delete from both tables to maintain consistency
-      const { error: raisesError } = await supabase
-        .from('raises')
-        .delete()
-        .in('id', selectedRaises);
-
-      if (raisesError) throw raisesError;
-
-      const { error: raiseEquityError } = await supabase
-        .from('raise_equity')
-        .delete()
-        .in('id', selectedRaises);
-
-      if (raiseEquityError) throw raiseEquityError;
-
-      toast({
-        title: "Success",
-        description: `${selectedRaises.length} projects deleted successfully`,
-      });
-
-      onUpdate();
-      setSelectedRaises([]);
-    } catch (error: any) {
-      console.error('Error bulk deleting raises:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete projects",
-        variant: "destructive",
-      });
-    }
+  const handleEdit = (raise: RaiseProject) => {
+    setSelectedRaise(raise);
+    setViewMode('edit');
+    setShowEditDialog(true);
   };
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedRaises(raises.map(raise => raise.id));
-    } else {
-      setSelectedRaises([]);
-    }
-  };
-
-  const handleSelectRaise = (id: string, checked: boolean) => {
-    if (checked) {
-      setSelectedRaises(prev => [...prev, id]);
-    } else {
-      setSelectedRaises(prev => prev.filter(raiseId => raiseId !== id));
-    }
+  const handleMemoClick = (raise: RaiseProject) => {
+    setSelectedRaise(raise);
+    setShowMemoDialog(true);
   };
 
   return (
-    <div className="space-y-4">
-      {selectedRaises.length > 0 && (
-        <BulkActions 
-          selectedCount={selectedRaises.length}
-          onBulkDelete={handleBulkDelete}
-        />
-      )}
-
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[50px]">
-                <Checkbox
-                  checked={raises.length > 0 && selectedRaises.length === raises.length}
-                  onCheckedChange={handleSelectAll}
-                />
-              </TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Asset Class</TableHead>
-              <TableHead>Target Amount</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {raises.map((raise) => (
-              <RaiseTableRow
-                key={raise.id}
+    <div className="grid gap-4">
+      {raises.map((raise) => (
+        <Card key={raise.id}>
+          <RaiseCardContent
+            name={raise.name}
+            description={raise.description}
+            status={raise.status}
+            targetAmount={raise.target_amount}
+            createdAt={raise.created_at}
+            onMenuClick={(e) => e.stopPropagation()}
+            menu={
+              <RaiseCardMenu
                 raise={raise}
-                isSelected={selectedRaises.includes(raise.id)}
-                onSelect={(checked) => handleSelectRaise(raise.id, checked)}
-                onDelete={() => handleDelete(raise.id)}
-                onView={() => {
-                  setSelectedRaise(raise);
-                  setViewDialogOpen(true);
-                }}
-                onEdit={() => {
-                  setSelectedRaise(raise);
-                  setEditDialogOpen(true);
-                }}
-                onMemo={() => {
-                  setSelectedRaise(raise);
-                  setMemoDialogOpen(true);
-                }}
+                onView={() => handleView(raise)}
+                onEdit={() => handleEdit(raise)}
+                onUpdate={onUpdate}
               />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            }
+            onMemoClick={() => handleMemoClick(raise)}
+          />
+        </Card>
+      ))}
 
       {selectedRaise && (
         <>
           <EditRaiseDialog
-            open={editDialogOpen}
-            onOpenChange={setEditDialogOpen}
+            open={showEditDialog}
+            onOpenChange={setShowEditDialog}
             project={selectedRaise}
             onUpdate={onUpdate}
-          />
-          <EditRaiseDialog
-            open={viewDialogOpen}
-            onOpenChange={setViewDialogOpen}
-            project={selectedRaise}
-            readOnly
+            readOnly={viewMode === 'view'}
           />
           <MemoDialog
-            open={memoDialogOpen}
-            onOpenChange={setMemoDialogOpen}
-            projectName={selectedRaise.name}
-            memo={selectedRaise.memo}
+            open={showMemoDialog}
+            onOpenChange={setShowMemoDialog}
+            raise={selectedRaise}
           />
         </>
       )}

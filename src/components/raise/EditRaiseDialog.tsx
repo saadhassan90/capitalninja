@@ -8,7 +8,7 @@ import type { RaiseProject } from "./types";
 import { RaiseDialogHeader } from "./dialog/RaiseDialogHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DetailedFormStep } from "./steps/DetailedFormStep";
-import { useRaiseForm } from "./RaiseFormContext";
+import { RaiseFormProvider, useRaiseForm } from "./RaiseFormContext";
 import type { RaiseType, RaiseCategory } from "./types/raiseTypes";
 import { uploadPitchDeck } from "./services/fileUploadService";
 
@@ -20,19 +20,18 @@ interface EditRaiseDialogProps {
   readOnly?: boolean;
 }
 
-export function EditRaiseDialog({ 
-  open, 
-  onOpenChange, 
+function EditRaiseDialogContent({ 
   project,
+  onOpenChange,
   onUpdate,
   readOnly = false
-}: EditRaiseDialogProps) {
+}: Omit<EditRaiseDialogProps, 'open'>) {
   const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const { formData, updateFormData } = useRaiseForm();
 
   useEffect(() => {
-    if (open && project) {
+    if (project) {
       const projectType = project.type as RaiseType;
       const projectCategory = project.category as RaiseCategory;
       
@@ -74,7 +73,7 @@ export function EditRaiseDialog({
         file: null
       });
     }
-  }, [open, project, updateFormData]);
+  }, [project, updateFormData]);
 
   const handleSave = async () => {
     if (!user) return;
@@ -114,33 +113,43 @@ export function EditRaiseDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] h-[90vh] flex flex-col p-0">
-        <RaiseDialogHeader step={1} totalSteps={1} />
-        
-        <ScrollArea className="flex-1 px-6">
-          <div className="py-4">
-            <DetailedFormStep />
-          </div>
-        </ScrollArea>
-
-        <div className="flex justify-end p-6 border-t">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="mr-2"
-          >
-            {readOnly ? "Close" : "Cancel"}
-          </Button>
-          {!readOnly && (
-            <Button
-              onClick={handleSave}
-              disabled={isProcessing}
-            >
-              {isProcessing ? "Saving..." : "Save Changes"}
-            </Button>
-          )}
+    <>
+      <RaiseDialogHeader step={1} totalSteps={1} />
+      
+      <ScrollArea className="flex-1 px-6">
+        <div className="py-4">
+          <DetailedFormStep />
         </div>
+      </ScrollArea>
+
+      <div className="flex justify-end p-6 border-t">
+        <Button
+          variant="outline"
+          onClick={() => onOpenChange(false)}
+          className="mr-2"
+        >
+          {readOnly ? "Close" : "Cancel"}
+        </Button>
+        {!readOnly && (
+          <Button
+            onClick={handleSave}
+            disabled={isProcessing}
+          >
+            {isProcessing ? "Saving..." : "Save Changes"}
+          </Button>
+        )}
+      </div>
+    </>
+  );
+}
+
+export function EditRaiseDialog(props: EditRaiseDialogProps) {
+  return (
+    <Dialog open={props.open} onOpenChange={props.onOpenChange}>
+      <DialogContent className="sm:max-w-[800px] h-[90vh] flex flex-col p-0">
+        <RaiseFormProvider>
+          <EditRaiseDialogContent {...props} />
+        </RaiseFormProvider>
       </DialogContent>
     </Dialog>
   );
