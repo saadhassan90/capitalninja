@@ -19,7 +19,8 @@ export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
   const { toast } = useToast();
   
   const totalSteps = 3;
-  const progress = (step / totalSteps) * 100;
+  // Adjust progress calculation to be based on completed steps
+  const progress = ((step - 1) / totalSteps) * 100;
 
   const handleNext = () => {
     if (step < totalSteps) {
