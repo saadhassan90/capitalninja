@@ -23,6 +23,7 @@ interface RaiseTableProps {
 export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
   const [selectedRaises, setSelectedRaises] = useState<string[]>([]);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [memoDialogOpen, setMemoDialogOpen] = useState(false);
   const [selectedRaise, setSelectedRaise] = useState<RaiseProject | null>(null);
   const { toast } = useToast();
@@ -149,6 +150,10 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
                 onDelete={() => handleDelete(raise.id)}
                 onView={() => {
                   setSelectedRaise(raise);
+                  setViewDialogOpen(true);
+                }}
+                onEdit={() => {
+                  setSelectedRaise(raise);
                   setEditDialogOpen(true);
                 }}
                 onMemo={() => {
@@ -168,6 +173,12 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
             onOpenChange={setEditDialogOpen}
             project={selectedRaise}
             onUpdate={onUpdate}
+          />
+          <EditRaiseDialog
+            open={viewDialogOpen}
+            onOpenChange={setViewDialogOpen}
+            project={selectedRaise}
+            readOnly
           />
           <MemoDialog
             open={memoDialogOpen}

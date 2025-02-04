@@ -14,13 +14,15 @@ interface EditRaiseDialogProps {
   onOpenChange: (open: boolean) => void;
   project: RaiseProject;
   onUpdate?: () => void;
+  readOnly?: boolean;
 }
 
 export function EditRaiseDialog({ 
   open, 
   onOpenChange, 
   project,
-  onUpdate 
+  onUpdate,
+  readOnly = false
 }: EditRaiseDialogProps) {
   const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -88,9 +90,9 @@ export function EditRaiseDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Raise</DialogTitle>
+          <DialogTitle>{readOnly ? "View Raise" : "Edit Raise"}</DialogTitle>
           <p className="text-sm text-muted-foreground">
-            Editing details for <span className="font-medium text-foreground">{project.name}</span>
+            {readOnly ? "Viewing" : "Editing"} details for <span className="font-medium text-foreground">{project.name}</span>
           </p>
         </DialogHeader>
 
@@ -101,6 +103,7 @@ export function EditRaiseDialog({
               id="name"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              readOnly={readOnly}
             />
           </div>
 
@@ -111,29 +114,32 @@ export function EditRaiseDialog({
               type="number"
               value={formData.targetAmount}
               onChange={(e) => setFormData(prev => ({ ...prev, targetAmount: e.target.value }))}
+              readOnly={readOnly}
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="pitchDeck">Pitch Deck</Label>
-            <div className="flex items-center gap-2">
-              <Input
-                id="pitchDeck"
-                type="file"
-                accept=".pdf,.ppt,.pptx"
-                onChange={handleFileChange}
-              />
-              {project.pitch_deck_url && !formData.file && (
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => window.open(project.pitch_deck_url, '_blank')}
-                >
-                  <FileText className="h-4 w-4" />
-                </Button>
-              )}
+          {!readOnly && (
+            <div className="space-y-2">
+              <Label htmlFor="pitchDeck">Pitch Deck</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="pitchDeck"
+                  type="file"
+                  accept=".pdf,.ppt,.pptx"
+                  onChange={handleFileChange}
+                />
+                {project.pitch_deck_url && !formData.file && (
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => window.open(project.pitch_deck_url, '_blank')}
+                  >
+                    <FileText className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="memo">Deal Memo</Label>
@@ -143,6 +149,7 @@ export function EditRaiseDialog({
               value={formData.memo}
               onChange={(e) => setFormData(prev => ({ ...prev, memo: e.target.value }))}
               placeholder="Enter deal memo content..."
+              readOnly={readOnly}
             />
           </div>
         </div>
@@ -152,14 +159,16 @@ export function EditRaiseDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {readOnly ? "Close" : "Cancel"}
           </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isProcessing}
-          >
-            {isProcessing ? "Saving..." : "Save Changes"}
-          </Button>
+          {!readOnly && (
+            <Button
+              onClick={handleSave}
+              disabled={isProcessing}
+            >
+              {isProcessing ? "Saving..." : "Save Changes"}
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
