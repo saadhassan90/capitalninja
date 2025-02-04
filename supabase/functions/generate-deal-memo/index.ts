@@ -14,16 +14,41 @@ serve(async (req) => {
   try {
     const { raiseData } = await req.json()
     
-    // Validate that raiseData exists and has required fields
     if (!raiseData) {
       throw new Error('No raise data provided')
     }
 
     console.log('Received raise data:', raiseData)
 
-    // Create a structured prompt for the deal memo
-    const prompt = `Create a professional investment deal memo for the following opportunity:
+    // First, let's get some market research data using a web search
+    const searchPrompt = `Latest market research and trends for ${raiseData.investment_type} investments in ${raiseData.asset_classes.join(', ')} sector, focusing on ${raiseData.city}, ${raiseData.state}, ${raiseData.country}. Include economic indicators, market dynamics, and growth projections.`;
 
+    const researchResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          { 
+            role: 'system', 
+            content: 'You are a market research analyst. Provide concise, data-driven insights about market conditions, trends, and opportunities. Focus on recent and relevant information.' 
+          },
+          { role: 'user', content: searchPrompt }
+        ],
+        temperature: 0.3,
+      }),
+    })
+
+    const researchData = await researchResponse.json()
+    const marketResearch = researchData.choices[0].message.content
+
+    // Now create the comprehensive deal memo prompt
+    const memoPrompt = `Create a professional investment deal memo incorporating both the provided deal information and current market research. Use this structured format:
+
+DEAL INFORMATION:
 Company/Fund Name: ${raiseData.raise_name || 'N/A'}
 Target Raise: $${raiseData.target_raise || 'N/A'}
 Investment Type: ${raiseData.investment_type || 'N/A'}
@@ -35,17 +60,53 @@ GP Capital Commitment: ${raiseData.gp_capital || 'N/A'}%
 Carried Interest: ${raiseData.carried_interest || 'N/A'}%
 Description: ${raiseData.raise_description || 'N/A'}
 
-Please structure the memo with the following sections:
+MARKET RESEARCH INSIGHTS:
+${marketResearch}
+
+Please create a comprehensive deal memo with the following sections:
+
 1. Executive Summary
-2. Investment Highlights
-3. Deal Structure
-4. Financial Overview
-5. Risk Factors and Mitigants
-6. Team and Contact Information
+   - Brief overview of the investment opportunity
+   - Key investment highlights
+   - Summary of target returns
 
-Use a professional tone and format suitable for institutional investors.`
+2. Market Analysis
+   - Current market conditions and trends
+   - Competitive landscape
+   - Growth drivers and market opportunities
+   - Relevant economic indicators
 
-    console.log('Sending prompt to OpenAI:', prompt)
+3. Investment Strategy
+   - Investment thesis
+   - Value creation plan
+   - Exit strategy
+   - Target timeline
+
+4. Financial Structure
+   - Capital stack details
+   - Fee structure
+   - Distribution waterfall
+   - Key terms
+
+5. Risk Analysis
+   - Key risk factors
+   - Mitigation strategies
+   - Market-specific considerations
+   - Regulatory and compliance factors
+
+6. Management & Track Record
+   - Team overview
+   - Historical performance
+   - Relevant experience
+   - Key personnel
+
+7. Contact Information
+   - Primary contact details
+   - Investment process next steps
+
+Use a professional tone suitable for institutional investors. Include specific data points and market research where relevant. Format the memo in a clear, structured manner with appropriate headings and subheadings.`
+
+    console.log('Sending enhanced prompt to OpenAI:', memoPrompt)
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -58,9 +119,9 @@ Use a professional tone and format suitable for institutional investors.`
         messages: [
           { 
             role: 'system', 
-            content: 'You are an expert investment analyst who creates professional deal memos for institutional investors.' 
+            content: 'You are an expert investment analyst who creates professional deal memos for institutional investors. Your memos should be data-driven, comprehensive, and actionable.' 
           },
-          { role: 'user', content: prompt }
+          { role: 'user', content: memoPrompt }
         ],
         temperature: 0.7,
       }),
