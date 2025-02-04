@@ -4,10 +4,12 @@ import { Progress } from "@/components/ui/progress";
 import { CategoryStep } from "./steps/CategoryStep";
 import { TypeStep } from "./steps/TypeStep";
 import { DetailsStep } from "./steps/DetailsStep";
+import { DetailedFormStep } from "./steps/DetailedFormStep";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { RaiseFormProvider } from "./RaiseFormContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface RaiseDialogProps {
   open: boolean;
@@ -18,9 +20,8 @@ export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
   const [step, setStep] = useState(1);
   const { toast } = useToast();
   
-  const totalSteps = 3;
-  // Adjust progress calculation to be based on completed steps
-  const progress = ((step - 1) / totalSteps) * 100;
+  const totalSteps = 4;
+  const progress = ((step - 1) / (totalSteps - 1)) * 100;
 
   const handleNext = () => {
     if (step < totalSteps) {
@@ -39,6 +40,63 @@ export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
     onOpenChange(false);
   };
 
+  const handleSubmit = async () => {
+    try {
+      const { error } = await supabase.from('raise_equity').insert([
+        {
+          // Add all the form fields here
+          raise_name: formData.raise_name,
+          target_raise: parseFloat(formData.target_raise),
+          asset_classes: formData.asset_classes,
+          investment_type: formData.investment_type,
+          geographic_focus: formData.geographic_focus,
+          raise_stage: formData.raise_stage,
+          raise_open_date: formData.raise_open_date,
+          close_date: formData.close_date,
+          first_close: formData.first_close,
+          minimum_ticket_size: parseFloat(formData.minimum_ticket_size),
+          capital_stack: formData.capital_stack,
+          gp_capital: formData.gp_capital ? parseFloat(formData.gp_capital) : null,
+          carried_interest: formData.carried_interest ? parseFloat(formData.carried_interest) : null,
+          irr_projections: formData.irr_projections ? parseFloat(formData.irr_projections) : null,
+          equity_multiple: formData.equity_multiple ? parseFloat(formData.equity_multiple) : null,
+          preferred_returns_hurdle: formData.preferred_returns_hurdle ? parseFloat(formData.preferred_returns_hurdle) : null,
+          asset_management_fee: formData.asset_management_fee ? parseFloat(formData.asset_management_fee) : null,
+          asset_management_fees_type: formData.asset_management_fees_type,
+          additional_fees: formData.additional_fees,
+          tax_incentives: formData.tax_incentives,
+          domicile: formData.domicile,
+          strategy: formData.strategy,
+          economic_drivers: formData.economic_drivers,
+          risks: formData.risks,
+          reups: formData.reups ? parseInt(formData.reups) : null,
+          audience: formData.audience,
+          primary_contact: formData.primary_contact,
+          contact_email: formData.contact_email,
+          company_contact: formData.company_contact,
+          raise_description: formData.raise_description,
+          banner: formData.banner,
+          term_lockup: formData.term_lockup ? parseInt(formData.term_lockup) : null,
+        }
+      ]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Raise created successfully",
+      });
+      handleClose();
+    } catch (error) {
+      console.error('Error creating raise:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create raise",
+        variant: "destructive",
+      });
+    }
+  };
+
   const getCurrentStep = () => {
     switch (step) {
       case 1:
@@ -47,6 +105,8 @@ export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
         return <TypeStep />;
       case 3:
         return <DetailsStep />;
+      case 4:
+        return <DetailedFormStep />;
       default:
         return null;
     }
@@ -54,7 +114,7 @@ export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>Create New Raise</DialogTitle>
           <p className="text-sm text-muted-foreground">
@@ -88,13 +148,7 @@ export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
                   Next <ChevronRight className="h-4 w-4" />
                 </Button>
               ) : (
-                <Button onClick={() => {
-                  toast({
-                    title: "Success",
-                    description: "Raise created successfully",
-                  });
-                  handleClose();
-                }}>
+                <Button onClick={handleSubmit}>
                   Create Raise
                 </Button>
               )}

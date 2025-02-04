@@ -733,6 +733,120 @@ export type Database = {
         }
         Relationships: []
       }
+      raise_equity: {
+        Row: {
+          additional_fees: string | null
+          asset_classes: string[]
+          asset_management_fee: number | null
+          asset_management_fees_type: string | null
+          audience: string[]
+          banner: string | null
+          capital_stack: string[]
+          carried_interest: number | null
+          close_date: string | null
+          company_contact: string | null
+          contact_email: string
+          created_at: string | null
+          domicile: string | null
+          economic_drivers: string[] | null
+          equity_multiple: number | null
+          first_close: string | null
+          geographic_focus: string[]
+          gp_capital: number | null
+          id: string
+          investment_type: string
+          irr_projections: number | null
+          minimum_ticket_size: number
+          preferred_returns_hurdle: number | null
+          primary_contact: string
+          raise_description: string
+          raise_name: string
+          raise_open_date: string | null
+          raise_stage: string
+          reups: number | null
+          risks: string[] | null
+          strategy: string[] | null
+          target_raise: number
+          tax_incentives: string | null
+          term_lockup: number | null
+          user_id: string
+        }
+        Insert: {
+          additional_fees?: string | null
+          asset_classes: string[]
+          asset_management_fee?: number | null
+          asset_management_fees_type?: string | null
+          audience: string[]
+          banner?: string | null
+          capital_stack: string[]
+          carried_interest?: number | null
+          close_date?: string | null
+          company_contact?: string | null
+          contact_email: string
+          created_at?: string | null
+          domicile?: string | null
+          economic_drivers?: string[] | null
+          equity_multiple?: number | null
+          first_close?: string | null
+          geographic_focus: string[]
+          gp_capital?: number | null
+          id?: string
+          investment_type: string
+          irr_projections?: number | null
+          minimum_ticket_size: number
+          preferred_returns_hurdle?: number | null
+          primary_contact: string
+          raise_description: string
+          raise_name: string
+          raise_open_date?: string | null
+          raise_stage: string
+          reups?: number | null
+          risks?: string[] | null
+          strategy?: string[] | null
+          target_raise: number
+          tax_incentives?: string | null
+          term_lockup?: number | null
+          user_id: string
+        }
+        Update: {
+          additional_fees?: string | null
+          asset_classes?: string[]
+          asset_management_fee?: number | null
+          asset_management_fees_type?: string | null
+          audience?: string[]
+          banner?: string | null
+          capital_stack?: string[]
+          carried_interest?: number | null
+          close_date?: string | null
+          company_contact?: string | null
+          contact_email?: string
+          created_at?: string | null
+          domicile?: string | null
+          economic_drivers?: string[] | null
+          equity_multiple?: number | null
+          first_close?: string | null
+          geographic_focus?: string[]
+          gp_capital?: number | null
+          id?: string
+          investment_type?: string
+          irr_projections?: number | null
+          minimum_ticket_size?: number
+          preferred_returns_hurdle?: number | null
+          primary_contact?: string
+          raise_description?: string
+          raise_name?: string
+          raise_open_date?: string | null
+          raise_stage?: string
+          reups?: number | null
+          risks?: string[] | null
+          strategy?: string[] | null
+          target_raise?: number
+          tax_incentives?: string | null
+          term_lockup?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       raises: {
         Row: {
           category: Database["public"]["Enums"]["investment_category"]
