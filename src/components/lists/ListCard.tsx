@@ -36,10 +36,9 @@ interface List {
 
 interface ListCardProps {
   list: List;
-  onDelete?: () => void;
 }
 
-function ListCardComponent({ list, onDelete }: ListCardProps) {
+function ListCardComponent({ list }: ListCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -54,8 +53,6 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
       if (error) throw error;
       return count || 0;
     },
-    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
-    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes
   });
 
   const handleDelete = async () => {
@@ -72,10 +69,8 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
         description: "List deleted successfully",
       });
 
-      // Call the onDelete callback to update parent component state
-      if (onDelete) {
-        onDelete();
-      }
+      // Refresh the lists query
+      window.location.reload();
     } catch (error: any) {
       toast({
         title: "Error",
