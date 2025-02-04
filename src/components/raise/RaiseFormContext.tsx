@@ -17,14 +17,13 @@ export type AssetClassType =
   | "Impact Investing"
   | "Other";
 
-interface RaiseFormData {
+export interface RaiseFormData {
   type: "equity" | "debt" | "";
   category: "fund_direct_deal" | "startup" | "";
   name: string;
   targetAmount: string;
   assetClass: string;
-  raise_name: string;
-  target_raise: string;
+  additional_fees: string;
   asset_classes: AssetClassType[];
   investment_type: string;
   geographic_focus: string[];
@@ -41,7 +40,6 @@ interface RaiseFormData {
   preferred_returns_hurdle: string;
   asset_management_fee: string;
   asset_management_fees_type: string;
-  additional_fees: string;
   tax_incentives: string;
   domicile: string;
   strategy: string[];
@@ -55,6 +53,8 @@ interface RaiseFormData {
   raise_description: string;
   banner: string;
   term_lockup: string;
+  raise_name: string;
+  target_raise: string;
 }
 
 interface RaiseFormContextType {
@@ -69,9 +69,7 @@ const initialFormData: RaiseFormData = {
   name: "",
   targetAmount: "",
   assetClass: "",
-  // Initialize new fields
-  raise_name: "",
-  target_raise: "",
+  additional_fees: "",
   asset_classes: [],
   investment_type: "",
   geographic_focus: [],
@@ -88,7 +86,6 @@ const initialFormData: RaiseFormData = {
   preferred_returns_hurdle: "",
   asset_management_fee: "",
   asset_management_fees_type: "",
-  additional_fees: "",
   tax_incentives: "",
   domicile: "",
   strategy: [],
@@ -102,6 +99,8 @@ const initialFormData: RaiseFormData = {
   raise_description: "",
   banner: "",
   term_lockup: "",
+  raise_name: "",
+  target_raise: "",
 };
 
 const RaiseFormContext = createContext<RaiseFormContextType | undefined>(undefined);
