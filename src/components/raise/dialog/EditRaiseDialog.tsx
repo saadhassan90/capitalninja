@@ -7,7 +7,11 @@ import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { BasicInfoSection } from "../steps/detailed-form/BasicInfoSection";
+import { FinancialDetailsSection } from "../steps/detailed-form/FinancialDetailsSection";
+import { InvestmentDetailsSection } from "../steps/detailed-form/InvestmentDetailsSection";
+import { ContactSection } from "../steps/detailed-form/ContactSection";
 import type { RaiseProject } from "../types";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface EditRaiseDialogProps {
   open: boolean;
@@ -25,6 +29,16 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
     target_raise: project.target_amount?.toString() || '',
     primary_contact: '',
     contact_email: '',
+    minimum_ticket_size: '',
+    capital_stack: [] as string[],
+    gp_capital: '',
+    carried_interest: '',
+    asset_management_fee: '',
+    assetClass: '',
+    investment_type: '',
+    city: '',
+    state: '',
+    country: '',
   });
 
   const handleSubmit = async () => {
@@ -44,6 +58,16 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
           target_raise: parseFloat(formData.target_raise),
           primary_contact: formData.primary_contact,
           contact_email: formData.contact_email,
+          minimum_ticket_size: formData.minimum_ticket_size,
+          capital_stack: formData.capital_stack,
+          gp_capital: formData.gp_capital,
+          carried_interest: formData.carried_interest,
+          asset_management_fee: formData.asset_management_fee,
+          asset_classes: [formData.assetClass],
+          investment_type: formData.investment_type,
+          city: formData.city,
+          state: formData.state,
+          country: formData.country,
         })
         .eq('id', project.id);
 
@@ -66,12 +90,29 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
         <RaiseFormProvider>
           <RaiseDialogHeader step={1} totalSteps={1} />
           
-          <div className="flex-1 px-6 py-4 overflow-y-auto">
-            <BasicInfoSection
-              formData={formData}
-              onChange={(data) => setFormData({ ...formData, ...data })}
-            />
-          </div>
+          <ScrollArea className="flex-1 px-6 py-4">
+            <div className="space-y-6">
+              <BasicInfoSection
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
+              />
+              
+              <ContactSection
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
+              />
+
+              <FinancialDetailsSection
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
+              />
+
+              <InvestmentDetailsSection
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
+              />
+            </div>
+          </ScrollArea>
 
           <RaiseDialogFooter
             step={1}

@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRaiseForm } from "../../RaiseFormContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const capitalStackOptions = [
@@ -10,13 +9,18 @@ const capitalStackOptions = [
   "Co-Investor",
 ];
 
-export function FinancialDetailsSection() {
-  const { formData, updateFormData } = useRaiseForm();
-
-  const handleCapitalStackChange = (value: string) => {
-    updateFormData({ capital_stack: [value] });
+interface FinancialDetailsSectionProps {
+  formData: {
+    minimum_ticket_size: string;
+    capital_stack: string[];
+    gp_capital: string;
+    carried_interest: string;
+    asset_management_fee: string;
   };
+  onChange: (data: Partial<FinancialDetailsSectionProps['formData']>) => void;
+}
 
+export function FinancialDetailsSection({ formData, onChange }: FinancialDetailsSectionProps) {
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="space-y-2">
@@ -24,8 +28,8 @@ export function FinancialDetailsSection() {
         <Input
           id="minimum_ticket_size"
           type="number"
-          value={formData.minimum_ticket_size || ""}
-          onChange={(e) => updateFormData({ minimum_ticket_size: e.target.value })}
+          value={formData.minimum_ticket_size}
+          onChange={(e) => onChange({ minimum_ticket_size: e.target.value })}
           placeholder="Enter minimum ticket size"
         />
       </div>
@@ -33,8 +37,8 @@ export function FinancialDetailsSection() {
       <div className="space-y-2">
         <Label>Capital Stack</Label>
         <Select 
-          value={formData.capital_stack?.[0] || ""} 
-          onValueChange={handleCapitalStackChange}
+          value={formData.capital_stack[0] || ""} 
+          onValueChange={(value) => onChange({ capital_stack: [value] })}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select capital stack position" />
@@ -55,8 +59,8 @@ export function FinancialDetailsSection() {
           id="gp_capital"
           type="number"
           step="0.01"
-          value={formData.gp_capital || ""}
-          onChange={(e) => updateFormData({ gp_capital: e.target.value })}
+          value={formData.gp_capital}
+          onChange={(e) => onChange({ gp_capital: e.target.value })}
           placeholder="Enter GP capital percentage"
         />
       </div>
@@ -67,8 +71,8 @@ export function FinancialDetailsSection() {
           id="carried_interest"
           type="number"
           step="0.01"
-          value={formData.carried_interest || ""}
-          onChange={(e) => updateFormData({ carried_interest: e.target.value })}
+          value={formData.carried_interest}
+          onChange={(e) => onChange({ carried_interest: e.target.value })}
           placeholder="Enter carried interest percentage"
         />
       </div>
@@ -79,8 +83,8 @@ export function FinancialDetailsSection() {
           id="asset_management_fee"
           type="number"
           step="0.01"
-          value={formData.asset_management_fee || ""}
-          onChange={(e) => updateFormData({ asset_management_fee: e.target.value })}
+          value={formData.asset_management_fee}
+          onChange={(e) => onChange({ asset_management_fee: e.target.value })}
           placeholder="Enter asset management fee percentage"
         />
       </div>

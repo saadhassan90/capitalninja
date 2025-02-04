@@ -1,5 +1,4 @@
 import { Label } from "@/components/ui/label";
-import { useRaiseForm } from "../../RaiseFormContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
@@ -21,16 +20,25 @@ const assetClassOptions = [
   "Venture Capital"
 ] as const;
 
-export function InvestmentDetailsSection() {
-  const { formData, updateFormData } = useRaiseForm();
+interface InvestmentDetailsSectionProps {
+  formData: {
+    assetClass: string;
+    investment_type: string;
+    city: string;
+    state: string;
+    country: string;
+  };
+  onChange: (data: Partial<InvestmentDetailsSectionProps['formData']>) => void;
+}
 
+export function InvestmentDetailsSection({ formData, onChange }: InvestmentDetailsSectionProps) {
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="space-y-2">
         <Label>Asset Classes</Label>
         <Select 
           value={formData.assetClass}
-          onValueChange={(value) => updateFormData({ assetClass: value })}
+          onValueChange={(value) => onChange({ assetClass: value })}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select asset class" />
@@ -49,7 +57,7 @@ export function InvestmentDetailsSection() {
         <Label htmlFor="investment_type">Investment Type</Label>
         <Select 
           value={formData.investment_type}
-          onValueChange={(value) => updateFormData({ investment_type: value })}
+          onValueChange={(value) => onChange({ investment_type: value })}
         >
           <SelectTrigger id="investment_type">
             <SelectValue placeholder="Select investment type" />
@@ -66,8 +74,8 @@ export function InvestmentDetailsSection() {
         <Input
           id="city"
           placeholder="Enter city"
-          value={formData.city || ""}
-          onChange={(e) => updateFormData({ city: e.target.value })}
+          value={formData.city}
+          onChange={(e) => onChange({ city: e.target.value })}
         />
       </div>
 
@@ -76,8 +84,8 @@ export function InvestmentDetailsSection() {
         <Input
           id="state"
           placeholder="Enter state/province"
-          value={formData.state || ""}
-          onChange={(e) => updateFormData({ state: e.target.value })}
+          value={formData.state}
+          onChange={(e) => onChange({ state: e.target.value })}
         />
       </div>
 
@@ -86,8 +94,8 @@ export function InvestmentDetailsSection() {
         <Input
           id="country"
           placeholder="Enter country"
-          value={formData.country || ""}
-          onChange={(e) => updateFormData({ country: e.target.value })}
+          value={formData.country}
+          onChange={(e) => onChange({ country: e.target.value })}
         />
       </div>
     </div>
