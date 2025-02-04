@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { FileText } from "lucide-react";
 import type { RaiseProject } from "./types";
 import { RaiseDialogHeader } from "./dialog/RaiseDialogHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -31,16 +30,48 @@ export function EditRaiseDialog({
   const { formData, updateFormData } = useRaiseForm();
 
   // Initialize form data with project values when dialog opens
-  useState(() => {
-    if (open) {
+  useEffect(() => {
+    if (open && project) {
       updateFormData({
+        type: project.type as "equity" | "debt",
+        category: project.category as "fund_direct_deal" | "startup",
         raise_name: project.name,
         target_raise: project.target_amount?.toString() || "",
-        type: project.type as "equity" | "debt",
-        category: project.category as "fund_direct_deal" | "startup"
+        raise_description: project.description || "",
+        memo: project.memo || null,
+        // Initialize other fields as needed
+        asset_classes: [],
+        investment_type: "",
+        city: "",
+        state: "",
+        country: "",
+        raise_stage: "",
+        minimum_ticket_size: "",
+        capital_stack: [],
+        gp_capital: "",
+        carried_interest: "",
+        irr_projections: "",
+        equity_multiple: "",
+        preferred_returns_hurdle: "",
+        asset_management_fee: "",
+        asset_management_fees_type: "",
+        additional_fees: "",
+        tax_incentives: "",
+        domicile: "",
+        strategy: [],
+        economic_drivers: [],
+        risks: [],
+        reups: "",
+        audience: [],
+        primary_contact: "",
+        contact_email: "",
+        company_contact: "",
+        banner: "",
+        term_lockup: "",
+        file: null
       });
     }
-  });
+  }, [open, project, updateFormData]);
 
   const handleSave = async () => {
     if (!user) return;
@@ -71,6 +102,9 @@ export function EditRaiseDialog({
         .from('raises')
         .update({
           name: formData.raise_name,
+          type: formData.type,
+          category: formData.category,
+          description: formData.raise_description,
           target_amount: parseInt(formData.target_raise),
           pitch_deck_url: pitchDeckUrl,
           memo: formData.memo
