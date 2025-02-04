@@ -1,10 +1,9 @@
 import { Label } from "@/components/ui/label";
 import { useRaiseForm } from "../../RaiseFormContext";
-import type { AssetClassType } from "../../RaiseFormContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
-const assetClassOptions: AssetClassType[] = [
+const assetClassOptions = [
   "Co-Investment",
   "Energy",
   "Fund of Funds",
@@ -20,7 +19,7 @@ const assetClassOptions: AssetClassType[] = [
   "Special Opportunities",
   "Startups",
   "Venture Capital"
-];
+] as const;
 
 export function InvestmentDetailsSection() {
   const { formData, updateFormData } = useRaiseForm();
