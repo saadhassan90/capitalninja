@@ -25,7 +25,7 @@ export function StartupEquityForm() {
           <Label htmlFor="raise_name">Company Name</Label>
           <Input
             id="raise_name"
-            value={formData.raise_name}
+            value={formData.raise_name || ""}
             onChange={(e) => updateFormData({ raise_name: e.target.value })}
             placeholder="Enter company name"
           />
@@ -36,7 +36,7 @@ export function StartupEquityForm() {
           <Input
             id="target_raise"
             type="number"
-            value={formData.target_raise}
+            value={formData.target_raise || ""}
             onChange={(e) => updateFormData({ target_raise: e.target.value })}
             placeholder="Enter target amount"
           />

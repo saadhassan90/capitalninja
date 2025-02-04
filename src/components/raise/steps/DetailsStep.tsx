@@ -8,22 +8,22 @@ export function DetailsStep() {
   return (
     <div className="space-y-4 py-4">
       <div className="space-y-2">
-        <Label htmlFor="name">Raise Name</Label>
+        <Label htmlFor="raise_name">Raise Name</Label>
         <Input
-          id="name"
-          value={formData.name}
-          onChange={(e) => updateFormData({ name: e.target.value })}
+          id="raise_name"
+          value={formData.raise_name || ""}
+          onChange={(e) => updateFormData({ raise_name: e.target.value })}
           placeholder="Enter raise name"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="targetAmount">Target Amount</Label>
+        <Label htmlFor="target_raise">Target Amount</Label>
         <Input
-          id="targetAmount"
+          id="target_raise"
           type="number"
-          value={formData.targetAmount}
-          onChange={(e) => updateFormData({ targetAmount: e.target.value })}
+          value={formData.target_raise || ""}
+          onChange={(e) => updateFormData({ target_raise: e.target.value })}
           placeholder="Enter target amount"
         />
       </div>
