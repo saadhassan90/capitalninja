@@ -13,22 +13,27 @@ serve(async (req) => {
 
   try {
     const { raiseData } = await req.json()
+    
+    // Validate that raiseData exists and has required fields
+    if (!raiseData) {
+      throw new Error('No raise data provided')
+    }
+
+    console.log('Received raise data:', raiseData)
 
     // Create a structured prompt for the deal memo
     const prompt = `Create a professional investment deal memo for the following opportunity:
 
-Company/Fund Name: ${raiseData.raise_name}
-Target Raise: $${raiseData.target_raise}
-Investment Type: ${raiseData.investment_type}
-Asset Classes: ${raiseData.asset_classes.join(', ')}
-Location: ${raiseData.city}, ${raiseData.state}, ${raiseData.country}
-Minimum Ticket Size: $${raiseData.minimum_ticket_size}
-Capital Stack Position: ${raiseData.capital_stack}
-GP Capital Commitment: ${raiseData.gp_capital}%
-Carried Interest: ${raiseData.carried_interest}%
-IRR Projections: ${raiseData.irr_projections}%
-Equity Multiple: ${raiseData.equity_multiple}x
-Description: ${raiseData.raise_description}
+Company/Fund Name: ${raiseData.raise_name || 'N/A'}
+Target Raise: $${raiseData.target_raise || 'N/A'}
+Investment Type: ${raiseData.investment_type || 'N/A'}
+Asset Classes: ${Array.isArray(raiseData.asset_classes) ? raiseData.asset_classes.join(', ') : 'N/A'}
+Location: ${raiseData.city || 'N/A'}, ${raiseData.state || 'N/A'}, ${raiseData.country || 'N/A'}
+Minimum Ticket Size: $${raiseData.minimum_ticket_size || 'N/A'}
+Capital Stack Position: ${Array.isArray(raiseData.capital_stack) ? raiseData.capital_stack.join(', ') : 'N/A'}
+GP Capital Commitment: ${raiseData.gp_capital || 'N/A'}%
+Carried Interest: ${raiseData.carried_interest || 'N/A'}%
+Description: ${raiseData.raise_description || 'N/A'}
 
 Please structure the memo with the following sections:
 1. Executive Summary
@@ -39,6 +44,8 @@ Please structure the memo with the following sections:
 6. Team and Contact Information
 
 Use a professional tone and format suitable for institutional investors.`
+
+    console.log('Sending prompt to OpenAI:', prompt)
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -60,6 +67,12 @@ Use a professional tone and format suitable for institutional investors.`
     })
 
     const data = await response.json()
+    console.log('OpenAI response:', data)
+
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid response from OpenAI')
+    }
+
     const memo = data.choices[0].message.content
 
     return new Response(
