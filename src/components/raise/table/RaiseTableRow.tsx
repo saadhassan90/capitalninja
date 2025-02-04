@@ -51,25 +51,17 @@ export function RaiseTableRow({
       </TableCell>
       <TableCell className="font-medium">{raise.name}</TableCell>
       <TableCell>{raise.type}</TableCell>
-      <TableCell>{raise.category}</TableCell>
       <TableCell>{raise.target_amount ? formatCurrency(raise.target_amount) : 'N/A'}</TableCell>
-      <TableCell>
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          raise.status === 'draft' ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800'
-        }`}>
-          {raise.status}
-        </span>
-      </TableCell>
       <TableCell>{new Date(raise.created_at).toLocaleDateString()}</TableCell>
       <TableCell className="flex items-center gap-2">
         <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
+          variant="secondary"
+          size="sm"
           onClick={onMemo}
+          className="gap-2"
         >
           <StickyNote className="h-4 w-4" />
-          <span className="sr-only">View memo</span>
+          Memo
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

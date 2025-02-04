@@ -132,10 +132,8 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
                 />
               </TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Category</TableHead>
+              <TableHead>Asset Class</TableHead>
               <TableHead>Target Amount</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
