@@ -97,6 +97,17 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
       return;
     }
 
+    // Validate type and category before submission
+    if (formData.type !== "equity" && formData.type !== "debt") {
+      toast.error("Please select a valid investment type.");
+      return;
+    }
+
+    if (formData.category !== "fund_direct_deal" && formData.category !== "startup") {
+      toast.error("Please select a valid category.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -147,15 +158,15 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
 
       console.log('Raise created:', raise);
 
-      // Also create an entry in the raises table for compatibility
+      // Create an entry in the raises table with type-safe values
       const raisesData = {
         user_id: user.id,
-        type: formData.type,
-        category: formData.category,
+        type: formData.type as "equity" | "debt", // Type assertion after validation
+        category: formData.category as "fund_direct_deal" | "startup", // Type assertion after validation
         name: formData.raise_name,
         description: formData.raise_description,
         target_amount: parseFloat(formData.target_raise),
-        status: 'active'
+        status: 'active' as const
       };
 
       const { error: raisesError } = await supabase
