@@ -58,11 +58,11 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
           target_raise: parseFloat(formData.target_raise),
           primary_contact: formData.primary_contact,
           contact_email: formData.contact_email,
-          minimum_ticket_size: formData.minimum_ticket_size,
+          minimum_ticket_size: parseFloat(formData.minimum_ticket_size),
           capital_stack: formData.capital_stack,
-          gp_capital: formData.gp_capital,
-          carried_interest: formData.carried_interest,
-          asset_management_fee: formData.asset_management_fee,
+          gp_capital: parseFloat(formData.gp_capital),
+          carried_interest: parseFloat(formData.carried_interest),
+          asset_management_fee: parseFloat(formData.asset_management_fee),
           asset_classes: [formData.assetClass],
           investment_type: formData.investment_type,
           city: formData.city,
@@ -88,7 +88,7 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[800px] h-[90vh] flex flex-col p-0">
         <RaiseFormProvider>
-          <RaiseDialogHeader step={1} totalSteps={1} />
+          <RaiseDialogHeader step={1} totalSteps={1} isEdit={true} />
           
           <ScrollArea className="flex-1 px-6 py-4">
             <div className="space-y-6">
@@ -122,7 +122,7 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
             onBack={() => {}}
             onNext={() => {}}
             onSubmit={handleSubmit}
-            submitText="Save"
+            submitText="Save Changes"
           />
         </RaiseFormProvider>
       </DialogContent>
