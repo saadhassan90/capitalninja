@@ -30,7 +30,38 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
     if (step === 1) {
       return formData.category !== "" && formData.type !== "";
     }
-    return true; // Other steps validation logic here
+    // Validate all required fields for step 2
+    if (step === 2) {
+      if (formData.category === "startup" && formData.type === "equity") {
+        return !!(
+          formData.raise_name &&
+          formData.target_raise &&
+          formData.raise_stage &&
+          formData.raise_description &&
+          formData.primary_contact &&
+          formData.contact_email
+        );
+      }
+      return !!(
+        formData.raise_name &&
+        formData.target_raise &&
+        formData.minimum_ticket_size &&
+        formData.capital_stack?.length &&
+        formData.gp_capital &&
+        formData.carried_interest &&
+        formData.primary_contact &&
+        formData.contact_email &&
+        formData.raise_description &&
+        formData.city &&
+        formData.state &&
+        formData.country &&
+        formData.assetClass &&
+        formData.investment_type &&
+        formData.raise_open_date &&
+        formData.close_date
+      );
+    }
+    return false;
   };
 
   const handleNext = () => {
@@ -102,6 +133,15 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
   };
 
   const handleSubmit = async () => {
+    if (!isStepValid()) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill in all required fields before creating the raise.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const insertData = prepareInsertData();
     if (!insertData) return;
 
@@ -172,11 +212,18 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
           </Button>
           
           {step < totalSteps ? (
-            <Button onClick={handleNext} className="gap-2">
+            <Button 
+              onClick={handleNext} 
+              className="gap-2"
+              disabled={!isStepValid()}
+            >
               Next <ChevronRight className="h-4 w-4" />
             </Button>
           ) : (
-            <Button onClick={handleSubmit}>
+            <Button 
+              onClick={handleSubmit}
+              disabled={!isStepValid()}
+            >
               Create Raise
             </Button>
           )}
