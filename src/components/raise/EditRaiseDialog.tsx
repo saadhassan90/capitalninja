@@ -17,14 +17,12 @@ interface EditRaiseDialogProps {
   onOpenChange: (open: boolean) => void;
   project: RaiseProject;
   onUpdate?: () => void;
-  readOnly?: boolean;
 }
 
 function EditRaiseDialogContent({ 
   project,
   onOpenChange,
   onUpdate,
-  readOnly = false
 }: Omit<EditRaiseDialogProps, 'open'>) {
   const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -128,16 +126,14 @@ function EditRaiseDialogContent({
           onClick={() => onOpenChange(false)}
           className="mr-2"
         >
-          {readOnly ? "Close" : "Cancel"}
+          Cancel
         </Button>
-        {!readOnly && (
-          <Button
-            onClick={handleSave}
-            disabled={isProcessing}
-          >
-            {isProcessing ? "Saving..." : "Save Changes"}
-          </Button>
-        )}
+        <Button
+          onClick={handleSave}
+          disabled={isProcessing}
+        >
+          {isProcessing ? "Saving..." : "Save Changes"}
+        </Button>
       </div>
     </>
   );
