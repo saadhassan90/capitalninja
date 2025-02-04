@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 
 export function CategoryAndTypeStep() {
   const { formData, updateFormData } = useRaiseForm();
-  const isDebtDisabled = formData.category === "startup" || formData.category === "fund_direct_deal";
 
   return (
     <div className="space-y-6">
@@ -19,6 +18,7 @@ export function CategoryAndTypeStep() {
             value={formData.category}
             onValueChange={(value) => updateFormData({ category: value as "fund_direct_deal" | "startup" })}
             className="flex flex-col space-y-3"
+            required
           >
             <div className="flex items-center space-x-3 rounded-lg border p-4">
               <RadioGroupItem value="fund_direct_deal" id="fund_direct_deal" />
@@ -51,6 +51,7 @@ export function CategoryAndTypeStep() {
             value={formData.type}
             onValueChange={(value) => updateFormData({ type: value as "equity" | "debt" })}
             className="flex flex-col space-y-3"
+            required
           >
             <div className="flex items-center space-x-3 rounded-lg border p-4">
               <RadioGroupItem value="equity" id="equity" />

@@ -26,7 +26,23 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
   const totalSteps = 2;
   const progress = ((step - 1) / (totalSteps - 1)) * 100;
 
+  const isStepValid = () => {
+    if (step === 1) {
+      return formData.category !== "" && formData.type !== "";
+    }
+    return true; // Other steps validation logic here
+  };
+
   const handleNext = () => {
+    if (!isStepValid()) {
+      toast({
+        title: "Required Fields",
+        description: "Please fill in all required fields before proceeding.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if (step < totalSteps) {
       setStep(step + 1);
     }
