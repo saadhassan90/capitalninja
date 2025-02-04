@@ -2,6 +2,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useRaiseForm } from "../RaiseFormContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export function CategoryAndTypeStep() {
   const { formData, updateFormData } = useRaiseForm();
@@ -61,14 +62,14 @@ export function CategoryAndTypeStep() {
               </Label>
             </div>
             <div className="flex items-center space-x-3 rounded-lg border p-4">
-              <RadioGroupItem value="debt" id="debt" disabled={isDebtDisabled} />
-              <Label 
-                htmlFor="debt" 
-                className={`flex-1 ${isDebtDisabled ? "opacity-50" : ""}`}
-              >
-                <div className="font-medium">Debt</div>
+              <RadioGroupItem value="debt" id="debt" disabled />
+              <Label htmlFor="debt" className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">Debt</span>
+                  <Badge variant="secondary">Coming Soon</Badge>
+                </div>
                 <p className="text-sm text-muted-foreground">
-                  Loan-based investment {isDebtDisabled && "(Coming Soon)"}
+                  Loan-based investment
                 </p>
               </Label>
             </div>
