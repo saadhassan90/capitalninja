@@ -4,10 +4,10 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { useRaiseForm } from "../../RaiseFormContext";
 
 const capitalStackOptions = [
-  "Senior Debt",
-  "Mezzanine Debt",
-  "Preferred Equity",
-  "Common Equity",
+  "General Partner",
+  "Limited Partner",
+  "Syndication",
+  "Co-Investor",
 ];
 
 export function FinancialDetailsSection() {
