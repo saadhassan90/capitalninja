@@ -8,7 +8,11 @@ interface BasicInfoSectionProps {
     description: string;
     target_amount: string;
   };
-  onChange: (data: Partial<typeof formData>) => void;
+  onChange: (data: Partial<{
+    name: string;
+    description: string;
+    target_amount: string;
+  }>) => void;
 }
 
 export function BasicInfoSection({ formData, onChange }: BasicInfoSectionProps) {
