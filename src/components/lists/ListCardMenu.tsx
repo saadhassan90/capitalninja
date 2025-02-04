@@ -5,6 +5,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -103,12 +114,33 @@ export function ListCardMenu({ listName, onView, onEdit, onDelete }: ListCardMen
         <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
         <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
         <DropdownMenuItem onClick={handleClone}>Clone</DropdownMenuItem>
-        <DropdownMenuItem 
-          onClick={onDelete}
-          className="text-red-600 focus:text-red-600"
-        >
-          Delete
-        </DropdownMenuItem>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <DropdownMenuItem
+              className="text-red-600 focus:text-red-600"
+              onSelect={(e) => {
+                e.preventDefault();
+              }}
+            >
+              Delete
+            </DropdownMenuItem>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the list "{listName}"
+                and remove all investors from it.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={onDelete}>
+                Delete List
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DropdownMenuContent>
     </DropdownMenu>
   );
