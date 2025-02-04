@@ -9,6 +9,7 @@ interface RaiseDialogFooterProps {
   onBack: () => void;
   onNext: () => void;
   onSubmit: () => void;
+  submitText?: string;
 }
 
 export function RaiseDialogFooter({ 
@@ -18,7 +19,8 @@ export function RaiseDialogFooter({
   isSubmitting,
   onBack,
   onNext,
-  onSubmit
+  onSubmit,
+  submitText = "Create Raise"
 }: RaiseDialogFooterProps) {
   return (
     <div className="flex justify-between p-6 border-t">
@@ -44,7 +46,7 @@ export function RaiseDialogFooter({
           onClick={onSubmit}
           disabled={!isStepValid || isSubmitting}
         >
-          {isSubmitting ? "Creating..." : "Create Raise"}
+          {isSubmitting ? "Saving..." : submitText}
         </Button>
       )}
     </div>

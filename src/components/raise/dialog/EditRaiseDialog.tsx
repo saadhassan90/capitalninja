@@ -23,6 +23,10 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
     name: project.name,
     description: project.description,
     target_amount: project.target_amount.toString(),
+    type: project.type,
+    category: project.category,
+    status: project.status,
+    pitch_deck_url: project.pitch_deck_url || '',
   });
 
   const handleSubmit = async () => {
@@ -40,6 +44,10 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
           name: formData.name,
           description: formData.description,
           target_amount: parseFloat(formData.target_amount),
+          type: formData.type,
+          category: formData.category,
+          status: formData.status,
+          pitch_deck_url: formData.pitch_deck_url || null,
         })
         .eq('id', project.id);
 
@@ -77,6 +85,7 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
             onBack={() => {}}
             onNext={() => {}}
             onSubmit={handleSubmit}
+            submitText="Save"
           />
         </RaiseFormProvider>
       </DialogContent>
