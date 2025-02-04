@@ -23,10 +23,10 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <Router>
+    <Router>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthProvider>
             <Routes>
               <Route path="/auth/*" element={<Auth />} />
               <Route
@@ -55,11 +55,11 @@ function App() {
                 }
               />
             </Routes>
-          </Router>
-          <Toaster />
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+            <Toaster />
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </Router>
   );
 }
 
