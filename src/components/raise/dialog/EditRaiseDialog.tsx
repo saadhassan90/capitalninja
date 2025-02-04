@@ -20,13 +20,11 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
   const [formData, setFormData] = useState({
-    name: project.name,
-    description: project.description,
-    target_amount: project.target_amount.toString(),
-    type: project.type,
-    category: project.category,
-    status: project.status,
-    pitch_deck_url: project.pitch_deck_url || '',
+    raise_name: project.name,
+    raise_description: project.description || '',
+    target_raise: project.target_amount?.toString() || '',
+    primary_contact: '',
+    contact_email: '',
   });
 
   const handleSubmit = async () => {
@@ -39,15 +37,13 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
 
     try {
       const { error } = await supabase
-        .from('raises')
+        .from('raise_equity')
         .update({
-          name: formData.name,
-          description: formData.description,
-          target_amount: parseFloat(formData.target_amount),
-          type: formData.type,
-          category: formData.category,
-          status: formData.status,
-          pitch_deck_url: formData.pitch_deck_url || null,
+          raise_name: formData.raise_name,
+          raise_description: formData.raise_description,
+          target_raise: parseFloat(formData.target_raise),
+          primary_contact: formData.primary_contact,
+          contact_email: formData.contact_email,
         })
         .eq('id', project.id);
 

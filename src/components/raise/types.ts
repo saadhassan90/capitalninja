@@ -17,13 +17,11 @@ export interface RaiseCardProps {
 }
 
 export interface FormData {
-  id?: string;
-  type: "equity" | "debt" | "";
-  category: "fund_direct_deal" | "startup" | "";
-  name: string;
-  targetAmount: string;
-  raisedAmount: string;
-  file: File | null;
+  raise_name: string;
+  raise_description: string;
+  target_raise: string;
+  primary_contact: string;
+  contact_email: string;
 }
 
 export interface RaiseFormContextType {
