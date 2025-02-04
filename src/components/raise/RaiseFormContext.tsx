@@ -54,6 +54,8 @@ export interface RaiseFormData {
   term_lockup: string;
   raise_name: string;
   target_raise: string;
+  file: File | null;  // Added this property
+  memo: string | null;  // Added this property
 }
 
 const initialFormData: RaiseFormData = {
@@ -93,6 +95,8 @@ const initialFormData: RaiseFormData = {
   term_lockup: "",
   raise_name: "",
   target_raise: "",
+  file: null,  // Added initial value
+  memo: null,  // Added initial value
 };
 
 interface RaiseFormContextType {
