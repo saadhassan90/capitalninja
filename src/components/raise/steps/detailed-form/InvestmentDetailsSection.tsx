@@ -1,9 +1,8 @@
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MultiSelect } from "@/components/ui/multi-select";
 import { useRaiseForm } from "../../RaiseFormContext";
 import type { AssetClassType } from "../../RaiseFormContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 // Sort asset classes alphabetically
 const assetClassOptions: AssetClassType[] = [
@@ -40,12 +39,21 @@ export function InvestmentDetailsSection() {
     <div className="grid grid-cols-2 gap-4">
       <div className="space-y-2">
         <Label>Asset Classes</Label>
-        <MultiSelect
-          options={assetClassOptions}
-          selected={formData.asset_classes}
-          onChange={(value) => updateFormData({ asset_classes: value as AssetClassType[] })}
-          placeholder="Select asset classes"
-        />
+        <Select 
+          value={formData.assetClass}
+          onValueChange={(value) => updateFormData({ assetClass: value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select asset class" />
+          </SelectTrigger>
+          <SelectContent>
+            {assetClassOptions.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">
