@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -30,7 +31,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ListInvestorsTable } from "./ListInvestorsTable";
-import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface List {
   id: string;
@@ -47,6 +50,11 @@ interface ListCardProps {
 function ListCardComponent({ list, onDelete }: ListCardProps) {
   const { toast } = useToast();
   const [showViewDialog, setShowViewDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: list.name,
+    description: list.description || "",
+  });
 
   const { data: investorCount } = useQuery({
     queryKey: ['listInvestorsCount', list.id],
@@ -59,8 +67,8 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
       if (error) throw error;
       return count || 0;
     },
-    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
-    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
   });
 
   const handleDelete = async () => {
@@ -89,6 +97,35 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
     }
   };
 
+  const handleEdit = async () => {
+    try {
+      const { error } = await supabase
+        .from('lists')
+        .update({
+          name: editForm.name,
+          description: editForm.description,
+        })
+        .eq('id', list.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "List updated successfully",
+      });
+
+      setShowEditDialog(false);
+      // Refresh the page to show updated data
+      window.location.reload();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update list",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <>
       <Card className="border-gray-200 hover:shadow-md transition-shadow">
@@ -104,7 +141,7 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onSelect={() => setShowViewDialog(true)}>View</DropdownMenuItem>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setShowEditDialog(true)}>Edit</DropdownMenuItem>
                 <DropdownMenuItem>Clone</DropdownMenuItem>
                 <DropdownMenuItem>Export</DropdownMenuItem>
                 <AlertDialog>
@@ -155,12 +192,48 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
         </CardContent>
       </Card>
 
+      {/* View Dialog */}
       <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{list.name}</DialogTitle>
           </DialogHeader>
           <ListInvestorsTable listId={list.id} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit List</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={editForm.description}
+                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEditDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleEdit} disabled={!editForm.name}>
+              Save changes
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
