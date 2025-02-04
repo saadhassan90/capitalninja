@@ -30,8 +30,6 @@ interface List {
   name: string;
   description: string;
   created_at: string;
-  type: "static" | "dynamic";
-  last_refreshed_at: string | null;
 }
 
 interface ListCardProps {
@@ -72,7 +70,6 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
         description: "List deleted successfully",
       });
 
-      // Call the onDelete callback to update parent component state
       if (onDelete) {
         onDelete();
       }
@@ -85,14 +82,6 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
     }
   };
 
-  const getLastUpdatedText = () => {
-    const date = list.type === 'dynamic' && list.last_refreshed_at 
-      ? new Date(list.last_refreshed_at)
-      : new Date(list.created_at);
-    
-    return formatDistanceToNow(date, { addSuffix: true });
-  };
-
   const handleView = () => {
     navigate(`/lists/${list.id}`);
   };
@@ -102,56 +91,47 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">{list.name}</CardTitle>
-          <div className="flex items-center gap-2">
-            <span className={`px-2 py-1 text-xs rounded-md ${
-              list.type === "static"
-                ? "bg-gray-100 text-gray-700"
-                : "bg-blue-100 text-blue-700"
-            }`}>
-              {list.type}
-            </span>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreVertical className="h-4 w-4" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem>Clone</DropdownMenuItem>
-                <DropdownMenuItem>Export</DropdownMenuItem>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <DropdownMenuItem
-                      className="text-destructive"
-                      onSelect={(e) => {
-                        e.preventDefault();
-                      }}
-                    >
-                      Delete
-                    </DropdownMenuItem>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This will permanently delete the list "{list.name}" and remove all associated data.
-                        This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDelete}>
-                        Delete List
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreVertical className="h-4 w-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem>Clone</DropdownMenuItem>
+              <DropdownMenuItem>Export</DropdownMenuItem>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onSelect={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete the list "{list.name}" and remove all associated data.
+                      This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>
+                      Delete List
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         {list.description && (
           <CardDescription className="text-muted-foreground mt-2">
@@ -162,7 +142,7 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
       <CardContent className="space-y-2">
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>Last updated:</span>
-          <span>{getLastUpdatedText()}</span>
+          <span>{formatDistanceToNow(new Date(list.created_at), { addSuffix: true })}</span>
         </div>
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>Records:</span>
@@ -173,5 +153,4 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
   );
 }
 
-// Memoize the component to prevent unnecessary re-renders
 export const ListCard = memo(ListCardComponent);

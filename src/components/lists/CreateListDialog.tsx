@@ -4,11 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { DynamicListFilters } from "./DynamicListFilters";
 import { useAuth } from "@/components/AuthProvider";
 import { toast } from "sonner";
-import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
 interface CreateListDialogProps {
   open: boolean;
@@ -16,15 +13,7 @@ interface CreateListDialogProps {
   onCreateList: (list: {
     name: string;
     description: string;
-    type: "static" | "dynamic";
     created_by: string;
-    filters?: {
-      type: InvestorFilterType;
-      location: InvestorFilterType;
-      assetClass: InvestorFilterType;
-      firstTimeFunds: InvestorFilterType;
-      aumRange: AUMRange;
-    };
   }) => void;
 }
 
@@ -33,36 +22,15 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
   const [newList, setNewList] = useState({
     name: "",
     description: "",
-    type: "static" as "static" | "dynamic",
-    filters: {
-      type: null as InvestorFilterType,
-      location: null as InvestorFilterType,
-      assetClass: null as InvestorFilterType,
-      firstTimeFunds: null as InvestorFilterType,
-      aumRange: null as AUMRange,
-    },
   });
-
-  const hasAtLeastOneFilter = () => {
-    const { type, location, assetClass, firstTimeFunds, aumRange } = newList.filters;
-    return type !== null || location !== null || assetClass !== null || 
-           firstTimeFunds !== null || (aumRange !== null && aumRange.length === 2);
-  };
 
   const handleCreate = () => {
     if (!user) return;
     
-    if (newList.type === 'dynamic' && !hasAtLeastOneFilter()) {
-      toast.error("Please set at least one filter for dynamic lists");
-      return;
-    }
-
     const listData = {
       name: newList.name,
       description: newList.description,
-      type: newList.type,
       created_by: user.id,
-      ...(newList.type === 'dynamic' && { filters: newList.filters }),
     };
     
     onCreateList(listData);
@@ -71,14 +39,6 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
     setNewList({
       name: "",
       description: "",
-      type: "static",
-      filters: {
-        type: null,
-        location: null,
-        assetClass: null,
-        firstTimeFunds: null,
-        aumRange: null,
-      },
     });
   };
 
@@ -107,30 +67,6 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
               placeholder="Enter list description"
             />
           </div>
-          <div className="space-y-2">
-            <Label>List Type</Label>
-            <RadioGroup
-              value={newList.type}
-              onValueChange={(value: "static" | "dynamic") => 
-                setNewList({ ...newList, type: value })
-              }
-              className="flex flex-col space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="static" id="static" />
-                <Label htmlFor="static">Static List</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="dynamic" id="dynamic" />
-                <Label htmlFor="dynamic">Dynamic List</Label>
-              </div>
-            </RadioGroup>
-          </div>
-          {newList.type === "dynamic" && (
-            <DynamicListFilters
-              onFiltersChange={(filters) => setNewList({ ...newList, filters })}
-            />
-          )}
         </div>
         <DialogFooter className="flex justify-end gap-2 pt-6 border-t">
           <Button variant="outline" onClick={() => onOpenChange(false)}>

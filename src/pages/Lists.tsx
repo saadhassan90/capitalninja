@@ -13,8 +13,6 @@ interface List {
   name: string;
   description: string;
   created_at: string;
-  type: "static" | "dynamic";
-  last_refreshed_at: string | null;
 }
 
 const Lists = () => {
@@ -85,7 +83,7 @@ const Lists = () => {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Lists</h1>
             <p className="text-muted-foreground mt-2">
-              Create and manage static and dynamic investor lists
+              Create and manage your investor lists
             </p>
           </div>
         </div>
@@ -95,16 +93,7 @@ const Lists = () => {
         </Button>
       </div>
       
-      <div className="space-y-8">
-        <ListSection 
-          title="Static Lists" 
-          lists={lists?.filter(list => list.type === 'static') || []} 
-        />
-        <ListSection 
-          title="Dynamic Lists" 
-          lists={lists?.filter(list => list.type === 'dynamic') || []} 
-        />
-      </div>
+      <ListSection lists={lists || []} />
 
       <CreateListDialog
         open={createDialogOpen}
