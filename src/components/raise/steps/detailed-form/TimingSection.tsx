@@ -1,17 +1,21 @@
 import { Label } from "@/components/ui/label";
-import { DatePicker } from "@/components/ui/date-picker";
+import { Input } from "@/components/ui/input";
 import { useRaiseForm } from "../../RaiseFormContext";
 
 export function TimingSection() {
   const { formData, updateFormData } = useRaiseForm();
 
-  const handleDateChange = (field: 'raise_open_date' | 'close_date' | 'first_close') => (date: Date | undefined) => {
-    updateFormData({ [field]: date || null });
+  const handleDateChange = (field: 'raise_open_date' | 'close_date' | 'first_close') => (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFormData({ [field]: e.target.value ? new Date(e.target.value) : null });
   };
 
-  const getDateValue = (dateString: Date | null) => {
-    if (!dateString) return null;
-    return new Date(dateString);
+  const formatDate = (date: Date | null) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${month}/${day}/${year}`;
   };
 
   return (
@@ -19,25 +23,31 @@ export function TimingSection() {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Raise Open Date</Label>
-          <DatePicker
-            date={getDateValue(formData.raise_open_date)}
-            onSelect={handleDateChange('raise_open_date')}
+          <Input
+            type="text"
+            placeholder="MM/DD/YYYY"
+            value={formatDate(formData.raise_open_date)}
+            onChange={handleDateChange('raise_open_date')}
           />
         </div>
 
         <div className="space-y-2">
           <Label>Close Date</Label>
-          <DatePicker
-            date={getDateValue(formData.close_date)}
-            onSelect={handleDateChange('close_date')}
+          <Input
+            type="text"
+            placeholder="MM/DD/YYYY"
+            value={formatDate(formData.close_date)}
+            onChange={handleDateChange('close_date')}
           />
         </div>
 
         <div className="space-y-2">
           <Label>First Close</Label>
-          <DatePicker
-            date={getDateValue(formData.first_close)}
-            onSelect={handleDateChange('first_close')}
+          <Input
+            type="text"
+            placeholder="MM/DD/YYYY"
+            value={formatDate(formData.first_close)}
+            onChange={handleDateChange('first_close')}
           />
         </div>
       </div>
