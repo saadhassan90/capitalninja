@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, Edit, Download } from "lucide-react";
+import { FileText, Edit, Download, ArrowLeft } from "lucide-react";
 import type { RaiseProject } from "../types";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +27,7 @@ export function MemoDialog({
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedMemo, setEditedMemo] = useState(project.memo || '');
+  const [showRenderedView, setShowRenderedView] = useState(false);
 
   const handleGenerateMemo = async () => {
     setIsGenerating(true);
@@ -57,6 +58,7 @@ export function MemoDialog({
 
       setEditedMemo(data.memo);
       toast.success('Deal memo generated successfully');
+      setShowRenderedView(true); // Show the rendered view after successful generation
     } catch (error: any) {
       console.error('Error generating memo:', error);
       toast.error(error.message || 'Failed to generate deal memo');
@@ -75,6 +77,7 @@ export function MemoDialog({
       if (error) throw error;
 
       setIsEditing(false);
+      setShowRenderedView(true); // Show rendered view after saving edits
       toast.success('Memo updated successfully');
     } catch (error: any) {
       console.error('Error updating memo:', error);
@@ -87,6 +90,11 @@ export function MemoDialog({
     if (memoElement) {
       generateMemoPDF(memoElement, project.name);
     }
+  };
+
+  const handleBack = () => {
+    setShowRenderedView(false);
+    setIsEditing(false);
   };
 
   return (
@@ -113,26 +121,40 @@ export function MemoDialog({
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="flex justify-end gap-2">
-              {isEditing ? (
+            <div className="flex justify-between gap-2">
+              {showRenderedView ? (
                 <>
-                  <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>
-                    Cancel
-                  </Button>
-                  <Button size="sm" onClick={handleSaveEdit}>
-                    Save Changes
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit Memo
+                  <Button variant="outline" size="sm" onClick={handleBack}>
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back to Edit
                   </Button>
                   <Button variant="outline" size="sm" onClick={handleDownloadPDF}>
                     <Download className="h-4 w-4 mr-2" />
                     Download PDF
                   </Button>
+                </>
+              ) : (
+                <>
+                  {isEditing ? (
+                    <>
+                      <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>
+                        Cancel
+                      </Button>
+                      <Button size="sm" onClick={handleSaveEdit}>
+                        Save Changes
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Memo
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setShowRenderedView(true)}>
+                        View Memo
+                      </Button>
+                    </>
+                  )}
                 </>
               )}
             </div>
