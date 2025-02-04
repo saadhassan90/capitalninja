@@ -47,10 +47,10 @@ export type Database = {
           action: string
           admin_id: string
           changes?: Json | null
-          created_at: string
+          created_at?: string
           entity_id: string
           entity_type: string
-          id: string
+          id?: string
         }
         Update: {
           action?: string
@@ -511,6 +511,351 @@ export type Database = {
         }
         Relationships: []
       }
+      list_investors: {
+        Row: {
+          created_at: string
+          investor_id: number
+          list_id: string
+        }
+        Insert: {
+          created_at?: string
+          investor_id: number
+          list_id: string
+        }
+        Update: {
+          created_at?: string
+          investor_id?: number
+          list_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "list_investors_investor_id_fkey"
+            columns: ["investor_id"]
+            isOneToOne: false
+            referencedRelation: "limited_partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "list_investors_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lists: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          filters: Json | null
+          id: string
+          last_refreshed_at: string | null
+          name: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          filters?: Json | null
+          id?: string
+          last_refreshed_at?: string | null
+          name: string
+          type?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          filters?: Json | null
+          id?: string
+          last_refreshed_at?: string | null
+          name?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      master_leads: {
+        Row: {
+          company_name: string
+          confidence_score: number | null
+          created_at: string
+          enriched_data: Json | null
+          id: string
+          last_validated_at: string | null
+          matched_limited_partner_id: number | null
+          original_upload_id: string | null
+          raw_data: Json
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          company_name: string
+          confidence_score?: number | null
+          created_at?: string
+          enriched_data?: Json | null
+          id?: string
+          last_validated_at?: string | null
+          matched_limited_partner_id?: number | null
+          original_upload_id?: string | null
+          raw_data: Json
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          company_name?: string
+          confidence_score?: number | null
+          created_at?: string
+          enriched_data?: Json | null
+          id?: string
+          last_validated_at?: string | null
+          matched_limited_partner_id?: number | null
+          original_upload_id?: string | null
+          raw_data?: Json
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "master_leads_matched_limited_partner_id_fkey"
+            columns: ["matched_limited_partner_id"]
+            isOneToOne: false
+            referencedRelation: "limited_partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "master_leads_original_upload_id_fkey"
+            columns: ["original_upload_id"]
+            isOneToOne: false
+            referencedRelation: "user_uploaded_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          email_notifications: boolean | null
+          id: string
+          investor_updates: boolean | null
+          list_updates: boolean | null
+          marketing_updates: boolean | null
+          security_alerts: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          investor_updates?: boolean | null
+          list_updates?: boolean | null
+          marketing_updates?: boolean | null
+          security_alerts?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          investor_updates?: boolean | null
+          list_updates?: boolean | null
+          marketing_updates?: boolean | null
+          security_alerts?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          company_description: string | null
+          company_name: string | null
+          company_website: string | null
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          linkedin_url: string | null
+          location: string | null
+          phone: string | null
+          raising_amount: number | null
+          raising_description: string | null
+          raising_stage: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          company_description?: string | null
+          company_name?: string | null
+          company_website?: string | null
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          phone?: string | null
+          raising_amount?: number | null
+          raising_description?: string | null
+          raising_stage?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          company_description?: string | null
+          company_name?: string | null
+          company_website?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          phone?: string | null
+          raising_amount?: number | null
+          raising_description?: string | null
+          raising_stage?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      raise_equity: {
+        Row: {
+          additional_fees: string | null
+          asset_classes: Database["public"]["Enums"]["asset_class_type"][]
+          asset_management_fee: number | null
+          asset_management_fees_type: string | null
+          audience: string[]
+          banner: string | null
+          capital_stack: string[]
+          carried_interest: number | null
+          city: string
+          close_date: string | null
+          company_contact: string | null
+          contact_email: string
+          country: string
+          created_at: string | null
+          domicile: string | null
+          economic_drivers: string[] | null
+          equity_multiple: number | null
+          first_close: string | null
+          gp_capital: number | null
+          id: string
+          investment_type: string
+          irr_projections: number | null
+          memo: string | null
+          minimum_ticket_size: number
+          preferred_returns_hurdle: number | null
+          primary_contact: string
+          raise_description: string
+          raise_name: string
+          raise_open_date: string | null
+          raise_stage: string
+          reups: number | null
+          risks: string[] | null
+          state: string
+          strategy: string[] | null
+          target_raise: number
+          tax_incentives: string | null
+          term_lockup: number | null
+          user_id: string
+        }
+        Insert: {
+          additional_fees?: string | null
+          asset_classes: Database["public"]["Enums"]["asset_class_type"][]
+          asset_management_fee?: number | null
+          asset_management_fees_type?: string | null
+          audience: string[]
+          banner?: string | null
+          capital_stack: string[]
+          carried_interest?: number | null
+          city: string
+          close_date?: string | null
+          company_contact?: string | null
+          contact_email: string
+          country: string
+          created_at?: string | null
+          domicile?: string | null
+          economic_drivers?: string[] | null
+          equity_multiple?: number | null
+          first_close?: string | null
+          gp_capital?: number | null
+          id?: string
+          investment_type: string
+          irr_projections?: number | null
+          memo?: string | null
+          minimum_ticket_size: number
+          preferred_returns_hurdle?: number | null
+          primary_contact: string
+          raise_description: string
+          raise_name: string
+          raise_open_date?: string | null
+          raise_stage: string
+          reups?: number | null
+          risks?: string[] | null
+          state: string
+          strategy?: string[] | null
+          target_raise: number
+          tax_incentives?: string | null
+          term_lockup?: number | null
+          user_id: string
+        }
+        Update: {
+          additional_fees?: string | null
+          asset_classes?: Database["public"]["Enums"]["asset_class_type"][]
+          asset_management_fee?: number | null
+          asset_management_fees_type?: string | null
+          audience?: string[]
+          banner?: string | null
+          capital_stack?: string[]
+          carried_interest?: number | null
+          city?: string
+          close_date?: string | null
+          company_contact?: string | null
+          contact_email?: string
+          country?: string
+          created_at?: string | null
+          domicile?: string | null
+          economic_drivers?: string[] | null
+          equity_multiple?: number | null
+          first_close?: string | null
+          gp_capital?: number | null
+          id?: string
+          investment_type?: string
+          irr_projections?: number | null
+          memo?: string | null
+          minimum_ticket_size?: number
+          preferred_returns_hurdle?: number | null
+          primary_contact?: string
+          raise_description?: string
+          raise_name?: string
+          raise_open_date?: string | null
+          raise_stage?: string
+          reups?: number | null
+          risks?: string[] | null
+          state?: string
+          strategy?: string[] | null
+          target_raise?: number
+          tax_incentives?: string | null
+          term_lockup?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       raises: {
         Row: {
           category: Database["public"]["Enums"]["investment_category"]
@@ -639,7 +984,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          id: string
+          id?: string
           role: string
           user_id: string
         }
@@ -672,7 +1017,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           device_info?: string | null
-          id: string
+          id?: string
           ip_address?: string | null
           is_active?: boolean | null
           last_active?: string | null
@@ -685,7 +1030,7 @@ export type Database = {
           ip_address?: string | null
           is_active?: boolean | null
           last_active?: string | null
-          user_id: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -702,7 +1047,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          id: string
+          id?: string
           instantly_api_key?: string | null
           instantly_email?: string | null
           instantly_password?: string | null
@@ -718,7 +1063,7 @@ export type Database = {
           instantly_password?: string | null
           plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string
-          user_id: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -746,7 +1091,7 @@ export type Database = {
           processed_status?: string | null
           raw_data: Json
           total_rows?: number | null
-          upload_date: string
+          upload_date?: string
           user_id: string
         }
         Update: {
@@ -760,7 +1105,7 @@ export type Database = {
           raw_data?: Json
           total_rows?: number | null
           upload_date?: string
-          user_id: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -901,3 +1246,100 @@ export type Database = {
     }
   }
 }
+
+type PublicSchema = Database[Extract<keyof Database, "public">]
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  PublicEnumNameOrOptions extends
+    | keyof PublicSchema["Enums"]
+    | { schema: keyof Database },
+  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
