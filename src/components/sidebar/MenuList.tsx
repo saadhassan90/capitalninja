@@ -1,7 +1,8 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMenuItems } from "./MenuItems";
+import { Link } from "react-router-dom";
 
 interface MenuItem {
   title: string;
@@ -16,12 +17,7 @@ interface MenuListProps {
 
 export function MenuList({ items: propItems }: MenuListProps) {
   const location = useLocation();
-  const navigate = useNavigate();
   const items = propItems || useMenuItems();
-
-  const handleNavigation = (href: string) => {
-    navigate(href);
-  };
 
   return (
     <nav className="space-y-6">
@@ -41,12 +37,14 @@ export function MenuList({ items: propItems }: MenuListProps) {
                       "w-full justify-start",
                       location.pathname === subItem.href && "bg-accent"
                     )}
-                    onClick={() => subItem.href && handleNavigation(subItem.href)}
+                    asChild
                   >
-                    {subItem.icon && (
-                      <subItem.icon className="mr-2 h-4 w-4" />
-                    )}
-                    {subItem.title}
+                    <Link to={subItem.href || "#"}>
+                      {subItem.icon && (
+                        <subItem.icon className="mr-2 h-4 w-4" />
+                      )}
+                      {subItem.title}
+                    </Link>
                   </Button>
                 ))}
               </div>
@@ -62,10 +60,12 @@ export function MenuList({ items: propItems }: MenuListProps) {
               "w-full justify-start",
               location.pathname === item.href && "bg-accent"
             )}
-            onClick={() => item.href && handleNavigation(item.href)}
+            asChild
           >
-            {item.icon && <item.icon className="mr-2 h-4 w-4" />}
-            {item.title}
+            <Link to={item.href || "#"}>
+              {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+              {item.title}
+            </Link>
           </Button>
         );
       })}

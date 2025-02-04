@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
@@ -35,9 +36,11 @@ interface List {
 
 interface ListCardProps {
   list: List;
+  onDelete?: () => void;
 }
 
-function ListCardComponent({ list }: ListCardProps) {
+function ListCardComponent({ list, onDelete }: ListCardProps) {
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const { data: investorCount } = useQuery({
@@ -51,6 +54,8 @@ function ListCardComponent({ list }: ListCardProps) {
       if (error) throw error;
       return count || 0;
     },
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes
   });
 
   const handleDelete = async () => {
@@ -67,8 +72,10 @@ function ListCardComponent({ list }: ListCardProps) {
         description: "List deleted successfully",
       });
 
-      // Refresh the lists query
-      window.location.reload();
+      // Call the onDelete callback to update parent component state
+      if (onDelete) {
+        onDelete();
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -86,8 +93,12 @@ function ListCardComponent({ list }: ListCardProps) {
     return formatDistanceToNow(date, { addSuffix: true });
   };
 
+  const handleView = () => {
+    navigate(`/lists/${list.id}`);
+  };
+
   return (
-    <Card className="border-gray-200">
+    <Card className="border-gray-200 hover:shadow-md transition-shadow cursor-pointer" onClick={handleView}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">{list.name}</CardTitle>
@@ -100,13 +111,15 @@ function ListCardComponent({ list }: ListCardProps) {
               {list.type}
             </span>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <MoreVertical className="h-4 w-4" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
                 <DropdownMenuItem>Clone</DropdownMenuItem>
                 <DropdownMenuItem>Export</DropdownMenuItem>
                 <AlertDialog>

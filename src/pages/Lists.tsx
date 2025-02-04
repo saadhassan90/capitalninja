@@ -89,7 +89,7 @@ const Lists = () => {
             </p>
           </div>
         </div>
-        <Button onClick={() => setCreateDialogOpen(true)} className="bg-black hover:bg-black/80">
+        <Button onClick={() => setCreateDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           New List
         </Button>
