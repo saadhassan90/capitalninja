@@ -86,6 +86,6 @@ const ListView = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ListView;

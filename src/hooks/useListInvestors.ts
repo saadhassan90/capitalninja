@@ -17,6 +17,7 @@ export function useListInvestors({ listId, currentPage, sortConfig }: UseListInv
     queryFn: async () => {
       console.log('Fetching investors for list:', listId);
       
+      // First get the list investors
       const { data: listInvestors, error: listInvestorsError, count } = await supabase
         .from('list_investors')
         .select('investor_id', { count: 'exact' })
