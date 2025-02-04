@@ -1,7 +1,8 @@
-import { Briefcase } from "lucide-react";
+import { Briefcase, Plus } from "lucide-react";
 import { RaiseTable } from "@/components/raise/RaiseTable";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 const Raise = () => {
   const { data: raises, refetch } = useQuery({
@@ -29,6 +30,10 @@ const Raise = () => {
             </p>
           </div>
         </div>
+        <Button className="gap-2">
+          <Plus className="h-4 w-4" />
+          Create Raise
+        </Button>
       </div>
       
       <RaiseTable 
