@@ -28,6 +28,7 @@ function EmptySection({ type }: { type: string }) {
 
 export function ListSection({ title, lists: initialLists }: ListSectionProps) {
   const [lists, setLists] = useState(initialLists);
+  console.log(`${title} lists:`, lists); // Debug log
 
   const handleDelete = (deletedListId: string) => {
     setLists(currentLists => currentLists.filter(list => list.id !== deletedListId));

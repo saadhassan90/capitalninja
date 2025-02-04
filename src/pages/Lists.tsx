@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { ListSection } from "@/components/lists/ListSection";
-import { ListChecks, Plus } from "lucide-react";
+import { ListChecks, Plus, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { CreateListDialog } from "@/components/lists/CreateListDialog";
 import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface List {
   id: string;
@@ -19,16 +20,21 @@ interface List {
 const Lists = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
-  const { data: lists, isLoading, refetch } = useQuery({
+  const { data: lists, isLoading, error, refetch } = useQuery({
     queryKey: ['lists'],
     queryFn: async () => {
+      console.log("Fetching lists...");
       const { data, error } = await supabase
         .from('lists')
         .select('*')
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching lists:", error);
+        throw error;
+      }
       
+      console.log("Fetched lists:", data);
       return (data as List[]) || [];
     }
   });
@@ -37,7 +43,10 @@ const Lists = () => {
     try {
       const { error } = await supabase
         .from('lists')
-        .insert(listData);
+        .insert({
+          ...listData,
+          created_by: (await supabase.auth.getUser()).data.user?.id
+        });
 
       if (error) throw error;
 
@@ -47,6 +56,26 @@ const Lists = () => {
       toast.error(error.message || "Failed to create list");
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <Alert variant="destructive">
+          <AlertDescription>
+            Failed to load lists. Please try again later.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
