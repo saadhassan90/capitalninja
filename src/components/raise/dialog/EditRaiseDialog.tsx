@@ -21,28 +21,42 @@ interface EditRaiseDialogProps {
   onUpdate?: () => void;
 }
 
+interface FormDataState {
+  raise_name: string;
+  raise_description: string;
+  target_raise: string;
+  primary_contact: string;
+  contact_email: string;
+  minimum_ticket_size: string;
+  capital_stack: string[];
+  gp_capital: string;
+  carried_interest: string;
+  asset_management_fee: string;
+  assetClass: AssetClassType;
+  investment_type: string;
+  city: string;
+  state: string;
+  country: string;
+}
+
 export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditRaiseDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataState>({
     raise_name: project.name,
     raise_description: project.description || '',
     target_raise: project.target_amount?.toString() || '',
     primary_contact: '',
     contact_email: '',
     minimum_ticket_size: '',
-    capital_stack: [] as string[],
+    capital_stack: [],
     gp_capital: '',
     carried_interest: '',
     asset_management_fee: '',
-    assetClass: '' as AssetClassType,
+    assetClass: 'Other', // Default to 'Other' as it's a valid AssetClassType
     investment_type: '',
     city: '',
-    state: '',
-    country: '',
-  });
-
-  const handleSubmit = async () => {
+    state: '',const handleSubmit = async () => {
     if (!user) {
       toast.error("You must be logged in to update a raise");
       return;
@@ -75,8 +89,7 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
       if (error) throw error;
 
       toast.success("Raise updated successfully");
-      onUpdate?.();
-      onOpenChange(false);
+      );
     } catch (error: any) {
       console.error('Error updating raise:', error);
       toast.error(error.message || "Failed to update raise");
