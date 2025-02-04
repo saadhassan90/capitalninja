@@ -14,7 +14,6 @@ import { MemoDialog } from "./card/MemoDialog";
 import { BulkActions } from "./table/BulkActions";
 import { RaiseTableRow } from "./table/RaiseTableRow";
 import type { RaiseProject } from "./types";
-import html2pdf from 'html2pdf.js';
 
 interface RaiseTableProps {
   raises: RaiseProject[];
@@ -94,21 +93,20 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
     }
   };
 
-  const handleDownloadMemo = () => {
-    if (!selectedRaise) return;
+  const handleGenerateMemo = async () => {
+    // This will be implemented later with OpenAI integration
+    toast({
+      title: "Coming Soon",
+      description: "Memo generation will be implemented shortly",
+    });
+  };
 
-    const element = document.getElementById('memo-content');
-    if (!element) return;
-
-    const opt = {
-      margin: 1,
-      filename: `${selectedRaise.name}-memo.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).save();
+  const handleEditMemo = () => {
+    // This will be implemented later
+    toast({
+      title: "Coming Soon",
+      description: "Memo editing will be implemented shortly",
+    });
   };
 
   return (
@@ -171,8 +169,9 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
             open={memoDialogOpen}
             onOpenChange={setMemoDialogOpen}
             projectName={selectedRaise.name}
-            memo={selectedRaise.pitch_deck_url || ''}
-            onDownload={handleDownloadMemo}
+            memo={selectedRaise.memo}
+            onGenerate={handleGenerateMemo}
+            onEdit={handleEditMemo}
           />
         </>
       )}
