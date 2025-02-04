@@ -30,12 +30,9 @@ function EditRaiseDialogContent({
 
   useEffect(() => {
     if (project) {
-      const projectType = project.type as RaiseType;
-      const projectCategory = project.category as RaiseCategory;
-      
       updateFormData({
-        type: projectType,
-        category: projectCategory,
+        type: project.type as RaiseType,
+        category: project.category as RaiseCategory,
         raise_name: project.name,
         target_raise: project.target_amount?.toString() || "",
         raise_description: project.description || "",
@@ -77,6 +74,7 @@ function EditRaiseDialogContent({
     if (!user) return;
 
     setIsProcessing(true);
+    console.log("Saving raise with data:", formData);
 
     try {
       let pitchDeckUrl = project.pitch_deck_url;
@@ -104,6 +102,7 @@ function EditRaiseDialogContent({
       onUpdate?.();
       onOpenChange(false);
     } catch (error: any) {
+      console.error("Error updating raise:", error);
       toast.error(error.message || "Failed to update raise");
     } finally {
       setIsProcessing(false);
