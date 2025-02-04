@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { RaiseFormProvider, useRaiseForm } from "./RaiseFormContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface RaiseDialogProps {
   open: boolean;
@@ -116,25 +117,29 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
   };
 
   return (
-    <DialogContent className="sm:max-w-[800px]">
-      <DialogHeader>
+    <DialogContent className="sm:max-w-[800px] h-[90vh] flex flex-col p-0">
+      <DialogHeader className="p-6 pb-2">
         <DialogTitle>Create New Raise</DialogTitle>
         <p className="text-sm text-muted-foreground">
           Set up your fundraising project in just a few steps
         </p>
       </DialogHeader>
 
-      <div className="space-y-6">
-        <div className="space-y-2">
+      <div className="flex-1 flex flex-col min-h-0">
+        <div className="px-6 py-2">
           <Progress value={progress} className="w-full" />
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground mt-2">
             Step {step} of {totalSteps}
           </div>
         </div>
 
-        {getCurrentStep()}
+        <ScrollArea className="flex-1 px-6">
+          <div className="py-4">
+            {getCurrentStep()}
+          </div>
+        </ScrollArea>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between p-6 border-t">
           <Button
             variant="outline"
             onClick={handleBack}
