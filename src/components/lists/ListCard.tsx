@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
@@ -39,7 +38,6 @@ interface ListCardProps {
 }
 
 function ListCardComponent({ list }: ListCardProps) {
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const { data: investorCount } = useQuery({
@@ -88,12 +86,8 @@ function ListCardComponent({ list }: ListCardProps) {
     return formatDistanceToNow(date, { addSuffix: true });
   };
 
-  const handleView = () => {
-    navigate(`/lists/${list.id}`);
-  };
-
   return (
-    <Card className="border-gray-200 hover:shadow-md transition-shadow cursor-pointer" onClick={handleView}>
+    <Card className="border-gray-200">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">{list.name}</CardTitle>
@@ -106,15 +100,13 @@ function ListCardComponent({ list }: ListCardProps) {
               {list.type}
             </span>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <MoreVertical className="h-4 w-4" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuContent align="end">
                 <DropdownMenuItem>Clone</DropdownMenuItem>
                 <DropdownMenuItem>Export</DropdownMenuItem>
                 <AlertDialog>
