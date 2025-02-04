@@ -25,6 +25,7 @@ interface InvestorsTableViewProps {
   selectedInvestors: number[];
   onSelectAll: (checked: boolean) => void;
   onSelectInvestor: (id: number, checked: boolean) => void;
+  listId?: string;
 }
 
 export function InvestorsTableView({ 
@@ -39,6 +40,7 @@ export function InvestorsTableView({
   selectedInvestors,
   onSelectAll,
   onSelectInvestor,
+  listId,
 }: InvestorsTableViewProps) {
   const SortableHeader = ({ column, children }: { column: string, children: React.ReactNode }) => {
     const isSorted = sortConfig.column === column;
@@ -106,6 +108,7 @@ export function InvestorsTableView({
                     onViewInvestor={onViewInvestor}
                     selected={selectedInvestors.includes(investor.id)}
                     onSelect={onSelectInvestor}
+                    listId={listId}
                   />
                 ))
               )}
