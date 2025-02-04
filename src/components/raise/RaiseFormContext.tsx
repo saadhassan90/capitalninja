@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from "react";
-import type { Database } from "@/integrations/supabase/types";
 
 export type AssetClassType = 
   | "Real Estate"
@@ -18,9 +17,6 @@ export type AssetClassType =
   | "Impact Investing"
   | "Other";
 
-// Use the geographic region type from Supabase's generated types
-export type GeographicRegionType = Database['public']['Enums']['geographic_region_type'];
-
 export interface RaiseFormData {
   type: "equity" | "debt" | "";
   category: "fund_direct_deal" | "startup" | "";
@@ -30,7 +26,9 @@ export interface RaiseFormData {
   additional_fees: string;
   asset_classes: AssetClassType[];
   investment_type: string;
-  geographic_focus: GeographicRegionType[];
+  city: string;
+  state: string;
+  country: string;
   raise_stage: string;
   raise_open_date: Date | null;
   close_date: Date | null;
@@ -61,12 +59,6 @@ export interface RaiseFormData {
   target_raise: string;
 }
 
-interface RaiseFormContextType {
-  formData: RaiseFormData;
-  updateFormData: (data: Partial<RaiseFormData>) => void;
-  resetForm: () => void;
-}
-
 const initialFormData: RaiseFormData = {
   type: "",
   category: "",
@@ -76,7 +68,9 @@ const initialFormData: RaiseFormData = {
   additional_fees: "",
   asset_classes: [],
   investment_type: "",
-  geographic_focus: [],
+  city: "",
+  state: "",
+  country: "",
   raise_stage: "",
   raise_open_date: null,
   close_date: null,
@@ -106,6 +100,12 @@ const initialFormData: RaiseFormData = {
   raise_name: "",
   target_raise: "",
 };
+
+interface RaiseFormContextType {
+  formData: RaiseFormData;
+  updateFormData: (data: Partial<RaiseFormData>) => void;
+  resetForm: () => void;
+}
 
 const RaiseFormContext = createContext<RaiseFormContextType | undefined>(undefined);
 

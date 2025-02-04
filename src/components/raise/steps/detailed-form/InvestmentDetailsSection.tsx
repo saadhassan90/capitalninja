@@ -2,8 +2,7 @@ import { Label } from "@/components/ui/label";
 import { useRaiseForm } from "../../RaiseFormContext";
 import type { AssetClassType } from "../../RaiseFormContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MultiCombobox } from "@/components/ui/multi-combobox";
-import { geographyOptions } from "@/data/geography-options";
+import { Input } from "@/components/ui/input";
 
 const assetClassOptions: AssetClassType[] = [
   "Co-Investment",
@@ -63,15 +62,33 @@ export function InvestmentDetailsSection() {
         </Select>
       </div>
 
-      <div className="col-span-2 space-y-2">
-        <Label>Geographic Focus</Label>
-        <MultiCombobox
-          options={geographyOptions}
-          selected={formData.geographic_focus.map(g => g.toString())}
-          onChange={(values) => updateFormData({ 
-            geographic_focus: values as Database['public']['Enums']['geographic_region_type'][] 
-          })}
-          placeholder="Select regions..."
+      <div className="space-y-2">
+        <Label htmlFor="city">City</Label>
+        <Input
+          id="city"
+          placeholder="Enter city"
+          value={formData.city || ""}
+          onChange={(e) => updateFormData({ city: e.target.value })}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="state">State/Province</Label>
+        <Input
+          id="state"
+          placeholder="Enter state/province"
+          value={formData.state || ""}
+          onChange={(e) => updateFormData({ state: e.target.value })}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="country">Country</Label>
+        <Input
+          id="country"
+          placeholder="Enter country"
+          value={formData.country || ""}
+          onChange={(e) => updateFormData({ country: e.target.value })}
         />
       </div>
     </div>
