@@ -16,7 +16,7 @@ interface RaiseDialogContentProps {
 export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
   const [step, setStep] = useState(1);
   const { user } = useAuth();
-  const { formData } = useRaiseForm();
+  const { formData, resetForm } = useRaiseForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const totalSteps = 2;
@@ -62,6 +62,7 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
 
   const handleClose = () => {
     setStep(1);
+    resetForm();
     onOpenChange(false);
   };
 
@@ -74,14 +75,14 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
 
       if (error) {
         console.error('Error generating deal memo:', error);
-        throw error;
+        return null;
       }
 
       console.log('Deal memo generated:', data);
       return data.memo;
     } catch (error) {
       console.error('Error in generateDealMemo:', error);
-      throw error;
+      return null;
     }
   };
 
@@ -124,7 +125,7 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
         primary_contact: formData.primary_contact,
         raise_description: formData.raise_description,
         raise_name: formData.raise_name,
-        raise_stage: formData.raise_stage || null,
+        raise_stage: formData.raise_stage || "Initial",  // Set a default value
         reups: formData.reups ? parseInt(formData.reups) : null,
         risks: formData.risks || [],
         strategy: formData.strategy || [],
@@ -146,23 +147,39 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
 
       console.log('Raise created:', raise);
 
+      // Also create an entry in the raises table for compatibility
+      const raisesData = {
+        user_id: user.id,
+        type: formData.type,
+        category: formData.category,
+        name: formData.raise_name,
+        description: formData.raise_description,
+        target_amount: parseFloat(formData.target_raise),
+        status: 'active'
+      };
+
+      const { error: raisesError } = await supabase
+        .from('raises')
+        .insert(raisesData);
+
+      if (raisesError) throw raisesError;
+
       try {
         const memo = await generateDealMemo(raise);
-        console.log('Generated memo:', memo);
+        if (memo) {
+          const { error: updateError } = await supabase
+            .from('raise_equity')
+            .update({ memo })
+            .eq('id', raise.id);
 
-        const { error: updateError } = await supabase
-          .from('raise_equity')
-          .update({ memo })
-          .eq('id', raise.id);
-
-        if (updateError) throw updateError;
-
-        toast.success("Raise created successfully with deal memo");
+          if (updateError) throw updateError;
+        }
       } catch (memoError) {
         console.error('Error with memo generation:', memoError);
-        toast.success("Raise created successfully, but there was an issue generating the deal memo");
+        // Continue without memo if generation fails
       }
 
+      toast.success("Raise created successfully");
       handleClose();
     } catch (error: any) {
       console.error('Error creating raise:', error);
