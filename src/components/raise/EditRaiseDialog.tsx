@@ -9,6 +9,7 @@ import { RaiseDialogHeader } from "./dialog/RaiseDialogHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DetailedFormStep } from "./steps/DetailedFormStep";
 import { useRaiseForm } from "./RaiseFormContext";
+import type { RaiseType, RaiseCategory } from "./RaiseFormContext";
 
 interface EditRaiseDialogProps {
   open: boolean;
@@ -29,17 +30,18 @@ export function EditRaiseDialog({
   const [isProcessing, setIsProcessing] = useState(false);
   const { formData, updateFormData } = useRaiseForm();
 
-  // Initialize form data with project values when dialog opens
   useEffect(() => {
     if (open && project) {
+      const projectType = project.type as RaiseType;
+      const projectCategory = project.category as RaiseCategory;
+      
       updateFormData({
-        type: project.type as "equity" | "debt",
-        category: project.category as "fund_direct_deal" | "startup",
+        type: projectType,
+        category: projectCategory,
         raise_name: project.name,
         target_raise: project.target_amount?.toString() || "",
         raise_description: project.description || "",
         memo: project.memo || null,
-        // Initialize other fields as needed
         asset_classes: [],
         investment_type: "",
         city: "",
@@ -102,8 +104,8 @@ export function EditRaiseDialog({
         .from('raises')
         .update({
           name: formData.raise_name,
-          type: formData.type,
-          category: formData.category,
+          type: formData.type as RaiseType,
+          category: formData.category as RaiseCategory,
           description: formData.raise_description,
           target_amount: parseInt(formData.target_raise),
           pitch_deck_url: pitchDeckUrl,

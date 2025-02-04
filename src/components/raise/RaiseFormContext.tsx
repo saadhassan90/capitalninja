@@ -17,9 +17,12 @@ export type AssetClassType =
   | "Impact Investing"
   | "Other";
 
+export type RaiseType = "equity" | "debt";
+export type RaiseCategory = "fund_direct_deal" | "startup";
+
 export interface RaiseFormData {
-  type: "equity" | "debt" | "";
-  category: "fund_direct_deal" | "startup" | "";
+  type: RaiseType | "";
+  category: RaiseCategory | "";
   name: string;
   targetAmount: string;
   assetClass: string;
@@ -54,8 +57,8 @@ export interface RaiseFormData {
   term_lockup: string;
   raise_name: string;
   target_raise: string;
-  file: File | null;  // Added this property
-  memo: string | null;  // Added this property
+  file: File | null;
+  memo: string | null;
 }
 
 const initialFormData: RaiseFormData = {
@@ -95,8 +98,8 @@ const initialFormData: RaiseFormData = {
   term_lockup: "",
   raise_name: "",
   target_raise: "",
-  file: null,  // Added initial value
-  memo: null,  // Added initial value
+  file: null,
+  memo: null,
 };
 
 interface RaiseFormContextType {
