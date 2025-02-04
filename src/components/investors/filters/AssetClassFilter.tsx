@@ -7,12 +7,13 @@ interface AssetClassFilterProps {
 
 export function AssetClassFilter({ onAssetClassChange }: AssetClassFilterProps) {
   const assetClasses = [
-    "Private Equity",
-    "Venture Capital",
     "Real Estate",
+    "Private Equity",
     "Private Credit",
-    "Infrastructure",
     "Energy",
+    "Infrastructure",
+    "Venture Capital",
+    "Startups",
     "Fund of Funds",
     "Special Opportunities",
     "Private Debt",

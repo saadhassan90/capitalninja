@@ -736,7 +736,7 @@ export type Database = {
       raise_equity: {
         Row: {
           additional_fees: string | null
-          asset_classes: string[]
+          asset_classes: Database["public"]["Enums"]["asset_class_type"][]
           asset_management_fee: number | null
           asset_management_fees_type: string | null
           audience: string[]
@@ -773,7 +773,7 @@ export type Database = {
         }
         Insert: {
           additional_fees?: string | null
-          asset_classes: string[]
+          asset_classes: Database["public"]["Enums"]["asset_class_type"][]
           asset_management_fee?: number | null
           asset_management_fees_type?: string | null
           audience: string[]
@@ -810,7 +810,7 @@ export type Database = {
         }
         Update: {
           additional_fees?: string | null
-          asset_classes?: string[]
+          asset_classes?: Database["public"]["Enums"]["asset_class_type"][]
           asset_management_fee?: number | null
           asset_management_fees_type?: string | null
           audience?: string[]
@@ -1184,6 +1184,22 @@ export type Database = {
     }
     Enums: {
       admin_role: "super_admin" | "admin" | "support"
+      asset_class_type:
+        | "Real Estate"
+        | "Private Equity"
+        | "Private Credit"
+        | "Energy"
+        | "Infrastructure"
+        | "Venture Capital"
+        | "Startups"
+        | "Other"
+        | "Fund of Funds"
+        | "Special Opportunities"
+        | "Private Debt"
+        | "Natural Resources"
+        | "Secondaries"
+        | "Co-Investment"
+        | "Impact Investing"
       campaign_status:
         | "draft"
         | "scheduled"

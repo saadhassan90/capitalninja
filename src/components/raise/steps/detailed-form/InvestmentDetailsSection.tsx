@@ -6,10 +6,19 @@ import { useRaiseForm } from "../../RaiseFormContext";
 const assetClassOptions = [
   "Real Estate",
   "Private Equity",
-  "Venture Capital",
+  "Private Credit",
+  "Energy",
   "Infrastructure",
+  "Venture Capital",
+  "Startups",
+  "Fund of Funds",
+  "Special Opportunities",
   "Private Debt",
-  "Hedge Funds",
+  "Natural Resources",
+  "Secondaries",
+  "Co-Investment",
+  "Impact Investing",
+  "Other"
 ];
 
 const geographicOptions = [
