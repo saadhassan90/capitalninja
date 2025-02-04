@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { FileText } from "lucide-react";
 import type { RaiseProject } from "./types";
+import { RaiseDialogHeader } from "./dialog/RaiseDialogHeader";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { DetailedFormStep } from "./steps/DetailedFormStep";
+import { useRaiseForm } from "./RaiseFormContext";
 
 interface EditRaiseDialogProps {
   open: boolean;
@@ -26,18 +28,19 @@ export function EditRaiseDialog({
 }: EditRaiseDialogProps) {
   const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: project.name,
-    targetAmount: project.target_amount?.toString() || "",
-    file: null as File | null,
-    memo: project.memo || ""
-  });
+  const { formData, updateFormData } = useRaiseForm();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData(prev => ({ ...prev, file: e.target.files![0] }));
+  // Initialize form data with project values when dialog opens
+  useState(() => {
+    if (open) {
+      updateFormData({
+        raise_name: project.name,
+        target_raise: project.target_amount?.toString() || "",
+        type: project.type as "equity" | "debt",
+        category: project.category as "fund_direct_deal" | "startup"
+      });
     }
-  };
+  });
 
   const handleSave = async () => {
     if (!user) return;
@@ -67,8 +70,8 @@ export function EditRaiseDialog({
       const { error } = await supabase
         .from('raises')
         .update({
-          name: formData.name,
-          target_amount: parseInt(formData.targetAmount),
+          name: formData.raise_name,
+          target_amount: parseInt(formData.target_raise),
           pitch_deck_url: pitchDeckUrl,
           memo: formData.memo
         })
@@ -88,76 +91,20 @@ export function EditRaiseDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{readOnly ? "View Raise" : "Edit Raise"}</DialogTitle>
-          <p className="text-sm text-muted-foreground">
-            {readOnly ? "Viewing" : "Editing"} details for <span className="font-medium text-foreground">{project.name}</span>
-          </p>
-        </DialogHeader>
-
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              readOnly={readOnly}
-            />
+      <DialogContent className="sm:max-w-[800px] h-[90vh] flex flex-col p-0">
+        <RaiseDialogHeader step={1} totalSteps={1} />
+        
+        <ScrollArea className="flex-1 px-6">
+          <div className="py-4">
+            <DetailedFormStep />
           </div>
+        </ScrollArea>
 
-          <div className="space-y-2">
-            <Label htmlFor="targetAmount">Target Amount</Label>
-            <Input
-              id="targetAmount"
-              type="number"
-              value={formData.targetAmount}
-              onChange={(e) => setFormData(prev => ({ ...prev, targetAmount: e.target.value }))}
-              readOnly={readOnly}
-            />
-          </div>
-
-          {!readOnly && (
-            <div className="space-y-2">
-              <Label htmlFor="pitchDeck">Pitch Deck</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="pitchDeck"
-                  type="file"
-                  accept=".pdf,.ppt,.pptx"
-                  onChange={handleFileChange}
-                />
-                {project.pitch_deck_url && !formData.file && (
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => window.open(project.pitch_deck_url, '_blank')}
-                  >
-                    <FileText className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="memo">Deal Memo</Label>
-            <textarea
-              id="memo"
-              className="w-full min-h-[200px] p-3 rounded-md border border-input bg-background"
-              value={formData.memo}
-              onChange={(e) => setFormData(prev => ({ ...prev, memo: e.target.value }))}
-              placeholder="Enter deal memo content..."
-              readOnly={readOnly}
-            />
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-2 mt-6">
+        <div className="flex justify-end p-6 border-t">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
+            className="mr-2"
           >
             {readOnly ? "Close" : "Cancel"}
           </Button>
