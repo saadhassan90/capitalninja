@@ -751,7 +751,7 @@ export type Database = {
           economic_drivers: string[] | null
           equity_multiple: number | null
           first_close: string | null
-          geographic_focus: string[]
+          geographic_focus: Database["public"]["Enums"]["geographic_region_type"][]
           gp_capital: number | null
           id: string
           investment_type: string
@@ -788,7 +788,7 @@ export type Database = {
           economic_drivers?: string[] | null
           equity_multiple?: number | null
           first_close?: string | null
-          geographic_focus: string[]
+          geographic_focus: Database["public"]["Enums"]["geographic_region_type"][]
           gp_capital?: number | null
           id?: string
           investment_type: string
@@ -825,7 +825,7 @@ export type Database = {
           economic_drivers?: string[] | null
           equity_multiple?: number | null
           first_close?: string | null
-          geographic_focus?: string[]
+          geographic_focus?: Database["public"]["Enums"]["geographic_region_type"][]
           gp_capital?: number | null
           id?: string
           investment_type?: string
@@ -1206,6 +1206,11 @@ export type Database = {
         | "sending"
         | "completed"
         | "failed"
+      geographic_region_type:
+        | "North America - US"
+        | "North America - Canada"
+        | "North America - Mexico"
+        | "North America - Caribbean"
       investment_category: "fund_direct_deal" | "startup"
       raise_type: "equity" | "debt"
       subscription_plan: "free" | "basic" | "outreach" | "enterprise"

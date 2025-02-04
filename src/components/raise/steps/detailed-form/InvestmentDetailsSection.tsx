@@ -2,7 +2,6 @@ import { Label } from "@/components/ui/label";
 import { useRaiseForm } from "../../RaiseFormContext";
 import type { AssetClassType } from "../../RaiseFormContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MultiSelect } from "@/components/ui/multi-select";
 
 // Sort asset classes alphabetically
 const assetClassOptions: AssetClassType[] = [
@@ -24,13 +23,23 @@ const assetClassOptions: AssetClassType[] = [
 ];
 
 const geographicOptions = [
-  "North America",
-  "Europe",
-  "Asia",
-  "Latin America",
-  "Middle East",
-  "Africa",
-].sort();
+  {
+    category: "United States",
+    regions: ["North America - US"]
+  },
+  {
+    category: "Canada",
+    regions: ["North America - Canada"]
+  },
+  {
+    category: "Mexico",
+    regions: ["North America - Mexico"]
+  },
+  {
+    category: "Caribbean",
+    regions: ["North America - Caribbean"]
+  }
+];
 
 export function InvestmentDetailsSection() {
   const { formData, updateFormData } = useRaiseForm();
@@ -74,12 +83,28 @@ export function InvestmentDetailsSection() {
 
       <div className="space-y-2">
         <Label>Geographic Focus</Label>
-        <MultiSelect
-          options={geographicOptions}
-          selected={formData.geographic_focus}
-          onChange={(value) => updateFormData({ geographic_focus: value })}
-          placeholder="Select regions"
-        />
+        <Select
+          value={formData.geographic_focus?.[0] || ""}
+          onValueChange={(value) => updateFormData({ geographic_focus: [value] })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select region" />
+          </SelectTrigger>
+          <SelectContent>
+            {geographicOptions.map((group) => (
+              <div key={group.category}>
+                <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                  {group.category}
+                </div>
+                {group.regions.map((region) => (
+                  <SelectItem key={region} value={region}>
+                    {region}
+                  </SelectItem>
+                ))}
+              </div>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
