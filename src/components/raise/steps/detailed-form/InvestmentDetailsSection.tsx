@@ -3,23 +3,25 @@ import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useRaiseForm } from "../../RaiseFormContext";
 import type { AssetClassType } from "../../RaiseFormContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+// Sort asset classes alphabetically
 const assetClassOptions: AssetClassType[] = [
-  "Real Estate",
-  "Private Equity",
-  "Private Credit",
-  "Energy",
-  "Infrastructure",
-  "Venture Capital",
-  "Startups",
-  "Fund of Funds",
-  "Special Opportunities",
-  "Private Debt",
-  "Natural Resources",
-  "Secondaries",
   "Co-Investment",
+  "Energy",
+  "Fund of Funds",
   "Impact Investing",
-  "Other"
+  "Infrastructure",
+  "Natural Resources",
+  "Other",
+  "Private Credit",
+  "Private Debt",
+  "Private Equity",
+  "Real Estate",
+  "Secondaries",
+  "Special Opportunities",
+  "Startups",
+  "Venture Capital"
 ];
 
 const geographicOptions = [
@@ -29,7 +31,7 @@ const geographicOptions = [
   "Latin America",
   "Middle East",
   "Africa",
-];
+].sort();
 
 export function InvestmentDetailsSection() {
   const { formData, updateFormData } = useRaiseForm();
@@ -48,12 +50,18 @@ export function InvestmentDetailsSection() {
 
       <div className="space-y-2">
         <Label htmlFor="investment_type">Investment Type</Label>
-        <Input
-          id="investment_type"
+        <Select 
           value={formData.investment_type}
-          onChange={(e) => updateFormData({ investment_type: e.target.value })}
-          placeholder="Direct or Indirect"
-        />
+          onValueChange={(value) => updateFormData({ investment_type: value })}
+        >
+          <SelectTrigger id="investment_type">
+            <SelectValue placeholder="Select investment type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="direct">Direct</SelectItem>
+            <SelectItem value="indirect">Indirect</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">
