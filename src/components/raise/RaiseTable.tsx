@@ -2,10 +2,8 @@ import { useState } from "react";
 import { RaiseCardContent } from "./card/RaiseCardContent";
 import { RaiseCardMenu } from "./card/RaiseCardMenu";
 import { Card } from "@/components/ui/card";
-import { EditRaiseDialog } from "./EditRaiseDialog";
 import { MemoDialog } from "./card/MemoDialog";
 import type { RaiseProject } from "./types";
-import { RaiseFormProvider } from "./RaiseFormContext";
 
 interface RaiseTableProps {
   raises: RaiseProject[];
@@ -14,13 +12,7 @@ interface RaiseTableProps {
 
 export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
   const [selectedRaise, setSelectedRaise] = useState<RaiseProject | null>(null);
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const [showMemoDialog, setShowMemoDialog] = useState(false);
-
-  const handleEdit = (raise: RaiseProject) => {
-    setSelectedRaise(raise);
-    setShowEditDialog(true);
-  };
 
   const handleMemoClick = (raise: RaiseProject) => {
     setSelectedRaise(raise);
@@ -41,7 +33,6 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
             menu={
               <RaiseCardMenu
                 project={raise}
-                onEdit={() => handleEdit(raise)}
                 onUpdate={onUpdate}
               />
             }
@@ -51,21 +42,11 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
       ))}
 
       {selectedRaise && (
-        <>
-          <RaiseFormProvider>
-            <EditRaiseDialog
-              open={showEditDialog}
-              onOpenChange={setShowEditDialog}
-              project={selectedRaise}
-              onUpdate={onUpdate}
-            />
-          </RaiseFormProvider>
-          <MemoDialog
-            open={showMemoDialog}
-            onOpenChange={setShowMemoDialog}
-            project={selectedRaise}
-          />
-        </>
+        <MemoDialog
+          open={showMemoDialog}
+          onOpenChange={setShowMemoDialog}
+          project={selectedRaise}
+        />
       )}
     </div>
   );
