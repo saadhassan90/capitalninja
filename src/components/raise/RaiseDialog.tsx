@@ -22,6 +22,7 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
   const { toast } = useToast();
   const { user } = useAuth();
   const { formData } = useRaiseForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const totalSteps = 2;
   const progress = ((step - 1) / (totalSteps - 1)) * 100;
@@ -31,37 +32,24 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
       return formData.category !== "" && formData.type !== "";
     }
     // Validate all required fields for step 2
-    if (step === 2) {
-      if (formData.category === "startup" && formData.type === "equity") {
-        return !!(
-          formData.raise_name &&
-          formData.target_raise &&
-          formData.raise_stage &&
-          formData.raise_description &&
-          formData.primary_contact &&
-          formData.contact_email
-        );
-      }
-      return !!(
-        formData.raise_name &&
-        formData.target_raise &&
-        formData.minimum_ticket_size &&
-        formData.capital_stack?.length &&
-        formData.gp_capital &&
-        formData.carried_interest &&
-        formData.primary_contact &&
-        formData.contact_email &&
-        formData.raise_description &&
-        formData.city &&
-        formData.state &&
-        formData.country &&
-        formData.assetClass &&
-        formData.investment_type &&
-        formData.raise_open_date &&
-        formData.close_date
-      );
-    }
-    return false;
+    return !!(
+      formData.raise_name &&
+      formData.target_raise &&
+      formData.minimum_ticket_size &&
+      formData.capital_stack?.length &&
+      formData.gp_capital &&
+      formData.carried_interest &&
+      formData.primary_contact &&
+      formData.contact_email &&
+      formData.raise_description &&
+      formData.city &&
+      formData.state &&
+      formData.country &&
+      formData.assetClass &&
+      formData.investment_type &&
+      formData.raise_open_date &&
+      formData.close_date
+    );
   };
 
   const handleNext = () => {
@@ -88,6 +76,20 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
   const handleClose = () => {
     setStep(1);
     onOpenChange(false);
+  };
+
+  const generateDealMemo = async (raiseData: any) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-deal-memo', {
+        body: { raiseData }
+      });
+
+      if (error) throw error;
+      return data.memo;
+    } catch (error) {
+      console.error('Error generating deal memo:', error);
+      throw error;
+    }
   };
 
   const prepareInsertData = () => {
@@ -142,19 +144,35 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
       return;
     }
 
-    const insertData = prepareInsertData();
-    if (!insertData) return;
+    setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
-        .from('raise_equity')
-        .insert(insertData);
+      const insertData = prepareInsertData();
+      if (!insertData) return;
 
-      if (error) throw error;
+      // First insert the raise data
+      const { data: raise, error: raiseError } = await supabase
+        .from('raise_equity')
+        .insert(insertData)
+        .select()
+        .single();
+
+      if (raiseError) throw raiseError;
+
+      // Generate the deal memo
+      const memo = await generateDealMemo(raise);
+
+      // Update the raise with the generated memo
+      const { error: updateError } = await supabase
+        .from('raise_equity')
+        .update({ memo })
+        .eq('id', raise.id);
+
+      if (updateError) throw updateError;
 
       toast({
         title: "Success",
-        description: "Raise created successfully",
+        description: "Raise created successfully with deal memo",
       });
       handleClose();
     } catch (error) {
@@ -164,6 +182,8 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
         description: "Failed to create raise",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -222,9 +242,9 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
           ) : (
             <Button 
               onClick={handleSubmit}
-              disabled={!isStepValid()}
+              disabled={!isStepValid() || isSubmitting}
             >
-              Create Raise
+              {isSubmitting ? "Creating..." : "Create Raise"}
             </Button>
           )}
         </div>
