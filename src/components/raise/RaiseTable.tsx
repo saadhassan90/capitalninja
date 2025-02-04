@@ -29,12 +29,20 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
 
   const handleDelete = async (id: string) => {
     try {
-      const { error } = await supabase
+      // Delete from both tables to maintain consistency
+      const { error: raiseError } = await supabase
         .from('raises')
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (raiseError) throw raiseError;
+
+      const { error: raiseEquityError } = await supabase
+        .from('raise_equity')
+        .delete()
+        .eq('id', id);
+
+      if (raiseEquityError) throw raiseEquityError;
 
       toast({
         title: "Success",
@@ -44,6 +52,7 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
       onUpdate();
       setSelectedRaises(prev => prev.filter(raiseId => raiseId !== id));
     } catch (error: any) {
+      console.error('Error deleting raise:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to delete project",
@@ -54,12 +63,20 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
 
   const handleBulkDelete = async () => {
     try {
-      const { error } = await supabase
+      // Delete from both tables to maintain consistency
+      const { error: raisesError } = await supabase
         .from('raises')
         .delete()
         .in('id', selectedRaises);
 
-      if (error) throw error;
+      if (raisesError) throw raisesError;
+
+      const { error: raiseEquityError } = await supabase
+        .from('raise_equity')
+        .delete()
+        .in('id', selectedRaises);
+
+      if (raiseEquityError) throw raiseEquityError;
 
       toast({
         title: "Success",
@@ -69,6 +86,7 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
       onUpdate();
       setSelectedRaises([]);
     } catch (error: any) {
+      console.error('Error bulk deleting raises:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to delete projects",
@@ -93,28 +111,14 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
     }
   };
 
-  const handleGenerateMemo = async () => {
-    // This will be implemented later with OpenAI integration
-    toast({
-      title: "Coming Soon",
-      description: "Memo generation will be implemented shortly",
-    });
-  };
-
-  const handleEditMemo = () => {
-    // This will be implemented later
-    toast({
-      title: "Coming Soon",
-      description: "Memo editing will be implemented shortly",
-    });
-  };
-
   return (
     <div className="space-y-4">
-      <BulkActions 
-        selectedCount={selectedRaises.length}
-        onBulkDelete={handleBulkDelete}
-      />
+      {selectedRaises.length > 0 && (
+        <BulkActions 
+          selectedCount={selectedRaises.length}
+          onBulkDelete={handleBulkDelete}
+        />
+      )}
 
       <div className="rounded-md border">
         <Table>
@@ -170,8 +174,6 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
             onOpenChange={setMemoDialogOpen}
             projectName={selectedRaise.name}
             memo={selectedRaise.memo}
-            onGenerate={handleGenerateMemo}
-            onEdit={handleEditMemo}
           />
         </>
       )}

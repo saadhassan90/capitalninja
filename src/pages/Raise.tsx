@@ -12,13 +12,19 @@ const Raise = () => {
   const { data: raises, refetch } = useQuery({
     queryKey: ['raises'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      console.log('Fetching raises...');
+      const { data: raisesData, error } = await supabase
         .from('raises')
         .select('*')
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
-      return data || [];
+      if (error) {
+        console.error('Error fetching raises:', error);
+        throw error;
+      }
+      
+      console.log('Fetched raises:', raisesData);
+      return raisesData || [];
     }
   });
 
@@ -47,7 +53,12 @@ const Raise = () => {
 
       <RaiseDialog 
         open={showDialog} 
-        onOpenChange={setShowDialog}
+        onOpenChange={(open) => {
+          setShowDialog(open);
+          if (!open) {
+            refetch(); // Refetch data when dialog closes
+          }
+        }}
       />
     </div>
   );
