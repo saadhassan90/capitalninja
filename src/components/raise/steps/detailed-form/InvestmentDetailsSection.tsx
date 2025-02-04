@@ -67,8 +67,10 @@ export function InvestmentDetailsSection() {
         <Label>Geographic Focus</Label>
         <MultiCombobox
           options={geographyOptions}
-          selected={formData.geographic_focus}
-          onChange={(values) => updateFormData({ geographic_focus: values })}
+          selected={formData.geographic_focus.map(g => g.toString())}
+          onChange={(values) => updateFormData({ 
+            geographic_focus: values as Database['public']['Enums']['geographic_region_type'][] 
+          })}
           placeholder="Select regions..."
         />
       </div>

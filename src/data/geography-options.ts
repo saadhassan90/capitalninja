@@ -1,14 +1,9 @@
 import type { Database } from "@/integrations/supabase/types";
+import type { ComboboxOption } from "@/components/ui/multi-combobox";
 
 type GeographicRegionType = Database['public']['Enums']['geographic_region_type'];
 
-interface GeographyOption {
-  value: GeographicRegionType;
-  label: string;
-  group?: string;
-}
-
-export const geographyOptions: GeographyOption[] = [
+export const geographyOptions: ComboboxOption[] = [
   // North America
   { value: "North America - US", label: "United States", group: "North America" },
   { value: "North America - Canada", label: "Canada", group: "North America" },
@@ -45,4 +40,4 @@ export const geographyOptions: GeographyOption[] = [
   { value: "Other - Global", label: "Global", group: "Other" }
 ];
 
-export type { GeographyOption, GeographicRegionType };
+export type { GeographicRegionType };
