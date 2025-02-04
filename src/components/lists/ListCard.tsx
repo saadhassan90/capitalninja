@@ -4,9 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ListInvestorsTable } from "./ListInvestorsTable";
 import { ListCardMenu } from "./ListCardMenu";
 import { ListEditDialog } from "./ListEditDialog";
-import { useNavigate } from "react-router-dom";
 
 interface List {
   id: string;
@@ -22,7 +23,7 @@ interface ListCardProps {
 
 function ListCardComponent({ list, onDelete }: ListCardProps) {
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const [showViewDialog, setShowViewDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
 
   const { data: investorCount } = useQuery({
@@ -66,26 +67,18 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
     }
   };
 
-  const handleCardClick = () => {
-    navigate(`/lists/${list.id}`);
-  };
-
   return (
     <>
-      <Card 
-        className="border-gray-200 hover:shadow-md transition-shadow cursor-pointer" 
-        onClick={handleCardClick}
-      >
+      <Card className="border-gray-200 hover:shadow-md transition-shadow">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">{list.name}</CardTitle>
-            <div onClick={(e) => e.stopPropagation()}>
-              <ListCardMenu
-                listName={list.name}
-                onEdit={() => setShowEditDialog(true)}
-                onDelete={handleDelete}
-              />
-            </div>
+            <ListCardMenu
+              listName={list.name}
+              onView={() => setShowViewDialog(true)}
+              onEdit={() => setShowEditDialog(true)}
+              onDelete={handleDelete}
+            />
           </div>
           {list.description && (
             <CardDescription className="text-muted-foreground mt-2">
@@ -104,6 +97,15 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{list.name}</DialogTitle>
+          </DialogHeader>
+          <ListInvestorsTable listId={list.id} />
+        </DialogContent>
+      </Dialog>
 
       <ListEditDialog
         open={showEditDialog}
