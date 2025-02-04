@@ -56,7 +56,11 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
     assetClass: 'Other', // Default to 'Other' as it's a valid AssetClassType
     investment_type: '',
     city: '',
-    state: '',const handleSubmit = async () => {
+    state: '',
+    country: ''
+  });
+
+  const handleSubmit = async () => {
     if (!user) {
       toast.error("You must be logged in to update a raise");
       return;
@@ -89,7 +93,8 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
       if (error) throw error;
 
       toast.success("Raise updated successfully");
-      );
+      onUpdate?.();
+      onOpenChange(false);
     } catch (error: any) {
       console.error('Error updating raise:', error);
       toast.error(error.message || "Failed to update raise");
