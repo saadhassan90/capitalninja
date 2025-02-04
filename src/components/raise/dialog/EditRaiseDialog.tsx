@@ -12,6 +12,7 @@ import { InvestmentDetailsSection } from "../steps/detailed-form/InvestmentDetai
 import { ContactSection } from "../steps/detailed-form/ContactSection";
 import type { RaiseProject } from "../types";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import type { AssetClassType } from "../types/raiseTypes";
 
 interface EditRaiseDialogProps {
   open: boolean;
@@ -34,7 +35,7 @@ export function EditRaiseDialog({ open, onOpenChange, project, onUpdate }: EditR
     gp_capital: '',
     carried_interest: '',
     asset_management_fee: '',
-    assetClass: '',
+    assetClass: '' as AssetClassType,
     investment_type: '',
     city: '',
     state: '',
