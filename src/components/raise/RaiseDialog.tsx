@@ -50,7 +50,7 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
     try {
       const { error } = await supabase
         .from('raise_equity')
-        .insert([{
+        .insert({
           raise_name: formData.raise_name,
           target_raise: parseFloat(formData.target_raise),
           asset_classes: formData.asset_classes,
@@ -84,7 +84,7 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
           banner: formData.banner,
           term_lockup: formData.term_lockup ? parseInt(formData.term_lockup) : null,
           user_id: user.id
-        }]);
+        });
 
       if (error) throw error;
 

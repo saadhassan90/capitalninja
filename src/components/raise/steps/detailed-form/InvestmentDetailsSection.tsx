@@ -2,8 +2,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useRaiseForm } from "../../RaiseFormContext";
+import type { AssetClassType } from "../../RaiseFormContext";
 
-const assetClassOptions = [
+const assetClassOptions: AssetClassType[] = [
   "Real Estate",
   "Private Equity",
   "Private Credit",
@@ -39,8 +40,8 @@ export function InvestmentDetailsSection() {
         <Label>Asset Classes</Label>
         <MultiSelect
           options={assetClassOptions}
-          selected={formData.asset_classes || []}
-          onChange={(value) => updateFormData({ asset_classes: value })}
+          selected={formData.asset_classes}
+          onChange={(value) => updateFormData({ asset_classes: value as AssetClassType[] })}
           placeholder="Select asset classes"
         />
       </div>
@@ -49,7 +50,7 @@ export function InvestmentDetailsSection() {
         <Label htmlFor="investment_type">Investment Type</Label>
         <Input
           id="investment_type"
-          value={formData.investment_type || ""}
+          value={formData.investment_type}
           onChange={(e) => updateFormData({ investment_type: e.target.value })}
           placeholder="Direct or Indirect"
         />
@@ -59,7 +60,7 @@ export function InvestmentDetailsSection() {
         <Label>Geographic Focus</Label>
         <MultiSelect
           options={geographicOptions}
-          selected={formData.geographic_focus || []}
+          selected={formData.geographic_focus}
           onChange={(value) => updateFormData({ geographic_focus: value })}
           placeholder="Select regions"
         />
