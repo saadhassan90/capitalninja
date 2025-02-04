@@ -743,15 +743,16 @@ export type Database = {
           banner: string | null
           capital_stack: string[]
           carried_interest: number | null
+          city: string
           close_date: string | null
           company_contact: string | null
           contact_email: string
+          country: string
           created_at: string | null
           domicile: string | null
           economic_drivers: string[] | null
           equity_multiple: number | null
           first_close: string | null
-          geographic_focus: Database["public"]["Enums"]["geographic_region_type"][]
           gp_capital: number | null
           id: string
           investment_type: string
@@ -765,6 +766,7 @@ export type Database = {
           raise_stage: string
           reups: number | null
           risks: string[] | null
+          state: string
           strategy: string[] | null
           target_raise: number
           tax_incentives: string | null
@@ -780,15 +782,16 @@ export type Database = {
           banner?: string | null
           capital_stack: string[]
           carried_interest?: number | null
+          city: string
           close_date?: string | null
           company_contact?: string | null
           contact_email: string
+          country: string
           created_at?: string | null
           domicile?: string | null
           economic_drivers?: string[] | null
           equity_multiple?: number | null
           first_close?: string | null
-          geographic_focus: Database["public"]["Enums"]["geographic_region_type"][]
           gp_capital?: number | null
           id?: string
           investment_type: string
@@ -802,6 +805,7 @@ export type Database = {
           raise_stage: string
           reups?: number | null
           risks?: string[] | null
+          state: string
           strategy?: string[] | null
           target_raise: number
           tax_incentives?: string | null
@@ -817,15 +821,16 @@ export type Database = {
           banner?: string | null
           capital_stack?: string[]
           carried_interest?: number | null
+          city?: string
           close_date?: string | null
           company_contact?: string | null
           contact_email?: string
+          country?: string
           created_at?: string | null
           domicile?: string | null
           economic_drivers?: string[] | null
           equity_multiple?: number | null
           first_close?: string | null
-          geographic_focus?: Database["public"]["Enums"]["geographic_region_type"][]
           gp_capital?: number | null
           id?: string
           investment_type?: string
@@ -839,6 +844,7 @@ export type Database = {
           raise_stage?: string
           reups?: number | null
           risks?: string[] | null
+          state?: string
           strategy?: string[] | null
           target_raise?: number
           tax_incentives?: string | null

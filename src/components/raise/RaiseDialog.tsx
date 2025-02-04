@@ -60,13 +60,13 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
       close_date: formData.close_date ? formatDateForSupabase(formData.close_date) : null,
       company_contact: formData.company_contact || null,
       contact_email: formData.contact_email,
+      city: formData.city,
+      state: formData.state,
+      country: formData.country,
       domicile: formData.domicile || null,
       economic_drivers: formData.economic_drivers || [],
       equity_multiple: formData.equity_multiple ? parseFloat(formData.equity_multiple) : null,
       first_close: formData.first_close ? formatDateForSupabase(formData.first_close) : null,
-      city: formData.city,
-      state: formData.state,
-      country: formData.country,
       gp_capital: formData.gp_capital ? parseFloat(formData.gp_capital) : null,
       investment_type: formData.investment_type,
       irr_projections: formData.irr_projections ? parseFloat(formData.irr_projections) : null,
@@ -132,7 +132,7 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
     <DialogContent className="sm:max-w-[800px] h-[90vh] flex flex-col p-0">
       <DialogHeader className="p-6 pb-2">
         <DialogTitle>Create New Raise</DialogTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground mt-2">
           Set up your fundraising project in just a few steps
         </p>
       </DialogHeader>
