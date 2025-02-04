@@ -9,7 +9,8 @@ import { RaiseDialogHeader } from "./dialog/RaiseDialogHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DetailedFormStep } from "./steps/DetailedFormStep";
 import { useRaiseForm } from "./RaiseFormContext";
-import type { RaiseType, RaiseCategory } from "./RaiseFormContext";
+import type { RaiseType, RaiseCategory } from "./types/raiseTypes";
+import { uploadPitchDeck } from "./services/fileUploadService";
 
 interface EditRaiseDialogProps {
   open: boolean;
@@ -84,20 +85,7 @@ export function EditRaiseDialog({
       let pitchDeckUrl = project.pitch_deck_url;
 
       if (formData.file) {
-        const fileExt = formData.file.name.split('.').pop();
-        const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('pitch_decks')
-          .upload(filePath, formData.file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('pitch_decks')
-          .getPublicUrl(filePath);
-
-        pitchDeckUrl = publicUrl;
+        pitchDeckUrl = await uploadPitchDeck(formData.file, user.id);
       }
 
       const { error } = await supabase
