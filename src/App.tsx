@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Suspense, lazy } from "react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Lazy load pages
 const Lists = lazy(() => import("@/pages/Lists"));
@@ -33,24 +35,28 @@ function App() {
                 path="/"
                 element={
                   <ProtectedRoute>
-                    <div className="flex h-screen">
-                      <AppSidebar />
-                      <main className="flex-1 overflow-y-auto bg-background">
-                        <Suspense fallback={<div>Loading...</div>}>
-                          <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="/lists" element={<Lists />} />
-                            <Route path="/investors" element={<Investors />} />
-                            <Route path="/raise" element={<Raise />} />
-                            <Route path="/campaigns" element={<Campaigns />} />
-                            <Route path="/enrichment" element={<Enrichment />} />
-                            <Route path="/profile" element={<Profile />} />
-                            <Route path="/settings" element={<Settings />} />
-                            <Route path="/team" element={<Team />} />
-                          </Routes>
-                        </Suspense>
-                      </main>
-                    </div>
+                    <TooltipProvider delayDuration={0}>
+                      <SidebarProvider>
+                        <div className="flex h-screen w-full">
+                          <AppSidebar />
+                          <main className="flex-1 overflow-y-auto bg-background">
+                            <Suspense fallback={<div>Loading...</div>}>
+                              <Routes>
+                                <Route path="/" element={<Dashboard />} />
+                                <Route path="/lists" element={<Lists />} />
+                                <Route path="/investors" element={<Investors />} />
+                                <Route path="/raise" element={<Raise />} />
+                                <Route path="/campaigns" element={<Campaigns />} />
+                                <Route path="/enrichment" element={<Enrichment />} />
+                                <Route path="/profile" element={<Profile />} />
+                                <Route path="/settings" element={<Settings />} />
+                                <Route path="/team" element={<Team />} />
+                              </Routes>
+                            </Suspense>
+                          </main>
+                        </div>
+                      </SidebarProvider>
+                    </TooltipProvider>
                   </ProtectedRoute>
                 }
               />
