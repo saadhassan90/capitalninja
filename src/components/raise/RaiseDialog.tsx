@@ -17,7 +17,7 @@ interface RaiseDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
+function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) => void }) {
   const [step, setStep] = useState(1);
   const { toast } = useToast();
   const { user } = useAuth();
@@ -48,17 +48,18 @@ export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
 
     try {
       const { error } = await supabase.from('raise_equity').insert({
+        user_id: user.id,
         raise_name: formData.raise_name,
         target_raise: parseFloat(formData.target_raise),
-        asset_classes: formData.asset_classes,
+        asset_classes: formData.asset_classes || [],
         investment_type: formData.investment_type,
-        geographic_focus: formData.geographic_focus,
+        geographic_focus: formData.geographic_focus || [],
         raise_stage: formData.raise_stage,
         raise_open_date: formData.raise_open_date,
         close_date: formData.close_date,
         first_close: formData.first_close,
         minimum_ticket_size: parseFloat(formData.minimum_ticket_size),
-        capital_stack: formData.capital_stack,
+        capital_stack: formData.capital_stack || [],
         gp_capital: formData.gp_capital ? parseFloat(formData.gp_capital) : null,
         carried_interest: formData.carried_interest ? parseFloat(formData.carried_interest) : null,
         irr_projections: formData.irr_projections ? parseFloat(formData.irr_projections) : null,
@@ -69,18 +70,17 @@ export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
         additional_fees: formData.additional_fees,
         tax_incentives: formData.tax_incentives,
         domicile: formData.domicile,
-        strategy: formData.strategy,
-        economic_drivers: formData.economic_drivers,
-        risks: formData.risks,
+        strategy: formData.strategy || [],
+        economic_drivers: formData.economic_drivers || [],
+        risks: formData.risks || [],
         reups: formData.reups ? parseInt(formData.reups) : null,
-        audience: formData.audience,
+        audience: formData.audience || [],
         primary_contact: formData.primary_contact,
         contact_email: formData.contact_email,
         company_contact: formData.company_contact,
         raise_description: formData.raise_description,
         banner: formData.banner,
-        term_lockup: formData.term_lockup ? parseInt(formData.term_lockup) : null,
-        user_id: user.id
+        term_lockup: formData.term_lockup ? parseInt(formData.term_lockup) : null
       });
 
       if (error) throw error;
@@ -116,49 +116,55 @@ export function RaiseDialog({ open, onOpenChange }: RaiseDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[800px]">
-        <DialogHeader>
-          <DialogTitle>Create New Raise</DialogTitle>
-          <p className="text-sm text-muted-foreground">
-            Set up your fundraising project in just a few steps
-          </p>
-        </DialogHeader>
+    <DialogContent className="sm:max-w-[800px]">
+      <DialogHeader>
+        <DialogTitle>Create New Raise</DialogTitle>
+        <p className="text-sm text-muted-foreground">
+          Set up your fundraising project in just a few steps
+        </p>
+      </DialogHeader>
 
-        <RaiseFormProvider>
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Progress value={progress} className="w-full" />
-              <div className="text-sm text-muted-foreground">
-                Step {step} of {totalSteps}
-              </div>
-            </div>
-
-            {getCurrentStep()}
-
-            <div className="flex justify-between">
-              <Button
-                variant="outline"
-                onClick={handleBack}
-                disabled={step === 1}
-                className="gap-2"
-              >
-                <ChevronLeft className="h-4 w-4" /> Back
-              </Button>
-              
-              {step < totalSteps ? (
-                <Button onClick={handleNext} className="gap-2">
-                  Next <ChevronRight className="h-4 w-4" />
-                </Button>
-              ) : (
-                <Button onClick={handleSubmit}>
-                  Create Raise
-                </Button>
-              )}
-            </div>
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Progress value={progress} className="w-full" />
+          <div className="text-sm text-muted-foreground">
+            Step {step} of {totalSteps}
           </div>
-        </RaiseFormProvider>
-      </DialogContent>
+        </div>
+
+        {getCurrentStep()}
+
+        <div className="flex justify-between">
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={step === 1}
+            className="gap-2"
+          >
+            <ChevronLeft className="h-4 w-4" /> Back
+          </Button>
+          
+          {step < totalSteps ? (
+            <Button onClick={handleNext} className="gap-2">
+              Next <ChevronRight className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button onClick={handleSubmit}>
+              Create Raise
+            </Button>
+          )}
+        </div>
+      </div>
+    </DialogContent>
+  );
+}
+
+export function RaiseDialog(props: RaiseDialogProps) {
+  return (
+    <Dialog open={props.open} onOpenChange={props.onOpenChange}>
+      <RaiseFormProvider>
+        <RaiseDialogContent onOpenChange={props.onOpenChange} />
+      </RaiseFormProvider>
     </Dialog>
   );
 }
