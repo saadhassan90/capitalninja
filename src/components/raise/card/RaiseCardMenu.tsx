@@ -1,4 +1,4 @@
-import { Edit, FileText, Trash } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,14 +22,12 @@ import type { RaiseProject } from "../types";
 
 interface RaiseCardMenuProps {
   project: RaiseProject;
-  onView: () => void;
   onEdit: () => void;
   onUpdate?: () => void;
 }
 
 export function RaiseCardMenu({ 
   project,
-  onView,
   onEdit,
   onUpdate
 }: RaiseCardMenuProps) {
@@ -42,10 +40,6 @@ export function RaiseCardMenu({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-        <DropdownMenuItem onClick={onView}>
-          <FileText className="mr-2 h-4 w-4" />
-          View
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={onEdit}>
           <Edit className="mr-2 h-4 w-4" />
           Edit
