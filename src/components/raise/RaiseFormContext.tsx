@@ -1,13 +1,11 @@
 import { createContext, useContext, useState } from "react";
 
 interface RaiseFormData {
-  type: "venture_capital" | "private_equity" | "real_estate" | "debt" | "";
+  type: "equity" | "debt" | "";
   category: "fund_direct_deal" | "startup" | "";
   name: string;
-  description: string;
-  target_amount: number | null;
-  pitch_deck_url: string | null;
-  memo: string | null;
+  targetAmount: string;
+  assetClass: string;
 }
 
 interface RaiseFormContextType {
@@ -20,10 +18,8 @@ const initialFormData: RaiseFormData = {
   type: "",
   category: "",
   name: "",
-  description: "",
-  target_amount: null,
-  pitch_deck_url: null,
-  memo: null,
+  targetAmount: "",
+  assetClass: "",
 };
 
 const RaiseFormContext = createContext<RaiseFormContextType | undefined>(undefined);

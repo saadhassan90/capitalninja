@@ -3,8 +3,12 @@ import { RaiseTable } from "@/components/raise/RaiseTable";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { RaiseDialog } from "@/components/raise/RaiseDialog";
+import { useState } from "react";
 
 const Raise = () => {
+  const [showDialog, setShowDialog] = useState(false);
+  
   const { data: raises, refetch } = useQuery({
     queryKey: ['raises'],
     queryFn: async () => {
@@ -30,7 +34,7 @@ const Raise = () => {
             </p>
           </div>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setShowDialog(true)}>
           <Plus className="h-4 w-4" />
           Create Raise
         </Button>
@@ -39,6 +43,11 @@ const Raise = () => {
       <RaiseTable 
         raises={raises || []}
         onUpdate={refetch}
+      />
+
+      <RaiseDialog 
+        open={showDialog} 
+        onOpenChange={setShowDialog}
       />
     </div>
   );
