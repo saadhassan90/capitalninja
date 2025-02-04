@@ -1,8 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
-import { CategoryStep } from "./steps/CategoryStep";
-import { TypeStep } from "./steps/TypeStep";
+import { CategoryAndTypeStep } from "./steps/CategoryAndTypeStep";
 import { DetailedFormStep } from "./steps/DetailedFormStep";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -24,7 +23,7 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
   const { user } = useAuth();
   const { formData } = useRaiseForm();
   
-  const totalSteps = 3; // Reduced from 4 to 3
+  const totalSteps = 2;
   const progress = ((step - 1) / (totalSteps - 1)) * 100;
 
   const handleNext = () => {
@@ -115,10 +114,8 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
   const getCurrentStep = () => {
     switch (step) {
       case 1:
-        return <CategoryStep />;
+        return <CategoryAndTypeStep />;
       case 2:
-        return <TypeStep />;
-      case 3:
         return <DetailedFormStep />;
       default:
         return null;
