@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
 
 interface AddToListDialogProps {
   open: boolean;
@@ -32,25 +33,39 @@ export function AddToListDialog({
   const [newList, setNewList] = useState({ name: "", description: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const { data: lists, isLoading: listsLoading } = useQuery({
     queryKey: ["static-lists"],
     queryFn: async () => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error("Not authenticated");
+      if (!user) throw new Error("Not authenticated");
 
       const { data, error } = await supabase
         .from("lists")
         .select("*")
         .eq("type", "static")
+        .eq("created_by", user.id)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching lists:", error);
+        throw error;
+      }
       return data;
     },
+    enabled: !!user,
   });
 
   const handleSubmit = async () => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to perform this action",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (selectedInvestors.length === 0) {
       toast({
         title: "No investors selected",
@@ -71,6 +86,7 @@ export function AddToListDialog({
             name: newList.name,
             description: newList.description,
             type: "static",
+            created_by: user.id
           })
           .select()
           .single();
@@ -126,6 +142,7 @@ export function AddToListDialog({
       onSuccess?.();
       onOpenChange(false);
     } catch (error: any) {
+      console.error("Error in handleSubmit:", error);
       toast({
         title: "Error",
         description: error.message || `Failed to ${mode} investors to list`,
