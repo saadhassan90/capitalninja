@@ -45,7 +45,7 @@ export function ListCardMenu({ listName, onView, onEdit, onDelete }: ListCardMen
       // Get the original list data
       const { data: originalList } = await supabase
         .from('lists')
-        .select('description, created_by')
+        .select('id, description, created_by')
         .eq('name', listName)
         .single();
 
