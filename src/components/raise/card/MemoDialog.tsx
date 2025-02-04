@@ -37,9 +37,13 @@ export function MemoDialog({
         .from('raise_equity')
         .select('*')
         .eq('id', project.id)
-        .single();
+        .maybeSingle();
 
       if (raiseError) throw raiseError;
+      if (!raiseData) {
+        toast.error('Could not find raise data');
+        return;
+      }
 
       console.log('Calling generate-deal-memo function...');
       const { data, error } = await supabase.functions.invoke('generate-deal-memo', {
@@ -58,7 +62,7 @@ export function MemoDialog({
 
       setEditedMemo(data.memo);
       toast.success('Deal memo generated successfully');
-      setShowRenderedView(true); // Show the rendered view after successful generation
+      setShowRenderedView(true);
     } catch (error: any) {
       console.error('Error generating memo:', error);
       toast.error(error.message || 'Failed to generate deal memo');
@@ -77,7 +81,7 @@ export function MemoDialog({
       if (error) throw error;
 
       setIsEditing(false);
-      setShowRenderedView(true); // Show rendered view after saving edits
+      setShowRenderedView(true);
       toast.success('Memo updated successfully');
     } catch (error: any) {
       console.error('Error updating memo:', error);
