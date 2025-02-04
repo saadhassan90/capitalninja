@@ -8,7 +8,6 @@ import { CategoryAndTypeStep } from "../steps/CategoryAndTypeStep";
 import { DetailedFormStep } from "../steps/DetailedFormStep";
 import { RaiseDialogHeader } from "./RaiseDialogHeader";
 import { RaiseDialogFooter } from "./RaiseDialogFooter";
-import { formatDateForSupabase } from "../utils/dateUtils";
 
 interface RaiseDialogContentProps {
   onOpenChange: (open: boolean) => void;
@@ -41,9 +40,7 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
       formData.state &&
       formData.country &&
       formData.assetClass &&
-      formData.investment_type &&
-      formData.raise_open_date &&
-      formData.close_date
+      formData.investment_type
     );
   };
 
@@ -109,7 +106,6 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
         banner: formData.banner || null,
         capital_stack: formData.capital_stack,
         carried_interest: formData.carried_interest ? parseFloat(formData.carried_interest) : null,
-        close_date: formData.close_date ? formatDateForSupabase(formData.close_date) : null,
         company_contact: formData.company_contact || null,
         contact_email: formData.contact_email,
         city: formData.city,
@@ -118,7 +114,6 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
         domicile: formData.domicile || null,
         economic_drivers: formData.economic_drivers || [],
         equity_multiple: formData.equity_multiple ? parseFloat(formData.equity_multiple) : null,
-        first_close: formData.first_close ? formatDateForSupabase(formData.first_close) : null,
         gp_capital: formData.gp_capital ? parseFloat(formData.gp_capital) : null,
         investment_type: formData.investment_type,
         irr_projections: formData.irr_projections ? parseFloat(formData.irr_projections) : null,
@@ -127,7 +122,6 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
         primary_contact: formData.primary_contact,
         raise_description: formData.raise_description,
         raise_name: formData.raise_name,
-        raise_open_date: formData.raise_open_date ? formatDateForSupabase(formData.raise_open_date) : null,
         raise_stage: formData.raise_stage,
         reups: formData.reups ? parseInt(formData.reups) : null,
         risks: formData.risks || [],
@@ -138,7 +132,6 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
         user_id: user?.id
       };
 
-      // First insert the raise data
       const { data: raise, error: raiseError } = await supabase
         .from('raise_equity')
         .insert(insertData)
@@ -147,10 +140,8 @@ export function RaiseDialogContent({ onOpenChange }: RaiseDialogContentProps) {
 
       if (raiseError) throw raiseError;
 
-      // Generate the deal memo
       const memo = await generateDealMemo(raise);
 
-      // Update the raise with the generated memo
       const { error: updateError } = await supabase
         .from('raise_equity')
         .update({ memo })

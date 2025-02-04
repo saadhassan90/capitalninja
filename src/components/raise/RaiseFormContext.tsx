@@ -30,9 +30,6 @@ export interface RaiseFormData {
   state: string;
   country: string;
   raise_stage: string;
-  raise_open_date: Date | null;
-  close_date: Date | null;
-  first_close: Date | null;
   minimum_ticket_size: string;
   capital_stack: string[];
   gp_capital: string;
@@ -72,9 +69,6 @@ const initialFormData: RaiseFormData = {
   state: "",
   country: "",
   raise_stage: "",
-  raise_open_date: null,
-  close_date: null,
-  first_close: null,
   minimum_ticket_size: "",
   capital_stack: [],
   gp_capital: "",
