@@ -1,13 +1,14 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ListInvestorsTable } from "@/components/lists/ListInvestorsTable";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Download, ClipboardList, Loader2 } from "lucide-react";
+import { Download, ClipboardList, Loader2, ArrowLeft } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const ListView = () => {
   const { listId } = useParams();
+  const navigate = useNavigate();
 
   const { data: list, isLoading, error } = useQuery({
     queryKey: ['list', listId],
@@ -33,7 +34,7 @@ const ListView = () => {
       console.log('Fetched list:', data);
       return data;
     },
-    enabled: !!listId,
+    retry: false,
   });
 
   if (isLoading) {
@@ -46,22 +47,38 @@ const ListView = () => {
 
   if (error) {
     return (
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-8 space-y-4">
         <Alert variant="destructive">
           <AlertDescription>
             {error instanceof Error ? error.message : 'Failed to load list'}
           </AlertDescription>
         </Alert>
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/lists')}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Lists
+        </Button>
       </div>
     );
   }
 
   if (!list) {
     return (
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-8 space-y-4">
         <Alert>
           <AlertDescription>List not found</AlertDescription>
         </Alert>
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/lists')}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Lists
+        </Button>
       </div>
     );
   }
