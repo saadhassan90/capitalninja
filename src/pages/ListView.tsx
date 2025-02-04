@@ -28,12 +28,14 @@ const ListView = () => {
       }
       
       if (!data) {
+        console.log('No list found with ID:', listId);
         throw new Error('List not found');
       }
 
-      console.log('Fetched list:', data);
+      console.log('Successfully fetched list:', data);
       return data;
     },
+    retry: false, // Don't retry if the list is not found
     enabled: !!listId,
   });
 
@@ -46,6 +48,7 @@ const ListView = () => {
   }
 
   if (error) {
+    console.error('ListView error:', error);
     return (
       <div className="flex-1 p-8 space-y-4">
         <Alert variant="destructive">
