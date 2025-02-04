@@ -1,4 +1,3 @@
-import { RefreshListButton } from "./RefreshListButton";
 import { BulkActions } from "@/components/investors/BulkActions";
 import type { QueryObserverResult } from "@tanstack/react-query";
 
@@ -7,7 +6,6 @@ interface ListHeaderProps {
   totalInvestors: number;
   listId: string;
   onClearSelection: () => void;
-  onRefresh: () => Promise<QueryObserverResult<any, Error>>;
 }
 
 export function ListHeader({ 
@@ -15,7 +13,6 @@ export function ListHeader({
   totalInvestors, 
   listId,
   onClearSelection,
-  onRefresh
 }: ListHeaderProps) {
   return (
     <div className="flex justify-between items-center mb-4">
@@ -33,7 +30,6 @@ export function ListHeader({
           </div>
         )}
       </div>
-      <RefreshListButton onRefresh={onRefresh} />
     </div>
   );
 }

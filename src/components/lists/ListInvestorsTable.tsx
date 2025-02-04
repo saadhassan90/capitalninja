@@ -20,7 +20,7 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
     direction: 'asc'
   });
 
-  const { data: investorsData, isLoading, error, refetch } = useListInvestors({
+  const { data: investorsData, isLoading, error } = useListInvestors({
     listId,
     currentPage,
     sortConfig,
@@ -60,14 +60,6 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
     }
   };
 
-  console.log('ListInvestorsTable render:', {
-    listId,
-    investorsCount: investorsData?.count,
-    currentPage,
-    isLoading,
-    error
-  });
-
   return (
     <div className="flex flex-col">
       <ListHeader
@@ -75,7 +67,6 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
         totalInvestors={investorsData?.count ?? 0}
         listId={listId}
         onClearSelection={() => setSelectedInvestors([])}
-        onRefresh={refetch}
       />
 
       <InvestorsTableView 
