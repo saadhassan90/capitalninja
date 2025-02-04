@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import type { Database } from "@/integrations/supabase/types";
 
 export type AssetClassType = 
   | "Real Estate"
@@ -17,6 +18,9 @@ export type AssetClassType =
   | "Impact Investing"
   | "Other";
 
+// Use the geographic region type from Supabase's generated types
+export type GeographicRegionType = Database['public']['Enums']['geographic_region_type'];
+
 export interface RaiseFormData {
   type: "equity" | "debt" | "";
   category: "fund_direct_deal" | "startup" | "";
@@ -26,7 +30,7 @@ export interface RaiseFormData {
   additional_fees: string;
   asset_classes: AssetClassType[];
   investment_type: string;
-  geographic_focus: string[];
+  geographic_focus: GeographicRegionType[];
   raise_stage: string;
   raise_open_date: Date | null;
   close_date: Date | null;
