@@ -12,22 +12,22 @@ import type { RaiseProject } from "../types";
 interface MemoDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  raise: RaiseProject;
+  project: RaiseProject;
 }
 
 export function MemoDialog({
   open,
   onOpenChange,
-  raise,
+  project,
 }: MemoDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Deal Memo - {raise.name}</DialogTitle>
+          <DialogTitle>Deal Memo - {project.name}</DialogTitle>
         </DialogHeader>
 
-        {!raise.memo ? (
+        {!project.memo ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <FileText className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No Deal Memo Yet</h3>
@@ -49,7 +49,7 @@ export function MemoDialog({
             </div>
             <ScrollArea className="h-[500px] w-full rounded-md border p-4">
               <div className="prose prose-sm max-w-none">
-                {raise.memo}
+                {project.memo}
               </div>
             </ScrollArea>
           </div>

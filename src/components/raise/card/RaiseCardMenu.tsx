@@ -7,8 +7,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreVertical } from "lucide-react";
-import { useState } from "react";
-import { EditRaiseDialog } from "../EditRaiseDialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,14 +21,14 @@ import {
 import type { RaiseProject } from "../types";
 
 interface RaiseCardMenuProps {
-  raise: RaiseProject;
+  project: RaiseProject;
   onView: () => void;
   onEdit: () => void;
-  onUpdate: () => void;
+  onUpdate?: () => void;
 }
 
 export function RaiseCardMenu({ 
-  raise,
+  project,
   onView,
   onEdit,
   onUpdate
@@ -68,7 +66,7 @@ export function RaiseCardMenu({
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This will permanently delete the project "{raise.name}" and remove all associated data.
+                This will permanently delete the project "{project.name}" and remove all associated data.
                 This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>

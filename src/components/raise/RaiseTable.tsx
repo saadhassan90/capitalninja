@@ -48,7 +48,7 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
             onMenuClick={(e) => e.stopPropagation()}
             menu={
               <RaiseCardMenu
-                raise={raise}
+                project={raise}
                 onView={() => handleView(raise)}
                 onEdit={() => handleEdit(raise)}
                 onUpdate={onUpdate}
@@ -73,7 +73,7 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
           <MemoDialog
             open={showMemoDialog}
             onOpenChange={setShowMemoDialog}
-            raise={selectedRaise}
+            project={selectedRaise}
           />
         </>
       )}
