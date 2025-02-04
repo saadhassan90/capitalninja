@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { EditRaiseDialog } from "./EditRaiseDialog";
 import { MemoDialog } from "./card/MemoDialog";
 import type { RaiseProject } from "./types";
+import { RaiseFormProvider } from "./RaiseFormContext";
 
 interface RaiseTableProps {
   raises: RaiseProject[];
@@ -60,13 +61,15 @@ export function RaiseTable({ raises, onUpdate }: RaiseTableProps) {
 
       {selectedRaise && (
         <>
-          <EditRaiseDialog
-            open={showEditDialog}
-            onOpenChange={setShowEditDialog}
-            project={selectedRaise}
-            onUpdate={onUpdate}
-            readOnly={viewMode === 'view'}
-          />
+          <RaiseFormProvider>
+            <EditRaiseDialog
+              open={showEditDialog}
+              onOpenChange={setShowEditDialog}
+              project={selectedRaise}
+              onUpdate={onUpdate}
+              readOnly={viewMode === 'view'}
+            />
+          </RaiseFormProvider>
           <MemoDialog
             open={showMemoDialog}
             onOpenChange={setShowMemoDialog}
