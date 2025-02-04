@@ -5,8 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +29,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { ListInvestorsTable } from "./ListInvestorsTable";
+import { useState } from "react";
 
 interface List {
   id: string;
@@ -38,8 +45,8 @@ interface ListCardProps {
 }
 
 function ListCardComponent({ list, onDelete }: ListCardProps) {
-  const navigate = useNavigate();
   const { toast } = useToast();
+  const [showViewDialog, setShowViewDialog] = useState(false);
 
   const { data: investorCount } = useQuery({
     queryKey: ['listInvestorsCount', list.id],
@@ -82,74 +89,81 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
     }
   };
 
-  const handleView = () => {
-    navigate(`/lists/${list.id}`);
-  };
-
   return (
-    <Card className="border-gray-200 hover:shadow-md transition-shadow cursor-pointer" onClick={handleView}>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{list.name}</CardTitle>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreVertical className="h-4 w-4" />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-              <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Clone</DropdownMenuItem>
-              <DropdownMenuItem>Export</DropdownMenuItem>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem
-                    className="text-destructive"
-                    onSelect={(e) => {
-                      e.preventDefault();
-                    }}
-                  >
-                    Delete
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will permanently delete the list "{list.name}" and remove all associated data.
-                      This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>
-                      Delete List
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        {list.description && (
-          <CardDescription className="text-muted-foreground mt-2">
-            {list.description}
-          </CardDescription>
-        )}
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>Last updated:</span>
-          <span>{formatDistanceToNow(new Date(list.created_at), { addSuffix: true })}</span>
-        </div>
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>Records:</span>
-          <span>{investorCount ?? '...'}</span>
-        </div>
-      </CardContent>
-    </Card>
+    <>
+      <Card className="border-gray-200 hover:shadow-md transition-shadow">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg">{list.name}</CardTitle>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreVertical className="h-4 w-4" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onSelect={() => setShowViewDialog(true)}>View</DropdownMenuItem>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem>Clone</DropdownMenuItem>
+                <DropdownMenuItem>Export</DropdownMenuItem>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <DropdownMenuItem
+                      className="text-destructive"
+                      onSelect={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
+                      Delete
+                    </DropdownMenuItem>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete the list "{list.name}" and remove all associated data.
+                        This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDelete}>
+                        Delete List
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          {list.description && (
+            <CardDescription className="text-muted-foreground mt-2">
+              {list.description}
+            </CardDescription>
+          )}
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>Last updated:</span>
+            <span>{formatDistanceToNow(new Date(list.created_at), { addSuffix: true })}</span>
+          </div>
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>Records:</span>
+            <span>{investorCount ?? '...'}</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{list.name}</DialogTitle>
+          </DialogHeader>
+          <ListInvestorsTable listId={list.id} />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
