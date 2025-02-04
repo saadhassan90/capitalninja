@@ -48,41 +48,43 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
     if (!user) return;
 
     try {
-      const { error } = await supabase.from('raise_equity').insert({
-        user_id: user.id,
-        raise_name: formData.raise_name,
-        target_raise: parseFloat(formData.target_raise),
-        asset_classes: formData.asset_classes || [],
-        investment_type: formData.investment_type,
-        geographic_focus: formData.geographic_focus || [],
-        raise_stage: formData.raise_stage,
-        raise_open_date: formData.raise_open_date,
-        close_date: formData.close_date,
-        first_close: formData.first_close,
-        minimum_ticket_size: parseFloat(formData.minimum_ticket_size),
-        capital_stack: formData.capital_stack || [],
-        gp_capital: formData.gp_capital ? parseFloat(formData.gp_capital) : null,
-        carried_interest: formData.carried_interest ? parseFloat(formData.carried_interest) : null,
-        irr_projections: formData.irr_projections ? parseFloat(formData.irr_projections) : null,
-        equity_multiple: formData.equity_multiple ? parseFloat(formData.equity_multiple) : null,
-        preferred_returns_hurdle: formData.preferred_returns_hurdle ? parseFloat(formData.preferred_returns_hurdle) : null,
-        asset_management_fee: formData.asset_management_fee ? parseFloat(formData.asset_management_fee) : null,
-        asset_management_fees_type: formData.asset_management_fees_type,
-        additional_fees: formData.additional_fees,
-        tax_incentives: formData.tax_incentives,
-        domicile: formData.domicile,
-        strategy: formData.strategy || [],
-        economic_drivers: formData.economic_drivers || [],
-        risks: formData.risks || [],
-        reups: formData.reups ? parseInt(formData.reups) : null,
-        audience: formData.audience || [],
-        primary_contact: formData.primary_contact,
-        contact_email: formData.contact_email,
-        company_contact: formData.company_contact,
-        raise_description: formData.raise_description,
-        banner: formData.banner,
-        term_lockup: formData.term_lockup ? parseInt(formData.term_lockup) : null
-      });
+      const { error } = await supabase
+        .from('raise_equity')
+        .insert([{
+          raise_name: formData.raise_name,
+          target_raise: parseFloat(formData.target_raise),
+          asset_classes: formData.asset_classes,
+          investment_type: formData.investment_type,
+          geographic_focus: formData.geographic_focus,
+          raise_stage: formData.raise_stage,
+          raise_open_date: formData.raise_open_date,
+          close_date: formData.close_date,
+          first_close: formData.first_close,
+          minimum_ticket_size: parseFloat(formData.minimum_ticket_size),
+          capital_stack: formData.capital_stack,
+          gp_capital: formData.gp_capital ? parseFloat(formData.gp_capital) : null,
+          carried_interest: formData.carried_interest ? parseFloat(formData.carried_interest) : null,
+          irr_projections: formData.irr_projections ? parseFloat(formData.irr_projections) : null,
+          equity_multiple: formData.equity_multiple ? parseFloat(formData.equity_multiple) : null,
+          preferred_returns_hurdle: formData.preferred_returns_hurdle ? parseFloat(formData.preferred_returns_hurdle) : null,
+          asset_management_fee: formData.asset_management_fee ? parseFloat(formData.asset_management_fee) : null,
+          asset_management_fees_type: formData.asset_management_fees_type,
+          additional_fees: formData.additional_fees,
+          tax_incentives: formData.tax_incentives,
+          domicile: formData.domicile,
+          strategy: formData.strategy,
+          economic_drivers: formData.economic_drivers,
+          risks: formData.risks,
+          reups: formData.reups ? parseInt(formData.reups) : null,
+          audience: formData.audience,
+          primary_contact: formData.primary_contact,
+          contact_email: formData.contact_email,
+          company_contact: formData.company_contact,
+          raise_description: formData.raise_description,
+          banner: formData.banner,
+          term_lockup: formData.term_lockup ? parseInt(formData.term_lockup) : null,
+          user_id: user.id
+        }]);
 
       if (error) throw error;
 

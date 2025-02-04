@@ -1,5 +1,22 @@
 import { createContext, useContext, useState } from "react";
 
+type AssetClassType = 
+  | "Real Estate"
+  | "Private Equity"
+  | "Private Credit"
+  | "Energy"
+  | "Infrastructure"
+  | "Venture Capital"
+  | "Startups"
+  | "Other"
+  | "Fund of Funds"
+  | "Special Opportunities"
+  | "Private Debt"
+  | "Natural Resources"
+  | "Secondaries"
+  | "Co-Investment"
+  | "Impact Investing";
+
 interface RaiseFormData {
   type: "equity" | "debt" | "";
   category: "fund_direct_deal" | "startup" | "";
@@ -9,7 +26,7 @@ interface RaiseFormData {
   // New fields for detailed form
   raise_name: string;
   target_raise: string;
-  asset_classes: string[];
+  asset_classes: AssetClassType[];
   investment_type: string;
   geographic_focus: string[];
   raise_stage: string;
