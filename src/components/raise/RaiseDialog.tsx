@@ -12,6 +12,7 @@ import { RaiseFormProvider, useRaiseForm } from "./RaiseFormContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatDateForSupabase } from "./utils/dateUtils";
 
 interface RaiseDialogProps {
   open: boolean;
@@ -44,46 +45,51 @@ function RaiseDialogContent({ onOpenChange }: { onOpenChange: (open: boolean) =>
     onOpenChange(false);
   };
 
+  const prepareInsertData = () => {
+    if (!user) return null;
+
+    return {
+      additional_fees: formData.additional_fees || null,
+      asset_classes: formData.asset_classes,
+      asset_management_fee: formData.asset_management_fee ? parseFloat(formData.asset_management_fee) : null,
+      asset_management_fees_type: formData.asset_management_fees_type || null,
+      audience: formData.audience,
+      banner: formData.banner || null,
+      capital_stack: formData.capital_stack,
+      carried_interest: formData.carried_interest ? parseFloat(formData.carried_interest) : null,
+      close_date: formData.close_date ? formatDateForSupabase(formData.close_date) : null,
+      company_contact: formData.company_contact || null,
+      contact_email: formData.contact_email,
+      domicile: formData.domicile || null,
+      economic_drivers: formData.economic_drivers || [],
+      equity_multiple: formData.equity_multiple ? parseFloat(formData.equity_multiple) : null,
+      first_close: formData.first_close ? formatDateForSupabase(formData.first_close) : null,
+      geographic_focus: formData.geographic_focus,
+      gp_capital: formData.gp_capital ? parseFloat(formData.gp_capital) : null,
+      investment_type: formData.investment_type,
+      irr_projections: formData.irr_projections ? parseFloat(formData.irr_projections) : null,
+      minimum_ticket_size: formData.minimum_ticket_size ? parseFloat(formData.minimum_ticket_size) : 0,
+      preferred_returns_hurdle: formData.preferred_returns_hurdle ? parseFloat(formData.preferred_returns_hurdle) : null,
+      primary_contact: formData.primary_contact,
+      raise_description: formData.raise_description,
+      raise_name: formData.raise_name,
+      raise_open_date: formData.raise_open_date ? formatDateForSupabase(formData.raise_open_date) : null,
+      raise_stage: formData.raise_stage,
+      reups: formData.reups ? parseInt(formData.reups) : null,
+      risks: formData.risks || [],
+      strategy: formData.strategy || [],
+      target_raise: formData.target_raise ? parseFloat(formData.target_raise) : 0,
+      tax_incentives: formData.tax_incentives || null,
+      term_lockup: formData.term_lockup ? parseInt(formData.term_lockup) : null,
+      user_id: user.id
+    };
+  };
+
   const handleSubmit = async () => {
-    if (!user) return;
+    const insertData = prepareInsertData();
+    if (!insertData) return;
 
     try {
-      const insertData = {
-        additional_fees: formData.additional_fees,
-        asset_classes: formData.asset_classes,
-        asset_management_fee: formData.asset_management_fee ? parseFloat(formData.asset_management_fee) : null,
-        asset_management_fees_type: formData.asset_management_fees_type,
-        audience: formData.audience,
-        banner: formData.banner,
-        capital_stack: formData.capital_stack,
-        carried_interest: formData.carried_interest ? parseFloat(formData.carried_interest) : null,
-        close_date: formData.close_date,
-        company_contact: formData.company_contact,
-        contact_email: formData.contact_email,
-        domicile: formData.domicile,
-        economic_drivers: formData.economic_drivers,
-        equity_multiple: formData.equity_multiple ? parseFloat(formData.equity_multiple) : null,
-        first_close: formData.first_close,
-        geographic_focus: formData.geographic_focus,
-        gp_capital: formData.gp_capital ? parseFloat(formData.gp_capital) : null,
-        investment_type: formData.investment_type,
-        irr_projections: formData.irr_projections ? parseFloat(formData.irr_projections) : null,
-        minimum_ticket_size: formData.minimum_ticket_size ? parseFloat(formData.minimum_ticket_size) : null,
-        preferred_returns_hurdle: formData.preferred_returns_hurdle ? parseFloat(formData.preferred_returns_hurdle) : null,
-        primary_contact: formData.primary_contact,
-        raise_description: formData.raise_description,
-        raise_name: formData.raise_name,
-        raise_open_date: formData.raise_open_date,
-        raise_stage: formData.raise_stage,
-        reups: formData.reups ? parseInt(formData.reups) : null,
-        risks: formData.risks,
-        strategy: formData.strategy,
-        target_raise: formData.target_raise ? parseFloat(formData.target_raise) : null,
-        tax_incentives: formData.tax_incentives,
-        term_lockup: formData.term_lockup ? parseInt(formData.term_lockup) : null,
-        user_id: user.id
-      };
-
       const { error } = await supabase
         .from('raise_equity')
         .insert(insertData);
