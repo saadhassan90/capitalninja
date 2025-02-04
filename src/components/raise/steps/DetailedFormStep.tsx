@@ -1,29 +1,25 @@
 import { useRaiseForm } from "../RaiseFormContext";
 import { BasicInfoSection } from "./detailed-form/BasicInfoSection";
+import { FinancialDetailsSection } from "./detailed-form/FinancialDetailsSection";
+import { InvestmentDetailsSection } from "./detailed-form/InvestmentDetailsSection";
 
 export function DetailedFormStep() {
   const { formData, updateFormData } = useRaiseForm();
 
-  const basicInfoData = {
-    name: formData.name,
-    description: formData.raise_description,
-    target_amount: formData.targetAmount,
-  };
-
-  const handleBasicInfoChange = (data: Partial<typeof basicInfoData>) => {
-    updateFormData({
-      name: data.name,
-      raise_description: data.description,
-      targetAmount: data.target_amount,
-    });
-  };
-
   return (
     <div className="space-y-8">
       <BasicInfoSection
-        formData={basicInfoData}
-        onChange={handleBasicInfoChange}
+        formData={{
+          raise_name: formData.raise_name,
+          raise_description: formData.raise_description,
+          target_raise: formData.target_raise,
+          primary_contact: formData.primary_contact,
+          contact_email: formData.contact_email,
+        }}
+        onChange={(data) => updateFormData(data)}
       />
+      <FinancialDetailsSection />
+      <InvestmentDetailsSection />
     </div>
   );
 }
