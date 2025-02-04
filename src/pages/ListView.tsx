@@ -17,22 +17,15 @@ const ListView = () => {
     queryFn: async () => {
       if (!listId || !user) throw new Error('List ID and authentication required');
       
-      console.log('Fetching list with ID:', listId);
       const { data, error } = await supabase
         .from('lists')
         .select('*')
         .eq('id', listId)
         .eq('created_by', user.id)
-        .maybeSingle();
+        .single();
       
-      if (error) {
-        console.error('Error fetching list:', error);
-        throw error;
-      }
-      
-      if (!data) {
-        throw new Error('List not found');
-      }
+      if (error) throw error;
+      if (!data) throw new Error('List not found');
 
       return data;
     },
