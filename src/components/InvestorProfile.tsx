@@ -103,31 +103,33 @@ export function InvestorProfile({ investorId, open, onOpenChange }: InvestorProf
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl h-[90vh] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl h-[90vh] max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-[#1A1F2C]">
             {investor?.limited_partner_name}
           </DialogTitle>
         </DialogHeader>
         
-        <Tabs defaultValue="overview" className="w-full">
+        <Tabs defaultValue="overview" className="w-full flex-1 flex flex-col">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="commitments">Fund Commitments</TabsTrigger>
             <TabsTrigger value="investments">Direct Investments</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="overview">
-            <OverviewTab investor={investor} />
-          </TabsContent>
-          
-          <TabsContent value="commitments">
-            <CommitmentsTab commitments={fundCommitments} investor={investor} />
-          </TabsContent>
-          
-          <TabsContent value="investments">
-            <InvestmentsTab investments={directInvestments} investor={investor} />
-          </TabsContent>
+          <div className="flex-1 overflow-y-auto">
+            <TabsContent value="overview" className="h-full">
+              <OverviewTab investor={investor} />
+            </TabsContent>
+            
+            <TabsContent value="commitments" className="h-full">
+              <CommitmentsTab commitments={fundCommitments} investor={investor} />
+            </TabsContent>
+            
+            <TabsContent value="investments" className="h-full">
+              <InvestmentsTab investments={directInvestments} investor={investor} />
+            </TabsContent>
+          </div>
         </Tabs>
       </DialogContent>
     </Dialog>
