@@ -136,10 +136,10 @@ const ListView = () => {
         listId={id}
       />
 
-      <CampaignForm
+      <SelectRaiseDialog
         open={showCampaignDialog}
         onOpenChange={setShowCampaignDialog}
-        defaultListId={id}
+        listId={id!}
       />
 
       {selectedInvestorId && (

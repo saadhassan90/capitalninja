@@ -7,21 +7,6 @@ import { CampaignForm } from "@/components/campaigns/CampaignForm";
 const Outreach = () => {
   const [showForm, setShowForm] = useState(false);
 
-  if (showForm) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">Create Campaign</h1>
-        </div>
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-          <div className="p-6">
-            <CampaignForm />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -46,6 +31,11 @@ const Outreach = () => {
           <CampaignList />
         </div>
       </div>
+
+      <CampaignForm 
+        open={showForm}
+        onOpenChange={setShowForm}
+      />
     </div>
   );
 };
