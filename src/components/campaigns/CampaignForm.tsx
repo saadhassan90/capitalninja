@@ -69,7 +69,9 @@ export function CampaignForm({ open, onOpenChange, defaultListId }: CampaignForm
       const { error } = await supabase.from("campaigns").insert({
         name,
         source_list_id: selectedListId,
-        raise_id: selectedRaiseId,
+        list_id: selectedListId, // We also need to set list_id based on the schema
+        subject: `Campaign: ${name}`, // Providing a default subject as it's required
+        content: "", // Providing empty content as it's required
         created_by: (await supabase.auth.getUser()).data.user?.id,
       });
 
