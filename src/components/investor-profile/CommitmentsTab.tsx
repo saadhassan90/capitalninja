@@ -40,7 +40,7 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Fund Commitments</CardTitle>
+          <CardTitle className="text-base font-medium">Fund Commitments</CardTitle>
           <CardDescription>
             View all fund commitments made by {investor.limited_partner_name}
           </CardDescription>
@@ -90,7 +90,7 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Fund Type Distribution</CardTitle>
+          <CardTitle className="text-base font-medium">Fund Type Distribution</CardTitle>
           <CardDescription>
             Distribution of commitments across different fund types
           </CardDescription>

@@ -26,7 +26,7 @@ export function InvestmentsTab({ investments, investor }: InvestmentsTabProps) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Direct Investments</CardTitle>
+          <CardTitle className="text-base font-medium">Direct Investments</CardTitle>
           <CardDescription>
             View all direct investments made by {investor.limited_partner_name}
           </CardDescription>

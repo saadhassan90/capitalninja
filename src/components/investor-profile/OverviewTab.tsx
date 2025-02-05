@@ -26,7 +26,7 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
       {investor?.description && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Description</CardTitle>
+            <CardTitle className="text-base font-medium">Description</CardTitle>
           </CardHeader>
           <CardContent className="text-sm">
             {investor.description}
@@ -37,7 +37,7 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Basic Information</CardTitle>
+            <CardTitle className="text-base font-medium">Basic Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div>
@@ -63,7 +63,7 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
         
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Contact Information</CardTitle>
+            <CardTitle className="text-base font-medium">Contact Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div>
@@ -81,7 +81,7 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">Primary Contact</CardTitle>
+          <CardTitle className="text-base font-medium">Primary Contact</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <div>
@@ -102,7 +102,7 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
       {assetAllocation.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Asset Allocation</CardTitle>
+            <CardTitle className="text-base font-medium">Asset Allocation</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {assetAllocation.map((item, index) => (
@@ -124,7 +124,7 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">Investment Preferences</CardTitle>
+          <CardTitle className="text-base font-medium">Investment Preferences</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <div>
