@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -6,12 +6,13 @@ import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
 import { useToast } from "@/hooks/use-toast";
 import { BulkActions } from "@/components/investors/BulkActions";
 import { Button } from "@/components/ui/button";
-import { Download, Send } from "lucide-react";
+import { Download, Send, Plus } from "lucide-react";
 import type { SortConfig } from "@/types/sorting";
 import { useListInvestors } from "@/hooks/useListInvestors";
 
 const ListView = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
@@ -31,6 +32,20 @@ const ListView = () => {
         .single();
       
       if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: existingCampaign } = useQuery({
+    queryKey: ['campaign', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('source_list_id', id)
+        .single();
+      
+      if (error && error.code !== 'PGRST116') throw error;
       return data;
     },
   });
@@ -66,6 +81,10 @@ const ListView = () => {
     }
   };
 
+  const handleCreateCampaign = () => {
+    navigate('/campaigns/new', { state: { listId: id } });
+  };
+
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -77,9 +96,17 @@ const ListView = () => {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="secondary" onClick={() => {}}>
-              <Send className="h-4 w-4 mr-2" />
-              Campaign
+            <Button 
+              variant="secondary" 
+              onClick={handleCreateCampaign}
+              disabled={!!existingCampaign}
+            >
+              {existingCampaign ? (
+                <Send className="h-4 w-4 mr-2" />
+              ) : (
+                <Plus className="h-4 w-4 mr-2" />
+              )}
+              Create Campaign
             </Button>
             <Button onClick={() => {}}>
               <Download className="h-4 w-4 mr-2" />

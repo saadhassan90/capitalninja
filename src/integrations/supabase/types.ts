@@ -148,6 +148,7 @@ export type Database = {
           name: string
           scheduled_for: string | null
           sent_at: string | null
+          source_list_id: string | null
           status: Database["public"]["Enums"]["campaign_status"]
           subject: string
           successful_sends: number | null
@@ -164,6 +165,7 @@ export type Database = {
           name: string
           scheduled_for?: string | null
           sent_at?: string | null
+          source_list_id?: string | null
           status?: Database["public"]["Enums"]["campaign_status"]
           subject: string
           successful_sends?: number | null
@@ -180,6 +182,7 @@ export type Database = {
           name?: string
           scheduled_for?: string | null
           sent_at?: string | null
+          source_list_id?: string | null
           status?: Database["public"]["Enums"]["campaign_status"]
           subject?: string
           successful_sends?: number | null
@@ -190,6 +193,13 @@ export type Database = {
           {
             foreignKeyName: "campaigns_list_id_fkey"
             columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "lists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaigns_source_list_id_fkey"
+            columns: ["source_list_id"]
             isOneToOne: false
             referencedRelation: "lists"
             referencedColumns: ["id"]
