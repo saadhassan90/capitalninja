@@ -115,25 +115,27 @@ export function CampaignForm({ open, onOpenChange, defaultListId }: CampaignForm
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="list">Select List</Label>
-            <Select
-              value={selectedListId}
-              onValueChange={setSelectedListId}
-              required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a list" />
-              </SelectTrigger>
-              <SelectContent>
-                {lists?.map((list) => (
-                  <SelectItem key={list.id} value={list.id}>
-                    {list.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {!defaultListId && (
+            <div className="space-y-2">
+              <Label htmlFor="list">Select List</Label>
+              <Select
+                value={selectedListId}
+                onValueChange={setSelectedListId}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a list" />
+                </SelectTrigger>
+                <SelectContent>
+                  {lists?.map((list) => (
+                    <SelectItem key={list.id} value={list.id}>
+                      {list.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="name">Campaign Name</Label>
