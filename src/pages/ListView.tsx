@@ -10,6 +10,7 @@ import { Download, Send, Plus } from "lucide-react";
 import type { SortConfig } from "@/types/sorting";
 import { useListInvestors } from "@/hooks/useListInvestors";
 import { SelectRaiseDialog } from "@/components/campaigns/SelectRaiseDialog";
+import { InvestorProfile } from "@/components/InvestorProfile";
 
 const ListView = () => {
   const { id } = useParams();
@@ -139,6 +140,14 @@ const ListView = () => {
         onSelectInvestor={handleSelectInvestor}
         listId={id}
       />
+
+      {selectedInvestorId && (
+        <InvestorProfile
+          investorId={selectedInvestorId}
+          open={selectedInvestorId !== null}
+          onOpenChange={(open) => !open && setSelectedInvestorId(null)}
+        />
+      )}
 
       {id && (
         <SelectRaiseDialog
