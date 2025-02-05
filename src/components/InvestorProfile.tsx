@@ -103,30 +103,30 @@ export function InvestorProfile({ investorId, open, onOpenChange }: InvestorProf
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl h-[90vh] max-h-[90vh] flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl h-[90vh] max-h-[90vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6">
           <DialogTitle className="text-2xl font-bold text-[#1A1F2C]">
             {investor?.limited_partner_name}
           </DialogTitle>
         </DialogHeader>
         
-        <Tabs defaultValue="overview" className="w-full flex-1 flex flex-col">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
+          <TabsList className="w-full grid grid-cols-3 px-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="commitments">Fund Commitments</TabsTrigger>
             <TabsTrigger value="investments">Direct Investments</TabsTrigger>
           </TabsList>
           
-          <div className="flex-1 overflow-y-auto">
-            <TabsContent value="overview" className="h-full">
+          <div className="flex-1 overflow-y-auto px-6 pb-6">
+            <TabsContent value="overview" className="mt-4 h-full data-[state=active]:flex">
               <OverviewTab investor={investor} />
             </TabsContent>
             
-            <TabsContent value="commitments" className="h-full">
+            <TabsContent value="commitments" className="mt-4 h-full data-[state=active]:flex">
               <CommitmentsTab commitments={fundCommitments} investor={investor} />
             </TabsContent>
             
-            <TabsContent value="investments" className="h-full">
+            <TabsContent value="investments" className="mt-4 h-full data-[state=active]:flex">
               <InvestmentsTab investments={directInvestments} investor={investor} />
             </TabsContent>
           </div>
