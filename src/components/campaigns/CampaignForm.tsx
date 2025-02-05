@@ -1,39 +1,37 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "sonner";
 
 export function CampaignForm() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { listId, raiseId } = location.state || {};
+
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
-  const [selectedListId, setSelectedListId] = useState<string>("");
 
-  const { data: lists } = useQuery({
-    queryKey: ["lists"],
+  const { data: raise } = useQuery({
+    queryKey: ["raise", raiseId],
     queryFn: async () => {
+      if (!raiseId) return null;
       const { data, error } = await supabase
-        .from("lists")
-        .select("id, name")
-        .order("name");
+        .from("raises")
+        .select("*")
+        .eq("id", raiseId)
+        .single();
       
       if (error) throw error;
       return data;
     },
+    enabled: !!raiseId,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,7 +43,8 @@ export function CampaignForm() {
         name,
         subject,
         content,
-        list_id: selectedListId,
+        source_list_id: listId,
+        raise_id: raiseId,
         created_by: (await supabase.auth.getUser()).data.user?.id,
       });
 
@@ -62,6 +61,13 @@ export function CampaignForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {raise && (
+        <div className="bg-muted p-4 rounded-lg mb-6">
+          <h3 className="font-medium mb-2">Campaign for raise: {raise.name}</h3>
+          <p className="text-sm text-muted-foreground">{raise.description}</p>
+        </div>
+      )}
+
       <div className="space-y-2">
         <Label htmlFor="name">Campaign Name</Label>
         <Input
@@ -70,22 +76,6 @@ export function CampaignForm() {
           onChange={(e) => setName(e.target.value)}
           required
         />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="list">Investor List</Label>
-        <Select value={selectedListId} onValueChange={setSelectedListId} required>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a list" />
-          </SelectTrigger>
-          <SelectContent>
-            {lists?.map((list) => (
-              <SelectItem key={list.id} value={list.id}>
-                {list.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       <div className="space-y-2">

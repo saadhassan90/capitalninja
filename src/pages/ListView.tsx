@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Send, Plus } from "lucide-react";
 import type { SortConfig } from "@/types/sorting";
 import { useListInvestors } from "@/hooks/useListInvestors";
+import { SelectRaiseDialog } from "@/components/campaigns/SelectRaiseDialog";
 
 const ListView = () => {
   const { id } = useParams();
@@ -16,6 +17,7 @@ const ListView = () => {
   const { toast } = useToast();
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
+  const [showRaiseDialog, setShowRaiseDialog] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'limited_partner_name',
@@ -81,10 +83,6 @@ const ListView = () => {
     }
   };
 
-  const handleCreateCampaign = () => {
-    navigate('/campaigns/new', { state: { listId: id } });
-  };
-
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -98,7 +96,7 @@ const ListView = () => {
           <div className="flex items-center gap-2">
             <Button 
               variant="secondary" 
-              onClick={handleCreateCampaign}
+              onClick={() => setShowRaiseDialog(true)}
               disabled={!!existingCampaign}
             >
               {existingCampaign ? (
@@ -141,6 +139,14 @@ const ListView = () => {
         onSelectInvestor={handleSelectInvestor}
         listId={id}
       />
+
+      {id && (
+        <SelectRaiseDialog
+          open={showRaiseDialog}
+          onOpenChange={setShowRaiseDialog}
+          listId={id}
+        />
+      )}
     </div>
   );
 };
