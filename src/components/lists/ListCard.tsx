@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +23,7 @@ interface ListCardProps {
 }
 
 function ListCardComponent({ list, onDelete }: ListCardProps) {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [showViewDialog, setShowViewDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -67,18 +69,27 @@ function ListCardComponent({ list, onDelete }: ListCardProps) {
     }
   };
 
+  const handleCardClick = () => {
+    navigate(`/lists/${list.id}`);
+  };
+
   return (
     <>
-      <Card className="border-gray-200 hover:shadow-md transition-shadow">
+      <Card 
+        className="border-gray-200 hover:shadow-md transition-shadow cursor-pointer" 
+        onClick={handleCardClick}
+      >
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">{list.name}</CardTitle>
-            <ListCardMenu
-              listName={list.name}
-              onView={() => setShowViewDialog(true)}
-              onEdit={() => setShowEditDialog(true)}
-              onDelete={handleDelete}
-            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <ListCardMenu
+                listName={list.name}
+                onView={() => setShowViewDialog(true)}
+                onEdit={() => setShowEditDialog(true)}
+                onDelete={handleDelete}
+              />
+            </div>
           </div>
           {list.description && (
             <CardDescription className="text-muted-foreground mt-2">

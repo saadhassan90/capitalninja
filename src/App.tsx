@@ -9,6 +9,7 @@ import Dashboard from "@/pages/Dashboard";
 import Profile from "@/pages/Profile";
 import Investors from "@/pages/Investors";
 import Lists from "@/pages/Lists";
+import ListView from "@/pages/ListView";
 import Settings from "@/pages/Settings";
 import Enrichment from "@/pages/Enrichment";
 import Exports from "@/pages/Exports";
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: "/lists",
         element: <Lists />,
+      },
+      {
+        path: "/lists/:id",
+        element: <ListView />,
       },
       {
         path: "/raise",
