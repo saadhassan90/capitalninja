@@ -103,7 +103,7 @@ export function InvestorProfile({ investorId, open, onOpenChange }: InvestorProf
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl h-[90vh] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-[#1A1F2C]">
             {investor?.limited_partner_name}
