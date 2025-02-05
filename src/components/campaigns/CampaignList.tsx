@@ -19,7 +19,7 @@ export function CampaignList() {
         .from("campaigns")
         .select(`
           *,
-          lists (
+          lists!campaigns_list_id_fkey (
             name
           )
         `)
