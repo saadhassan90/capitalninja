@@ -4,6 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
 import { useToast } from "@/hooks/use-toast";
+import { BulkActions } from "@/components/investors/BulkActions";
+import { Button } from "@/components/ui/button";
+import { Download, Send } from "lucide-react";
 import type { SortConfig } from "@/types/sorting";
 import { useListInvestors } from "@/hooks/useListInvestors";
 
@@ -66,9 +69,34 @@ const ListView = () => {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">{list?.name}</h1>
-        {list?.description && (
-          <p className="text-muted-foreground mt-2">{list.description}</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">{list?.name}</h1>
+            {list?.description && (
+              <p className="text-muted-foreground mt-2">{list.description}</p>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" onClick={() => {}}>
+              <Send className="h-4 w-4 mr-2" />
+              Campaign
+            </Button>
+            <Button onClick={() => {}}>
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-4">
+        {selectedInvestors.length > 0 && (
+          <BulkActions 
+            selectedCount={selectedInvestors.length}
+            selectedInvestors={selectedInvestors}
+            onClearSelection={() => setSelectedInvestors([])}
+            listId={id}
+          />
         )}
       </div>
 
