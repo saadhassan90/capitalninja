@@ -6,10 +6,9 @@ import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
 import { useToast } from "@/hooks/use-toast";
 import { BulkActions } from "@/components/investors/BulkActions";
 import { Button } from "@/components/ui/button";
-import { Download, Send, Plus } from "lucide-react";
+import { Download } from "lucide-react";
 import type { SortConfig } from "@/types/sorting";
 import { useListInvestors } from "@/hooks/useListInvestors";
-import { SelectRaiseDialog } from "@/components/campaigns/SelectRaiseDialog";
 import { InvestorProfile } from "@/components/InvestorProfile";
 
 const ListView = () => {
@@ -18,7 +17,6 @@ const ListView = () => {
   const { toast } = useToast();
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
-  const [showCampaignDialog, setShowCampaignDialog] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'limited_partner_name',
@@ -33,20 +31,6 @@ const ListView = () => {
         .select('*')
         .eq('id', id)
         .single();
-      
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: existingCampaign } = useQuery({
-    queryKey: ['campaign', id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('campaigns')
-        .select('*')
-        .eq('source_list_id', id)
-        .maybeSingle();
       
       if (error) throw error;
       return data;
@@ -94,14 +78,7 @@ const ListView = () => {
               <p className="text-muted-foreground mt-2">{list.description}</p>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="secondary" 
-              onClick={() => setShowCampaignDialog(true)}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Campaign
-            </Button>
+          <div>
             <Button onClick={() => {}}>
               <Download className="h-4 w-4 mr-2" />
               Export
@@ -134,12 +111,6 @@ const ListView = () => {
         onSelectAll={handleSelectAll}
         onSelectInvestor={handleSelectInvestor}
         listId={id}
-      />
-
-      <SelectRaiseDialog
-        open={showCampaignDialog}
-        onOpenChange={setShowCampaignDialog}
-        listId={id!}
       />
 
       {selectedInvestorId && (
