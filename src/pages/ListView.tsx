@@ -18,7 +18,7 @@ const ListView = () => {
   const { toast } = useToast();
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
-  const [showRaiseDialog, setShowRaiseDialog] = useState(false);
+  const [showCampaignDialog, setShowCampaignDialog] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'limited_partner_name',
@@ -97,14 +97,9 @@ const ListView = () => {
           <div className="flex items-center gap-2">
             <Button 
               variant="secondary" 
-              onClick={() => setShowRaiseDialog(true)}
-              disabled={!!existingCampaign}
+              onClick={() => setShowCampaignDialog(true)}
             >
-              {existingCampaign ? (
-                <Send className="h-4 w-4 mr-2" />
-              ) : (
-                <Plus className="h-4 w-4 mr-2" />
-              )}
+              <Plus className="h-4 w-4 mr-2" />
               Create Campaign
             </Button>
             <Button onClick={() => {}}>
@@ -141,19 +136,17 @@ const ListView = () => {
         listId={id}
       />
 
+      <CampaignForm
+        open={showCampaignDialog}
+        onOpenChange={setShowCampaignDialog}
+        defaultListId={id}
+      />
+
       {selectedInvestorId && (
         <InvestorProfile
           investorId={selectedInvestorId}
           open={selectedInvestorId !== null}
           onOpenChange={(open) => !open && setSelectedInvestorId(null)}
-        />
-      )}
-
-      {id && (
-        <SelectRaiseDialog
-          open={showRaiseDialog}
-          onOpenChange={setShowRaiseDialog}
-          listId={id}
         />
       )}
     </div>
