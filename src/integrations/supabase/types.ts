@@ -146,6 +146,7 @@ export type Database = {
           id: string
           list_id: string | null
           name: string
+          raise_id: string | null
           scheduled_for: string | null
           sent_at: string | null
           source_list_id: string | null
@@ -163,6 +164,7 @@ export type Database = {
           id?: string
           list_id?: string | null
           name: string
+          raise_id?: string | null
           scheduled_for?: string | null
           sent_at?: string | null
           source_list_id?: string | null
@@ -180,6 +182,7 @@ export type Database = {
           id?: string
           list_id?: string | null
           name?: string
+          raise_id?: string | null
           scheduled_for?: string | null
           sent_at?: string | null
           source_list_id?: string | null
@@ -195,6 +198,13 @@ export type Database = {
             columns: ["list_id"]
             isOneToOne: false
             referencedRelation: "lists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaigns_raise_id_fkey"
+            columns: ["raise_id"]
+            isOneToOne: false
+            referencedRelation: "raises"
             referencedColumns: ["id"]
           },
           {
