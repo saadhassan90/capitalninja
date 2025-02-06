@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -32,21 +33,9 @@ export function CampaignForm({ open, onOpenChange, defaultListId }: CampaignForm
 
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
-  const [selectedRaiseId, setSelectedRaiseId] = useState("");
+  const [subject, setSubject] = useState("");
+  const [content, setContent] = useState("");
   const [selectedListId, setSelectedListId] = useState(defaultListId || "");
-
-  const { data: raises } = useQuery({
-    queryKey: ["raises"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("raises")
-        .select("*")
-        .order("created_at", { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    },
-  });
 
   const { data: lists } = useQuery({
     queryKey: ["lists"],
@@ -68,10 +57,10 @@ export function CampaignForm({ open, onOpenChange, defaultListId }: CampaignForm
     try {
       const { error } = await supabase.from("campaigns").insert({
         name,
+        subject,
+        content,
         source_list_id: selectedListId,
-        list_id: selectedListId, // We also need to set list_id based on the schema
-        subject: `Campaign: ${name}`, // Providing a default subject as it's required
-        content: "", // Providing empty content as it's required
+        list_id: selectedListId,
         created_by: (await supabase.auth.getUser()).data.user?.id,
       });
 
@@ -96,23 +85,13 @@ export function CampaignForm({ open, onOpenChange, defaultListId }: CampaignForm
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="raise">Select Raise</Label>
-            <Select
-              value={selectedRaiseId}
-              onValueChange={setSelectedRaiseId}
+            <Label htmlFor="name">Campaign Name</Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a raise" />
-              </SelectTrigger>
-              <SelectContent>
-                {raises?.map((raise) => (
-                  <SelectItem key={raise.id} value={raise.id}>
-                    {raise.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            />
           </div>
 
           {!defaultListId && (
@@ -138,12 +117,23 @@ export function CampaignForm({ open, onOpenChange, defaultListId }: CampaignForm
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="name">Campaign Name</Label>
+            <Label htmlFor="subject">Email Subject</Label>
             <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              id="subject"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
               required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="content">Email Content</Label>
+            <Textarea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+              rows={10}
             />
           </div>
 

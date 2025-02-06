@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { CampaignList } from "@/components/campaigns/CampaignList";
+import { CampaignsTable } from "@/components/campaigns/CampaignsTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { CampaignForm } from "@/components/campaigns/CampaignForm";
+import type { Campaign } from "@/types/campaign";
 
 export default function Campaigns() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
 
   return (
     <div className="space-y-6">
@@ -22,7 +24,7 @@ export default function Campaigns() {
         </Button>
       </div>
       
-      <CampaignList />
+      <CampaignsTable onEdit={setEditingCampaign} />
 
       <CampaignForm 
         open={showCreateDialog}
