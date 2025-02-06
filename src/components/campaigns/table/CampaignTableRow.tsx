@@ -2,8 +2,9 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, Edit, Trash } from "lucide-react";
+import { ExternalLink, Trash } from "lucide-react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import type { Campaign } from "@/types/campaign";
 
 interface CampaignTableRowProps {
@@ -13,7 +14,9 @@ interface CampaignTableRowProps {
   onEdit?: (campaign: Campaign) => void;
 }
 
-export function CampaignTableRow({ campaign, selected, onSelect, onEdit }: CampaignTableRowProps) {
+export function CampaignTableRow({ campaign, selected, onSelect }: CampaignTableRowProps) {
+  const navigate = useNavigate();
+
   const getStatusColor = (status: string): "default" | "secondary" | "destructive" => {
     switch (status) {
       case 'completed':
@@ -59,23 +62,18 @@ export function CampaignTableRow({ campaign, selected, onSelect, onEdit }: Campa
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => {}}
+            onClick={() => navigate(`/campaigns/${campaign.id}`)}
           >
-            <Eye className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onEdit?.(campaign)}
-          >
-            <Edit className="h-4 w-4" />
+            <ExternalLink className="mr-2 h-4 w-4" />
+            Open
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => {}}
           >
-            <Trash className="h-4 w-4" />
+            <Trash className="mr-2 h-4 w-4" />
+            Delete
           </Button>
         </div>
       </TableCell>
