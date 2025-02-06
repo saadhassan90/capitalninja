@@ -47,17 +47,18 @@ export function CampaignTableRow({
             variant="ghost"
             size="sm"
             onClick={() => navigate(`/campaigns/${campaign.id}`)}
+            className="flex items-center gap-2"
           >
             <ExternalLink className="h-4 w-4" />
-            <span className="sr-only">Open campaign</span>
+            View
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="text-destructive hover:text-destructive"
+            className="text-destructive hover:text-destructive flex items-center gap-2"
           >
             <Trash className="h-4 w-4" />
-            <span className="sr-only">Delete campaign</span>
+            Delete
           </Button>
         </div>
       </TableCell>
