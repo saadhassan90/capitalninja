@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { RichTextEditor } from "./RichTextEditor";
+import { useRef } from "react";
 
 interface EmailStep {
   id: number;
@@ -18,6 +19,30 @@ interface SequenceStepProps {
 }
 
 export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
+  const subjectInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSubjectVariableInsert = (variable: string) => {
+    const input = subjectInputRef.current;
+    if (!input) return;
+
+    const start = input.selectionStart || 0;
+    const end = input.selectionEnd || 0;
+    const currentValue = input.value;
+
+    const newValue = 
+      currentValue.substring(0, start) + 
+      variable + 
+      currentValue.substring(end);
+
+    onUpdate(step.id, "subject", newValue);
+
+    // Set cursor position after the inserted variable
+    setTimeout(() => {
+      input.focus();
+      input.setSelectionRange(start + variable.length, start + variable.length);
+    }, 0);
+  };
+
   return (
     <Card>
       <CardContent className="p-6">
@@ -34,6 +59,7 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
         <div className="space-y-4">
           <div>
             <Input
+              ref={subjectInputRef}
               placeholder="Email subject"
               value={step.subject}
               onChange={(e) => onUpdate(step.id, "subject", e.target.value)}

@@ -143,12 +143,6 @@ export function SequenceTab() {
     }
   };
 
-  const handleInsertLink = (url: string) => {
-    if (useAI) return;
-    
-    document.execCommand('createLink', false, url);
-  };
-
   return (
     <div className="space-y-6 p-6">
       <SequenceHeader
