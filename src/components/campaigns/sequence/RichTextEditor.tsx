@@ -1,6 +1,5 @@
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 interface RichTextEditorProps {
   content: string;
@@ -8,37 +7,34 @@ interface RichTextEditorProps {
   disabled?: boolean;
 }
 
+const modules = {
+  toolbar: [
+    ['bold', 'italic', 'underline', 'link'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+  ],
+};
+
+const formats = [
+  'bold',
+  'italic',
+  'underline',
+  'link',
+  'list',
+  'bullet',
+];
+
 export function RichTextEditor({ content, onChange, disabled }: RichTextEditorProps) {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-primary underline cursor-pointer',
-        },
-        validate: href => /^https?:\/\//.test(href),
-      }),
-    ],
-    content,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
-    },
-    editorProps: {
-      attributes: {
-        class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-xl m-5 focus:outline-none min-h-[150px]',
-      },
-    },
-    editable: !disabled,
-  });
-
-  if (!editor) {
-    return null;
-  }
-
   return (
     <div className="border rounded-md">
-      <EditorContent editor={editor} />
+      <ReactQuill
+        theme="snow"
+        value={content}
+        onChange={onChange}
+        modules={modules}
+        formats={formats}
+        readOnly={disabled}
+        className="min-h-[150px]"
+      />
     </div>
   );
 }
