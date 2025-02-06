@@ -1,6 +1,6 @@
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Zap } from 'lucide-react';
+import { Link, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -26,45 +26,39 @@ const variables = [
 ];
 
 const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
-  <div id="toolbar" className="flex items-center gap-1 p-2 border border-border rounded-t-md [&_.ql-formats]:mr-0">
-    <span className="ql-formats flex gap-1">
+  <div id="toolbar" className="flex items-center gap-2 p-2 border border-border rounded-t-md [&_.ql-formats]:mr-0">
+    <span className="ql-formats flex gap-2">
       <Button
         variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-bold"
+        size="default"
+        className="h-10 w-10 p-0 ql-bold"
         disabled={!isEditorFocused}
       />
       <Button
         variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-italic"
+        size="default"
+        className="h-10 w-10 p-0 ql-italic"
         disabled={!isEditorFocused}
       />
       <Button
         variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-underline"
-        disabled={!isEditorFocused}
-      />
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-link"
+        size="default"
+        className="h-10 w-10 p-0 ql-underline"
         disabled={!isEditorFocused}
       />
     </span>
-    <span className="ql-formats flex gap-1">
+    <span className="ql-formats flex gap-2">
       <Button
         variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-list"
+        size="default"
+        className="h-10 w-10 p-0 ql-list"
         value="ordered"
         disabled={!isEditorFocused}
       />
       <Button
         variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-list"
+        size="default"
+        className="h-10 w-10 p-0 ql-list"
         value="bullet"
         disabled={!isEditorFocused}
       />
@@ -73,12 +67,12 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 px-2 flex items-center gap-2"
+            variant="secondary" 
+            size="default"
+            className="h-10 px-3 flex items-center gap-2"
             disabled={!isEditorFocused}
           >
-            <Zap className="h-4 w-4" />
+            <Zap className="h-5 w-5" />
             <span>Variables</span>
           </Button>
         </DropdownMenuTrigger>
@@ -106,6 +100,16 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+    </span>
+    <span className="ql-formats">
+      <Button
+        variant="ghost"
+        size="default"
+        className="h-10 w-10 p-0 ql-link"
+        disabled={!isEditorFocused}
+      >
+        <Link className="h-5 w-5" />
+      </Button>
     </span>
   </div>
 );
