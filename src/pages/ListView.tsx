@@ -38,6 +38,41 @@ const ListView = () => {
     },
   });
 
+  // Query for monthly exports and limits
+  const { data: exportLimits } = useQuery({
+    queryKey: ['export-limits'],
+    queryFn: async () => {
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const { data: teamMember } = await supabase
+        .from('team_members')
+        .select('id')
+        .single();
+
+      if (!teamMember) throw new Error('No team found');
+
+      const [{ count: monthlyExports }, { data: teamLimit }] = await Promise.all([
+        supabase
+          .from('exports')
+          .select('*', { count: 'exact', head: true })
+          .eq('team_id', teamMember.id)
+          .gte('created_at', startOfMonth.toISOString()),
+        supabase
+          .from('team_export_limits')
+          .select('monthly_limit')
+          .eq('team_id', teamMember.id)
+          .single()
+      ]);
+
+      return {
+        used: monthlyExports || 0,
+        limit: teamLimit?.monthly_limit ?? 200
+      };
+    }
+  });
+
   const { data: investorsData, isLoading } = useListInvestors({
     listId: id!,
     currentPage,
@@ -74,6 +109,16 @@ const ListView = () => {
     
     try {
       setIsExporting(true);
+
+      // Check if export would exceed monthly limit
+      if (exportLimits && (exportLimits.used + investorsData?.data.length!) > exportLimits.limit) {
+        toast({
+          title: "Export Limit Reached",
+          description: `You've reached your monthly export limit of ${exportLimits.limit} records.`,
+          variant: "destructive",
+        });
+        return;
+      }
       
       const { data, error } = await supabase.functions.invoke('export-list-investors', {
         body: { listId: id }
@@ -123,7 +168,7 @@ const ListView = () => {
           <div>
             <Button 
               onClick={handleExport} 
-              disabled={isExporting}
+              disabled={isExporting || (exportLimits && exportLimits.used >= exportLimits.limit)}
               className="flex items-center gap-2"
             >
               {isExporting ? (

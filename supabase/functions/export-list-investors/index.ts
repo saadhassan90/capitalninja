@@ -21,6 +21,37 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
+    // Get user's team_id
+    const { data: { user } } = await supabaseClient.auth.getUser(req.headers.get('Authorization')?.split(' ')[1] || '');
+    if (!user) throw new Error('Unauthorized');
+
+    const { data: teamMember } = await supabaseClient
+      .from('team_members')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+
+    if (!teamMember) throw new Error('No team found');
+
+    // Check monthly export limit
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const { count: monthlyExports } = await supabaseClient
+      .from('exports')
+      .select('*', { count: 'exact', head: true })
+      .eq('team_id', teamMember.id)
+      .gte('created_at', startOfMonth.toISOString());
+
+    const { data: teamLimit } = await supabaseClient
+      .from('team_export_limits')
+      .select('monthly_limit')
+      .eq('team_id', teamMember.id)
+      .single();
+
+    const monthlyLimit = teamLimit?.monthly_limit ?? 200;
+
     // Get all investors in the list
     const { data: listInvestors, error: listError } = await supabaseClient
       .from('list_investors')
@@ -31,6 +62,11 @@ serve(async (req) => {
 
     if (!listInvestors?.length) {
       throw new Error('No investors found in list');
+    }
+
+    // Check if adding these records would exceed the monthly limit
+    if ((monthlyExports || 0) + listInvestors.length > monthlyLimit) {
+      throw new Error(`Export would exceed monthly limit of ${monthlyLimit} records`);
     }
 
     const investorIds = listInvestors.map(li => li.investor_id);
@@ -50,14 +86,26 @@ serve(async (req) => {
       ...investors.map(investor => 
         headers.map(header => {
           const value = investor[header];
-          // Handle special characters and commas in CSV
-          if (value === null || value === undefined) return '';
           return typeof value === 'string' 
             ? `"${value.replace(/"/g, '""')}"` 
-            : value;
+            : value ?? '';
         }).join(',')
       )
     ].join('\n');
+
+    // Create export record
+    const { error: exportError } = await supabaseClient
+      .from('exports')
+      .insert({
+        name: `List Export ${new Date().toISOString()}`,
+        type: 'list',
+        records: investors.length,
+        status: 'complete',
+        team_id: teamMember.id,
+        created_by: user.id
+      });
+
+    if (exportError) throw exportError;
 
     return new Response(csvContent, {
       headers: {
@@ -72,7 +120,7 @@ serve(async (req) => {
       JSON.stringify({ error: error.message }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
+        status: error.message.includes('monthly limit') ? 429 : 400,
       }
     );
   }
