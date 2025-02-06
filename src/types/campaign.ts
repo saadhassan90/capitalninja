@@ -17,4 +17,8 @@ export interface Campaign {
   lists: {
     name: string;
   } | null;
+  raise?: {
+    name: string;
+    id: string;
+  } | null;
 }

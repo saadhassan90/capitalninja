@@ -33,12 +33,26 @@ export function CampaignForm({ open, onOpenChange, defaultListId }: CampaignForm
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [selectedListId, setSelectedListId] = useState(defaultListId || "");
+  const [selectedRaiseId, setSelectedRaiseId] = useState("");
 
   const { data: lists } = useQuery({
     queryKey: ["lists"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("lists")
+        .select("*")
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: raises } = useQuery({
+    queryKey: ["raises"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("raises")
         .select("*")
         .order("created_at", { ascending: false });
       
@@ -58,6 +72,7 @@ export function CampaignForm({ open, onOpenChange, defaultListId }: CampaignForm
         content: "Draft", // Default content for draft campaigns
         list_id: selectedListId,
         source_list_id: selectedListId,
+        raise_id: selectedRaiseId || null,
         status: "draft",
         created_by: (await supabase.auth.getUser()).data.user?.id,
       });
@@ -113,6 +128,25 @@ export function CampaignForm({ open, onOpenChange, defaultListId }: CampaignForm
               </Select>
             </div>
           )}
+
+          <div className="space-y-2">
+            <Label htmlFor="raise">Select Raise (Optional)</Label>
+            <Select
+              value={selectedRaiseId}
+              onValueChange={setSelectedRaiseId}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a raise" />
+              </SelectTrigger>
+              <SelectContent>
+                {raises?.map((raise) => (
+                  <SelectItem key={raise.id} value={raise.id}>
+                    {raise.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           <DialogFooter>
             <Button
