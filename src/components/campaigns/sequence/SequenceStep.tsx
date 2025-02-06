@@ -71,6 +71,14 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
     }, 0);
   };
 
+  const handleBodyVariableInsert = (variable: string) => {
+    if (editor) {
+      editor.commands.focus();
+      editor.commands.insertContent(variable);
+      onUpdate(step.id, "content", editor.getHTML());
+    }
+  };
+
   return (
     <Card>
       <CardContent className="p-6">
@@ -120,12 +128,7 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
           <div>
             <FormatToolbar
               editor={editor}
-              onInsertVariable={(variable) => {
-                if (editor) {
-                  editor.commands.focus();
-                  editor.commands.insertContent(variable);
-                }
-              }}
+              onInsertVariable={handleBodyVariableInsert}
             />
             <RichTextEditor
               content={step.content}

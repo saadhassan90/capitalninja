@@ -36,15 +36,7 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
 
   const handleLinkSubmit = () => {
     if (linkUrl) {
-      if (editor.state.selection.empty) {
-        editor.chain().focus().insertContent({
-          type: 'text',
-          text: linkUrl,
-          marks: [{ type: 'link', attrs: { href: linkUrl } }],
-        }).run();
-      } else {
-        editor.chain().focus().setLink({ href: linkUrl }).run();
-      }
+      editor.chain().focus().setLink({ href: linkUrl }).run();
     } else {
       editor.chain().focus().unsetLink().run();
     }
@@ -53,9 +45,10 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
   };
 
   const handleVariableInsert = (variable: string) => {
-    editor.commands.focus();
-    editor.commands.insertContent(variable);
-    onInsertVariable(variable);
+    if (editor) {
+      editor.chain().focus().insertContent(variable).run();
+      onInsertVariable(variable);
+    }
   };
 
   return (
