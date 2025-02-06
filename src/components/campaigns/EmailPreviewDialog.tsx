@@ -66,38 +66,33 @@ export function EmailPreviewDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[1100px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <span>Test Email</span>
-          </DialogTitle>
+          <DialogTitle className="text-2xl font-semibold">Test Email</DialogTitle>
         </DialogHeader>
         
         <div className="grid grid-cols-[300px_1fr] gap-6">
           {/* Left Side - Test Email Controls */}
           <div className="space-y-6 border-r pr-6">
-            <div>
-              <h3 className="font-semibold mb-4">Test Email</h3>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Sender Email</Label>
-                  <Input 
-                    value={previewVars.senderEmail}
-                    onChange={(e) => setPreviewVars(prev => ({ ...prev, senderEmail: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Sender Full Name</Label>
-                  <Input 
-                    value={previewVars.senderName}
-                    onChange={(e) => setPreviewVars(prev => ({ ...prev, senderName: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Recipient First Name</Label>
-                  <Input 
-                    value={previewVars.recipientFirstName}
-                    onChange={(e) => setPreviewVars(prev => ({ ...prev, recipientFirstName: e.target.value }))}
-                  />
-                </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Sender Email</Label>
+                <Input 
+                  value={previewVars.senderEmail}
+                  onChange={(e) => setPreviewVars(prev => ({ ...prev, senderEmail: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Sender Full Name</Label>
+                <Input 
+                  value={previewVars.senderName}
+                  onChange={(e) => setPreviewVars(prev => ({ ...prev, senderName: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Recipient First Name</Label>
+                <Input 
+                  value={previewVars.recipientFirstName}
+                  onChange={(e) => setPreviewVars(prev => ({ ...prev, recipientFirstName: e.target.value }))}
+                />
               </div>
             </div>
           </div>
@@ -164,7 +159,7 @@ export function EmailPreviewDialog({
           </Button>
           <Button>
             <Send className="h-4 w-4 mr-2" />
-            Send test email
+            Send Test Email
           </Button>
         </div>
       </DialogContent>
