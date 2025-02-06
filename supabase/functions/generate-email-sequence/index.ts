@@ -1,6 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,6 +13,7 @@ serve(async (req) => {
 
   try {
     const { investor, campaign } = await req.json();
+    console.log('Generating sequence for:', { investor, campaign });
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -22,7 +22,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4',
         messages: [
           {
             role: 'system',
@@ -48,27 +48,54 @@ serve(async (req) => {
             - Keep emails concise and professional
             - End with a clear call to action
             
-            Return in JSON format with an array of objects containing:
-            {
-              title: string;
-              subject: string;
-              content: string;
-              delay: number;
-            }`
+            Return in this exact JSON format:
+            [
+              {
+                "title": "Initial Outreach",
+                "subject": "subject line here",
+                "content": "email content here",
+                "delay": 0
+              },
+              {
+                "title": "Follow-up",
+                "subject": "subject line here",
+                "content": "email content here",
+                "delay": 3
+              },
+              {
+                "title": "Final Follow-up",
+                "subject": "subject line here",
+                "content": "email content here",
+                "delay": 7
+              }
+            ]`
           }
         ],
         temperature: 0.7,
       }),
     });
 
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('OpenAI API error:', error);
+      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+    }
+
     const data = await response.json();
+    console.log('OpenAI response:', data);
+
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response format from OpenAI');
+    }
+
     const sequence = JSON.parse(data.choices[0].message.content);
+    console.log('Generated sequence:', sequence);
 
     return new Response(JSON.stringify(sequence), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error in generate-email-sequence function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
