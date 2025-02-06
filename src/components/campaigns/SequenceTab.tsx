@@ -129,42 +129,15 @@ export function SequenceTab() {
   const handleInsertVariable = (variable: string) => {
     if (useAI) return;
     
-    // Get the currently focused element
-    const activeElement = document.activeElement;
+    const selection = window.getSelection();
+    const range = selection?.getRangeAt(0);
     
-    if (activeElement instanceof HTMLInputElement && activeElement.type === 'text') {
-      // Handle insertion for subject input
-      const start = activeElement.selectionStart || 0;
-      const end = activeElement.selectionEnd || 0;
-      const currentValue = activeElement.value;
-      
-      const newValue = 
-        currentValue.substring(0, start) + 
-        variable + 
-        currentValue.substring(end);
-      
-      // Find the step being edited
-      const stepId = parseInt(activeElement.closest('[data-step-id]')?.getAttribute('data-step-id') || '1');
-      updateStep(stepId, "subject", newValue);
-      
-      // Set cursor position after the inserted variable
-      setTimeout(() => {
-        activeElement.focus();
-        const newPosition = start + variable.length;
-        activeElement.setSelectionRange(newPosition, newPosition);
-      }, 0);
-    } else {
-      // Handle insertion for rich text editor
-      const selection = window.getSelection();
-      const range = selection?.getRangeAt(0);
-      
-      if (range) {
-        const variableSpan = document.createElement('span');
-        variableSpan.className = 'bg-blue-100 px-1 rounded';
-        variableSpan.textContent = variable;
-        range.deleteContents();
-        range.insertNode(variableSpan);
-      }
+    if (range) {
+      const variableSpan = document.createElement('span');
+      variableSpan.className = 'bg-blue-100 px-1 rounded';
+      variableSpan.textContent = variable;
+      range.deleteContents();
+      range.insertNode(variableSpan);
     }
   };
 

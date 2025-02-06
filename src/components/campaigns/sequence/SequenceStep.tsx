@@ -1,9 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Copy } from "lucide-react";
+import { Copy, Variable, ChevronDown } from "lucide-react";
 import { RichTextEditor } from "./RichTextEditor";
 import { useRef } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface EmailStep {
   id: number;
@@ -18,8 +24,40 @@ interface SequenceStepProps {
   onUpdate: (id: number, field: keyof EmailStep, value: string | number) => void;
 }
 
+const variables = [
+  { label: 'First Name', value: '{firstName}' },
+  { label: 'Last Name', value: '{lastName}' },
+  { label: 'Company Name', value: '{companyName}' },
+  { label: 'Title', value: '{title}' },
+  { label: 'Location', value: '{location}' },
+  { label: 'Email', value: '{email}' },
+];
+
 export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
   const subjectInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSubjectVariableInsert = (variable: string) => {
+    const input = subjectInputRef.current;
+    if (!input) return;
+
+    const start = input.selectionStart || 0;
+    const end = input.selectionEnd || 0;
+    const currentValue = input.value;
+
+    const newValue = 
+      currentValue.substring(0, start) + 
+      variable + 
+      currentValue.substring(end);
+
+    onUpdate(step.id, "subject", newValue);
+
+    // Set cursor position after the inserted variable
+    setTimeout(() => {
+      input.focus();
+      const newPosition = start + variable.length;
+      input.setSelectionRange(newPosition, newPosition);
+    }, 0);
+  };
 
   return (
     <Card>
@@ -35,15 +73,36 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
         </div>
 
         <div className="space-y-4">
-          <div>
-            <Input
-              ref={subjectInputRef}
-              placeholder="Email subject"
-              value={step.subject}
-              onChange={(e) => onUpdate(step.id, "subject", e.target.value)}
-              className="w-full"
-              disabled={useAI}
-            />
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <Input
+                ref={subjectInputRef}
+                placeholder="Email subject"
+                value={step.subject}
+                onChange={(e) => onUpdate(step.id, "subject", e.target.value)}
+                className="w-full"
+                disabled={useAI}
+              />
+            </div>
+            {!useAI && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Variable className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {variables.map((variable) => (
+                    <DropdownMenuItem 
+                      key={variable.value}
+                      onClick={() => handleSubjectVariableInsert(variable.value)}
+                    >
+                      {variable.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
 
           <div>
