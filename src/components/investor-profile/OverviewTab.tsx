@@ -22,7 +22,7 @@ export function OverviewTab({ investor }: { investor: ProcessedInvestorData }) {
   ].filter(item => item.value !== null);
 
   return (
-    <div className="h-[600px] overflow-y-auto space-y-4 p-4">
+    <div className="h-full overflow-y-auto space-y-4 p-4">
       {investor?.description && (
         <Card>
           <CardHeader>
