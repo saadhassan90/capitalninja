@@ -3,7 +3,7 @@ import { List, ListOrdered, Link } from "lucide-react";
 import { Editor } from '@tiptap/react';
 
 interface ListControlsProps {
-  editor: Editor;
+  editor: Editor | null;
   onOpenLinkDialog: () => void;
 }
 

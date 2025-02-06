@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface TextStyleControlsProps {
-  editor: Editor;
+  editor: Editor | null;
 }
 
 const fontSizes = [
@@ -53,7 +53,7 @@ export function TextStyleControls({ editor }: TextStyleControlsProps) {
             <DropdownMenuItem 
               key={size.value}
               onClick={() => {
-                editor.chain().focus().setMark('textStyle', { fontSize: size.value }).run();
+                editor.chain().focus().setMark('fontSize', { size: size.value }).run();
               }}
             >
               {size.label}
@@ -98,7 +98,7 @@ export function TextStyleControls({ editor }: TextStyleControlsProps) {
             <DropdownMenuItem 
               key={font.value}
               onClick={() => {
-                editor.chain().focus().setMark('textStyle', { fontFamily: font.value }).run();
+                editor.chain().focus().setMark('fontFamily', { family: font.value }).run();
               }}
               style={{ fontFamily: font.value }}
             >

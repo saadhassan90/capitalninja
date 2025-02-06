@@ -3,7 +3,7 @@ import { Bold, Italic, Underline } from "lucide-react";
 import { Editor } from '@tiptap/react';
 
 interface BasicFormatButtonsProps {
-  editor: Editor;
+  editor: Editor | null;
 }
 
 export function BasicFormatButtons({ editor }: BasicFormatButtonsProps) {
