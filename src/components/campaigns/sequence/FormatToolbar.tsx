@@ -132,7 +132,13 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
               {fontSizes.map((size) => (
                 <DropdownMenuItem 
                   key={size.value}
-                  onClick={() => editor.chain().focus().setFontSize(size.value).run()}
+                  onClick={() => {
+                    editor.chain().focus().run();
+                    const element = document.querySelector('.ProseMirror');
+                    if (element) {
+                      element.style.fontSize = size.value;
+                    }
+                  }}
                 >
                   {size.label}
                 </DropdownMenuItem>
