@@ -1,51 +1,31 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/components/AuthProvider";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Dashboard";
-import Profile from "@/pages/Profile";
 import Investors from "@/pages/Investors";
 import Lists from "@/pages/Lists";
 import ListView from "@/pages/ListView";
+import Raise from "@/pages/Raise";
+import Team from "@/pages/Team";
+import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
+import Campaigns from "@/pages/Campaigns";
+import CampaignDetails from "@/pages/CampaignDetails";
 import Enrichment from "@/pages/Enrichment";
 import Exports from "@/pages/Exports";
-import Campaigns from "@/pages/Campaigns";
-import Emails from "@/pages/Emails";
-import Raise from "@/pages/Raise";
-import AdminLayout from "@/components/admin/AdminLayout";
+import Outreach from "@/pages/Outreach";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminUsers from "@/pages/admin/Users";
 import AdminActivity from "@/pages/admin/Activity";
 
-const queryClient = new QueryClient();
-
-const Root = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <AuthProvider>
-        {children}
-        <Toaster />
-      </AuthProvider>
-    </ThemeProvider>
-  );
-};
-
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root><Index /></Root>,
+    element: <Index />,
     children: [
       {
         path: "/",
         element: <Dashboard />,
-      },
-      {
-        path: "/profile",
-        element: <Profile />,
       },
       {
         path: "/investors",
@@ -64,8 +44,24 @@ const router = createBrowserRouter([
         element: <Raise />,
       },
       {
+        path: "/team",
+        element: <Team />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
+      },
+      {
         path: "/settings",
         element: <Settings />,
+      },
+      {
+        path: "/campaigns",
+        element: <Campaigns />,
+      },
+      {
+        path: "/campaigns/:id",
+        element: <CampaignDetails />,
       },
       {
         path: "/enrichment",
@@ -76,45 +72,31 @@ const router = createBrowserRouter([
         element: <Exports />,
       },
       {
-        path: "/campaigns",
-        element: <Campaigns />,
+        path: "/outreach",
+        element: <Outreach />,
       },
       {
-        path: "/emails",
-        element: <Emails />,
+        path: "/admin",
+        element: <AdminDashboard />,
       },
       {
-        path: "admin",
-        element: <AdminLayout />,
-        children: [
-          {
-            path: "",
-            element: <AdminDashboard />,
-          },
-          {
-            path: "users",
-            element: <AdminUsers />,
-          },
-          {
-            path: "activity",
-            element: <AdminActivity />,
-          },
-        ],
+        path: "/admin/users",
+        element: <AdminUsers />,
+      },
+      {
+        path: "/admin/activity",
+        element: <AdminActivity />,
       },
     ],
   },
   {
     path: "/auth",
-    element: <Root><Auth /></Root>,
+    element: <Auth />,
   },
 ]);
 
-export function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
+function App() {
+  return <RouterProvider router={router} />;
 }
 
 export default App;
