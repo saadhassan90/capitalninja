@@ -118,15 +118,15 @@ export function InvestorProfile({ investorId, open, onOpenChange }: InvestorProf
           </TabsList>
           
           <div className="flex-1 overflow-y-auto px-6 pb-6">
-            <TabsContent value="overview" className="mt-4 h-full data-[state=active]:flex">
+            <TabsContent value="overview" className="h-full data-[state=active]:flex">
               <OverviewTab investor={investor} />
             </TabsContent>
             
-            <TabsContent value="commitments" className="mt-4 h-full data-[state=active]:flex">
+            <TabsContent value="commitments" className="h-full data-[state=active]:flex">
               <CommitmentsTab commitments={fundCommitments} investor={investor} />
             </TabsContent>
             
-            <TabsContent value="investments" className="mt-4 h-full data-[state=active]:flex">
+            <TabsContent value="investments" className="h-full data-[state=active]:flex">
               <InvestmentsTab investments={directInvestments} investor={investor} />
             </TabsContent>
           </div>
