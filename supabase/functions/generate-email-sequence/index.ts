@@ -1,61 +1,44 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-interface InvestorData {
-  limited_partner_name: string;
-  limited_partner_type: string | null;
-  preferred_fund_type: string | null;
-  aum: number | null;
-  hqlocation: string | null;
-}
-
-interface RaiseData {
-  name: string;
-  target_amount: number;
-  type: string;
-  category: string;
-  description: string;
-}
+};
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { investor, raise } = await req.json()
+    const { investor, campaign } = await req.json();
 
-    // Initialize OpenAI
-    const openai = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Content-Type': 'application/json',
       },
-      method: "POST",
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: 'gpt-4o-mini',
         messages: [
           {
-            role: "system",
-            content: `You are an expert investment outreach specialist. Generate a personalized email sequence for reaching out to investors. 
-            Focus on matching investment preferences with opportunities while maintaining professionalism and authenticity.
-            Keep emails concise and focused on value proposition.`
+            role: 'system',
+            content: `You are an expert at writing personalized email outreach sequences for investors. 
+            Focus on creating compelling, professional emails that highlight the investment opportunity 
+            while maintaining authenticity and avoiding generic language.`
           },
           {
-            role: "user",
-            content: `Generate a personalized email sequence for an investor with the following details:
+            role: 'user',
+            content: `Write a personalized email sequence for an investor with the following details:
             
             Investor Information:
             ${JSON.stringify(investor, null, 2)}
             
-            Raise Information:
-            ${JSON.stringify(raise, null, 2)}
+            Campaign/Raise Information:
+            ${JSON.stringify(campaign, null, 2)}
             
             Requirements:
             - Create 3 emails in a sequence
@@ -64,29 +47,34 @@ serve(async (req) => {
             - Include specific details about why this opportunity matches their portfolio
             - Keep emails concise and professional
             - End with a clear call to action
-            - Return in JSON format with subject and content fields for each email`
+            
+            Return in JSON format with an array of objects containing:
+            {
+              title: string;
+              subject: string;
+              content: string;
+              delay: number;
+            }`
           }
         ],
         temperature: 0.7,
       }),
     });
 
-    const response = await openai.json();
-    const sequence = JSON.parse(response.choices[0].message.content);
+    const data = await response.json();
+    const sequence = JSON.parse(data.choices[0].message.content);
 
-    return new Response(
-      JSON.stringify(sequence),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
-
+    return new Response(JSON.stringify(sequence), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
-    )
+    );
   }
-})
+});
