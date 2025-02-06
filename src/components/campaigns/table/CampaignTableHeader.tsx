@@ -42,13 +42,13 @@ export function CampaignTableHeader({ onSelectAll, allSelected, sortConfig, onSo
         />
       </TableHead>
       <SortableHeader column="name">Name</SortableHeader>
-      <SortableHeader column="subject">Subject</SortableHeader>
-      <TableHead>List</TableHead>
       <TableHead>Raise</TableHead>
+      <TableHead>List</TableHead>
       <SortableHeader column="status">Status</SortableHeader>
       <SortableHeader column="created_at">Created</SortableHeader>
-      <TableHead>Recipients</TableHead>
-      <TableHead>Success Rate</TableHead>
+      <TableHead>Sent</TableHead>
+      <TableHead>Opens</TableHead>
+      <TableHead>Clicks</TableHead>
       <TableHead className="text-right">Actions</TableHead>
     </TableRow>
   );

@@ -66,9 +66,8 @@ export function CampaignTableRow({ campaign, selected, onSelect }: CampaignTable
         />
       </TableCell>
       <TableCell className="font-medium">{campaign.name}</TableCell>
-      <TableCell>{campaign.subject}</TableCell>
-      <TableCell>{campaign.lists?.name}</TableCell>
       <TableCell>{campaign.raise?.name || '-'}</TableCell>
+      <TableCell>{campaign.lists?.name || '-'}</TableCell>
       <TableCell>
         <Badge variant={getStatusColor(campaign.status)}>
           {campaign.status}
@@ -77,13 +76,11 @@ export function CampaignTableRow({ campaign, selected, onSelect }: CampaignTable
       <TableCell>
         {format(new Date(campaign.created_at), "MMM d, yyyy")}
       </TableCell>
-      <TableCell>{campaign.total_recipients || 0}</TableCell>
       <TableCell>
-        {campaign.total_recipients ? 
-          `${Math.round(((campaign.successful_sends || 0) / campaign.total_recipients) * 100)}%` : 
-          '-'
-        }
+        {campaign.sent_at ? format(new Date(campaign.sent_at), "MMM d, yyyy") : '-'}
       </TableCell>
+      <TableCell>0</TableCell>
+      <TableCell>0</TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">
           <Button
