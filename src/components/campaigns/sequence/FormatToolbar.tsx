@@ -36,7 +36,6 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
 
   const handleLinkSubmit = () => {
     if (linkUrl) {
-      // If no text is selected, insert the URL as the text
       if (editor.state.selection.empty) {
         editor.chain().focus().insertContent({
           type: 'text',
@@ -54,6 +53,7 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
   };
 
   const handleVariableInsert = (variable: string) => {
+    // Focus the editor and insert the variable at the current cursor position
     editor.chain().focus().insertContent(variable).run();
     onInsertVariable(variable);
   };
