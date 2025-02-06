@@ -51,34 +51,11 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
 
     onUpdate(step.id, "subject", newValue);
 
-    // Set cursor position after the inserted variable
     setTimeout(() => {
       input.focus();
       const newPosition = start + variable.length;
       input.setSelectionRange(newPosition, newPosition);
     }, 0);
-  };
-
-  const handleFormat = (command: string, value?: string) => {
-    if (useAI) return;
-    
-    if (command === 'createLink') {
-      const selection = window.getSelection();
-      const range = selection?.getRangeAt(0);
-      
-      if (range && !range.collapsed && value) {
-        const link = document.createElement('a');
-        link.href = value;
-        link.className = 'text-primary underline';
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        range.surroundContents(link);
-      }
-    } else if (value) {
-      document.execCommand(command, false, value);
-    } else {
-      document.execCommand(command, false);
-    }
   };
 
   return (
