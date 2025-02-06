@@ -13,6 +13,7 @@ import { useState } from "react";
 import type { Campaign } from "@/types/campaign";
 import type { SortConfig } from "@/types/sorting";
 import { SequenceTab } from "@/components/campaigns/SequenceTab";
+import { CampaignForm } from "@/components/campaigns/CampaignForm";
 
 export default function CampaignView() {
   const { id } = useParams();
@@ -341,3 +342,4 @@ export default function CampaignView() {
     </div>
   );
 }
+
