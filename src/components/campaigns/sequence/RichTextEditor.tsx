@@ -1,7 +1,8 @@
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import { Link, Zap } from 'lucide-react';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
 import { Button } from '@/components/ui/button';
+import { Link as LinkIcon, Zap, Bold, Italic, Underline, List, ListOrdered } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,143 +26,156 @@ const variables = [
   { label: 'Email', value: '{email}' },
 ];
 
-const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
-  <div id="toolbar" className="flex items-center gap-2 p-2 border border-border rounded-t-md bg-background">
-    <div className="flex items-center gap-1 border-r border-border pr-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-bold hover:bg-accent [&_svg]:text-foreground"
-        disabled={!isEditorFocused}
-      />
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-italic hover:bg-accent [&_svg]:text-foreground"
-        disabled={!isEditorFocused}
-      />
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-underline hover:bg-accent [&_svg]:text-foreground"
-        disabled={!isEditorFocused}
-      />
-    </div>
-    
-    <div className="flex items-center gap-1 border-r border-border pr-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-list hover:bg-accent [&_svg]:text-foreground"
-        value="ordered"
-        disabled={!isEditorFocused}
-      />
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-list hover:bg-accent [&_svg]:text-foreground"
-        value="bullet"
-        disabled={!isEditorFocused}
-      />
-    </div>
-
-    <div className="flex items-center gap-1">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 ql-link hover:bg-accent"
-        disabled={!isEditorFocused}
-        onClick={() => {
-          // Force open the link popup
-          const quill = document.querySelector('.ql-editor');
-          if (quill) {
-            const selection = window.getSelection();
-            if (selection && selection.rangeCount > 0) {
-              const range = selection.getRangeAt(0);
-              const linkButton = document.querySelector('.ql-link') as HTMLButtonElement;
-              if (linkButton) {
-                linkButton.click();
-              }
-            }
-          }
-        }}
-      >
-        <Link className="h-4 w-4 text-foreground" />
-      </Button>
-    </div>
-
-    <div className="flex items-center gap-1 ml-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button 
-            variant="secondary" 
-            size="sm"
-            className="h-8 px-3 flex items-center gap-2"
-            disabled={!isEditorFocused}
-          >
-            <Zap className="h-4 w-4 text-foreground" />
-            <span>Variables</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          {variables.map((variable) => (
-            <DropdownMenuItem 
-              key={variable.value}
-              onClick={() => {
-                const quill = document.querySelector('.ql-editor');
-                if (quill) {
-                  const selection = window.getSelection();
-                  const range = selection?.getRangeAt(0);
-                  if (range) {
-                    const span = document.createElement('span');
-                    span.className = 'bg-blue-100 px-1 rounded';
-                    span.textContent = variable.value;
-                    range.deleteContents();
-                    range.insertNode(span);
-                  }
-                }
-              }}
-            >
-              {variable.label}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  </div>
-);
-
-const modules = {
-  toolbar: {
-    container: '#toolbar',
-  },
-};
-
-const formats = [
-  'bold',
-  'italic',
-  'underline',
-  'link',
-  'list',
-  'bullet',
-];
-
 export function RichTextEditor({ content, onChange, disabled }: RichTextEditorProps) {
   const [isEditorFocused, setIsEditorFocused] = useState(false);
 
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-primary underline',
+        },
+      }),
+    ],
+    content,
+    editable: !disabled,
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML());
+    },
+    onFocus: () => setIsEditorFocused(true),
+    onBlur: () => setIsEditorFocused(false),
+  });
+
+  if (!editor) {
+    return null;
+  }
+
+  const setLink = () => {
+    const previousUrl = editor.getAttributes('link').href;
+    const url = window.prompt('URL', previousUrl);
+
+    if (url === null) {
+      return;
+    }
+
+    if (url === '') {
+      editor.chain().focus().unsetLink().run();
+      return;
+    }
+
+    editor.chain().focus().setLink({ href: url }).run();
+  };
+
   return (
-    <div className="relative w-full h-full">
-      <CustomToolbar isEditorFocused={isEditorFocused} />
-      <ReactQuill
-        theme="snow"
-        value={content}
-        onChange={onChange}
-        modules={modules}
-        formats={formats}
-        readOnly={disabled}
-        onFocus={() => setIsEditorFocused(true)}
-        onBlur={() => setIsEditorFocused(false)}
-        className="w-full [&_.ql-container]:border [&_.ql-container]:border-border [&_.ql-container]:rounded-b-md [&_.ql-container]:border-t-0 [&_.ql-editor]:min-h-[150px] [&_.ql-tooltip]:!z-[9999] [&_.ql-tooltip]:!border-border [&_.ql-tooltip]:!bg-popover [&_.ql-tooltip]:!text-popover-foreground [&_.ql-tooltip]:!shadow-md [&_.ql-tooltip]:!rounded-md [&_.ql-tooltip]:!px-3 [&_.ql-tooltip]:!py-2 [&_.ql-tooltip.ql-editing]:!w-fit [&_.ql-tooltip]:!text-sm [&_.ql-tooltip_input]:!border-input [&_.ql-tooltip_input]:!bg-background [&_.ql-tooltip_input]:!h-9 [&_.ql-tooltip_input]:!rounded-md [&_.ql-tooltip_input]:!px-3 [&_.ql-tooltip_input]:!py-1 [&_.ql-tooltip_input]:!text-sm [&_.ql-tooltip_input]:!leading-none [&_.ql-tooltip_input]:!transition-colors [&_.ql-tooltip_input]:!w-[280px] [&_.ql-tooltip_input]:!mb-2 [&_.ql-tooltip_input:focus]:!outline-none [&_.ql-tooltip_input:focus]:!ring-1 [&_.ql-tooltip_input:focus]:!ring-ring [&_.ql-tooltip_a]:!text-primary [&_.ql-tooltip_a]:!no-underline [&_.ql-tooltip_a:hover]:!text-primary/80 [&_.ql-tooltip_a.ql-action]:!ml-0 [&_.ql-tooltip_a.ql-action]:!mr-2 [&_.ql-tooltip_a.ql-remove]:!ml-2 [&_.ql-tooltip_a.ql-remove]:!mr-0 [&_.ql-tooltip_a.ql-action]:!bg-primary [&_.ql-tooltip_a.ql-action]:!text-primary-foreground [&_.ql-tooltip_a.ql-action]:!px-4 [&_.ql-tooltip_a.ql-action]:!py-2 [&_.ql-tooltip_a.ql-action]:!rounded-md [&_.ql-tooltip_a.ql-action]:!text-sm [&_.ql-tooltip_a.ql-action]:!font-medium [&_.ql-tooltip_a.ql-action]:!inline-flex [&_.ql-tooltip_a.ql-action]:!items-center [&_.ql-tooltip_a.ql-action]:!justify-center [&_.ql-tooltip_a.ql-action]:!h-9 [&_.ql-tooltip_a.ql-action]:!transition-colors [&_.ql-tooltip_a.ql-action]:hover:!bg-primary/90"
+    <div className="w-full">
+      <div className="flex items-center gap-2 p-2 border border-border rounded-t-md bg-background">
+        <div className="flex items-center gap-1 border-r border-border pr-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('bold') ? 'bg-accent' : ''}`}
+            disabled={!isEditorFocused}
+          >
+            <Bold className="h-4 w-4 text-foreground" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('italic') ? 'bg-accent' : ''}`}
+            disabled={!isEditorFocused}
+          >
+            <Italic className="h-4 w-4 text-foreground" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('underline') ? 'bg-accent' : ''}`}
+            disabled={!isEditorFocused}
+          >
+            <Underline className="h-4 w-4 text-foreground" />
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-1 border-r border-border pr-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('orderedList') ? 'bg-accent' : ''}`}
+            disabled={!isEditorFocused}
+          >
+            <ListOrdered className="h-4 w-4 text-foreground" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('bulletList') ? 'bg-accent' : ''}`}
+            disabled={!isEditorFocused}
+          >
+            <List className="h-4 w-4 text-foreground" />
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={setLink}
+            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('link') ? 'bg-accent' : ''}`}
+            disabled={!isEditorFocused}
+          >
+            <LinkIcon className="h-4 w-4 text-foreground" />
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-1 ml-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="secondary" 
+                size="sm"
+                className="h-8 px-3 flex items-center gap-2"
+                disabled={!isEditorFocused}
+              >
+                <Zap className="h-4 w-4 text-foreground" />
+                <span>Variables</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {variables.map((variable) => (
+                <DropdownMenuItem 
+                  key={variable.value}
+                  onClick={() => {
+                    editor
+                      .chain()
+                      .focus()
+                      .insertContent(`<span class="bg-blue-100 px-1 rounded">${variable.value}</span>`)
+                      .run();
+                  }}
+                >
+                  {variable.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      <EditorContent 
+        editor={editor} 
+        className="w-full border border-t-0 border-border rounded-b-md min-h-[150px] focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 [&_.ProseMirror]:p-3 [&_.ProseMirror]:min-h-[150px] [&_.ProseMirror:focus]:outline-none"
       />
     </div>
   );
