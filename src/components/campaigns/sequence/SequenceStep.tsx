@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Copy, Variable } from "lucide-react";
+import { Copy, Variable, ChevronDown } from "lucide-react";
 import { RichTextEditor } from "./RichTextEditor";
 import { useRef } from "react";
 import {
@@ -10,9 +10,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FormatToolbar } from "./FormatToolbar";
-import { useEditor } from '@tiptap/react';
-import { getEditorExtensions } from './editor/editorConfig';
 
 interface EmailStep {
   id: number;
@@ -39,15 +36,6 @@ const variables = [
 export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
   const subjectInputRef = useRef<HTMLInputElement>(null);
 
-  const editor = useEditor({
-    extensions: getEditorExtensions(),
-    content: step.content,
-    onUpdate: ({ editor }) => {
-      onUpdate(step.id, "content", editor.getHTML());
-    },
-    editable: !useAI
-  });
-
   const handleSubjectVariableInsert = (variable: string) => {
     const input = subjectInputRef.current;
     if (!input) return;
@@ -69,14 +57,6 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
       const newPosition = start + variable.length;
       input.setSelectionRange(newPosition, newPosition);
     }, 0);
-  };
-
-  const handleBodyVariableInsert = (variable: string) => {
-    if (editor) {
-      editor.commands.focus();
-      editor.commands.insertContent(variable);
-      onUpdate(step.id, "content", editor.getHTML());
-    }
   };
 
   return (
@@ -126,10 +106,6 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
           </div>
 
           <div>
-            <FormatToolbar
-              editor={editor}
-              onInsertVariable={handleBodyVariableInsert}
-            />
             <RichTextEditor
               content={step.content}
               onChange={(html) => onUpdate(step.id, "content", html)}

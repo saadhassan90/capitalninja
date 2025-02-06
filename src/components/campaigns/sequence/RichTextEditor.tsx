@@ -1,5 +1,6 @@
 import { useEditor, EditorContent } from '@tiptap/react';
-import { getEditorExtensions } from './editor/editorConfig';
+import StarterKit from '@tiptap/starter-kit';
+import { Button } from "@/components/ui/button";
 
 interface RichTextEditorProps {
   content: string;
@@ -9,17 +10,17 @@ interface RichTextEditorProps {
 
 export function RichTextEditor({ content, onChange, disabled }: RichTextEditorProps) {
   const editor = useEditor({
-    extensions: getEditorExtensions(),
+    extensions: [StarterKit],
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
-    editable: !disabled,
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-xl m-5 focus:outline-none min-h-[150px]',
       },
     },
+    editable: !disabled,
   });
 
   if (!editor) {

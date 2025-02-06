@@ -116,6 +116,36 @@ export function SequenceTab() {
     ));
   };
 
+  const handleFormat = (command: string, value?: string) => {
+    if (useAI) return;
+    
+    if (value) {
+      document.execCommand(command, false, value);
+    } else {
+      document.execCommand(command, false);
+    }
+  };
+
+  const handleInsertVariable = (variable: string) => {
+    if (useAI) return;
+    
+    const selection = window.getSelection();
+    const range = selection?.getRangeAt(0);
+    
+    if (range) {
+      const variableSpan = document.createElement('span');
+      variableSpan.className = 'bg-blue-100 px-1 rounded';
+      variableSpan.textContent = variable;
+      range.deleteContents();
+      range.insertNode(variableSpan);
+    }
+  };
+
+  const handleInsertLink = (url: string) => {
+    if (useAI) return;
+    document.execCommand('createLink', false, url);
+  };
+
   return (
     <div className="space-y-6 p-6">
       <SequenceHeader
@@ -126,6 +156,12 @@ export function SequenceTab() {
       />
 
       <div className="space-y-4">
+        <FormatToolbar 
+          onFormat={handleFormat}
+          onInsertVariable={handleInsertVariable}
+          onInsertLink={handleInsertLink}
+        />
+
         {steps.map((step) => (
           <SequenceStep
             key={step.id}
