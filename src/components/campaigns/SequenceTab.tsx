@@ -1,21 +1,10 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Plus, Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { EmailPreviewDialog } from "./EmailPreviewDialog";
 import { SequenceHeader } from "./sequence/SequenceHeader";
-import { SequenceStep } from "./sequence/SequenceStep";
-import { supabase } from "@/integrations/supabase/client";
+import { SequenceStepsList } from "./sequence/SequenceStepsList";
+import { ConfirmAIDialog } from "./sequence/ConfirmAIDialog";
+import { useAISequence } from "@/hooks/useAISequence";
+import { useToast } from "@/hooks/use-toast";
 
 interface EmailStep {
   id: number;
@@ -31,41 +20,8 @@ export function SequenceTab() {
   const [useAI, setUseAI] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const { isGenerating, generateAISequence } = useAISequence();
   const { toast } = useToast();
-
-  const generateAISequence = async (investor: any, raise: any) => {
-    setIsGenerating(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-email-sequence', {
-        body: { investor, raise }
-      });
-
-      if (error) throw error;
-
-      const aiSequence = data.map((email: any, index: number) => ({
-        id: index + 1,
-        subject: email.subject,
-        content: email.content,
-        delay: 3 + (index * 2)
-      }));
-
-      setSteps(aiSequence);
-      toast({
-        title: "AI Sequence Generated",
-        description: "Your email sequence has been generated successfully.",
-      });
-    } catch (error) {
-      console.error('Error generating AI sequence:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate AI sequence. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGenerating(false);
-    }
-  };
 
   const handleAIToggle = async (checked: boolean) => {
     if (checked && steps.some(step => step.subject || step.content)) {
@@ -95,7 +51,10 @@ export function SequenceTab() {
         description: "A growth equity fund focused on technology companies"
       };
 
-      await generateAISequence(mockInvestor, mockRaise);
+      const aiSequence = await generateAISequence(mockInvestor, mockRaise);
+      if (aiSequence) {
+        setSteps(aiSequence);
+      }
     } else {
       setSteps([{ id: 1, subject: "", content: "", delay: 5 }]);
     }
@@ -144,56 +103,23 @@ export function SequenceTab() {
         onSave={handleSaveSequence}
       />
 
-      {isGenerating ? (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          <span className="ml-2 text-muted-foreground">Generating AI sequence...</span>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {steps.map((step) => (
-            <SequenceStep
-              key={step.id}
-              step={step}
-              useAI={useAI}
-              onUpdate={updateStep}
-            />
-          ))}
+      <SequenceStepsList
+        steps={steps}
+        useAI={useAI}
+        isGenerating={isGenerating}
+        onUpdateStep={updateStep}
+        onAddStep={addStep}
+      />
 
-          {!useAI && steps.length < 5 && (
-            <Button 
-              variant="outline" 
-              className="w-full" 
-              onClick={addStep}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add step
-            </Button>
-          )}
-        </div>
-      )}
-
-      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Switch to AI-Generated Sequence?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will replace your current email sequence with an AI-generated version. All manually created steps will be deleted. This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              setShowConfirmDialog(false);
-              setUseAI(false);
-            }}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={() => confirmAIToggle(true)}>
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmAIDialog
+        open={showConfirmDialog}
+        onOpenChange={setShowConfirmDialog}
+        onConfirm={() => confirmAIToggle(true)}
+        onCancel={() => {
+          setShowConfirmDialog(false);
+          setUseAI(false);
+        }}
+      />
 
       <EmailPreviewDialog
         open={showPreviewDialog}
