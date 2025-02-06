@@ -54,14 +54,12 @@ export function SequenceTab() {
   ]);
   const [useAI, setUseAI] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [pendingAIToggle, setPendingAIToggle] = useState(false);
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const { toast } = useToast();
 
   const handleAIToggle = (checked: boolean) => {
     if (checked && steps.some(step => step.subject || step.content)) {
       setShowConfirmDialog(true);
-      setPendingAIToggle(true);
     } else {
       confirmAIToggle(checked);
     }
@@ -70,16 +68,17 @@ export function SequenceTab() {
   const confirmAIToggle = (checked: boolean) => {
     setUseAI(checked);
     if (checked) {
+      // Always replace existing steps with AI sequence when toggling on
       setSteps(aiGeneratedSequence);
       toast({
         title: "AI Sequence Generated",
         description: "Your email sequence has been replaced with an AI-generated version.",
       });
     } else {
+      // Reset to a single empty step when toggling off
       setSteps([{ id: 1, subject: "", content: "", delay: 5 }]);
     }
     setShowConfirmDialog(false);
-    setPendingAIToggle(false);
   };
 
   const handleSaveSequence = async () => {
@@ -151,13 +150,12 @@ export function SequenceTab() {
           <AlertDialogHeader>
             <AlertDialogTitle>Switch to AI-Generated Sequence?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will replace your current email sequence with an AI-generated version. This action cannot be undone.
+              This will replace your current email sequence with an AI-generated version. All manually created steps will be deleted. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => {
               setShowConfirmDialog(false);
-              setPendingAIToggle(false);
               setUseAI(false);
             }}>
               Cancel
