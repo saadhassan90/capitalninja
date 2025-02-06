@@ -12,6 +12,7 @@ import { InvestorsPagination } from "./InvestorsPagination";
 import { ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import type { LimitedPartner } from "@/types/investor";
 import type { SortConfig } from "@/types/sorting";
+import type { Campaign } from "@/types/campaign";
 
 interface InvestorsTableViewProps {
   investors: LimitedPartner[];
@@ -26,6 +27,7 @@ interface InvestorsTableViewProps {
   onSelectAll: (checked: boolean) => void;
   onSelectInvestor: (id: number, checked: boolean) => void;
   listId?: string;
+  campaign?: Campaign;
 }
 
 export function InvestorsTableView({ 
@@ -41,6 +43,7 @@ export function InvestorsTableView({
   onSelectAll,
   onSelectInvestor,
   listId,
+  campaign,
 }: InvestorsTableViewProps) {
   const SortableHeader = ({ column, children }: { column: string, children: React.ReactNode }) => {
     const isSorted = sortConfig.column === column;
@@ -109,6 +112,7 @@ export function InvestorsTableView({
                     selected={selectedInvestors.includes(investor.id)}
                     onSelect={onSelectInvestor}
                     listId={listId}
+                    campaign={campaign}
                   />
                 ))
               )}
