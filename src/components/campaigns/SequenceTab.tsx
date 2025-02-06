@@ -111,6 +111,7 @@ export function SequenceTab() {
               checked={useAI}
               onCheckedChange={setUseAI}
               id="ai-mode"
+              className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-[#1EAEDB] data-[state=checked]:to-[#8B5CF6]"
             />
             <label
               htmlFor="ai-mode"
