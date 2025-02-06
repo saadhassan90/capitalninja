@@ -29,44 +29,6 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
 
   return (
     <div className="border rounded-md">
-      <div className="border-b bg-muted/50 p-2 flex gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive('bold') ? 'bg-muted' : ''}
-          disabled={disabled}
-        >
-          Bold
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive('italic') ? 'bg-muted' : ''}
-          disabled={disabled}
-        >
-          Italic
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive('bulletList') ? 'bg-muted' : ''}
-          disabled={disabled}
-        >
-          Bullet List
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive('orderedList') ? 'bg-muted' : ''}
-          disabled={disabled}
-        >
-          Numbered List
-        </Button>
-      </div>
       <EditorContent editor={editor} />
     </div>
   );

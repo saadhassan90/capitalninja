@@ -15,6 +15,7 @@ import {
 import { EmailPreviewDialog } from "./EmailPreviewDialog";
 import { SequenceHeader } from "./sequence/SequenceHeader";
 import { SequenceStep } from "./sequence/SequenceStep";
+import { FormatToolbar } from "./sequence/FormatToolbar";
 
 interface EmailStep {
   id: number;
@@ -115,6 +116,27 @@ export function SequenceTab() {
     ));
   };
 
+  const handleFormat = (command: string) => {
+    if (useAI) return;
+    
+    document.execCommand(command, false);
+  };
+
+  const handleInsertVariable = () => {
+    if (useAI) return;
+    
+    const selection = window.getSelection();
+    const range = selection?.getRangeAt(0);
+    
+    if (range) {
+      const variableSpan = document.createElement('span');
+      variableSpan.className = 'bg-blue-100 px-1 rounded';
+      variableSpan.textContent = '{{variable}}';
+      range.deleteContents();
+      range.insertNode(variableSpan);
+    }
+  };
+
   return (
     <div className="space-y-6 p-6">
       <SequenceHeader
@@ -125,6 +147,11 @@ export function SequenceTab() {
       />
 
       <div className="space-y-4">
+        <FormatToolbar 
+          onFormat={handleFormat}
+          onInsertVariable={handleInsertVariable}
+        />
+
         {steps.map((step) => (
           <SequenceStep
             key={step.id}
