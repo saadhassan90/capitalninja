@@ -23,7 +23,7 @@ export function InvestmentsTab({ investments, investor }: InvestmentsTabProps) {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="h-full overflow-y-auto space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-medium">Direct Investments</CardTitle>
