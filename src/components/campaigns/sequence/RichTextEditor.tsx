@@ -26,16 +26,48 @@ const variables = [
 ];
 
 const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
-  <div id="toolbar">
-    <span className="ql-formats">
-      <button className="ql-bold" disabled={!isEditorFocused} />
-      <button className="ql-italic" disabled={!isEditorFocused} />
-      <button className="ql-underline" disabled={!isEditorFocused} />
-      <button className="ql-link" disabled={!isEditorFocused} />
+  <div id="toolbar" className="flex items-center gap-1 p-2 border border-border rounded-t-md [&_.ql-formats]:mr-0">
+    <span className="ql-formats flex gap-1">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 w-8 p-0 ql-bold"
+        disabled={!isEditorFocused}
+      />
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 w-8 p-0 ql-italic"
+        disabled={!isEditorFocused}
+      />
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 w-8 p-0 ql-underline"
+        disabled={!isEditorFocused}
+      />
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 w-8 p-0 ql-link"
+        disabled={!isEditorFocused}
+      />
     </span>
-    <span className="ql-formats">
-      <button className="ql-list" value="ordered" disabled={!isEditorFocused} />
-      <button className="ql-list" value="bullet" disabled={!isEditorFocused} />
+    <span className="ql-formats flex gap-1">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 w-8 p-0 ql-list"
+        value="ordered"
+        disabled={!isEditorFocused}
+      />
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 w-8 p-0 ql-list"
+        value="bullet"
+        disabled={!isEditorFocused}
+      />
     </span>
     <span className="ql-formats">
       <DropdownMenu>
@@ -43,7 +75,7 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-8 px-2 -mt-1 flex items-center gap-2"
+            className="h-8 px-2 flex items-center gap-2"
             disabled={!isEditorFocused}
           >
             <Variable className="h-4 w-4" />
@@ -108,7 +140,7 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
         readOnly={disabled}
         onFocus={() => setIsEditorFocused(true)}
         onBlur={() => setIsEditorFocused(false)}
-        className="w-full [&_.ql-container]:border [&_.ql-container]:border-border [&_.ql-toolbar]:border [&_.ql-toolbar]:border-border [&_.ql-editor]:min-h-[150px]"
+        className="w-full [&_.ql-container]:border [&_.ql-container]:border-border [&_.ql-container]:rounded-b-md [&_.ql-container]:border-t-0 [&_.ql-editor]:min-h-[150px]"
       />
     </div>
   );
