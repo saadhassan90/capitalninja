@@ -74,22 +74,17 @@ const ListView = () => {
     
     try {
       setIsExporting(true);
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/export-list-investors`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ listId: id }),
+      
+      const { data, error } = await supabase.functions.invoke('export-list-investors', {
+        body: { listId: id }
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to export list');
+      if (error) {
+        throw error;
       }
 
       // Create a blob from the CSV content
-      const blob = await response.blob();
+      const blob = new Blob([data], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
