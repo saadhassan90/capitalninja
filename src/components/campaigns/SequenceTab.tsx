@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Copy, Eye, Save, Sparkle } from "lucide-react";
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { Switch } from "@/components/ui/switch";
+import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +13,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { EmailPreviewDialog } from "./EmailPreviewDialog";
+import { SequenceHeader } from "./sequence/SequenceHeader";
+import { SequenceStep } from "./sequence/SequenceStep";
 
 interface EmailStep {
   id: number;
@@ -26,70 +22,6 @@ interface EmailStep {
   content: string;
   delay: number;
 }
-
-const RichTextEditor = ({ content, onChange, disabled }: { content: string; onChange: (html: string) => void; disabled?: boolean }) => {
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
-    },
-    editorProps: {
-      attributes: {
-        class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-xl m-5 focus:outline-none min-h-[150px]',
-      },
-    },
-    editable: !disabled,
-  });
-
-  if (!editor) {
-    return null;
-  }
-
-  return (
-    <div className="border rounded-md">
-      <div className="border-b bg-muted/50 p-2 flex gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive('bold') ? 'bg-muted' : ''}
-          disabled={disabled}
-        >
-          Bold
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive('italic') ? 'bg-muted' : ''}
-          disabled={disabled}
-        >
-          Italic
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive('bulletList') ? 'bg-muted' : ''}
-          disabled={disabled}
-        >
-          Bullet List
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive('orderedList') ? 'bg-muted' : ''}
-          disabled={disabled}
-        >
-          Numbered List
-        </Button>
-      </div>
-      <EditorContent editor={editor} />
-    </div>
-  );
-};
 
 const aiGeneratedSequence: EmailStep[] = [
   {
@@ -152,8 +84,6 @@ export function SequenceTab() {
 
   const handleSaveSequence = async () => {
     try {
-      // Here you would typically save to your backend
-      // For now, we'll just show a success toast
       toast({
         title: "Sequence Saved",
         description: "Your email sequence has been saved successfully.",
@@ -187,85 +117,21 @@ export function SequenceTab() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Email Sequence</h2>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={useAI}
-              onCheckedChange={handleAIToggle}
-              id="ai-mode"
-              className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-[#1EAEDB] data-[state=checked]:to-[#8B5CF6]"
-            />
-            <label
-              htmlFor="ai-mode"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
-            >
-              <span className="bg-gradient-to-r from-[#1EAEDB] to-[#8B5CF6] bg-clip-text text-transparent">
-                Personalize using AI
-              </span>
-              <Sparkle className="h-4 w-4 text-[#1EAEDB]" />
-            </label>
-          </div>
-          <Button variant="outline" size="sm" onClick={() => setShowPreviewDialog(true)}>
-            <Eye className="h-4 w-4 mr-2" />
-            Preview
-          </Button>
-          <Button size="sm" onClick={handleSaveSequence}>
-            <Save className="h-4 w-4 mr-2" />
-            Save Sequence
-          </Button>
-        </div>
-      </div>
+      <SequenceHeader
+        useAI={useAI}
+        onAIToggle={handleAIToggle}
+        onPreview={() => setShowPreviewDialog(true)}
+        onSave={handleSaveSequence}
+      />
 
       <div className="space-y-4">
         {steps.map((step) => (
-          <Card key={step.id} className="relative">
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="font-medium">Step {step.id}</h3>
-                {!useAI && (
-                  <Button variant="ghost" size="sm" onClick={() => {}}>
-                    <Copy className="h-4 w-4 mr-2" />
-                    Add variant
-                  </Button>
-                )}
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <Input
-                    placeholder="Email subject"
-                    value={step.subject}
-                    onChange={(e) => updateStep(step.id, "subject", e.target.value)}
-                    className="w-full"
-                    disabled={useAI}
-                  />
-                </div>
-
-                <div>
-                  <RichTextEditor
-                    content={step.content}
-                    onChange={(html) => updateStep(step.id, "content", html)}
-                    disabled={useAI}
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Send next message in</span>
-                  <Input
-                    type="number"
-                    value={step.delay}
-                    onChange={(e) => updateStep(step.id, "delay", parseInt(e.target.value))}
-                    className="w-20"
-                    min={1}
-                    disabled={useAI}
-                  />
-                  <span className="text-sm text-muted-foreground">Days</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <SequenceStep
+            key={step.id}
+            step={step}
+            useAI={useAI}
+            onUpdate={updateStep}
+          />
         ))}
 
         {!useAI && steps.length < 5 && (
