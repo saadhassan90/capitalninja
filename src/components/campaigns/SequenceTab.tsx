@@ -116,13 +116,17 @@ export function SequenceTab() {
     ));
   };
 
-  const handleFormat = (command: string) => {
+  const handleFormat = (command: string, value?: string) => {
     if (useAI) return;
     
-    document.execCommand(command, false);
+    if (value) {
+      document.execCommand(command, false, value);
+    } else {
+      document.execCommand(command, false);
+    }
   };
 
-  const handleInsertVariable = () => {
+  const handleInsertVariable = (variable: string) => {
     if (useAI) return;
     
     const selection = window.getSelection();
@@ -131,10 +135,16 @@ export function SequenceTab() {
     if (range) {
       const variableSpan = document.createElement('span');
       variableSpan.className = 'bg-blue-100 px-1 rounded';
-      variableSpan.textContent = '{{variable}}';
+      variableSpan.textContent = variable;
       range.deleteContents();
       range.insertNode(variableSpan);
     }
+  };
+
+  const handleInsertLink = (url: string) => {
+    if (useAI) return;
+    
+    document.execCommand('createLink', false, url);
   };
 
   return (
@@ -150,6 +160,7 @@ export function SequenceTab() {
         <FormatToolbar 
           onFormat={handleFormat}
           onInsertVariable={handleInsertVariable}
+          onInsertLink={handleInsertLink}
         />
 
         {steps.map((step) => (
