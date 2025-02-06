@@ -27,7 +27,7 @@ interface EmailStep {
 const aiGeneratedSequence: EmailStep[] = [
   {
     id: 1,
-    subject: "Exclusive Pre-Sale option for you Christopher",
+    subject: "Exclusive Pre-Sale option for you {firstName}",
     content: `<p>Fund managers and capital raisers like you have two options:</p>
     <p>1️⃣ Pay over $50k/year for databases like Preqin, PitchBook, Fintrx, or ZoomInfo, each offering partial and incomplete data.</p>
     <p>2️⃣ Use CapitalNinja – our AI compiles investor/LP data from all these platforms into harmonized profiles for a fraction of the cost. CapitalNinja is the newest portfolio company of the Hassan Family Office.</p>
@@ -71,12 +71,14 @@ export function SequenceTab() {
   const confirmAIToggle = (checked: boolean) => {
     setUseAI(checked);
     if (checked) {
+      // Completely replace with AI sequence
       setSteps(aiGeneratedSequence);
       toast({
         title: "AI Sequence Generated",
         description: "Your email sequence has been replaced with an AI-generated version.",
       });
     } else {
+      // Reset to a single empty step when turning AI off
       setSteps([{ id: 1, subject: "", content: "", delay: 5 }]);
     }
     setShowConfirmDialog(false);
