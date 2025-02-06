@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Copy, Eye, Save, Bolt } from "lucide-react";
+import { Plus, Copy, Eye, Save, Sparkle } from "lucide-react";
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Switch } from "@/components/ui/switch";
@@ -106,18 +106,19 @@ export function SequenceTab() {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Email Sequence</h2>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-gradient-to-r from-[#1EAEDB] to-[#8B5CF6] p-2 rounded-lg">
             <Switch
               checked={useAI}
               onCheckedChange={setUseAI}
               id="ai-mode"
+              className="data-[state=checked]:bg-white"
             />
             <label
               htmlFor="ai-mode"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2 text-white"
             >
               Personalize using AI
-              <Bolt className="h-4 w-4 text-yellow-500" />
+              <Sparkle className="h-4 w-4 text-white animate-pulse" />
             </label>
           </div>
           <Button variant="outline" size="sm">
