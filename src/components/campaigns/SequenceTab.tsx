@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Copy, Eye, Save } from "lucide-react";
+import { Plus, Copy, Eye, Save, Bolt } from "lucide-react";
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Switch } from "@/components/ui/switch";
@@ -114,9 +114,10 @@ export function SequenceTab() {
             />
             <label
               htmlFor="ai-mode"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
             >
               Personalize using AI
+              <Bolt className="h-4 w-4 text-yellow-500" />
             </label>
           </div>
           <Button variant="outline" size="sm">
