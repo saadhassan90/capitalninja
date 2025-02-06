@@ -10,6 +10,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { FormatToolbar } from "./FormatToolbar";
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import TextStyle from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
+import ListItem from '@tiptap/extension-list-item';
+import BulletList from '@tiptap/extension-bullet-list';
+import OrderedList from '@tiptap/extension-ordered-list';
+import Link from '@tiptap/extension-link';
 
 interface EmailStep {
   id: number;
@@ -36,6 +46,37 @@ const variables = [
 export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
   const subjectInputRef = useRef<HTMLInputElement>(null);
 
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      TextStyle,
+      Color,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-blue-500 underline'
+        }
+      }),
+      BulletList.configure({
+        HTMLAttributes: {
+          class: 'list-disc ml-4'
+        }
+      }),
+      OrderedList.configure({
+        HTMLAttributes: {
+          class: 'list-decimal ml-4'
+        }
+      }),
+      ListItem
+    ],
+    content: step.content,
+    onUpdate: ({ editor }) => {
+      onUpdate(step.id, "content", editor.getHTML());
+    },
+    editable: !useAI
+  });
+
   const handleSubjectVariableInsert = (variable: string) => {
     const input = subjectInputRef.current;
     if (!input) return;
@@ -51,7 +92,6 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
 
     onUpdate(step.id, "subject", newValue);
 
-    // Set cursor position after the inserted variable
     setTimeout(() => {
       input.focus();
       const newPosition = start + variable.length;
@@ -106,6 +146,14 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
           </div>
 
           <div>
+            <FormatToolbar
+              editor={editor}
+              onInsertVariable={(variable) => {
+                if (editor) {
+                  editor.chain().focus().insertContent(variable).run();
+                }
+              }}
+            />
             <RichTextEditor
               content={step.content}
               onChange={(html) => onUpdate(step.id, "content", html)}

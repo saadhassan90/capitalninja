@@ -27,18 +27,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { Editor } from '@tiptap/react';
 
 interface FormatToolbarProps {
-  onFormat: (command: string, value?: string) => void;
+  editor: Editor | null;
   onInsertVariable: (variable: string) => void;
-  onInsertLink: (url: string) => void;
 }
 
 const fontSizes = [
-  { label: 'Small', value: '2' },
-  { label: 'Normal', value: '3' },
-  { label: 'Large', value: '4' },
-  { label: 'Extra Large', value: '5' },
+  { label: 'Small', value: '14px' },
+  { label: 'Normal', value: '16px' },
+  { label: 'Large', value: '18px' },
+  { label: 'Extra Large', value: '24px' },
 ];
 
 const variables = [
@@ -58,12 +58,29 @@ const colors = [
   { label: 'Green', value: '#008000' },
 ];
 
-export function FormatToolbar({ onFormat, onInsertVariable, onInsertLink }: FormatToolbarProps) {
+export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) {
   const [showLinkDialog, setShowLinkDialog] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
 
+  if (!editor) {
+    return null;
+  }
+
   const handleLinkSubmit = () => {
-    onInsertLink(linkUrl);
+    if (linkUrl) {
+      // Check if there is text selected
+      if (editor.state.selection.empty) {
+        editor.chain().focus().insertContent({
+          type: 'text',
+          text: linkUrl,
+          marks: [{ type: 'link', attrs: { href: linkUrl } }],
+        }).run();
+      } else {
+        editor.chain().focus().setLink({ href: linkUrl }).run();
+      }
+    } else {
+      editor.chain().focus().unsetLink().run();
+    }
     setLinkUrl('');
     setShowLinkDialog(false);
   };
@@ -75,24 +92,27 @@ export function FormatToolbar({ onFormat, onInsertVariable, onInsertLink }: Form
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onFormat('bold')}
-            className="h-8 px-2"
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            data-active={editor.isActive('bold')}
+            className={`h-8 px-2 ${editor.isActive('bold') ? 'bg-muted' : ''}`}
           >
             <Bold className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onFormat('italic')}
-            className="h-8 px-2"
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            data-active={editor.isActive('italic')}
+            className={`h-8 px-2 ${editor.isActive('italic') ? 'bg-muted' : ''}`}
           >
             <Italic className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onFormat('underline')}
-            className="h-8 px-2"
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            data-active={editor.isActive('underline')}
+            className={`h-8 px-2 ${editor.isActive('underline') ? 'bg-muted' : ''}`}
           >
             <Underline className="h-4 w-4" />
           </Button>
@@ -112,7 +132,7 @@ export function FormatToolbar({ onFormat, onInsertVariable, onInsertLink }: Form
               {fontSizes.map((size) => (
                 <DropdownMenuItem 
                   key={size.value}
-                  onClick={() => onFormat('fontSize', size.value)}
+                  onClick={() => editor.chain().focus().setStyle({ fontSize: size.value }).run()}
                 >
                   {size.label}
                 </DropdownMenuItem>
@@ -131,7 +151,7 @@ export function FormatToolbar({ onFormat, onInsertVariable, onInsertLink }: Form
               {colors.map((color) => (
                 <DropdownMenuItem 
                   key={color.value}
-                  onClick={() => onFormat('foreColor', color.value)}
+                  onClick={() => editor.chain().focus().setColor(color.value).run()}
                   className="flex items-center gap-2"
                 >
                   <div 
@@ -151,16 +171,18 @@ export function FormatToolbar({ onFormat, onInsertVariable, onInsertLink }: Form
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onFormat('insertUnorderedList')}
-            className="h-8 px-2"
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            data-active={editor.isActive('bulletList')}
+            className={`h-8 px-2 ${editor.isActive('bulletList') ? 'bg-muted' : ''}`}
           >
             <List className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onFormat('insertOrderedList')}
-            className="h-8 px-2"
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            data-active={editor.isActive('orderedList')}
+            className={`h-8 px-2 ${editor.isActive('orderedList') ? 'bg-muted' : ''}`}
           >
             <ListOrdered className="h-4 w-4" />
           </Button>
