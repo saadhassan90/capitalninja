@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -15,6 +15,7 @@ import {
 import { EmailPreviewDialog } from "./EmailPreviewDialog";
 import { SequenceHeader } from "./sequence/SequenceHeader";
 import { SequenceStep } from "./sequence/SequenceStep";
+import { supabase } from "@/integrations/supabase/client";
 
 interface EmailStep {
   id: number;
@@ -23,31 +24,6 @@ interface EmailStep {
   delay: number;
 }
 
-const aiGeneratedSequence: EmailStep[] = [
-  {
-    id: 1,
-    subject: "Exclusive Pre-Sale option for you {firstName}",
-    content: `<p>Fund managers and capital raisers like you have two options:</p>
-    <p>1️⃣ Pay over $50k/year for databases like Preqin, PitchBook, Fintrx, or ZoomInfo, each offering partial and incomplete data.</p>
-    <p>2️⃣ Use CapitalNinja – our AI compiles investor/LP data from all these platforms into harmonized profiles for a fraction of the cost. CapitalNinja is the newest portfolio company of the Hassan Family Office.</p>
-    <p>For $2k/month, you'll access harmonized insights previously scattered across platforms, saving time and money. This invite-only pre-sale is for those who've connected with Hassan Family Office in some way. We're capping discounted access at 100 clients. Post-launch, the price rises to $5k/month.</p>
-    <p>Let's book a Meeting!</p>`,
-    delay: 0
-  },
-  {
-    id: 2,
-    subject: "Key Metrics and Market Opportunity",
-    content: "<p>Following up on my previous email about our investment opportunity. I wanted to share some key metrics that demonstrate our market position and growth trajectory:</p><ul><li>Market size: $50B+</li><li>Current growth rate: 40% YoY</li><li>Target IRR: 25%+</li></ul><p>When would be a good time for a brief discussion?</p>",
-    delay: 3
-  },
-  {
-    id: 3,
-    subject: "Final Follow-up and Next Steps",
-    content: "<p>I wanted to make one final attempt to connect regarding our investment opportunity. Given your successful track record with similar investments, I believe this could be a mutually beneficial partnership.</p><p>I've attached our detailed pitch deck for your review. Please let me know if you'd like to schedule a call to discuss further.</p>",
-    delay: 4
-  }
-];
-
 export function SequenceTab() {
   const [steps, setSteps] = useState<EmailStep[]>([
     { id: 1, subject: "", content: "", delay: 5 }
@@ -55,27 +31,72 @@ export function SequenceTab() {
   const [useAI, setUseAI] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
 
-  const handleAIToggle = (checked: boolean) => {
-    if (checked && steps.some(step => step.subject || step.content)) {
-      setShowConfirmDialog(true);
-    } else {
-      confirmAIToggle(checked);
+  const generateAISequence = async (investor: any, raise: any) => {
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-email-sequence', {
+        body: { investor, raise }
+      });
+
+      if (error) throw error;
+
+      const aiSequence = data.map((email: any, index: number) => ({
+        id: index + 1,
+        subject: email.subject,
+        content: email.content,
+        delay: 3 + (index * 2)
+      }));
+
+      setSteps(aiSequence);
+      toast({
+        title: "AI Sequence Generated",
+        description: "Your email sequence has been generated successfully.",
+      });
+    } catch (error) {
+      console.error('Error generating AI sequence:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate AI sequence. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
     }
   };
 
-  const confirmAIToggle = (checked: boolean) => {
+  const handleAIToggle = async (checked: boolean) => {
+    if (checked && steps.some(step => step.subject || step.content)) {
+      setShowConfirmDialog(true);
+    } else {
+      await confirmAIToggle(checked);
+    }
+  };
+
+  const confirmAIToggle = async (checked: boolean) => {
     setUseAI(checked);
     if (checked) {
-      // Always replace existing steps with AI sequence when toggling on
-      setSteps(aiGeneratedSequence);
-      toast({
-        title: "AI Sequence Generated",
-        description: "Your email sequence has been replaced with an AI-generated version.",
-      });
+      // Fetch investor and raise data here
+      const mockInvestor = {
+        limited_partner_name: "Sample Investor",
+        limited_partner_type: "Private Equity",
+        preferred_fund_type: "Growth Equity",
+        aum: 1000000000,
+        hqlocation: "New York, NY"
+      };
+
+      const mockRaise = {
+        name: "Growth Fund I",
+        target_amount: 50000000,
+        type: "equity",
+        category: "fund_direct_deal",
+        description: "A growth equity fund focused on technology companies"
+      };
+
+      await generateAISequence(mockInvestor, mockRaise);
     } else {
-      // Reset to a single empty step when toggling off
       setSteps([{ id: 1, subject: "", content: "", delay: 5 }]);
     }
     setShowConfirmDialog(false);
@@ -123,27 +144,34 @@ export function SequenceTab() {
         onSave={handleSaveSequence}
       />
 
-      <div className="space-y-4">
-        {steps.map((step) => (
-          <SequenceStep
-            key={step.id}
-            step={step}
-            useAI={useAI}
-            onUpdate={updateStep}
-          />
-        ))}
+      {isGenerating ? (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <span className="ml-2 text-muted-foreground">Generating AI sequence...</span>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {steps.map((step) => (
+            <SequenceStep
+              key={step.id}
+              step={step}
+              useAI={useAI}
+              onUpdate={updateStep}
+            />
+          ))}
 
-        {!useAI && steps.length < 5 && (
-          <Button 
-            variant="outline" 
-            className="w-full" 
-            onClick={addStep}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add step
-          </Button>
-        )}
-      </div>
+          {!useAI && steps.length < 5 && (
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={addStep}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add step
+            </Button>
+          )}
+        </div>
+      )}
 
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
