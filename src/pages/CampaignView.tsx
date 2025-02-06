@@ -17,6 +17,8 @@ import { SequenceTab } from "@/components/campaigns/SequenceTab";
 export default function CampaignView() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -142,7 +144,7 @@ export default function CampaignView() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => setShowEditDialog(true)}>
             <Edit className="h-4 w-4 mr-2" />
             Edit
           </Button>
@@ -330,6 +332,12 @@ export default function CampaignView() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <CampaignForm 
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        campaign={campaign}
+      />
     </div>
   );
 }
