@@ -31,19 +31,19 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
       <Button
         variant="ghost"
         size="sm"
-        className="h-8 w-8 p-0 ql-bold hover:bg-accent"
+        className="h-8 w-8 p-0 ql-bold hover:bg-accent [&_svg]:text-foreground"
         disabled={!isEditorFocused}
       />
       <Button
         variant="ghost"
         size="sm"
-        className="h-8 w-8 p-0 ql-italic hover:bg-accent"
+        className="h-8 w-8 p-0 ql-italic hover:bg-accent [&_svg]:text-foreground"
         disabled={!isEditorFocused}
       />
       <Button
         variant="ghost"
         size="sm"
-        className="h-8 w-8 p-0 ql-underline hover:bg-accent"
+        className="h-8 w-8 p-0 ql-underline hover:bg-accent [&_svg]:text-foreground"
         disabled={!isEditorFocused}
       />
     </div>
@@ -52,14 +52,14 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
       <Button
         variant="ghost"
         size="sm"
-        className="h-8 w-8 p-0 ql-list hover:bg-accent"
+        className="h-8 w-8 p-0 ql-list hover:bg-accent [&_svg]:text-foreground"
         value="ordered"
         disabled={!isEditorFocused}
       />
       <Button
         variant="ghost"
         size="sm"
-        className="h-8 w-8 p-0 ql-list hover:bg-accent"
+        className="h-8 w-8 p-0 ql-list hover:bg-accent [&_svg]:text-foreground"
         value="bullet"
         disabled={!isEditorFocused}
       />
@@ -71,8 +71,22 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
         size="sm"
         className="h-8 w-8 p-0 ql-link hover:bg-accent"
         disabled={!isEditorFocused}
+        onClick={() => {
+          // Force open the link popup
+          const quill = document.querySelector('.ql-editor');
+          if (quill) {
+            const selection = window.getSelection();
+            if (selection && selection.rangeCount > 0) {
+              const range = selection.getRangeAt(0);
+              const linkButton = document.querySelector('.ql-link') as HTMLButtonElement;
+              if (linkButton) {
+                linkButton.click();
+              }
+            }
+          }
+        }}
       >
-        <Link className="h-4 w-4" />
+        <Link className="h-4 w-4 text-foreground" />
       </Button>
     </div>
 
@@ -85,7 +99,7 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
             className="h-8 px-3 flex items-center gap-2"
             disabled={!isEditorFocused}
           >
-            <Zap className="h-4 w-4" />
+            <Zap className="h-4 w-4 text-foreground" />
             <span>Variables</span>
           </Button>
         </DropdownMenuTrigger>
