@@ -7,6 +7,10 @@ interface BasicFormatButtonsProps {
 }
 
 export function BasicFormatButtons({ editor }: BasicFormatButtonsProps) {
+  if (!editor) {
+    return null;
+  }
+
   return (
     <div className="flex items-center gap-2">
       <Button

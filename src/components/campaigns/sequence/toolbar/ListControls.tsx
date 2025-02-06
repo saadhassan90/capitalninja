@@ -8,6 +8,10 @@ interface ListControlsProps {
 }
 
 export function ListControls({ editor, onOpenLinkDialog }: ListControlsProps) {
+  if (!editor) {
+    return null;
+  }
+
   return (
     <div className="flex items-center gap-2">
       <Button

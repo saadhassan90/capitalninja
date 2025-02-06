@@ -35,6 +35,10 @@ const fontFamilies = [
 ];
 
 export function TextStyleControls({ editor }: TextStyleControlsProps) {
+  if (!editor) {
+    return null;
+  }
+
   return (
     <div className="flex items-center gap-2">
       <DropdownMenu>
