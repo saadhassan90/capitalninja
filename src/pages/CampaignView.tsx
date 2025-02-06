@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import type { Campaign } from "@/types/campaign";
 
 export default function CampaignView() {
@@ -181,20 +182,39 @@ export default function CampaignView() {
                   </div>
 
                   <TabsContent value="activity" className="mt-0">
-                    <div className="space-y-4">
-                      {[1, 2, 3, 4, 5].map((_, index) => (
-                        <div key={index} className="flex items-center justify-between py-3 border-b last:border-0">
-                          <div className="flex items-center gap-3">
-                            <div className="h-2 w-2 rounded-full bg-green-500" />
-                            <span className="text-sm text-muted-foreground">saad@investty.com</span>
-                          </div>
-                          <div className="flex items-center gap-8">
-                            <span className="text-sm text-muted-foreground">a month ago</span>
-                            <span className="text-sm">Step 1</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Time</TableHead>
+                          <TableHead>Step</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {[1, 2, 3, 4, 5].map((_, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <div className="flex items-center gap-3">
+                                <div className="h-2 w-2 rounded-full bg-green-500" />
+                                <span className="text-sm">saad@investty.com</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-sm font-medium">
+                                {['Sent', 'Opened', 'Clicked', 'Responded'][index % 4]}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-sm text-muted-foreground">a month ago</span>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-sm">Step {index + 1}</span>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </TabsContent>
 
                   <TabsContent value="step-analytics" className="mt-0">
