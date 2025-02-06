@@ -144,7 +144,7 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
         readOnly={disabled}
         onFocus={() => setIsEditorFocused(true)}
         onBlur={() => setIsEditorFocused(false)}
-        className="w-full [&_.ql-container]:border [&_.ql-container]:border-border [&_.ql-container]:rounded-b-md [&_.ql-container]:border-t-0 [&_.ql-editor]:min-h-[150px]"
+        className="w-full [&_.ql-container]:border [&_.ql-container]:border-border [&_.ql-container]:rounded-b-md [&_.ql-container]:border-t-0 [&_.ql-editor]:min-h-[150px] [&_.ql-tooltip]:!z-[9999]"
       />
     </div>
   );
