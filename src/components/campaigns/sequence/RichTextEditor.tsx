@@ -7,6 +7,27 @@ import ListItem from '@tiptap/extension-list-item';
 import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
 import Link from '@tiptap/extension-link';
+import { Extension } from '@tiptap/core';
+
+const FontSize = Extension.create({
+  name: 'fontSize',
+  addAttributes() {
+    return {
+      size: {
+        default: null,
+        parseHTML: element => element.style.fontSize,
+        renderHTML: attributes => {
+          if (!attributes.size) {
+            return {};
+          }
+          return {
+            style: `font-size: ${attributes.size}`,
+          };
+        },
+      },
+    };
+  },
+});
 
 interface RichTextEditorProps {
   content: string;
@@ -21,6 +42,7 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
       Underline,
       TextStyle,
       Color,
+      FontSize,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {

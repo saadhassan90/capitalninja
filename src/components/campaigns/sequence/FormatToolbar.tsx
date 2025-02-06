@@ -76,7 +76,7 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
           marks: [{ type: 'link', attrs: { href: linkUrl } }],
         }).run();
       } else {
-        editor.chain().focus().setLink({ href: linkUrl }).run();
+        editor.chain().focus().toggleLink({ href: linkUrl }).run();
       }
     } else {
       editor.chain().focus().unsetLink().run();
@@ -132,7 +132,7 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
               {fontSizes.map((size) => (
                 <DropdownMenuItem 
                   key={size.value}
-                  onClick={() => editor.chain().focus().setStyle({ fontSize: size.value }).run()}
+                  onClick={() => editor.chain().focus().setFontSize(size.value).run()}
                 >
                   {size.label}
                 </DropdownMenuItem>
