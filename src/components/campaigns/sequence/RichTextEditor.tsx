@@ -33,7 +33,7 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
         modules={modules}
         formats={formats}
         readOnly={disabled}
-        className="w-full [&_.ql-container]:border-x [&_.ql-container]:border-b [&_.ql-container]:border-border [&_.ql-toolbar]:border-0 [&_.ql-toolbar]:mb-2 [&_.ql-editor]:min-h-[150px]"
+        className="w-full [&_.ql-container]:border [&_.ql-container]:border-border [&_.ql-toolbar]:border [&_.ql-toolbar]:border-border [&_.ql-toolbar]:mb-2 [&_.ql-editor]:min-h-[150px]"
       />
     </div>
   );
