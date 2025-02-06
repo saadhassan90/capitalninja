@@ -14,7 +14,7 @@ export interface Campaign {
   total_recipients: number | null;
   successful_sends: number | null;
   failed_sends: number | null;
-  lists?: {
+  lists: {
     name: string;
-  };
+  } | null;
 }

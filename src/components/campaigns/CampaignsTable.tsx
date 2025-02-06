@@ -31,7 +31,7 @@ export function CampaignsTable({ onEdit }: CampaignsTableProps) {
   const { data: campaigns, isLoading } = useQuery({
     queryKey: ['campaigns', sortConfig],
     queryFn: async () => {
-      const query = supabase
+      const { data, error } = await supabase
         .from('campaigns')
         .select(`
           *,
@@ -40,8 +40,6 @@ export function CampaignsTable({ onEdit }: CampaignsTableProps) {
           )
         `)
         .order(sortConfig.column, { ascending: sortConfig.direction === 'asc' });
-
-      const { data, error } = await query;
       
       if (error) throw error;
       return data as Campaign[];
@@ -179,7 +177,7 @@ export function CampaignsTable({ onEdit }: CampaignsTableProps) {
                   <TableCell>{campaign.total_recipients || 0}</TableCell>
                   <TableCell>
                     {campaign.total_recipients ? 
-                      `${Math.round((campaign.successful_sends / campaign.total_recipients) * 100)}%` : 
+                      `${Math.round((campaign.successful_sends || 0 / campaign.total_recipients) * 100)}%` : 
                       '-'
                     }
                   </TableCell>
