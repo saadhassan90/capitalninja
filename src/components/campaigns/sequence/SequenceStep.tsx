@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Copy, Variable, ChevronDown } from "lucide-react";
+import { Copy, Zap } from "lucide-react";
 import { RichTextEditor } from "./RichTextEditor";
 import { useRef } from "react";
 import {
@@ -86,8 +86,9 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
             {!useAI && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <Variable className="h-4 w-4" />
+                  <Button variant="secondary" size="sm" className="flex items-center gap-2">
+                    <Zap className="h-4 w-4" />
+                    <span>Variables</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>

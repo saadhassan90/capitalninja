@@ -1,6 +1,6 @@
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Variable } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -78,7 +78,7 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
             className="h-8 px-2 flex items-center gap-2"
             disabled={!isEditorFocused}
           >
-            <Variable className="h-4 w-4" />
+            <Zap className="h-4 w-4" />
             <span>Variables</span>
           </Button>
         </DropdownMenuTrigger>
