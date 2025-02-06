@@ -1,64 +1,15 @@
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import TextStyle from '@tiptap/extension-text-style';
-import Color from '@tiptap/extension-color';
-import ListItem from '@tiptap/extension-list-item';
+import Link from '@tiptap/extension-link';
 import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
-import Link from '@tiptap/extension-link';
-import { Extension } from '@tiptap/core';
-
-const FontSize = Extension.create({
-  name: 'fontSize',
-  addAttributes() {
-    return {
-      size: {
-        default: null,
-        parseHTML: element => element.style.fontSize,
-        renderHTML: attributes => {
-          if (!attributes.size) {
-            return {};
-          }
-          return {
-            style: `font-size: ${attributes.size}`,
-          };
-        },
-      },
-    };
-  },
-});
-
-const FontFamily = Extension.create({
-  name: 'fontFamily',
-  addAttributes() {
-    return {
-      family: {
-        default: null,
-        parseHTML: element => element.style.fontFamily,
-        renderHTML: attributes => {
-          if (!attributes.family) {
-            return {};
-          }
-          return {
-            style: `font-family: ${attributes.family}`,
-          };
-        },
-      },
-    };
-  },
-});
+import ListItem from '@tiptap/extension-list-item';
 
 export const getEditorExtensions = () => [
   StarterKit.configure({
-    heading: {
-      levels: [1, 2, 3],
-    },
+    bulletList: false,
+    orderedList: false,
+    listItem: false,
   }),
-  Underline,
-  TextStyle,
-  Color,
-  FontSize,
-  FontFamily,
   Link.configure({
     openOnClick: false,
     HTMLAttributes: {

@@ -4,15 +4,27 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { BasicFormatButtons } from "./toolbar/BasicFormatButtons";
-import { TextStyleControls } from "./toolbar/TextStyleControls";
-import { ListControls } from "./toolbar/ListControls";
-import { VariableMenu } from "./toolbar/VariableMenu";
+import { List, ListOrdered, Link, Variable } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface FormatToolbarProps {
   editor: Editor | null;
   onInsertVariable: (variable: string) => void;
 }
+
+const variables = [
+  { label: 'First Name', value: '{firstName}' },
+  { label: 'Last Name', value: '{lastName}' },
+  { label: 'Company Name', value: '{companyName}' },
+  { label: 'Title', value: '{title}' },
+  { label: 'Location', value: '{location}' },
+  { label: 'Email', value: '{email}' },
+];
 
 export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) {
   const [showLinkDialog, setShowLinkDialog] = useState(false);
@@ -24,6 +36,7 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
 
   const handleLinkSubmit = () => {
     if (linkUrl) {
+      // If no text is selected, insert the URL as the text
       if (editor.state.selection.empty) {
         editor.chain().focus().insertContent({
           type: 'text',
@@ -31,7 +44,7 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
           marks: [{ type: 'link', attrs: { href: linkUrl } }],
         }).run();
       } else {
-        editor.chain().focus().toggleLink({ href: linkUrl }).run();
+        editor.chain().focus().setLink({ href: linkUrl }).run();
       }
     } else {
       editor.chain().focus().unsetLink().run();
@@ -40,16 +53,59 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
     setShowLinkDialog(false);
   };
 
+  const handleVariableInsert = (variable: string) => {
+    editor.chain().focus().insertContent(variable).run();
+    onInsertVariable(variable);
+  };
+
   return (
     <>
       <div className="border rounded-md bg-muted/50 p-2 mb-4 flex flex-wrap gap-2">
-        <BasicFormatButtons editor={editor} />
-        <div className="w-px h-8 bg-border" />
-        <TextStyleControls editor={editor} />
-        <div className="w-px h-8 bg-border" />
-        <ListControls editor={editor} onOpenLinkDialog={() => setShowLinkDialog(true)} />
-        <div className="w-px h-8 bg-border" />
-        <VariableMenu onInsertVariable={onInsertVariable} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            data-active={editor.isActive('bulletList')}
+            className={`h-8 px-2 ${editor.isActive('bulletList') ? 'bg-muted' : ''}`}
+          >
+            <List className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            data-active={editor.isActive('orderedList')}
+            className={`h-8 px-2 ${editor.isActive('orderedList') ? 'bg-muted' : ''}`}
+          >
+            <ListOrdered className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowLinkDialog(true)}
+            className="h-8 px-2"
+          >
+            <Link className="h-4 w-4" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 gap-2">
+                <Variable className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {variables.map((variable) => (
+                <DropdownMenuItem 
+                  key={variable.value}
+                  onClick={() => handleVariableInsert(variable.value)}
+                >
+                  {variable.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <Dialog open={showLinkDialog} onOpenChange={setShowLinkDialog}>
