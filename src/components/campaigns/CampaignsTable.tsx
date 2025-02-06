@@ -31,7 +31,7 @@ export function CampaignsTable({ onEdit }: CampaignsTableProps) {
         .from('campaigns')
         .select(`
           *,
-          lists (
+          lists!list_id (
             name
           ),
           raise:raise_id (
