@@ -71,14 +71,12 @@ export function SequenceTab() {
   const confirmAIToggle = (checked: boolean) => {
     setUseAI(checked);
     if (checked) {
-      // Completely replace with AI sequence
       setSteps(aiGeneratedSequence);
       toast({
         title: "AI Sequence Generated",
         description: "Your email sequence has been replaced with an AI-generated version.",
       });
     } else {
-      // Reset to a single empty step when turning AI off
       setSteps([{ id: 1, subject: "", content: "", delay: 5 }]);
     }
     setShowConfirmDialog(false);
@@ -141,6 +139,11 @@ export function SequenceTab() {
       range.deleteContents();
       range.insertNode(variableSpan);
     }
+  };
+
+  const handleInsertLink = (url: string) => {
+    if (useAI) return;
+    document.execCommand('createLink', false, url);
   };
 
   return (
