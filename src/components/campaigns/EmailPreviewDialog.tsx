@@ -5,11 +5,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { X, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PreviewVariablesForm } from "./email-preview/PreviewVariablesForm";
+import { TestEmailRecipients } from "./email-preview/TestEmailRecipients";
+import { EmailSignature } from "./email-preview/EmailSignature";
 
 interface EmailStep {
   id: number;
@@ -60,11 +61,8 @@ export function EmailPreviewDialog({
     setTestEmails(testEmails.filter(email => email !== emailToRemove));
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleAddEmail(newEmail);
-    }
+  const handleVariableChange = (field: string, value: string) => {
+    setPreviewVars(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -77,60 +75,21 @@ export function EmailPreviewDialog({
         <div className="grid grid-cols-[300px_1fr] gap-6">
           {/* Left Side - Test Email Controls */}
           <div className="space-y-6 border-r pr-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Sender Email</Label>
-                <Input 
-                  value={previewVars.senderEmail}
-                  onChange={(e) => setPreviewVars(prev => ({ ...prev, senderEmail: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Sender Full Name</Label>
-                <Input 
-                  value={previewVars.senderName}
-                  onChange={(e) => setPreviewVars(prev => ({ ...prev, senderName: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Recipient First Name</Label>
-                <Input 
-                  value={previewVars.recipientFirstName}
-                  onChange={(e) => setPreviewVars(prev => ({ ...prev, recipientFirstName: e.target.value }))}
-                />
-              </div>
-            </div>
+            <PreviewVariablesForm 
+              {...previewVars}
+              onVariableChange={handleVariableChange}
+            />
           </div>
 
           {/* Right Side - Email Preview */}
           <div className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground w-24">Send to:</span>
-                <div className="flex-1">
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {testEmails.map((email) => (
-                      <div key={email} className="bg-muted text-sm px-2 py-1 rounded-md flex items-center gap-1">
-                        {email}
-                        <X 
-                          className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" 
-                          onClick={() => handleRemoveEmail(email)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  {testEmails.length < 5 && (
-                    <Input 
-                      placeholder="Enter email address and press Enter" 
-                      value={newEmail}
-                      onChange={(e) => setNewEmail(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      className="text-sm h-8"
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
+            <TestEmailRecipients 
+              testEmails={testEmails}
+              newEmail={newEmail}
+              onNewEmailChange={setNewEmail}
+              onAddEmail={handleAddEmail}
+              onRemoveEmail={handleRemoveEmail}
+            />
 
             <Tabs defaultValue="1" className="w-full">
               <TabsList className="w-full">
@@ -158,17 +117,10 @@ export function EmailPreviewDialog({
                         dangerouslySetInnerHTML={{ __html: replaceVariables(email.content) }} 
                       />
                       
-                      <div className="border-t pt-4 space-y-1 text-sm">
-                        <div>Best,</div>
-                        <div className="font-medium">{previewVars.senderName}</div>
-                        <div>Managing Director | Nvestiv</div>
-                        <div>E: {previewVars.senderEmail}</div>
-                        <div>P: 1-888-831-9886</div>
-                        <div className="space-x-2 text-blue-500">
-                          <a href="#" className="hover:underline">Linkedin</a>
-                          <a href="#" className="hover:underline">Website</a>
-                        </div>
-                      </div>
+                      <EmailSignature 
+                        senderName={previewVars.senderName}
+                        senderEmail={previewVars.senderEmail}
+                      />
                     </div>
                   </div>
                 </TabsContent>
