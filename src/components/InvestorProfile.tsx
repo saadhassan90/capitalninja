@@ -104,14 +104,14 @@ export function InvestorProfile({ investorId, open, onOpenChange }: InvestorProf
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0">
-        <DialogHeader className="px-6 pt-6 pb-4">
+        <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0">
           <DialogTitle className="text-2xl font-bold text-[#1A1F2C]">
             {investor?.limited_partner_name}
           </DialogTitle>
         </DialogHeader>
         
         <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
-          <TabsList className="w-full grid grid-cols-3 px-6">
+          <TabsList className="w-full grid grid-cols-3 px-6 flex-shrink-0">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="commitments">Fund Commitments</TabsTrigger>
             <TabsTrigger value="investments">Direct Investments</TabsTrigger>
