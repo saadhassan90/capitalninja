@@ -322,6 +322,8 @@ export default function CampaignView() {
                   selectedInvestors={selectedInvestors}
                   onSelectAll={handleSelectAll}
                   onSelectInvestor={handleSelectInvestor}
+                  listId={id}
+                  campaign={campaign}
                 />
               ) : (
                 <div className="text-center py-8 text-muted-foreground">

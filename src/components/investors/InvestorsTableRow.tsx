@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Eye, ArrowRight } from "lucide-react";
+import { Eye, ArrowRight, FileEdit } from "lucide-react";
 import { getAssetClassStyle } from "@/utils/assetClassColors";
 import { AddToListDialog } from "./AddToListDialog";
+import { EmailDraftDialog } from "@/components/campaigns/EmailDraftDialog";
 import type { LimitedPartner } from "@/types/investor";
+import type { Campaign } from "@/types/campaign";
 
 interface InvestorsTableRowProps {
   investor: LimitedPartner;
@@ -13,6 +15,7 @@ interface InvestorsTableRowProps {
   selected: boolean;
   onSelect: (id: number, checked: boolean) => void;
   listId?: string;
+  campaign?: Campaign;
 }
 
 export function InvestorsTableRow({ 
@@ -20,9 +23,11 @@ export function InvestorsTableRow({
   onViewInvestor, 
   selected, 
   onSelect,
-  listId 
+  listId,
+  campaign
 }: InvestorsTableRowProps) {
   const [showMoveToList, setShowMoveToList] = useState(false);
+  const [showDraftDialog, setShowDraftDialog] = useState(false);
 
   const renderFundTypes = (fundTypes: string | null) => {
     if (!fundTypes) return 'N/A';
@@ -102,6 +107,17 @@ export function InvestorsTableRow({
             <Eye className="h-4 w-4" />
             View
           </Button>
+          {campaign && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setShowDraftDialog(true)}
+              className="transition-colors hover:bg-black hover:text-white"
+            >
+              <FileEdit className="h-4 w-4" />
+              Draft
+            </Button>
+          )}
           {listId && (
             <Button
               variant="secondary"
@@ -122,6 +138,15 @@ export function InvestorsTableRow({
             selectedInvestors={[investor.id]}
             mode="move"
             sourceListId={listId}
+          />
+        )}
+
+        {showDraftDialog && campaign && (
+          <EmailDraftDialog
+            open={showDraftDialog}
+            onOpenChange={setShowDraftDialog}
+            investor={investor}
+            campaign={campaign}
           />
         )}
       </TableCell>
