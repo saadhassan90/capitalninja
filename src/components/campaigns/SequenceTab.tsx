@@ -124,7 +124,7 @@ export function SequenceTab() {
       <EmailPreviewDialog
         open={showPreviewDialog}
         onOpenChange={setShowPreviewDialog}
-        sequence={steps[0]}
+        sequence={steps}
       />
     </div>
   );

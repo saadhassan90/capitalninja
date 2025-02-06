@@ -9,14 +9,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Send } from "lucide-react";
 import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+interface EmailStep {
+  id: number;
+  subject: string;
+  content: string;
+  delay: number;
+}
 
 interface EmailPreviewDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  sequence: {
-    subject: string;
-    content: string;
-  };
+  sequence: EmailStep[];
   senderName?: string;
   senderEmail?: string;
 }
@@ -66,7 +71,7 @@ export function EmailPreviewDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[1100px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold">Test Email</DialogTitle>
+          <DialogTitle className="text-2xl font-semibold">Test Email Sequence</DialogTitle>
         </DialogHeader>
         
         <div className="grid grid-cols-[300px_1fr] gap-6">
@@ -125,31 +130,50 @@ export function EmailPreviewDialog({
                   )}
                 </div>
               </div>
-              
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground w-24">Subject:</span>
-                <span className="text-sm">{replaceVariables(sequence.subject)}</span>
-              </div>
             </div>
 
-            <div className="bg-muted/30 rounded-lg p-6 space-y-6">
-              <div 
-                className="prose prose-sm max-w-none" 
-                dangerouslySetInnerHTML={{ __html: replaceVariables(sequence.content) }} 
-              />
-              
-              <div className="border-t pt-4 space-y-1 text-sm">
-                <div>Best,</div>
-                <div className="font-medium">{previewVars.senderName}</div>
-                <div>Managing Director | Nvestiv</div>
-                <div>E: {previewVars.senderEmail}</div>
-                <div>P: 1-888-831-9886</div>
-                <div className="space-x-2 text-blue-500">
-                  <a href="#" className="hover:underline">Linkedin</a>
-                  <a href="#" className="hover:underline">Website</a>
-                </div>
-              </div>
-            </div>
+            <Tabs defaultValue="1" className="w-full">
+              <TabsList className="w-full">
+                {sequence.map((email) => (
+                  <TabsTrigger key={email.id} value={email.id.toString()} className="flex-1">
+                    Email {email.id}
+                    {email.delay > 0 && <span className="ml-2 text-xs text-muted-foreground">
+                      (+{email.delay} days)
+                    </span>}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              {sequence.map((email) => (
+                <TabsContent key={email.id} value={email.id.toString()} className="mt-4">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground w-24">Subject:</span>
+                      <span className="text-sm">{replaceVariables(email.subject)}</span>
+                    </div>
+
+                    <div className="bg-muted/30 rounded-lg p-6 space-y-6">
+                      <div 
+                        className="prose prose-sm max-w-none" 
+                        dangerouslySetInnerHTML={{ __html: replaceVariables(email.content) }} 
+                      />
+                      
+                      <div className="border-t pt-4 space-y-1 text-sm">
+                        <div>Best,</div>
+                        <div className="font-medium">{previewVars.senderName}</div>
+                        <div>Managing Director | Nvestiv</div>
+                        <div>E: {previewVars.senderEmail}</div>
+                        <div>P: 1-888-831-9886</div>
+                        <div className="space-x-2 text-blue-500">
+                          <a href="#" className="hover:underline">Linkedin</a>
+                          <a href="#" className="hover:underline">Website</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
           </div>
         </div>
 
