@@ -12,11 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FormatToolbar } from "./FormatToolbar";
 import { useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
-import BulletList from '@tiptap/extension-bullet-list';
-import OrderedList from '@tiptap/extension-ordered-list';
-import ListItem from '@tiptap/extension-list-item';
+import { getEditorExtensions } from './editor/editorConfig';
 
 interface EmailStep {
   id: number;
@@ -44,30 +40,7 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
   const subjectInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        bulletList: false,
-        orderedList: false,
-        listItem: false,
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-blue-500 underline'
-        }
-      }),
-      BulletList.configure({
-        HTMLAttributes: {
-          class: 'list-disc ml-4'
-        }
-      }),
-      OrderedList.configure({
-        HTMLAttributes: {
-          class: 'list-decimal ml-4'
-        }
-      }),
-      ListItem,
-    ],
+    extensions: getEditorExtensions(),
     content: step.content,
     onUpdate: ({ editor }) => {
       onUpdate(step.id, "content", editor.getHTML());
