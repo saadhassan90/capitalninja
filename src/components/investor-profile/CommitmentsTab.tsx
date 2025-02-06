@@ -37,8 +37,8 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
   };
 
   return (
-    <div className="h-full overflow-y-auto space-y-6">
-      <Card>
+    <div className="h-full w-full overflow-y-auto flex flex-col gap-6">
+      <Card className="w-full flex-1">
         <CardHeader>
           <CardTitle className="text-base font-medium">Fund Commitments</CardTitle>
           <CardDescription>
@@ -46,7 +46,7 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
+          <div className="w-full rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -88,15 +88,15 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="w-full flex-1">
         <CardHeader>
           <CardTitle className="text-base font-medium">Fund Type Distribution</CardTitle>
           <CardDescription>
             Distribution of commitments across different fund types
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
+        <CardContent className="w-full">
+          <div className="w-full space-y-4">
             {[
               {
                 type: "Private Equity",
@@ -133,7 +133,7 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
             ].map(({ type, count }) => {
               const style = getAssetClassStyle(mapToAssetClass(type));
               return count > 0 ? (
-                <div key={type} className="flex items-center justify-between">
+                <div key={type} className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
                     <div
                       className="h-3 w-3 rounded-full"

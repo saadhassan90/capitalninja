@@ -23,8 +23,8 @@ export function InvestmentsTab({ investments, investor }: InvestmentsTabProps) {
   );
 
   return (
-    <div className="h-full overflow-y-auto space-y-6">
-      <Card>
+    <div className="h-full w-full overflow-y-auto flex flex-col">
+      <Card className="w-full flex-1">
         <CardHeader>
           <CardTitle className="text-base font-medium">Direct Investments</CardTitle>
           <CardDescription>
@@ -32,7 +32,7 @@ export function InvestmentsTab({ investments, investor }: InvestmentsTabProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
+          <div className="w-full rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
