@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Eye, ArrowRight, FileEdit } from "lucide-react";
+import { Eye, FileEdit } from "lucide-react";
 import { getAssetClassStyle } from "@/utils/assetClassColors";
-import { AddToListDialog } from "./AddToListDialog";
 import { EmailDraftDialog } from "@/components/campaigns/EmailDraftDialog";
 import type { LimitedPartner } from "@/types/investor";
 import type { Campaign } from "@/types/campaign";
@@ -26,7 +25,6 @@ export function InvestorsTableRow({
   listId,
   campaign
 }: InvestorsTableRowProps) {
-  const [showMoveToList, setShowMoveToList] = useState(false);
   const [showDraftDialog, setShowDraftDialog] = useState(false);
 
   const renderFundTypes = (fundTypes: string | null) => {
@@ -118,28 +116,7 @@ export function InvestorsTableRow({
               Draft
             </Button>
           )}
-          {listId && (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setShowMoveToList(true)}
-              className="transition-colors hover:bg-black hover:text-white"
-            >
-              <ArrowRight className="h-4 w-4" />
-              Move to List
-            </Button>
-          )}
         </div>
-
-        {showMoveToList && (
-          <AddToListDialog
-            open={showMoveToList}
-            onOpenChange={setShowMoveToList}
-            selectedInvestors={[investor.id]}
-            mode="move"
-            sourceListId={listId}
-          />
-        )}
 
         {showDraftDialog && campaign && (
           <EmailDraftDialog
