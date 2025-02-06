@@ -42,7 +42,13 @@ export function CampaignsTable({ onEdit }: CampaignsTableProps) {
         .order(sortConfig.column, { ascending: sortConfig.direction === 'asc' });
       
       if (error) throw error;
-      return data as Campaign[];
+
+      // Transform the data to match the Campaign type
+      return (data || []).map(campaign => ({
+        ...campaign,
+        lists: campaign.lists || null,
+        raise: campaign.raise || null
+      })) as Campaign[];
     },
   });
 
