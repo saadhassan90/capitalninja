@@ -55,8 +55,18 @@ export default function CampaignView() {
             Back to Campaigns
           </Button>
           <h1 className="text-3xl font-bold tracking-tight">{campaign.name}</h1>
-          <p className="text-muted-foreground">
-            Campaign details and performance metrics
+          <p className="text-muted-foreground flex items-center gap-4">
+            <span className="flex items-center gap-2">
+              Status: <span className="font-medium text-foreground">{campaign.status}</span>
+            </span>
+            •
+            <span className="flex items-center gap-2">
+              List: <span className="font-medium text-foreground">{campaign.lists?.name || 'No list selected'}</span>
+            </span>
+            •
+            <span className="flex items-center gap-2">
+              Raise: <span className="font-medium text-foreground">{campaign.raise?.name || 'No raise selected'}</span>
+            </span>
           </p>
         </div>
         <div className="flex gap-2">
@@ -68,21 +78,6 @@ export default function CampaignView() {
             <Send className="h-4 w-4 mr-2" />
             Send Campaign
           </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="rounded-lg border p-4">
-          <div className="text-sm font-medium text-muted-foreground">Status</div>
-          <div className="mt-1 text-2xl font-semibold">{campaign.status}</div>
-        </div>
-        <div className="rounded-lg border p-4">
-          <div className="text-sm font-medium text-muted-foreground">List</div>
-          <div className="mt-1 text-2xl font-semibold">{campaign.lists?.name || 'No list selected'}</div>
-        </div>
-        <div className="rounded-lg border p-4">
-          <div className="text-sm font-medium text-muted-foreground">Raise</div>
-          <div className="mt-1 text-2xl font-semibold">{campaign.raise?.name || 'No raise selected'}</div>
         </div>
       </div>
 
