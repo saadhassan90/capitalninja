@@ -1,19 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "@/components/theme/theme-provider";
+import { ThemeProvider } from "./components/theme/ThemeProvider";
 import { Toaster } from "sonner";
-import { queryClient } from "@/lib/react-query";
-import { AuthProvider } from "@/components/auth/AuthProvider";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { AppSidebar } from "@/components/layout/AppSidebar";
-import Index from "@/pages/Index";
-import Auth from "@/pages/Auth";
-import Dashboard from "@/pages/Dashboard";
-import Campaigns from "@/pages/Campaigns";
-import CampaignSetup from "@/pages/CampaignSetup";
-import Lists from "@/pages/Lists";
-import Raises from "@/pages/Raises";
-import Settings from "@/pages/Settings";
+import { queryClient } from "./lib/react-query";
+import { AuthProvider } from "./components/auth/AuthProvider";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AppSidebar } from "./components/layout/AppSidebar";
+import Index from "./pages/Index";
+import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
+import Campaigns from "./pages/Campaigns";
+import CampaignSetup from "./pages/CampaignSetup";
+import Lists from "./pages/Lists";
+import Raises from "./pages/Raises";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
