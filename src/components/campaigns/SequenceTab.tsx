@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Copy, Eye, Save } from "lucide-react";
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 
 interface EmailStep {
   id: number;
@@ -11,6 +12,65 @@ interface EmailStep {
   content: string;
   delay: number;
 }
+
+const RichTextEditor = ({ content, onChange }: { content: string; onChange: (html: string) => void }) => {
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content,
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML());
+    },
+    editorProps: {
+      attributes: {
+        class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-xl m-5 focus:outline-none min-h-[150px]',
+      },
+    },
+  });
+
+  if (!editor) {
+    return null;
+  }
+
+  return (
+    <div className="border rounded-md">
+      <div className="border-b bg-muted/50 p-2 flex gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={editor.isActive('bold') ? 'bg-muted' : ''}
+        >
+          Bold
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={editor.isActive('italic') ? 'bg-muted' : ''}
+        >
+          Italic
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={editor.isActive('bulletList') ? 'bg-muted' : ''}
+        >
+          Bullet List
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={editor.isActive('orderedList') ? 'bg-muted' : ''}
+        >
+          Numbered List
+        </Button>
+      </div>
+      <EditorContent editor={editor} />
+    </div>
+  );
+};
 
 export function SequenceTab() {
   const [steps, setSteps] = useState<EmailStep[]>([
@@ -78,11 +138,9 @@ export function SequenceTab() {
                 </div>
 
                 <div>
-                  <Textarea
-                    placeholder="Email content"
-                    value={step.content}
-                    onChange={(e) => updateStep(step.id, "content", e.target.value)}
-                    className="min-h-[200px]"
+                  <RichTextEditor
+                    content={step.content}
+                    onChange={(html) => updateStep(step.id, "content", html)}
                   />
                 </div>
 
