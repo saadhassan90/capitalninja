@@ -9,23 +9,40 @@ import OrderedList from '@tiptap/extension-ordered-list';
 import Link from '@tiptap/extension-link';
 import { Extension } from '@tiptap/core';
 
-const FontSize = Extension.create({
-  name: 'fontSize',
-  addAttributes() {
-    return {
-      size: {
-        default: null,
-        parseHTML: element => element.style.fontSize,
-        renderHTML: attributes => {
-          if (!attributes.size) {
-            return {};
-          }
-          return {
-            style: `font-size: ${attributes.size}`,
-          };
+const CustomDocument = Extension.create({
+  name: 'customDocument',
+  addGlobalAttributes() {
+    return [
+      {
+        types: ['textStyle'],
+        attributes: {
+          fontSize: {
+            default: '16px',
+            parseHTML: element => element.style.fontSize,
+            renderHTML: attributes => {
+              if (!attributes.fontSize) {
+                return {};
+              }
+              return {
+                style: `font-size: ${attributes.fontSize}`,
+              };
+            },
+          },
+          fontFamily: {
+            default: 'Arial',
+            parseHTML: element => element.style.fontFamily,
+            renderHTML: attributes => {
+              if (!attributes.fontFamily) {
+                return {};
+              }
+              return {
+                style: `font-family: ${attributes.fontFamily}`,
+              };
+            },
+          },
         },
       },
-    };
+    ];
   },
 });
 
@@ -38,11 +55,15 @@ interface RichTextEditorProps {
 export function RichTextEditor({ content, onChange, disabled }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
       Underline,
       TextStyle,
       Color,
-      FontSize,
+      CustomDocument,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {

@@ -27,6 +27,13 @@ const colors = [
   { label: 'Green', value: '#008000' },
 ];
 
+const fontFamilies = [
+  { label: 'Arial', value: 'Arial, sans-serif' },
+  { label: 'Times New Roman', value: 'Times New Roman, serif' },
+  { label: 'Courier New', value: 'Courier New, monospace' },
+  { label: 'Georgia', value: 'Georgia, serif' },
+];
+
 export function TextStyleControls({ editor }: TextStyleControlsProps) {
   return (
     <div className="flex items-center gap-2">
@@ -42,11 +49,7 @@ export function TextStyleControls({ editor }: TextStyleControlsProps) {
             <DropdownMenuItem 
               key={size.value}
               onClick={() => {
-                editor.chain().focus().run();
-                const element = document.querySelector('.ProseMirror') as HTMLElement;
-                if (element) {
-                  element.style.fontSize = size.value;
-                }
+                editor.chain().focus().setMark('textStyle', { fontSize: size.value }).run();
               }}
             >
               {size.label}
@@ -74,6 +77,28 @@ export function TextStyleControls({ editor }: TextStyleControlsProps) {
                 style={{ backgroundColor: color.value }} 
               />
               {color.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm" className="h-8 gap-2">
+            <span className="font-serif">F</span>
+            <ChevronDown className="h-3 w-3" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          {fontFamilies.map((font) => (
+            <DropdownMenuItem 
+              key={font.value}
+              onClick={() => {
+                editor.chain().focus().setMark('textStyle', { fontFamily: font.value }).run();
+              }}
+              style={{ fontFamily: font.value }}
+            >
+              {font.label}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
