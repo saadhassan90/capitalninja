@@ -68,7 +68,6 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
 
   const handleLinkSubmit = () => {
     if (linkUrl) {
-      // Check if there is text selected
       if (editor.state.selection.empty) {
         editor.chain().focus().insertContent({
           type: 'text',
@@ -134,7 +133,7 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
                   key={size.value}
                   onClick={() => {
                     editor.chain().focus().run();
-                    const element = document.querySelector('.ProseMirror');
+                    const element = document.querySelector('.ProseMirror') as HTMLElement;
                     if (element) {
                       element.style.fontSize = size.value;
                     }
