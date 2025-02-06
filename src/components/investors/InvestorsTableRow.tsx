@@ -113,7 +113,7 @@ export function InvestorsTableRow({
               className="transition-colors hover:bg-black hover:text-white"
             >
               <FileEdit className="h-4 w-4" />
-              Draft
+              Personalize Email
             </Button>
           )}
         </div>
