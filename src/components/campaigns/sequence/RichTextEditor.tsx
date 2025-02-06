@@ -1,20 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { EditorState } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
-import { Schema } from 'prosemirror-model';
-import { schema } from 'prosemirror-schema-basic';
-import { addListNodes } from 'prosemirror-schema-list';
-import { history } from 'prosemirror-history';
-import { keymap } from 'prosemirror-keymap';
-import { baseKeymap, toggleMark, setBlockType } from 'prosemirror-commands';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { Link, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link as LinkIcon, Zap, Bold, Italic, List, ListOrdered } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState } from 'react';
 
 interface RichTextEditorProps {
   content: string;
@@ -31,183 +25,126 @@ const variables = [
   { label: 'Email', value: '{email}' },
 ];
 
-// Extend the basic schema to include marks we need
-const mySchema = new Schema({
-  nodes: addListNodes(schema.spec.nodes, 'paragraph block*', 'block'),
-  marks: {
-    ...schema.spec.marks,
-    link: {
-      attrs: { href: {} },
-      inclusive: false,
-      parseDOM: [{ 
-        tag: 'a', 
-        getAttrs: (dom) => ({ 
-          href: (dom as HTMLElement).getAttribute('href') || '' 
-        }) 
-      }],
-      toDOM: node => ['a', { ...node.attrs, class: 'text-primary underline' }, 0]
-    }
-  }
-});
+const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
+  <div id="toolbar" className="flex items-center gap-2 p-2 border border-border rounded-t-md [&_.ql-formats]:mr-0">
+    <span className="ql-formats flex gap-2">
+      <Button
+        variant="ghost"
+        size="default"
+        className="h-10 w-10 p-0 ql-bold"
+        disabled={!isEditorFocused}
+      />
+      <Button
+        variant="ghost"
+        size="default"
+        className="h-10 w-10 p-0 ql-italic"
+        disabled={!isEditorFocused}
+      />
+      <Button
+        variant="ghost"
+        size="default"
+        className="h-10 w-10 p-0 ql-underline"
+        disabled={!isEditorFocused}
+      />
+    </span>
+    <span className="ql-formats flex gap-2">
+      <Button
+        variant="ghost"
+        size="default"
+        className="h-10 w-10 p-0 ql-list"
+        value="ordered"
+        disabled={!isEditorFocused}
+      />
+      <Button
+        variant="ghost"
+        size="default"
+        className="h-10 w-10 p-0 ql-list"
+        value="bullet"
+        disabled={!isEditorFocused}
+      />
+    </span>
+    <span className="ql-formats">
+      <Button
+        variant="ghost"
+        size="default"
+        className="h-10 w-10 p-0 ql-link"
+        disabled={!isEditorFocused}
+      >
+        <Link className="h-5 w-5" />
+      </Button>
+    </span>
+    <span className="ql-formats ml-2">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button 
+            variant="secondary" 
+            size="default"
+            className="h-10 px-3 flex items-center gap-2"
+            disabled={!isEditorFocused}
+          >
+            <Zap className="h-5 w-5" />
+            <span>Variables</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          {variables.map((variable) => (
+            <DropdownMenuItem 
+              key={variable.value}
+              onClick={() => {
+                const quill = document.querySelector('.ql-editor');
+                if (quill) {
+                  const selection = window.getSelection();
+                  const range = selection?.getRangeAt(0);
+                  if (range) {
+                    const span = document.createElement('span');
+                    span.className = 'bg-blue-100 px-1 rounded';
+                    span.textContent = variable.value;
+                    range.deleteContents();
+                    range.insertNode(span);
+                  }
+                }
+              }}
+            >
+              {variable.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </span>
+  </div>
+);
+
+const modules = {
+  toolbar: {
+    container: '#toolbar',
+  },
+};
+
+const formats = [
+  'bold',
+  'italic',
+  'underline',
+  'link',
+  'list',
+  'bullet',
+];
 
 export function RichTextEditor({ content, onChange, disabled }: RichTextEditorProps) {
-  const editorRef = useRef<HTMLDivElement>(null);
-  const viewRef = useRef<EditorView | null>(null);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
 
-  useEffect(() => {
-    if (!editorRef.current) return;
-
-    const state = EditorState.create({
-      doc: mySchema.nodeFromJSON(content ? JSON.parse(content) : { type: 'doc', content: [{ type: 'paragraph' }] }),
-      schema: mySchema,
-      plugins: [
-        history(),
-        keymap(baseKeymap)
-      ]
-    });
-
-    const view = new EditorView(editorRef.current, {
-      state,
-      dispatchTransaction(transaction) {
-        const newState = view.state.apply(transaction);
-        view.updateState(newState);
-        if (onChange) {
-          const content = JSON.stringify(newState.doc.toJSON());
-          onChange(content);
-        }
-      }
-    });
-
-    viewRef.current = view;
-
-    return () => {
-      if (viewRef.current) {
-        viewRef.current.destroy();
-      }
-    };
-  }, []);
-
-  const toggleFormat = (markType: string) => {
-    if (!viewRef.current) return;
-    const { state, dispatch } = viewRef.current;
-    toggleMark(mySchema.marks[markType])(state, dispatch);
-  };
-
-  const setLink = () => {
-    if (!viewRef.current) return;
-    const { state, dispatch } = viewRef.current;
-    const { from, to } = state.selection;
-    
-    if (from === to) return; // No text selected
-    
-    const url = window.prompt('Enter URL:');
-    if (!url) return;
-    
-    toggleMark(mySchema.marks.link, { href: url })(state, dispatch);
-  };
-
-  const insertVariable = (variable: string) => {
-    if (!viewRef.current) return;
-    const { state, dispatch } = viewRef.current;
-    const { from } = state.selection;
-    
-    const tr = state.tr.insertText(variable, from);
-    dispatch(tr);
-  };
-
   return (
-    <div className="w-full">
-      <div className="flex items-center gap-2 p-2 border border-border rounded-t-md bg-background">
-        <div className="flex items-center gap-1 border-r border-border pr-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => toggleFormat('strong')}
-            className="h-8 w-8 p-0 hover:bg-accent"
-            disabled={disabled}
-          >
-            <Bold className="h-4 w-4 text-foreground" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => toggleFormat('em')}
-            className="h-8 w-8 p-0 hover:bg-accent"
-            disabled={disabled}
-          >
-            <Italic className="h-4 w-4 text-foreground" />
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-1 border-r border-border pr-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setBlockType(mySchema.nodes.ordered_list)(viewRef.current?.state, viewRef.current?.dispatch)}
-            className="h-8 w-8 p-0 hover:bg-accent"
-            disabled={disabled}
-          >
-            <ListOrdered className="h-4 w-4 text-foreground" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setBlockType(mySchema.nodes.bullet_list)(viewRef.current?.state, viewRef.current?.dispatch)}
-            className="h-8 w-8 p-0 hover:bg-accent"
-            disabled={disabled}
-          >
-            <List className="h-4 w-4 text-foreground" />
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={setLink}
-            className="h-8 w-8 p-0 hover:bg-accent"
-            disabled={disabled}
-          >
-            <LinkIcon className="h-4 w-4 text-foreground" />
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-1 ml-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="secondary" 
-                size="sm"
-                className="h-8 px-3 flex items-center gap-2"
-                disabled={disabled}
-              >
-                <Zap className="h-4 w-4 text-foreground" />
-                <span>Variables</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {variables.map((variable) => (
-                <DropdownMenuItem 
-                  key={variable.value}
-                  onClick={() => insertVariable(variable.value)}
-                >
-                  {variable.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
-      <div 
-        ref={editorRef}
-        className="w-full border border-t-0 border-border rounded-b-md min-h-[150px] p-3 focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+    <div className="relative w-full h-full">
+      <CustomToolbar isEditorFocused={isEditorFocused} />
+      <ReactQuill
+        theme="snow"
+        value={content}
+        onChange={onChange}
+        modules={modules}
+        formats={formats}
+        readOnly={disabled}
+        onFocus={() => setIsEditorFocused(true)}
+        onBlur={() => setIsEditorFocused(false)}
+        className="w-full [&_.ql-container]:border [&_.ql-container]:border-border [&_.ql-container]:rounded-b-md [&_.ql-container]:border-t-0 [&_.ql-editor]:min-h-[150px] [&_.ql-tooltip]:!z-[9999]"
       />
     </div>
   );
