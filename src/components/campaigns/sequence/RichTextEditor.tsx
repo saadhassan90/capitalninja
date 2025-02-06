@@ -1,5 +1,6 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
 import { Button } from "@/components/ui/button";
 
 interface RichTextEditorProps {
@@ -10,7 +11,15 @@ interface RichTextEditorProps {
 
 export function RichTextEditor({ content, onChange, disabled }: RichTextEditorProps) {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-primary underline',
+        },
+      }),
+    ],
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
