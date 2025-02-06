@@ -25,7 +25,7 @@ const formats = [
 
 export function RichTextEditor({ content, onChange, disabled }: RichTextEditorProps) {
   return (
-    <div className="border rounded-md">
+    <div className="relative w-full h-full">
       <ReactQuill
         theme="snow"
         value={content}
@@ -33,7 +33,7 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
         modules={modules}
         formats={formats}
         readOnly={disabled}
-        className="min-h-[150px]"
+        className="w-full [&_.ql-container]:border-0 [&_.ql-toolbar]:border-0 [&_.ql-editor]:min-h-[150px]"
       />
     </div>
   );
