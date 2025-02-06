@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Copy, Variable, ChevronDown } from "lucide-react";
+import { Copy, Variable } from "lucide-react";
 import { RichTextEditor } from "./RichTextEditor";
 import { useRef } from "react";
 import {
@@ -13,34 +13,10 @@ import {
 import { FormatToolbar } from "./FormatToolbar";
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import TextStyle from '@tiptap/extension-text-style';
-import Color from '@tiptap/extension-color';
-import ListItem from '@tiptap/extension-list-item';
+import Link from '@tiptap/extension-link';
 import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
-import Link from '@tiptap/extension-link';
-import { Extension } from '@tiptap/core';
-
-const FontSize = Extension.create({
-  name: 'fontSize',
-  addAttributes() {
-    return {
-      size: {
-        default: null,
-        parseHTML: element => element.style.fontSize,
-        renderHTML: attributes => {
-          if (!attributes.size) {
-            return {};
-          }
-          return {
-            style: `font-size: ${attributes.size}`,
-          };
-        },
-      },
-    };
-  },
-});
+import ListItem from '@tiptap/extension-list-item';
 
 interface EmailStep {
   id: number;
@@ -69,11 +45,11 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Underline,
-      TextStyle,
-      Color,
-      FontSize,
+      StarterKit.configure({
+        bulletList: false,
+        orderedList: false,
+        listItem: false,
+      }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -90,7 +66,7 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
           class: 'list-decimal ml-4'
         }
       }),
-      ListItem
+      ListItem,
     ],
     content: step.content,
     onUpdate: ({ editor }) => {
@@ -114,6 +90,7 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
 
     onUpdate(step.id, "subject", newValue);
 
+    // Set cursor position after the inserted variable
     setTimeout(() => {
       input.focus();
       const newPosition = start + variable.length;
@@ -172,7 +149,8 @@ export function SequenceStep({ step, useAI, onUpdate }: SequenceStepProps) {
               editor={editor}
               onInsertVariable={(variable) => {
                 if (editor) {
-                  editor.chain().focus().insertContent(variable).run();
+                  editor.commands.focus();
+                  editor.commands.insertContent(variable);
                 }
               }}
             />

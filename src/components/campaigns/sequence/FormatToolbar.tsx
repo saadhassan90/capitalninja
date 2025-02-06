@@ -53,8 +53,8 @@ export function FormatToolbar({ editor, onInsertVariable }: FormatToolbarProps) 
   };
 
   const handleVariableInsert = (variable: string) => {
-    // Focus the editor and insert the variable at the current cursor position
-    editor.chain().focus().insertContent(variable).run();
+    editor.commands.focus();
+    editor.commands.insertContent(variable);
     onInsertVariable(variable);
   };
 
