@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Copy, Eye, Save } from "lucide-react";
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { Switch } from "@/components/ui/switch";
 
 interface EmailStep {
   id: number;
@@ -76,6 +77,7 @@ export function SequenceTab() {
   const [steps, setSteps] = useState<EmailStep[]>([
     { id: 1, subject: "", content: "", delay: 5 }
   ]);
+  const [useAI, setUseAI] = useState(false);
 
   const addStep = () => {
     if (steps.length >= 5) return;
@@ -103,7 +105,20 @@ export function SequenceTab() {
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Email Sequence</h2>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={useAI}
+              onCheckedChange={setUseAI}
+              id="ai-mode"
+            />
+            <label
+              htmlFor="ai-mode"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Personalize using AI
+            </label>
+          </div>
           <Button variant="outline" size="sm">
             <Eye className="h-4 w-4 mr-2" />
             Preview
