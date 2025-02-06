@@ -6,7 +6,7 @@ import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
 import { useToast } from "@/hooks/use-toast";
 import { BulkActions } from "@/components/investors/BulkActions";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import type { SortConfig } from "@/types/sorting";
 import { useListInvestors } from "@/hooks/useListInvestors";
 import { InvestorProfile } from "@/components/InvestorProfile";
@@ -18,6 +18,7 @@ const ListView = () => {
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isExporting, setIsExporting] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'limited_partner_name',
     direction: 'asc'
@@ -68,6 +69,52 @@ const ListView = () => {
     }
   };
 
+  const handleExport = async () => {
+    if (!id) return;
+    
+    try {
+      setIsExporting(true);
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/export-list-investors`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ listId: id }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to export list');
+      }
+
+      // Create a blob from the CSV content
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `investor-list-${id}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast({
+        title: "Export Successful",
+        description: "Your investor list has been exported successfully.",
+      });
+    } catch (error: any) {
+      console.error('Export error:', error);
+      toast({
+        title: "Export Failed",
+        description: error.message || "Failed to export investor list.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -79,9 +126,17 @@ const ListView = () => {
             )}
           </div>
           <div>
-            <Button onClick={() => {}}>
-              <Download className="h-4 w-4 mr-2" />
-              Export
+            <Button 
+              onClick={handleExport} 
+              disabled={isExporting}
+              className="flex items-center gap-2"
+            >
+              {isExporting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              {isExporting ? "Exporting..." : "Export"}
             </Button>
           </div>
         </div>
