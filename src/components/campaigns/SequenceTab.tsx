@@ -15,7 +15,6 @@ import {
 import { EmailPreviewDialog } from "./EmailPreviewDialog";
 import { SequenceHeader } from "./sequence/SequenceHeader";
 import { SequenceStep } from "./sequence/SequenceStep";
-import { FormatToolbar } from "./sequence/FormatToolbar";
 
 interface EmailStep {
   id: number;
@@ -116,43 +115,6 @@ export function SequenceTab() {
     ));
   };
 
-  const handleFormat = (command: string, value?: string) => {
-    if (useAI) return;
-    
-    if (command === 'createLink') {
-      const selection = window.getSelection();
-      const range = selection?.getRangeAt(0);
-      
-      if (range && !range.collapsed && value) {
-        const link = document.createElement('a');
-        link.href = value;
-        link.className = 'text-primary underline';
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        range.surroundContents(link);
-      }
-    } else if (value) {
-      document.execCommand(command, false, value);
-    } else {
-      document.execCommand(command, false);
-    }
-  };
-
-  const handleInsertVariable = (variable: string) => {
-    if (useAI) return;
-    
-    const selection = window.getSelection();
-    const range = selection?.getRangeAt(0);
-    
-    if (range) {
-      const variableSpan = document.createElement('span');
-      variableSpan.className = 'bg-blue-100 px-1 rounded';
-      variableSpan.textContent = variable;
-      range.deleteContents();
-      range.insertNode(variableSpan);
-    }
-  };
-
   return (
     <div className="space-y-6 p-6">
       <SequenceHeader
@@ -163,11 +125,6 @@ export function SequenceTab() {
       />
 
       <div className="space-y-4">
-        <FormatToolbar 
-          onFormat={handleFormat}
-          onInsertVariable={handleInsertVariable}
-        />
-
         {steps.map((step) => (
           <SequenceStep
             key={step.id}
