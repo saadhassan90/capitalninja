@@ -21,8 +21,22 @@ export function CampaignTableRow({
 }: CampaignTableRowProps) {
   const navigate = useNavigate();
 
+  const handleRowClick = (e: React.MouseEvent) => {
+    // Prevent navigation when clicking on buttons or checkbox
+    if (
+      e.target instanceof HTMLElement && 
+      (e.target.closest('button') || e.target.closest('label'))
+    ) {
+      return;
+    }
+    navigate(`/campaigns/${campaign.id}`);
+  };
+
   return (
-    <TableRow>
+    <TableRow 
+      className="cursor-pointer hover:bg-muted/50"
+      onClick={handleRowClick}
+    >
       <TableCell>
         <Checkbox
           checked={selected}
@@ -50,7 +64,7 @@ export function CampaignTableRow({
             className="flex items-center gap-2"
           >
             <ExternalLink className="h-4 w-4" />
-            View
+            Open
           </Button>
           <Button
             variant="ghost"
