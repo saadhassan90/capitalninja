@@ -1,15 +1,20 @@
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
+import React, { useEffect, useRef, useState } from 'react';
+import { EditorState } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import { Schema } from 'prosemirror-model';
+import { schema } from 'prosemirror-schema-basic';
+import { addListNodes } from 'prosemirror-schema-list';
+import { history } from 'prosemirror-history';
+import { keymap } from 'prosemirror-keymap';
+import { baseKeymap, toggleMark, setBlockType } from 'prosemirror-commands';
 import { Button } from '@/components/ui/button';
-import { Link as LinkIcon, Zap, Bold, Italic, Underline, List, ListOrdered } from 'lucide-react';
+import { Link as LinkIcon, Zap, Bold, Italic, List, ListOrdered } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from 'react';
 
 interface RichTextEditorProps {
   content: string;
@@ -26,46 +31,84 @@ const variables = [
   { label: 'Email', value: '{email}' },
 ];
 
+// Extend the basic schema to include marks we need
+const mySchema = new Schema({
+  nodes: addListNodes(schema.spec.nodes, 'paragraph block*', 'block'),
+  marks: {
+    ...schema.spec.marks,
+    link: {
+      attrs: { href: {} },
+      inclusive: false,
+      parseDOM: [{ tag: 'a', getAttrs: dom => ({ href: (dom as HTMLElement).getAttribute('href') }) }],
+      toDOM: node => ['a', { ...node.attrs, class: 'text-primary underline' }, 0]
+    }
+  }
+});
+
 export function RichTextEditor({ content, onChange, disabled }: RichTextEditorProps) {
+  const editorRef = useRef<HTMLDivElement>(null);
+  const viewRef = useRef<EditorView | null>(null);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-primary underline',
-        },
-      }),
-    ],
-    content,
-    editable: !disabled,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
-    },
-    onFocus: () => setIsEditorFocused(true),
-    onBlur: () => setIsEditorFocused(false),
-  });
+  useEffect(() => {
+    if (!editorRef.current) return;
 
-  if (!editor) {
-    return null;
-  }
+    const state = EditorState.create({
+      doc: mySchema.nodeFromJSON(content ? JSON.parse(content) : { type: 'doc', content: [{ type: 'paragraph' }] }),
+      schema: mySchema,
+      plugins: [
+        history(),
+        keymap(baseKeymap)
+      ]
+    });
+
+    const view = new EditorView(editorRef.current, {
+      state,
+      dispatchTransaction(transaction) {
+        const newState = view.state.apply(transaction);
+        view.updateState(newState);
+        if (onChange) {
+          const content = JSON.stringify(newState.doc.toJSON());
+          onChange(content);
+        }
+      }
+    });
+
+    viewRef.current = view;
+
+    return () => {
+      if (viewRef.current) {
+        viewRef.current.destroy();
+      }
+    };
+  }, []);
+
+  const toggleFormat = (markType: string) => {
+    if (!viewRef.current) return;
+    const { state, dispatch } = viewRef.current;
+    toggleMark(mySchema.marks[markType])(state, dispatch);
+  };
 
   const setLink = () => {
-    const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('URL', previousUrl);
+    if (!viewRef.current) return;
+    const { state, dispatch } = viewRef.current;
+    const { from, to } = state.selection;
+    
+    if (from === to) return; // No text selected
+    
+    const url = window.prompt('Enter URL:');
+    if (!url) return;
+    
+    toggleMark(mySchema.marks.link, { href: url })(state, dispatch);
+  };
 
-    if (url === null) {
-      return;
-    }
-
-    if (url === '') {
-      editor.chain().focus().unsetLink().run();
-      return;
-    }
-
-    editor.chain().focus().setLink({ href: url }).run();
+  const insertVariable = (variable: string) => {
+    if (!viewRef.current) return;
+    const { state, dispatch } = viewRef.current;
+    const { from } = state.selection;
+    
+    const tr = state.tr.insertText(variable, from);
+    dispatch(tr);
   };
 
   return (
@@ -76,9 +119,9 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('bold') ? 'bg-accent' : ''}`}
-            disabled={!isEditorFocused}
+            onClick={() => toggleFormat('strong')}
+            className="h-8 w-8 p-0 hover:bg-accent"
+            disabled={disabled}
           >
             <Bold className="h-4 w-4 text-foreground" />
           </Button>
@@ -86,21 +129,11 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('italic') ? 'bg-accent' : ''}`}
-            disabled={!isEditorFocused}
+            onClick={() => toggleFormat('em')}
+            className="h-8 w-8 p-0 hover:bg-accent"
+            disabled={disabled}
           >
             <Italic className="h-4 w-4 text-foreground" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('underline') ? 'bg-accent' : ''}`}
-            disabled={!isEditorFocused}
-          >
-            <Underline className="h-4 w-4 text-foreground" />
           </Button>
         </div>
 
@@ -109,9 +142,9 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('orderedList') ? 'bg-accent' : ''}`}
-            disabled={!isEditorFocused}
+            onClick={() => setBlockType(mySchema.nodes.ordered_list)(viewRef.current?.state, viewRef.current?.dispatch)}
+            className="h-8 w-8 p-0 hover:bg-accent"
+            disabled={disabled}
           >
             <ListOrdered className="h-4 w-4 text-foreground" />
           </Button>
@@ -119,9 +152,9 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('bulletList') ? 'bg-accent' : ''}`}
-            disabled={!isEditorFocused}
+            onClick={() => setBlockType(mySchema.nodes.bullet_list)(viewRef.current?.state, viewRef.current?.dispatch)}
+            className="h-8 w-8 p-0 hover:bg-accent"
+            disabled={disabled}
           >
             <List className="h-4 w-4 text-foreground" />
           </Button>
@@ -133,8 +166,8 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
             variant="ghost"
             size="sm"
             onClick={setLink}
-            className={`h-8 w-8 p-0 hover:bg-accent ${editor.isActive('link') ? 'bg-accent' : ''}`}
-            disabled={!isEditorFocused}
+            className="h-8 w-8 p-0 hover:bg-accent"
+            disabled={disabled}
           >
             <LinkIcon className="h-4 w-4 text-foreground" />
           </Button>
@@ -147,7 +180,7 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
                 variant="secondary" 
                 size="sm"
                 className="h-8 px-3 flex items-center gap-2"
-                disabled={!isEditorFocused}
+                disabled={disabled}
               >
                 <Zap className="h-4 w-4 text-foreground" />
                 <span>Variables</span>
@@ -157,13 +190,7 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
               {variables.map((variable) => (
                 <DropdownMenuItem 
                   key={variable.value}
-                  onClick={() => {
-                    editor
-                      .chain()
-                      .focus()
-                      .insertContent(`<span class="bg-blue-100 px-1 rounded">${variable.value}</span>`)
-                      .run();
-                  }}
+                  onClick={() => insertVariable(variable.value)}
                 >
                   {variable.label}
                 </DropdownMenuItem>
@@ -173,9 +200,9 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
         </div>
       </div>
 
-      <EditorContent 
-        editor={editor} 
-        className="w-full border border-t-0 border-border rounded-b-md min-h-[150px] focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 [&_.ProseMirror]:p-3 [&_.ProseMirror]:min-h-[150px] [&_.ProseMirror:focus]:outline-none"
+      <div 
+        ref={editorRef}
+        className="w-full border border-t-0 border-border rounded-b-md min-h-[150px] p-3 focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
       />
     </div>
   );
