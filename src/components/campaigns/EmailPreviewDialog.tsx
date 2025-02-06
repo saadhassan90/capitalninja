@@ -17,7 +17,6 @@ interface EmailPreviewDialogProps {
     subject: string;
     content: string;
   };
-  recipientEmail?: string;
   senderName?: string;
   senderEmail?: string;
 }
@@ -26,7 +25,6 @@ export function EmailPreviewDialog({
   open,
   onOpenChange,
   sequence,
-  recipientEmail = "elleb@hassanfamilyoffice.com",
   senderName = "Elle Buetow",
   senderEmail = "elleb@hassanfamilyoffice.com",
 }: EmailPreviewDialogProps) {
@@ -36,6 +34,9 @@ export function EmailPreviewDialog({
     recipientFirstName: "Christopher",
   });
 
+  const [testEmails, setTestEmails] = useState<string[]>([]);
+  const [newEmail, setNewEmail] = useState("");
+
   const replaceVariables = (text: string) => {
     return text
       .replace(/\{firstName\}/g, previewVars.recipientFirstName)
@@ -43,12 +44,30 @@ export function EmailPreviewDialog({
       .replace(/\{senderEmail\}/g, previewVars.senderEmail);
   };
 
+  const handleAddEmail = (email: string) => {
+    if (email && testEmails.length < 5 && !testEmails.includes(email)) {
+      setTestEmails([...testEmails, email]);
+      setNewEmail("");
+    }
+  };
+
+  const handleRemoveEmail = (emailToRemove: string) => {
+    setTestEmails(testEmails.filter(email => email !== emailToRemove));
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddEmail(newEmail);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[1100px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <span>Email Preview</span>
+            <span>Test Email</span>
           </DialogTitle>
         </DialogHeader>
         
@@ -88,15 +107,27 @@ export function EmailPreviewDialog({
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground w-24">Send to:</span>
-                <div className="flex-1 flex items-center gap-1">
-                  <div className="bg-muted text-sm px-2 py-1 rounded-md flex items-center gap-1">
-                    {recipientEmail}
-                    <X className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                <div className="flex-1">
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {testEmails.map((email) => (
+                      <div key={email} className="bg-muted text-sm px-2 py-1 rounded-md flex items-center gap-1">
+                        {email}
+                        <X 
+                          className="h-3 w-3 text-muted-foreground cursor-pointer hover:text-foreground" 
+                          onClick={() => handleRemoveEmail(email)}
+                        />
+                      </div>
+                    ))}
                   </div>
-                  <Input 
-                    placeholder="Enter email address" 
-                    className="flex-1 text-sm h-8"
-                  />
+                  {testEmails.length < 5 && (
+                    <Input 
+                      placeholder="Enter email address and press Enter" 
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className="text-sm h-8"
+                    />
+                  )}
                 </div>
               </div>
               
@@ -131,15 +162,10 @@ export function EmailPreviewDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Close
           </Button>
-          <div className="flex gap-2">
-            <Button variant="outline">
-              Check Deliverability Score
-            </Button>
-            <Button>
-              <Send className="h-4 w-4 mr-2" />
-              Send test email
-            </Button>
-          </div>
+          <Button>
+            <Send className="h-4 w-4 mr-2" />
+            Send test email
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
