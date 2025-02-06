@@ -156,74 +156,60 @@ export default function CampaignView() {
             </div>
 
             <div className="rounded-lg border">
-              <Tabs defaultValue="activity" className="w-full">
-                <div className="border-b px-4">
-                  <TabsList className="border-0">
-                    <TabsTrigger value="activity">Activity</TabsTrigger>
-                    <TabsTrigger value="step-analytics">Step Analytics</TabsTrigger>
-                  </TabsList>
-                </div>
-
-                <div className="p-4">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input 
-                        placeholder="Search by email" 
-                        className="pl-9"
-                      />
-                    </div>
-                    <Button variant="outline" size="sm">
-                      Filter
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Download className="h-4 w-4" />
-                    </Button>
+              <div className="border-b px-4 py-4">
+                <h3 className="font-semibold">Activity</h3>
+              </div>
+              <div className="p-4">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      placeholder="Search by email" 
+                      className="pl-9"
+                    />
                   </div>
-
-                  <TabsContent value="activity" className="mt-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Email</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Time</TableHead>
-                          <TableHead>Step</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {[1, 2, 3, 4, 5].map((_, index) => (
-                          <TableRow key={index}>
-                            <TableCell>
-                              <div className="flex items-center gap-3">
-                                <div className="h-2 w-2 rounded-full bg-green-500" />
-                                <span className="text-sm">saad@investty.com</span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <span className="text-sm font-medium">
-                                {['Sent', 'Opened', 'Clicked', 'Responded'][index % 4]}
-                              </span>
-                            </TableCell>
-                            <TableCell>
-                              <span className="text-sm text-muted-foreground">a month ago</span>
-                            </TableCell>
-                            <TableCell>
-                              <span className="text-sm">Step {index + 1}</span>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TabsContent>
-
-                  <TabsContent value="step-analytics" className="mt-0">
-                    <div className="text-sm text-muted-foreground">
-                      Step-by-step analytics will be displayed here
-                    </div>
-                  </TabsContent>
+                  <Button variant="outline" size="sm">
+                    Filter
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Download className="h-4 w-4" />
+                  </Button>
                 </div>
-              </Tabs>
+
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Time</TableHead>
+                      <TableHead>Step</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {[1, 2, 3, 4, 5].map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="h-2 w-2 rounded-full bg-green-500" />
+                            <span className="text-sm">saad@investty.com</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm font-medium">
+                            {['Sent', 'Opened', 'Clicked', 'Responded'][index % 4]}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm text-muted-foreground">a month ago</span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm">Step {index + 1}</span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           </div>
         </TabsContent>
