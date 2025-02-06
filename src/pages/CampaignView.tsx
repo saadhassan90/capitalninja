@@ -12,6 +12,7 @@ import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
 import { useState } from "react";
 import type { Campaign } from "@/types/campaign";
 import type { SortConfig } from "@/types/sorting";
+import { SequenceTab } from "@/components/campaigns/SequenceTab";
 
 export default function CampaignView() {
   const { id } = useParams();
@@ -283,19 +284,7 @@ export default function CampaignView() {
         </TabsContent>
 
         <TabsContent value="sequence" className="mt-6">
-          <div className="rounded-lg border p-6">
-            <h2 className="text-xl font-semibold mb-4">Email Sequence</h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Subject</h3>
-                <p className="mt-1">{campaign.subject}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Content</h3>
-                <div className="mt-1 whitespace-pre-wrap">{campaign.content}</div>
-              </div>
-            </div>
-          </div>
+          <SequenceTab />
         </TabsContent>
 
         <TabsContent value="leads" className="mt-6">
