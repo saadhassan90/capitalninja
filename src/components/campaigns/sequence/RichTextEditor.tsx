@@ -15,8 +15,9 @@ export function RichTextEditor({ content, onChange, disabled }: RichTextEditorPr
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-primary underline',
+          class: 'text-primary underline cursor-pointer',
         },
+        validate: href => /^https?:\/\//.test(href),
       }),
     ],
     content,
