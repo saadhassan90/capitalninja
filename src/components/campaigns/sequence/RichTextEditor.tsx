@@ -39,7 +39,12 @@ const mySchema = new Schema({
     link: {
       attrs: { href: {} },
       inclusive: false,
-      parseDOM: [{ tag: 'a', getAttrs: dom => ({ href: (dom as HTMLElement).getAttribute('href') }) }],
+      parseDOM: [{ 
+        tag: 'a', 
+        getAttrs: (dom) => ({ 
+          href: (dom as HTMLElement).getAttribute('href') || '' 
+        }) 
+      }],
       toDOM: node => ['a', { ...node.attrs, class: 'text-primary underline' }, 0]
     }
   }
