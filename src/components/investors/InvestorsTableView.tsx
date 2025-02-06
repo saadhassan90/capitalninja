@@ -10,6 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { InvestorsTableRow } from "./InvestorsTableRow";
 import { InvestorsPagination } from "./InvestorsPagination";
 import { ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
+import { InvestorProfile } from "../InvestorProfile";
+import { useState } from "react";
 import type { LimitedPartner } from "@/types/investor";
 import type { SortConfig } from "@/types/sorting";
 import type { Campaign } from "@/types/campaign";
@@ -45,6 +47,8 @@ export function InvestorsTableView({
   listId,
   campaign,
 }: InvestorsTableViewProps) {
+  const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
+
   const SortableHeader = ({ column, children }: { column: string, children: React.ReactNode }) => {
     const isSorted = sortConfig.column === column;
     
@@ -70,6 +74,10 @@ export function InvestorsTableView({
   const allSelected = investors.length > 0 && investors.every(investor => 
     selectedInvestors.includes(investor.id)
   );
+
+  const handleViewInvestor = (id: number) => {
+    setSelectedInvestorId(id);
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -108,7 +116,7 @@ export function InvestorsTableView({
                   <InvestorsTableRow 
                     key={investor.id}
                     investor={investor}
-                    onViewInvestor={onViewInvestor}
+                    onViewInvestor={handleViewInvestor}
                     selected={selectedInvestors.includes(investor.id)}
                     onSelect={onSelectInvestor}
                     listId={listId}
@@ -126,6 +134,14 @@ export function InvestorsTableView({
         totalPages={totalPages}
         onPageChange={onPageChange}
       />
+
+      {selectedInvestorId && (
+        <InvestorProfile
+          investorId={selectedInvestorId}
+          open={selectedInvestorId !== null}
+          onOpenChange={(open) => !open && setSelectedInvestorId(null)}
+        />
+      )}
     </div>
   );
 }
