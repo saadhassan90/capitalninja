@@ -106,19 +106,18 @@ export function SequenceTab() {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Email Sequence</h2>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-gradient-to-r from-[#1EAEDB] to-[#8B5CF6] p-2 rounded-lg">
+          <div className="flex items-center gap-2">
             <Switch
               checked={useAI}
               onCheckedChange={setUseAI}
               id="ai-mode"
-              className="data-[state=checked]:bg-white"
             />
             <label
               htmlFor="ai-mode"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2 text-white"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2 bg-clip-text text-transparent bg-gradient-to-r from-[#1EAEDB] to-[#8B5CF6]"
             >
               Personalize using AI
-              <Sparkle className="h-4 w-4 text-white animate-pulse" />
+              <Sparkle className="h-4 w-4 text-[#1EAEDB] animate-pulse" />
             </label>
           </div>
           <Button variant="outline" size="sm">
