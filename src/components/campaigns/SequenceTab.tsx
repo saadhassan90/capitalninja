@@ -6,6 +6,8 @@ import { Plus, Copy, Eye, Save, Sparkle } from "lucide-react";
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
+import { EmailPreviewDialog } from "./EmailPreviewDialog";
 
 interface EmailStep {
   id: number;
@@ -92,8 +94,12 @@ const RichTextEditor = ({ content, onChange, disabled }: { content: string; onCh
 const aiGeneratedSequence: EmailStep[] = [
   {
     id: 1,
-    subject: "Introduction and Value Proposition",
-    content: "<p>I hope this email finds you well. I wanted to reach out regarding an exciting investment opportunity that aligns with your portfolio's focus areas. Our track record and unique approach have consistently delivered above-market returns.</p><p>Would you be interested in learning more about how we could potentially collaborate?</p>",
+    subject: "Exclusive Pre-Sale option for you Christopher",
+    content: `<p>Fund managers and capital raisers like you have two options:</p>
+    <p>1️⃣ Pay over $50k/year for databases like Preqin, PitchBook, Fintrx, or ZoomInfo, each offering partial and incomplete data.</p>
+    <p>2️⃣ Use CapitalNinja – our AI compiles investor/LP data from all these platforms into harmonized profiles for a fraction of the cost. CapitalNinja is the newest portfolio company of the Hassan Family Office.</p>
+    <p>For $2k/month, you'll access harmonized insights previously scattered across platforms, saving time and money. This invite-only pre-sale is for those who've connected with Hassan Family Office in some way. We're capping discounted access at 100 clients. Post-launch, the price rises to $5k/month.</p>
+    <p>Let's book a Meeting!</p>`,
     delay: 0
   },
   {
@@ -117,6 +123,7 @@ export function SequenceTab() {
   const [useAI, setUseAI] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pendingAIToggle, setPendingAIToggle] = useState(false);
+  const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const { toast } = useToast();
 
   const handleAIToggle = (checked: boolean) => {
@@ -141,6 +148,23 @@ export function SequenceTab() {
     }
     setShowConfirmDialog(false);
     setPendingAIToggle(false);
+  };
+
+  const handleSaveSequence = async () => {
+    try {
+      // Here you would typically save to your backend
+      // For now, we'll just show a success toast
+      toast({
+        title: "Sequence Saved",
+        description: "Your email sequence has been saved successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save the sequence. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const addStep = () => {
@@ -180,14 +204,14 @@ export function SequenceTab() {
               <span className="bg-gradient-to-r from-[#1EAEDB] to-[#8B5CF6] bg-clip-text text-transparent">
                 Personalize using AI
               </span>
-              <Sparkle className="h-4 w-4 text-[#1EAEDB] animate-pulse" />
+              <Sparkle className="h-4 w-4 text-[#1EAEDB]" />
             </label>
           </div>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => setShowPreviewDialog(true)}>
             <Eye className="h-4 w-4 mr-2" />
             Preview
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={handleSaveSequence}>
             <Save className="h-4 w-4 mr-2" />
             Save Sequence
           </Button>
@@ -278,6 +302,12 @@ export function SequenceTab() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <EmailPreviewDialog
+        open={showPreviewDialog}
+        onOpenChange={setShowPreviewDialog}
+        sequence={steps[0]}
+      />
     </div>
   );
 }
