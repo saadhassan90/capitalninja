@@ -8,13 +8,23 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
+import { useState } from "react";
 import type { Campaign } from "@/types/campaign";
+import type { SortConfig } from "@/types/sorting";
 
 export default function CampaignView() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
+  const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    column: 'limited_partner_name',
+    direction: 'asc'
+  });
 
-  const { data: campaign, isLoading } = useQuery({
+  const { data: campaign, isLoading: campaignLoading } = useQuery({
     queryKey: ['campaign', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -22,7 +32,8 @@ export default function CampaignView() {
         .select(`
           *,
           lists!list_id (
-            name
+            name,
+            id
           ),
           raise:raise_id (
             name,
@@ -37,7 +48,64 @@ export default function CampaignView() {
     },
   });
 
-  if (isLoading) {
+  const { data: investorsData, isLoading: investorsLoading } = useQuery({
+    queryKey: ['list-investors', campaign?.list_id, currentPage, sortConfig],
+    queryFn: async () => {
+      if (!campaign?.list_id) return { data: [], count: 0 };
+
+      const { data: listInvestors, error: listInvestorsError, count } = await supabase
+        .from('list_investors')
+        .select('investor_id', { count: 'exact' })
+        .eq('list_id', campaign.list_id)
+        .range((currentPage - 1) * 200, currentPage * 200 - 1);
+
+      if (listInvestorsError) throw listInvestorsError;
+
+      if (!listInvestors?.length) {
+        return { data: [], count: 0 };
+      }
+
+      const investorIds = listInvestors.map(li => li.investor_id);
+
+      const { data: investors, error: investorsError } = await supabase
+        .from('limited_partners')
+        .select('*')
+        .in('id', investorIds)
+        .order(sortConfig.column, { ascending: sortConfig.direction === 'asc' });
+
+      if (investorsError) throw investorsError;
+
+      return { data: investors || [], count: count || 0 };
+    },
+    enabled: !!campaign?.list_id,
+  });
+
+  const handleSort = (column: string) => {
+    setSortConfig(prevConfig => ({
+      column,
+      direction: prevConfig.column === column && prevConfig.direction === 'asc' ? 'desc' : 'asc'
+    }));
+    setCurrentPage(1);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const allIds = (investorsData?.data || []).map(investor => investor.id);
+      setSelectedInvestors(allIds);
+    } else {
+      setSelectedInvestors([]);
+    }
+  };
+
+  const handleSelectInvestor = (id: number, checked: boolean) => {
+    if (checked) {
+      setSelectedInvestors(prev => [...prev, id]);
+    } else {
+      setSelectedInvestors(prev => prev.filter(investorId => investorId !== id));
+    }
+  };
+
+  if (campaignLoading) {
     return <div>Loading campaign details...</div>;
   }
 
@@ -231,9 +299,36 @@ export default function CampaignView() {
         </TabsContent>
 
         <TabsContent value="leads" className="mt-6">
-          <div className="rounded-lg border p-6">
-            <h2 className="text-xl font-semibold mb-4">Campaign Leads</h2>
-            <p className="text-muted-foreground">List of leads targeted in this campaign will be displayed here.</p>
+          <div className="rounded-lg border">
+            <div className="border-b px-4 py-4">
+              <h2 className="font-semibold">Campaign Leads</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {campaign.lists?.name ? 
+                  `Showing investors from list: ${campaign.lists.name}` : 
+                  'No list selected for this campaign'}
+              </p>
+            </div>
+            <div className="p-4">
+              {campaign.list_id ? (
+                <InvestorsTableView 
+                  investors={investorsData?.data ?? []}
+                  isLoading={investorsLoading}
+                  onViewInvestor={setSelectedInvestorId}
+                  currentPage={currentPage}
+                  totalPages={Math.ceil((investorsData?.count ?? 0) / 200)}
+                  onPageChange={setCurrentPage}
+                  sortConfig={sortConfig}
+                  onSort={handleSort}
+                  selectedInvestors={selectedInvestors}
+                  onSelectAll={handleSelectAll}
+                  onSelectInvestor={handleSelectInvestor}
+                />
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  No list selected for this campaign. Edit the campaign to select a list of investors.
+                </div>
+              )}
+            </div>
           </div>
         </TabsContent>
 
