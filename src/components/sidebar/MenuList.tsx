@@ -34,8 +34,9 @@ export function MenuList({ items: propItems }: MenuListProps) {
                     key={subIndex}
                     variant="ghost"
                     className={cn(
-                      "w-full justify-start",
-                      location.pathname === subItem.href && "bg-accent"
+                      "w-full justify-start transition-colors",
+                      "hover:bg-accent/50",
+                      location.pathname === subItem.href && "bg-primary text-primary-foreground hover:bg-primary/90"
                     )}
                     asChild
                   >
@@ -57,8 +58,9 @@ export function MenuList({ items: propItems }: MenuListProps) {
             key={index}
             variant="ghost"
             className={cn(
-              "w-full justify-start",
-              location.pathname === item.href && "bg-accent"
+              "w-full justify-start transition-colors",
+              "hover:bg-accent/50",
+              location.pathname === item.href && "bg-primary text-primary-foreground hover:bg-primary/90"
             )}
             asChild
           >
