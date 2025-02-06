@@ -7,9 +7,6 @@ import {
   Download,
   Shield,
   Activity,
-  Mail,
-  MessageSquare,
-  Briefcase,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
@@ -43,26 +40,6 @@ export const menuItems = [
         title: "Exports",
         href: "/exports",
         icon: Download,
-      },
-    ],
-  },
-  {
-    title: "Outreach",
-    items: [
-      {
-        title: "Raise",
-        href: "/raise",
-        icon: Briefcase,
-      },
-      {
-        title: "Campaigns",
-        href: "/campaigns",
-        icon: Mail,
-      },
-      {
-        title: "Outreach",
-        href: "/emails",
-        icon: MessageSquare,
       },
     ],
   },
