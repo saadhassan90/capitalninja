@@ -26,39 +26,45 @@ const variables = [
 ];
 
 const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
-  <div id="toolbar" className="flex items-center gap-2 p-2 border border-border rounded-t-md [&_.ql-formats]:mr-0">
-    <span className="ql-formats flex gap-2">
+  <div id="toolbar" className="flex items-center gap-1 p-2 border border-border rounded-t-md [&_.ql-formats]:mr-0">
+    <span className="ql-formats flex gap-1">
       <Button
         variant="ghost"
-        size="default"
-        className="h-10 w-10 p-0 ql-bold"
+        size="sm"
+        className="h-8 w-8 p-0 ql-bold"
         disabled={!isEditorFocused}
       />
       <Button
         variant="ghost"
-        size="default"
-        className="h-10 w-10 p-0 ql-italic"
+        size="sm"
+        className="h-8 w-8 p-0 ql-italic"
         disabled={!isEditorFocused}
       />
       <Button
         variant="ghost"
-        size="default"
-        className="h-10 w-10 p-0 ql-underline"
+        size="sm"
+        className="h-8 w-8 p-0 ql-underline"
+        disabled={!isEditorFocused}
+      />
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 w-8 p-0 ql-link"
         disabled={!isEditorFocused}
       />
     </span>
-    <span className="ql-formats flex gap-2">
+    <span className="ql-formats flex gap-1">
       <Button
         variant="ghost"
-        size="default"
-        className="h-10 w-10 p-0 ql-list"
+        size="sm"
+        className="h-8 w-8 p-0 ql-list"
         value="ordered"
         disabled={!isEditorFocused}
       />
       <Button
         variant="ghost"
-        size="default"
-        className="h-10 w-10 p-0 ql-list"
+        size="sm"
+        className="h-8 w-8 p-0 ql-list"
         value="bullet"
         disabled={!isEditorFocused}
       />
@@ -67,12 +73,12 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button 
-            variant="secondary" 
-            size="default" 
-            className="h-10 px-4 flex items-center gap-2"
+            variant="ghost" 
+            size="sm" 
+            className="h-8 px-2 flex items-center gap-2"
             disabled={!isEditorFocused}
           >
-            <Zap className="h-5 w-5" />
+            <Zap className="h-4 w-4" />
             <span>Variables</span>
           </Button>
         </DropdownMenuTrigger>
@@ -100,14 +106,6 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-    </span>
-    <span className="ql-formats">
-      <Button
-        variant="ghost"
-        size="default"
-        className="h-10 w-10 p-0 ql-link"
-        disabled={!isEditorFocused}
-      />
     </span>
   </div>
 );
