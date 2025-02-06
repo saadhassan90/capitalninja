@@ -64,6 +64,16 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
       />
     </span>
     <span className="ql-formats">
+      <Button
+        variant="ghost"
+        size="default"
+        className="h-10 w-10 p-0 ql-link"
+        disabled={!isEditorFocused}
+      >
+        <Link className="h-5 w-5" />
+      </Button>
+    </span>
+    <span className="ql-formats ml-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button 
@@ -100,16 +110,6 @@ const CustomToolbar = ({ isEditorFocused }: { isEditorFocused: boolean }) => (
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-    </span>
-    <span className="ql-formats">
-      <Button
-        variant="ghost"
-        size="default"
-        className="h-10 w-10 p-0 ql-link"
-        disabled={!isEditorFocused}
-      >
-        <Link className="h-5 w-5" />
-      </Button>
     </span>
   </div>
 );
