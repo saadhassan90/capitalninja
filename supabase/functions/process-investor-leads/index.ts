@@ -1,6 +1,6 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
-import "https://deno.land/x/xhr@0.1.0/mod.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -41,60 +41,45 @@ serve(async (req) => {
     let matchedCount = 0
     const processedRecords = []
 
-    // Process each row with AI assistance
+    // Process each row
     for (const row of rawData) {
       const companyName = row.company_name || row.investor_name || row.name
+      const email = row.email || row.contact_email || row.primary_email
+      
+      if (!companyName && !email) continue
 
-      if (!companyName) continue
-
-      // Use OpenAI to help with matching
-      const matchingPrompt = `Find the best matching investor from our database for this company: "${companyName}".
-      Consider variations in company names, abbreviations, and common aliases.
-      Return a confidence score between 0 and 1, where:
-      1.0 = Exact match
-      0.8-0.9 = Very high confidence (minor variations)
-      0.6-0.7 = High confidence (significant variations but likely same company)
-      0.4-0.5 = Medium confidence (possible match but needs verification)
-      <0.4 = Low confidence (likely different companies)`
-
-      const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            { 
-              role: 'system', 
-              content: 'You are a data matching expert helping to match company names.' 
-            },
-            { role: 'user', content: matchingPrompt }
-          ],
-          temperature: 0.1,
-        }),
-      })
-
-      const aiResult = await aiResponse.json()
-      const aiSuggestions = aiResult.choices[0].message.content
-
-      // Search for matching investor with AI suggestions
-      const { data: matches, error: matchError } = await supabase
+      // Try exact matches first
+      const { data: exactMatches, error: matchError } = await supabase
         .from('limited_partners')
-        .select('id, limited_partner_name, limited_partner_type, aum')
-        .or(`limited_partner_name.ilike.%${companyName}%,limited_partner_former_name.ilike.%${companyName}%,limited_partner_also_known_as.ilike.%${companyName}%`)
-        .limit(5)
+        .select('*')
+        .or(`primary_contact_email.ilike.${email},limited_partner_name.ilike.${companyName}`)
+        .limit(1)
 
       if (matchError) {
         console.error('Error matching investor:', matchError)
         continue
       }
 
-      const bestMatch = matches?.[0]
-      const confidenceScore = bestMatch ? 0.8 : 0 // Simple scoring for now
+      let bestMatch = exactMatches?.[0]
+      let matchingMethod = 'exact_match'
+      let matchedFields = {}
 
-      // Insert into master_leads
+      // If no exact match, try fuzzy matching on company name
+      if (!bestMatch && companyName) {
+        const { data: fuzzyMatches } = await supabase
+          .from('limited_partners')
+          .select('*, similarity:calculate_company_similarity(limited_partner_name, ${companyName}) as score')
+          .order('score', { ascending: false })
+          .limit(1)
+
+        if (fuzzyMatches?.[0]?.score > 0.6) {
+          bestMatch = fuzzyMatches[0]
+          matchingMethod = 'fuzzy_match'
+          matchedFields = { company_name_similarity: fuzzyMatches[0].score }
+        }
+      }
+
+      // Insert into master_leads with enriched data
       const { data: insertedLead, error: insertError } = await supabase
         .from('master_leads')
         .insert({
@@ -102,11 +87,28 @@ serve(async (req) => {
           uploaded_by: uploadData.user_id,
           company_name: companyName,
           matched_limited_partner_id: bestMatch?.id,
-          confidence_score: confidenceScore,
+          confidence_score: bestMatch ? (matchingMethod === 'exact_match' ? 1.0 : 0.8) : 0,
+          matching_method: matchingMethod,
+          matched_fields: matchedFields,
           raw_data: row,
           enriched_data: bestMatch ? {
-            matched_investor: bestMatch,
-            ai_analysis: aiSuggestions
+            // Include all relevant fields from our dataset
+            id: bestMatch.id,
+            limited_partner_name: bestMatch.limited_partner_name,
+            limited_partner_type: bestMatch.limited_partner_type,
+            aum: bestMatch.aum,
+            year_founded: bestMatch.year_founded,
+            website: bestMatch.website,
+            description: bestMatch.description,
+            hqlocation: bestMatch.hqlocation,
+            primary_contact: bestMatch.primary_contact,
+            primary_contact_email: bestMatch.primary_contact_email,
+            primary_contact_title: bestMatch.primary_contact_title,
+            preferred_fund_type: bestMatch.preferred_fund_type,
+            preferred_geography: bestMatch.preferred_geography,
+            preferred_commitment_size_min: bestMatch.preferred_commitment_size_min,
+            preferred_commitment_size_max: bestMatch.preferred_commitment_size_max,
+            open_to_first_time_funds: bestMatch.open_to_first_time_funds
           } : null,
           last_validated_at: new Date().toISOString()
         })
@@ -124,25 +126,7 @@ serve(async (req) => {
       }
     }
 
-    // Get AI analysis of the enrichment process
-    const analysisResponse = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/analyze-enrichment`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        uploadData: {
-          total_rows: rawData.length,
-          matched_rows: matchedCount
-        },
-        matchedData: processedRecords
-      })
-    })
-
-    const { analysis } = await analysisResponse.json()
-
-    // Update upload status with analysis
+    // Update upload status
     await supabase
       .from('user_uploaded_leads')
       .update({ 
@@ -151,7 +135,7 @@ serve(async (req) => {
         total_rows: rawData.length,
         column_mapping: {
           ...uploadData.column_mapping,
-          enrichment_analysis: analysis
+          enrichment_summary: `Processed ${rawData.length} records with ${matchedCount} successful matches (${((matchedCount / rawData.length) * 100).toFixed(1)}% match rate)`
         }
       })
       .eq('id', uploadId)
@@ -160,8 +144,7 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         matchedCount,
-        totalRows: rawData.length,
-        analysis 
+        totalRows: rawData.length
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

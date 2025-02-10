@@ -599,7 +599,9 @@ export type Database = {
           enriched_data: Json | null
           id: string
           last_validated_at: string | null
+          matched_fields: Json | null
           matched_limited_partner_id: number | null
+          matching_method: string | null
           original_upload_id: string | null
           raw_data: Json
           updated_at: string
@@ -612,7 +614,9 @@ export type Database = {
           enriched_data?: Json | null
           id?: string
           last_validated_at?: string | null
+          matched_fields?: Json | null
           matched_limited_partner_id?: number | null
+          matching_method?: string | null
           original_upload_id?: string | null
           raw_data: Json
           updated_at?: string
@@ -625,7 +629,9 @@ export type Database = {
           enriched_data?: Json | null
           id?: string
           last_validated_at?: string | null
+          matched_fields?: Json | null
           matched_limited_partner_id?: number | null
+          matching_method?: string | null
           original_upload_id?: string | null
           raw_data?: Json
           updated_at?: string
@@ -1128,6 +1134,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_company_similarity: {
+        Args: {
+          name1: string
+          name2: string
+        }
+        Returns: number
+      }
       check_admin_status: {
         Args: {
           user_id: string
