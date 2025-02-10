@@ -324,6 +324,30 @@ export type Database = {
           },
         ]
       }
+      instantly_settings: {
+        Row: {
+          agency_email: string
+          api_key: string
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          agency_email: string
+          api_key: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_email?: string
+          api_key?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       limited_partners: {
         Row: {
           allocation_to_alternative_investments: number | null
@@ -1058,9 +1082,6 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          instantly_api_key: string | null
-          instantly_email: string | null
-          instantly_password: string | null
           plan: Database["public"]["Enums"]["subscription_plan"]
           updated_at: string
           user_id: string
@@ -1068,9 +1089,6 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          instantly_api_key?: string | null
-          instantly_email?: string | null
-          instantly_password?: string | null
           plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string
           user_id: string
@@ -1078,9 +1096,6 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          instantly_api_key?: string | null
-          instantly_email?: string | null
-          instantly_password?: string | null
           plan?: Database["public"]["Enums"]["subscription_plan"]
           updated_at?: string
           user_id?: string
