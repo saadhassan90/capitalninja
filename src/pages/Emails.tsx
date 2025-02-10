@@ -44,7 +44,7 @@ export default function Emails() {
   });
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="flex-1 space-y-6 p-8">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -60,15 +60,18 @@ export default function Emails() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Email Management</h1>
-          <p className="text-muted-foreground">
-            Manage your email accounts and warm-up settings
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Mail className="h-8 w-8" />
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Email Management</h1>
+            <p className="text-muted-foreground mt-1">
+              Manage your email accounts and warm-up settings
+            </p>
+          </div>
         </div>
         <Button onClick={() => navigate("/emails/add")}>
-          <Mail className="w-4 h-4 mr-2" />
+          <Mail className="mr-2 h-4 w-4" />
           Add Email
         </Button>
       </div>

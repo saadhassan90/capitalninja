@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Sparkles, Home } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -155,7 +156,7 @@ export default function Enrichment() {
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="flex-1 space-y-6 p-8">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -171,11 +172,11 @@ export default function Enrichment() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex items-center gap-2 mb-8">
+      <div className="flex items-center gap-2">
         <Sparkles className="h-8 w-8" />
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Enrich Investor Data</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-muted-foreground mt-1">
             Upload a CSV file containing investor leads to enrich it with data from our database
           </p>
         </div>

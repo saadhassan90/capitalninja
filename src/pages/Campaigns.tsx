@@ -19,7 +19,7 @@ export default function Campaigns() {
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
 
   return (
-    <div className="space-y-6">
+    <div className="flex-1 space-y-6 p-8">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -35,12 +35,15 @@ export default function Campaigns() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Campaigns</h1>
-          <p className="text-muted-foreground">
-            Create and manage your email campaigns
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Plus className="h-8 w-8" />
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Campaigns</h1>
+            <p className="text-muted-foreground mt-1">
+              Create and manage your email campaigns
+            </p>
+          </div>
         </div>
         <Button onClick={() => setShowCreateDialog(true)}>
           <Plus className="mr-2 h-4 w-4" />

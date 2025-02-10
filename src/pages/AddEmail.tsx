@@ -19,7 +19,7 @@ export default function AddEmail() {
   const [addDomainOpen, setAddDomainOpen] = useState(false);
 
   return (
-    <div className="py-6 space-y-6">
+    <div className="flex-1 space-y-6 p-8">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -44,8 +44,8 @@ export default function AddEmail() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Add Email</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight">Add Email</h1>
+          <p className="text-muted-foreground mt-1">
             Choose how you want to set up your email
           </p>
         </div>

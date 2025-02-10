@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { RaiseTable } from "@/components/raise/RaiseTable";
 import { Briefcase, Plus, Home } from "lucide-react";
@@ -37,7 +38,7 @@ const Raise = () => {
   });
 
   return (
-    <div className="p-8">
+    <div className="flex-1 space-y-6 p-8">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -53,12 +54,12 @@ const Raise = () => {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Briefcase className="h-8 w-8" />
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Raise</h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground mt-1">
               View your fundraising projects
             </p>
           </div>

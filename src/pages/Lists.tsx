@@ -46,24 +46,6 @@ const Lists = () => {
     }
   });
 
-  const handleCreateList = async (listData: any) => {
-    try {
-      const { error } = await supabase
-        .from('lists')
-        .insert({
-          ...listData,
-          created_by: (await supabase.auth.getUser()).data.user?.id
-        });
-
-      if (error) throw error;
-
-      toast.success("List created successfully");
-      refetch();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create list");
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="p-8 flex items-center justify-center min-h-screen">
@@ -85,7 +67,7 @@ const Lists = () => {
   }
 
   return (
-    <div className="p-8">
+    <div className="flex-1 space-y-6 p-8">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -101,12 +83,12 @@ const Lists = () => {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ListChecks className="h-8 w-8" />
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Lists</h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground mt-1">
               Create and manage your investor lists
             </p>
           </div>
