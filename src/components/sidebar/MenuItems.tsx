@@ -8,6 +8,7 @@ import {
   Shield,
   Activity,
   Send,
+  Mail,
   Briefcase,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
@@ -61,7 +62,7 @@ export const menuItems = [
       {
         title: "Emails",
         href: "/emails",
-        icon: Send,
+        icon: Mail,
       },
     ],
   },
