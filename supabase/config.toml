@@ -1,4 +1,5 @@
+
 project_id = "hgxpzbujwruehbjywgio"
 
-[functions.generate-email-sequence]
+[functions.send-notification]
 verify_jwt = true
