@@ -6,11 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, ShoppingCart } from "lucide-react";
+import { AddDomainDialog } from "@/components/emails/AddDomainDialog";
+import { BuyDomainDialog } from "@/components/emails/BuyDomainDialog";
 
 export default function Emails() {
   const [activeTab, setActiveTab] = useState("domains");
+  const [addDomainOpen, setAddDomainOpen] = useState(false);
+  const [buyDomainOpen, setBuyDomainOpen] = useState(false);
 
-  const { data: domains, isLoading: domainsLoading } = useQuery({
+  const { data: domains, isLoading: domainsLoading, refetch: refetchDomains } = useQuery({
     queryKey: ['email-domains'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -51,11 +55,11 @@ export default function Emails() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => setBuyDomainOpen(true)}>
             <ShoppingCart className="w-4 h-4 mr-2" />
             Buy Domain
           </Button>
-          <Button>
+          <Button onClick={() => setAddDomainOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Add Domain
           </Button>
@@ -82,11 +86,11 @@ export default function Emails() {
               </CardHeader>
               <CardFooter>
                 <div className="flex gap-2">
-                  <Button variant="outline">
+                  <Button variant="outline" onClick={() => setBuyDomainOpen(true)}>
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Buy Domain
                   </Button>
-                  <Button>
+                  <Button onClick={() => setAddDomainOpen(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add Domain
                   </Button>
@@ -169,7 +173,17 @@ export default function Emails() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AddDomainDialog 
+        open={addDomainOpen} 
+        onOpenChange={setAddDomainOpen}
+        onDomainAdded={() => refetchDomains()}
+      />
+      <BuyDomainDialog
+        open={buyDomainOpen}
+        onOpenChange={setBuyDomainOpen}
+        onDomainPurchased={() => refetchDomains()}
+      />
     </div>
   );
 }
-
