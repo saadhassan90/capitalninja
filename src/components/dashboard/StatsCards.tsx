@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ListTodo, Database, FileSpreadsheet, Sparkles, CreditCard } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -10,14 +11,17 @@ interface StatsCardsProps {
 }
 
 export const StatsCards = ({ listsCount, investorsCount }: StatsCardsProps) => {
-  // Query for exports count
+  // Query for total records exported
   const { data: exportsData } = useQuery({
-    queryKey: ['exports-count'],
+    queryKey: ['exports-records'],
     queryFn: async () => {
-      const { count } = await supabase
+      const { data } = await supabase
         .from('exports')
-        .select('*', { count: 'exact', head: true });
-      return count;
+        .select('records')
+        .not('records', 'is', null);
+      
+      // Sum up all records from exports
+      return data?.reduce((sum, export_) => sum + (export_.records || 0), 0) || 0;
     },
   });
 
@@ -37,14 +41,16 @@ export const StatsCards = ({ listsCount, investorsCount }: StatsCardsProps) => {
 
       if (!teamMember) return 0;
 
-      // Then count exports for the team this month
-      const { count } = await supabase
+      // Then get the total records exported for the team this month
+      const { data } = await supabase
         .from('exports')
-        .select('*', { count: 'exact', head: true })
+        .select('records')
         .eq('team_id', teamMember.id)
-        .gte('created_at', startOfMonth.toISOString());
+        .gte('created_at', startOfMonth.toISOString())
+        .not('records', 'is', null);
 
-      return count;
+      // Sum up all records from exports
+      return data?.reduce((sum, export_) => sum + (export_.records || 0), 0) || 0;
     },
   });
 
@@ -90,7 +96,7 @@ export const StatsCards = ({ listsCount, investorsCount }: StatsCardsProps) => {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Exports</CardTitle>
+          <CardTitle className="text-sm font-medium">Total Records Exported</CardTitle>
           <FileSpreadsheet className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -116,7 +122,7 @@ export const StatsCards = ({ listsCount, investorsCount }: StatsCardsProps) => {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Monthly Credits</CardTitle>
+          <CardTitle className="text-sm font-medium">Monthly Export Credits</CardTitle>
           <CreditCard className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
