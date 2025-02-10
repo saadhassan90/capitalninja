@@ -1,28 +1,21 @@
-import { useState } from "react";
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail } from "lucide-react";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Mail, Trash2, ActivitySquare, Thermometer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function Emails() {
-  const [activeTab, setActiveTab] = useState("domains");
   const navigate = useNavigate();
-
-  const { data: domains, isLoading: domainsLoading } = useQuery({
-    queryKey: ['email-domains'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('email_domains')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    }
-  });
 
   const { data: accounts, isLoading: accountsLoading } = useQuery({
     queryKey: ['email-accounts'],
@@ -43,12 +36,12 @@ export default function Emails() {
   });
 
   return (
-    <div className="py-6 space-y-6">
+    <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Email Management</h1>
           <p className="text-muted-foreground">
-            Manage your email domains and accounts
+            Manage your email accounts and warm-up settings
           </p>
         </div>
         <Button onClick={() => navigate("/emails/add")}>
@@ -57,107 +50,63 @@ export default function Emails() {
         </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="domains">Domains</TabsTrigger>
-          <TabsTrigger value="accounts">Email Accounts</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="domains" className="space-y-4">
-          {domainsLoading ? (
-            <div>Loading domains...</div>
-          ) : domains?.length === 0 ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>No Domains Added</CardTitle>
-                <CardDescription>
-                  Get started by adding your first email domain
-                </CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Button onClick={() => navigate("/emails/add")}>
-                  <Mail className="w-4 h-4 mr-2" />
-                  Add Email
-                </Button>
-              </CardFooter>
-            </Card>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {domains?.map((domain) => (
-                <Card key={domain.id}>
-                  <CardHeader>
-                    <CardTitle>{domain.domain_name}</CardTitle>
-                    <CardDescription>Status: {domain.status}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {/* Domain details will go here */}
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <Button variant="outline">Verify</Button>
-                    <Button variant="destructive">Remove</Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="accounts" className="space-y-4">
-          {accountsLoading ? (
-            <div>Loading accounts...</div>
-          ) : accounts?.length === 0 ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>No Email Accounts</CardTitle>
-                <CardDescription>
-                  Add a domain first, then create email accounts
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {accounts?.map((account) => (
-                <Card key={account.id}>
-                  <CardHeader>
-                    <CardTitle>{account.email}</CardTitle>
-                    <CardDescription>
-                      Domain: {account.email_domains.domain_name}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div>Status: {account.status}</div>
-                      <div>Daily Limit: {account.daily_limit}</div>
-                      <div>
-                        Warmup: {account.warmup_enabled ? "Enabled" : "Disabled"}
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <Button variant="outline">Edit</Button>
-                    <Button variant="destructive">Delete</Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="settings">
-          <Card>
-            <CardHeader>
-              <CardTitle>Instantly.ai Integration</CardTitle>
-              <CardDescription>
-                Connect your Instantly.ai account to manage your email infrastructure
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {/* Instantly.ai integration settings will go here */}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      {accountsLoading ? (
+        <div>Loading accounts...</div>
+      ) : accounts?.length === 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>No Email Accounts</CardTitle>
+            <CardDescription>
+              Get started by adding your first email account
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Email Address</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Daily Limit</TableHead>
+              <TableHead>Warmup</TableHead>
+              <TableHead>Score</TableHead>
+              <TableHead>Emails Sent</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {accounts?.map((account) => (
+              <TableRow key={account.id}>
+                <TableCell className="font-medium">{account.email}</TableCell>
+                <TableCell>{account.status}</TableCell>
+                <TableCell>{account.daily_limit}</TableCell>
+                <TableCell>
+                  <Button 
+                    variant={account.warmup_enabled ? "secondary" : "outline"} 
+                    size="sm"
+                  >
+                    <Thermometer className="w-4 h-4 mr-2" />
+                    {account.warmup_enabled ? "Enabled" : "Disabled"}
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button variant="ghost" size="sm">
+                    <ActivitySquare className="w-4 h-4 mr-2" />
+                    View Score
+                  </Button>
+                </TableCell>
+                <TableCell>0</TableCell>
+                <TableCell className="text-right">
+                  <Button variant="destructive" size="sm">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Remove
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 }
