@@ -245,6 +245,83 @@ export type Database = {
           },
         ]
       }
+      email_accounts: {
+        Row: {
+          created_at: string | null
+          daily_limit: number | null
+          domain_id: string
+          email: string
+          id: string
+          instantly_account_id: string | null
+          status: string
+          updated_at: string | null
+          user_id: string
+          warmup_enabled: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          daily_limit?: number | null
+          domain_id: string
+          email: string
+          id?: string
+          instantly_account_id?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+          warmup_enabled?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          daily_limit?: number | null
+          domain_id?: string
+          email?: string
+          id?: string
+          instantly_account_id?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+          warmup_enabled?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_accounts_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "email_domains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_domains: {
+        Row: {
+          created_at: string | null
+          domain_name: string
+          id: string
+          instantly_domain_id: string | null
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          domain_name: string
+          id?: string
+          instantly_domain_id?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          domain_name?: string
+          id?: string
+          instantly_domain_id?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       exports: {
         Row: {
           created_at: string
@@ -323,6 +400,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      instantly_integrations: {
+        Row: {
+          api_key: string
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          api_key: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          api_key?: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       instantly_settings: {
         Row: {

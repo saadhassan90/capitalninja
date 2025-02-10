@@ -1,4 +1,3 @@
-
 import {
   LayoutDashboard,
   Users,
@@ -57,6 +56,11 @@ export const menuItems = [
       {
         title: "Campaigns",
         href: "/campaigns",
+        icon: Mail,
+      },
+      {
+        title: "Emails",
+        href: "/emails",
         icon: Mail,
       },
     ],

@@ -17,6 +17,7 @@ import Exports from "@/pages/Exports";
 import Campaigns from "@/pages/Campaigns";
 import CampaignView from "@/pages/CampaignView";
 import Raise from "@/pages/Raise";
+import Emails from "@/pages/Emails";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminUsers from "@/pages/admin/Users";
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
       {
         path: "/campaigns/:id",
         element: <CampaignView />,
+      },
+      {
+        path: "/emails",
+        element: <Emails />,
       },
       {
         path: "admin",
