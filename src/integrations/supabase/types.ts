@@ -1101,6 +1101,7 @@ export type Database = {
           id: string
           role: string
           status: string
+          token: string | null
         }
         Insert: {
           created_at?: string
@@ -1109,6 +1110,7 @@ export type Database = {
           id?: string
           role: string
           status?: string
+          token?: string | null
         }
         Update: {
           created_at?: string
@@ -1117,6 +1119,7 @@ export type Database = {
           id?: string
           role?: string
           status?: string
+          token?: string | null
         }
         Relationships: []
       }

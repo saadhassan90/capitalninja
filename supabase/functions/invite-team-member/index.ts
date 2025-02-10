@@ -51,10 +51,12 @@ serve(async (req) => {
       // Check for existing pending invitation
       const { data: existingInvitation } = await supabase
         .from('team_invitations')
-        .select('id')
+        .select('id, token')
         .eq('email', email)
         .eq('status', 'pending')
         .single()
+
+      let invitationToken: string
 
       if (existingInvitation) {
         // Update the existing invitation's expiry and created_at
@@ -67,20 +69,24 @@ serve(async (req) => {
           .eq('id', existingInvitation.id)
 
         if (updateError) throw updateError
+        invitationToken = existingInvitation.token
       } else {
         // Create new invitation record
-        const { error: inviteError } = await supabase
+        const { data: newInvitation, error: inviteError } = await supabase
           .from('team_invitations')
           .insert({
             email,
             role,
             expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
           })
+          .select('token')
+          .single()
 
         if (inviteError) throw inviteError
+        invitationToken = newInvitation.token
       }
 
-      // Send invitation email
+      // Send invitation email with token in URL
       const emailResponse = await resend.emails.send({
         from: "noreply@app.capitalninja.ai",
         to: [email],
@@ -93,7 +99,7 @@ serve(async (req) => {
   <p>Hello,</p>
   <p>You have been invited to join Capital Ninja as a ${role}.</p>
   <p>Click the link below to join:</p>
-  <p><a href="https://app.capitalninja.ai/auth">Accept Invitation</a></p>
+  <p><a href="https://app.capitalninja.ai/auth?invitation=${invitationToken}">Accept Invitation</a></p>
   <p>If you did not expect this invitation, you can safely ignore this email.</p>
   <p>Best regards,<br>The Capital Ninja Team</p>
 </body>
