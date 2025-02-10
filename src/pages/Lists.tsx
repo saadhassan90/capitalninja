@@ -46,6 +46,26 @@ const Lists = () => {
     }
   });
 
+  const handleCreateList = async (listData: { name: string; description: string; created_by: string }) => {
+    try {
+      const { data, error } = await supabase
+        .from('lists')
+        .insert([listData])
+        .select()
+        .single();
+
+      if (error) {
+        toast.error("Failed to create list");
+        throw error;
+      }
+
+      toast.success("List created successfully");
+      refetch(); // Refresh the lists
+    } catch (error) {
+      console.error("Error creating list:", error);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="p-8 flex items-center justify-center min-h-screen">
