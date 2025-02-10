@@ -24,11 +24,20 @@ export function AddDomainDialog({ open, onOpenChange, onDomainAdded }: AddDomain
     setIsLoading(true);
 
     try {
+      // Get the current user's ID
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("No authenticated user found");
+      }
+
       const { error } = await supabase
         .from('email_domains')
-        .insert([
-          { domain_name: domain }
-        ]);
+        .insert({
+          domain_name: domain,
+          user_id: user.id,
+          status: 'pending'
+        });
 
       if (error) throw error;
 
