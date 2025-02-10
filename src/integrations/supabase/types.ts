@@ -785,7 +785,6 @@ export type Database = {
           email_notifications: boolean | null
           id: string
           investor_updates: boolean | null
-          list_updates: boolean | null
           marketing_updates: boolean | null
           security_alerts: boolean | null
           updated_at: string | null
@@ -796,7 +795,6 @@ export type Database = {
           email_notifications?: boolean | null
           id?: string
           investor_updates?: boolean | null
-          list_updates?: boolean | null
           marketing_updates?: boolean | null
           security_alerts?: boolean | null
           updated_at?: string | null
@@ -807,7 +805,6 @@ export type Database = {
           email_notifications?: boolean | null
           id?: string
           investor_updates?: boolean | null
-          list_updates?: boolean | null
           marketing_updates?: boolean | null
           security_alerts?: boolean | null
           updated_at?: string | null

@@ -5,7 +5,6 @@ import { useAuth } from "@/components/AuthProvider";
 
 export interface NotificationPreferences {
   email_notifications: boolean;
-  list_updates: boolean;
   investor_updates: boolean;
   security_alerts: boolean;
   marketing_updates: boolean;
@@ -13,7 +12,6 @@ export interface NotificationPreferences {
 
 export const defaultPreferences: NotificationPreferences = {
   email_notifications: true,
-  list_updates: true,
   investor_updates: true,
   security_alerts: true,
   marketing_updates: false,

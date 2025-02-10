@@ -1,3 +1,4 @@
+
 import { useNotificationPreferences } from "@/hooks/useNotificationPreferences";
 import { NotificationToggle } from "./NotificationToggle";
 import { Loader2 } from "lucide-react";
@@ -20,13 +21,6 @@ export function NotificationsSection() {
         description="Receive notifications via email"
         checked={preferences.email_notifications}
         onCheckedChange={(checked) => updatePreference("email_notifications", checked)}
-      />
-
-      <NotificationToggle
-        title="List Updates"
-        description="Get notified when your lists are updated"
-        checked={preferences.list_updates}
-        onCheckedChange={(checked) => updatePreference("list_updates", checked)}
       />
 
       <NotificationToggle
