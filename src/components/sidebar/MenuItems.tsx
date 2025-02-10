@@ -7,7 +7,7 @@ import {
   Download,
   Shield,
   Activity,
-  Mail,
+  Send,
   Briefcase,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
@@ -56,12 +56,12 @@ export const menuItems = [
       {
         title: "Campaigns",
         href: "/campaigns",
-        icon: Mail,
+        icon: Send,
       },
       {
         title: "Emails",
         href: "/emails",
-        icon: Mail,
+        icon: Send,
       },
     ],
   },

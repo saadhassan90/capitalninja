@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { CampaignsTable } from "@/components/campaigns/CampaignsTable";
 import { Button } from "@/components/ui/button";
-import { Plus, Home } from "lucide-react";
+import { Plus, Home, Send } from "lucide-react";
 import { CampaignForm } from "@/components/campaigns/CampaignForm";
 import type { Campaign } from "@/types/campaign";
 import {
@@ -37,7 +37,7 @@ export default function Campaigns() {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Plus className="h-8 w-8" />
+          <Send className="h-8 w-8" />
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Campaigns</h1>
             <p className="text-muted-foreground mt-1">
