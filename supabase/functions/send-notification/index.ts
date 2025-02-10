@@ -50,7 +50,7 @@ serve(async (req) => {
     console.log(`Sending ${templateName} email to ${to}`)
 
     const emailResponse = await resend.emails.send({
-      from: "notifications@yourdomain.com", // Update this with your verified domain
+      from: "noreply@app.capitalninja.ai",
       to: [to],
       subject: subject,
       html: templates[templateName](data)
