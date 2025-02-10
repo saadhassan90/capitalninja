@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NotificationsSection } from "@/components/settings/NotificationsSection";
@@ -6,7 +7,7 @@ import { TeamMembersTable } from "@/components/team/TeamMembersTable";
 import { InviteUserDialog } from "@/components/team/InviteUserDialog";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { TeamMember } from "@/types/team";
+import type { TeamMember, TeamInvitation } from "@/types/team";
 import {
   Accordion,
   AccordionContent,
@@ -17,7 +18,7 @@ import {
 export default function Settings() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
-  const { data: members, isLoading } = useQuery({
+  const { data: members, isLoading: isMembersLoading } = useQuery({
     queryKey: ['team-members'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -36,6 +37,20 @@ export default function Settings() {
       return data as TeamMember[];
     }
   });
+
+  const { data: invitations, isLoading: isInvitationsLoading } = useQuery({
+    queryKey: ['team-invitations'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('team_invitations')
+        .select('*');
+
+      if (error) throw error;
+      return data as TeamInvitation[];
+    }
+  });
+
+  const isLoading = isMembersLoading || isInvitationsLoading;
 
   return (
     <div className="container mx-auto py-8 space-y-6">
@@ -67,6 +82,7 @@ export default function Settings() {
               </Button>
               <TeamMembersTable 
                 members={members || []}
+                invitations={invitations || []}
                 isLoading={isLoading}
               />
             </div>
