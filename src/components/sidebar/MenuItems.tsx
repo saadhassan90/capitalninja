@@ -1,3 +1,4 @@
+
 import {
   LayoutDashboard,
   Users,
@@ -8,7 +9,6 @@ import {
   Shield,
   Activity,
   Mail,
-  MessageSquare,
   Briefcase,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
@@ -58,11 +58,6 @@ export const menuItems = [
         title: "Campaigns",
         href: "/campaigns",
         icon: Mail,
-      },
-      {
-        title: "Outreach",
-        href: "/emails",
-        icon: MessageSquare,
       },
     ],
   },
