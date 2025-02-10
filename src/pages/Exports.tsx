@@ -1,3 +1,4 @@
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Download, RefreshCw, Trash2, Check, Loader, Clock, X, Home } from "lucide-react";
@@ -55,7 +56,7 @@ const Exports = () => {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="flex-1 space-y-6 p-8">
         <div className="flex items-center justify-center">
           <Loader className="h-8 w-8 animate-spin" />
         </div>
@@ -64,7 +65,7 @@ const Exports = () => {
   }
 
   return (
-    <div className="p-8">
+    <div className="flex-1 space-y-6 p-8">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -80,13 +81,15 @@ const Exports = () => {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex items-start gap-2 mb-8">
-        <Download className="h-8 w-8 mt-1" />
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Exports History</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">
-            View and manage your data exports
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Download className="h-8 w-8" />
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Exports</h1>
+            <p className="text-muted-foreground mt-1">
+              View and manage your data exports
+            </p>
+          </div>
         </div>
       </div>
 
@@ -152,3 +155,4 @@ const Exports = () => {
 };
 
 export default Exports;
+
