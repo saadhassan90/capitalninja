@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { EmailField } from "./EmailField";
 import { SignupFormFields } from "./SignupFormFields";
@@ -9,6 +10,7 @@ interface MagicLinkFormProps {
   onEmailChange: (email: string) => void;
   onSubmit: (e: React.FormEvent, formData?: SignupFormData) => void;
   type: "signin" | "signup";
+  isInvitation?: boolean;
 }
 
 export interface SignupFormData {
@@ -24,7 +26,8 @@ export function MagicLinkForm({
   loading, 
   onEmailChange, 
   onSubmit,
-  type 
+  type,
+  isInvitation
 }: MagicLinkFormProps) {
   const id = `${type}-email`;
   const [firstName, setFirstName] = useState("");
