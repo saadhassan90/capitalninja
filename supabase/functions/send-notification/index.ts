@@ -1,6 +1,8 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { Resend } from "npm:resend@2.0.0"
+import { WelcomeTemplate } from "./templates/WelcomeTemplate.ts"
+import { NotificationTemplate } from "./templates/NotificationTemplate.ts"
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"))
 
@@ -17,21 +19,8 @@ interface EmailNotification {
 }
 
 const templates = {
-  welcome: (data: any) => `
-    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <h1>Welcome to Our Platform!</h1>
-      <p>Hi ${data.name || 'there'},</p>
-      <p>Thank you for joining our platform. We're excited to have you on board!</p>
-      <p>Best regards,<br>The Team</p>
-    </div>
-  `,
-  notification: (data: any) => `
-    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2>${data.title || 'Notification'}</h2>
-      <p>${data.message}</p>
-      <p>Best regards,<br>The Team</p>
-    </div>
-  `
+  welcome: WelcomeTemplate,
+  notification: NotificationTemplate
 }
 
 serve(async (req) => {
