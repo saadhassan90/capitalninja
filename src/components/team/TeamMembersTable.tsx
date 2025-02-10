@@ -20,7 +20,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TeamMember, TeamInvitation, Role } from "@/types/team";
 import { Badge } from "@/components/ui/badge";
-import { Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Clock, CheckCircle2, XCircle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface TeamMembersTableProps {
   members: TeamMember[];
@@ -50,6 +51,27 @@ export function TeamMembersTable({ members, invitations, isLoading }: TeamMember
       title: "Role updated",
       description: "Team member's role has been updated successfully.",
     });
+  };
+
+  const handleResendInvitation = async (invitation: TeamInvitation) => {
+    try {
+      const { error } = await supabase.functions.invoke('invite-team-member', {
+        body: { email: invitation.email, role: invitation.role }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Invitation resent",
+        description: `A new invitation email has been sent to ${invitation.email}`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error resending invitation",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -91,6 +113,7 @@ export function TeamMembersTable({ members, invitations, isLoading }: TeamMember
           <TableHead>Role</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Joined</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -132,6 +155,9 @@ export function TeamMembersTable({ members, invitations, isLoading }: TeamMember
             <TableCell>
               {new Date(member.created_at).toLocaleDateString()}
             </TableCell>
+            <TableCell>
+              {/* Active members don't need any actions */}
+            </TableCell>
           </TableRow>
         ))}
         {invitations.map((invitation) => (
@@ -152,6 +178,19 @@ export function TeamMembersTable({ members, invitations, isLoading }: TeamMember
             </TableCell>
             <TableCell>
               Invited {new Date(invitation.created_at).toLocaleDateString()}
+            </TableCell>
+            <TableCell>
+              {invitation.status === 'pending' && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handleResendInvitation(invitation)}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Resend Invitation
+                </Button>
+              )}
             </TableCell>
           </TableRow>
         ))}
