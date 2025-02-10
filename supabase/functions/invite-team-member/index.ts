@@ -48,16 +48,37 @@ serve(async (req) => {
         )
       }
     } else {
-      // Create invitation record
-      const { error: inviteError } = await supabase
+      // Check for existing pending invitation
+      const { data: existingInvitation } = await supabase
         .from('team_invitations')
-        .insert({
-          email,
-          role,
-          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
-        })
+        .select('id')
+        .eq('email', email)
+        .eq('status', 'pending')
+        .single()
 
-      if (inviteError) throw inviteError
+      if (existingInvitation) {
+        // Update the existing invitation's expiry and created_at
+        const { error: updateError } = await supabase
+          .from('team_invitations')
+          .update({
+            expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            created_at: new Date().toISOString()
+          })
+          .eq('id', existingInvitation.id)
+
+        if (updateError) throw updateError
+      } else {
+        // Create new invitation record
+        const { error: inviteError } = await supabase
+          .from('team_invitations')
+          .insert({
+            email,
+            role,
+            expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          })
+
+        if (inviteError) throw inviteError
+      }
 
       // Send invitation email
       const emailResponse = await resend.emails.send({
