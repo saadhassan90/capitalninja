@@ -1,12 +1,21 @@
+
 import { useState } from "react";
 import { ListSection } from "@/components/lists/ListSection";
-import { ListChecks, Plus, Loader2 } from "lucide-react";
+import { ListChecks, Plus, Home } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { CreateListDialog } from "@/components/lists/CreateListDialog";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 interface List {
   id: string;
@@ -77,6 +86,21 @@ const Lists = () => {
 
   return (
     <div className="p-8">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/" className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Dashboard
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Lists</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-2">
           <ListChecks className="h-8 w-8" />
@@ -102,6 +126,6 @@ const Lists = () => {
       />
     </div>
   );
-};
+}
 
 export default Lists;

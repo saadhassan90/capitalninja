@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Home } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { FileUploadSection } from "@/components/enrichment/FileUploadSection";
@@ -7,6 +7,14 @@ import { ProgressSection } from "@/components/enrichment/ProgressSection";
 import { InstructionsSection } from "@/components/enrichment/InstructionsSection";
 import { EnrichmentHistoryTable } from "@/components/enrichment/EnrichmentHistoryTable";
 import { useQuery } from "@tanstack/react-query";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export default function Enrichment() {
   const [file, setFile] = useState<File | null>(null);
@@ -148,6 +156,21 @@ export default function Enrichment() {
 
   return (
     <div className="p-8 space-y-8">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/" className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Dashboard
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Enrichment</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className="flex items-center gap-2 mb-8">
         <Sparkles className="h-8 w-8" />
         <div>

@@ -6,10 +6,18 @@ import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
 import { useToast } from "@/hooks/use-toast";
 import { BulkActions } from "@/components/investors/BulkActions";
 import { Button } from "@/components/ui/button";
-import { Download, Loader2 } from "lucide-react";
+import { Download, Loader2, Home, ListChecks } from "lucide-react";
 import type { SortConfig } from "@/types/sorting";
 import { useListInvestors } from "@/hooks/useListInvestors";
 import { InvestorProfile } from "@/components/InvestorProfile";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const ListView = () => {
   const { id } = useParams();
@@ -161,6 +169,28 @@ const ListView = () => {
 
   return (
     <div className="p-8">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/" className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Dashboard
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/lists" className="flex items-center gap-2">
+              <ListChecks className="h-4 w-4" />
+              Lists
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{list?.name || 'List Details'}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>

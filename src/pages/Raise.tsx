@@ -1,10 +1,18 @@
-import { Briefcase, Plus } from "lucide-react";
+import { useState } from "react";
 import { RaiseTable } from "@/components/raise/RaiseTable";
+import { Briefcase, Plus, Home } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { RaiseDialog } from "@/components/raise/RaiseDialog";
-import { useState } from "react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const Raise = () => {
   const [showDialog, setShowDialog] = useState(false);
@@ -30,6 +38,21 @@ const Raise = () => {
 
   return (
     <div className="p-8">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/" className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Dashboard
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Raise</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-2">
           <Briefcase className="h-8 w-8" />
