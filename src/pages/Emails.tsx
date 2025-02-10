@@ -55,7 +55,7 @@ export default function Emails() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>Emails</BreadcrumbPage>
+            <BreadcrumbPage>Email Accounts</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -64,7 +64,7 @@ export default function Emails() {
         <div className="flex items-center gap-2">
           <Mail className="h-8 w-8" />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Email Management</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Email Accounts</h1>
             <p className="text-muted-foreground mt-1">
               Manage your email accounts and warm-up settings
             </p>
