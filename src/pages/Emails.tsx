@@ -1,20 +1,17 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, ShoppingCart } from "lucide-react";
-import { AddDomainDialog } from "@/components/emails/AddDomainDialog";
-import { BuyDomainDialog } from "@/components/emails/BuyDomainDialog";
+import { Mail } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Emails() {
   const [activeTab, setActiveTab] = useState("domains");
-  const [addDomainOpen, setAddDomainOpen] = useState(false);
-  const [buyDomainOpen, setBuyDomainOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const { data: domains, isLoading: domainsLoading, refetch: refetchDomains } = useQuery({
+  const { data: domains, isLoading: domainsLoading } = useQuery({
     queryKey: ['email-domains'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -46,7 +43,7 @@ export default function Emails() {
   });
 
   return (
-    <div className="container py-6 space-y-6">
+    <div className="py-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Email Management</h1>
@@ -54,16 +51,10 @@ export default function Emails() {
             Manage your email domains and accounts
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setBuyDomainOpen(true)}>
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            Buy Domain
-          </Button>
-          <Button onClick={() => setAddDomainOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Domain
-          </Button>
-        </div>
+        <Button onClick={() => navigate("/emails/add")}>
+          <Mail className="w-4 h-4 mr-2" />
+          Add Email
+        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -81,20 +72,14 @@ export default function Emails() {
               <CardHeader>
                 <CardTitle>No Domains Added</CardTitle>
                 <CardDescription>
-                  Get started by adding your first domain
+                  Get started by adding your first email domain
                 </CardDescription>
               </CardHeader>
               <CardFooter>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => setBuyDomainOpen(true)}>
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    Buy Domain
-                  </Button>
-                  <Button onClick={() => setAddDomainOpen(true)}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Domain
-                  </Button>
-                </div>
+                <Button onClick={() => navigate("/emails/add")}>
+                  <Mail className="w-4 h-4 mr-2" />
+                  Add Email
+                </Button>
               </CardFooter>
             </Card>
           ) : (
@@ -173,17 +158,6 @@ export default function Emails() {
           </Card>
         </TabsContent>
       </Tabs>
-
-      <AddDomainDialog 
-        open={addDomainOpen} 
-        onOpenChange={setAddDomainOpen}
-        onDomainAdded={() => refetchDomains()}
-      />
-      <BuyDomainDialog
-        open={buyDomainOpen}
-        onOpenChange={setBuyDomainOpen}
-        onDomainPurchased={() => refetchDomains()}
-      />
     </div>
   );
 }

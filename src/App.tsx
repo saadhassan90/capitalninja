@@ -1,4 +1,3 @@
-
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -18,6 +17,7 @@ import Campaigns from "@/pages/Campaigns";
 import CampaignView from "@/pages/CampaignView";
 import Raise from "@/pages/Raise";
 import Emails from "@/pages/Emails";
+import AddEmail from "@/pages/AddEmail";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminUsers from "@/pages/admin/Users";
@@ -88,6 +88,10 @@ const router = createBrowserRouter([
       {
         path: "/emails",
         element: <Emails />,
+      },
+      {
+        path: "/emails/add",
+        element: <AddEmail />,
       },
       {
         path: "admin",
