@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -5,12 +6,12 @@ import { UserPlus } from "lucide-react";
 import { InviteUserDialog } from "@/components/team/InviteUserDialog";
 import { TeamMembersTable } from "@/components/team/TeamMembersTable";
 import { supabase } from "@/integrations/supabase/client";
-import { TeamMember } from "@/types/team";
+import { TeamMember, TeamInvitation } from "@/types/team";
 
 export default function Team() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
-  const { data: teamMembers, isLoading } = useQuery({
+  const { data: teamMembers, isLoading: isMembersLoading } = useQuery({
     queryKey: ["team-members"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -34,6 +35,21 @@ export default function Team() {
     },
   });
 
+  const { data: invitations, isLoading: isInvitationsLoading } = useQuery({
+    queryKey: ["team-invitations"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_invitations")
+        .select("*")
+        .returns<TeamInvitation[]>();
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const isLoading = isMembersLoading || isInvitationsLoading;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -49,7 +65,11 @@ export default function Team() {
         </Button>
       </div>
 
-      <TeamMembersTable members={teamMembers || []} isLoading={isLoading} />
+      <TeamMembersTable 
+        members={teamMembers || []} 
+        invitations={invitations || []}
+        isLoading={isLoading} 
+      />
       
       <InviteUserDialog 
         open={inviteDialogOpen} 

@@ -1103,6 +1103,7 @@ export type Database = {
           expires_at: string
           id: string
           role: string
+          status: string
         }
         Insert: {
           created_at?: string
@@ -1110,6 +1111,7 @@ export type Database = {
           expires_at: string
           id?: string
           role: string
+          status?: string
         }
         Update: {
           created_at?: string
@@ -1117,6 +1119,7 @@ export type Database = {
           expires_at?: string
           id?: string
           role?: string
+          status?: string
         }
         Relationships: []
       }

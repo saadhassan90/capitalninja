@@ -1,3 +1,4 @@
+
 export type Role = "owner" | "administrator" | "viewer";
 
 export interface TeamMember {
@@ -12,3 +13,13 @@ export interface TeamMember {
     avatar_url: string | null;
   };
 }
+
+export interface TeamInvitation {
+  id: string;
+  email: string;
+  role: Role;
+  status: 'pending' | 'accepted' | 'expired';
+  created_at: string;
+  expires_at: string;
+}
+
