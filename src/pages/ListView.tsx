@@ -56,9 +56,10 @@ const ListView = () => {
       const [{ count: monthlyExports }, { data: teamLimit }] = await Promise.all([
         supabase
           .from('exports')
-          .select('*', { count: 'exact', head: true })
+          .select('records', { count: 'exact', head: true })
           .eq('team_id', teamMember.id)
-          .gte('created_at', startOfMonth.toISOString()),
+          .gte('created_at', startOfMonth.toISOString())
+          .not('records', 'is', null),
         supabase
           .from('team_export_limits')
           .select('monthly_limit')
@@ -111,13 +112,16 @@ const ListView = () => {
       setIsExporting(true);
 
       // Check if export would exceed monthly limit
-      if (exportLimits && (exportLimits.used + investorsData?.data.length!) > exportLimits.limit) {
-        toast({
-          title: "Export Limit Reached",
-          description: `You've reached your monthly export limit of ${exportLimits.limit} records.`,
-          variant: "destructive",
-        });
-        return;
+      if (exportLimits && investorsData?.data.length) {
+        const wouldExceedLimit = exportLimits.used + investorsData.data.length > exportLimits.limit;
+        if (wouldExceedLimit) {
+          toast({
+            title: "Export Limit Reached",
+            description: `You've reached your monthly export limit of ${exportLimits.limit} records. Current usage: ${exportLimits.used} records.`,
+            variant: "destructive",
+          });
+          return;
+        }
       }
       
       const { data, error } = await supabase.functions.invoke('export-list-investors', {
@@ -165,7 +169,12 @@ const ListView = () => {
               <p className="text-muted-foreground mt-2">{list.description}</p>
             )}
           </div>
-          <div>
+          <div className="flex items-center gap-4">
+            {exportLimits && (
+              <p className="text-sm text-muted-foreground">
+                Exports this month: {exportLimits.used}/{exportLimits.limit} records
+              </p>
+            )}
             <Button 
               onClick={handleExport} 
               disabled={isExporting || (exportLimits && exportLimits.used >= exportLimits.limit)}

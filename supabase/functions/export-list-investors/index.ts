@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -40,9 +41,10 @@ serve(async (req) => {
 
     const { count: monthlyExports } = await supabaseClient
       .from('exports')
-      .select('*', { count: 'exact', head: true })
+      .select('records', { count: 'exact', head: true })
       .eq('team_id', teamMember.id)
-      .gte('created_at', startOfMonth.toISOString());
+      .gte('created_at', startOfMonth.toISOString())
+      .not('records', 'is', null);
 
     const { data: teamLimit } = await supabaseClient
       .from('team_export_limits')
