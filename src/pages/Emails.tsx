@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus } from "lucide-react";
+import { Plus, ShoppingCart } from "lucide-react";
 
 export default function Emails() {
   const [activeTab, setActiveTab] = useState("domains");
@@ -50,10 +50,16 @@ export default function Emails() {
             Manage your email domains and accounts
           </p>
         </div>
-        <Button>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Domain
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline">
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            Buy Domain
+          </Button>
+          <Button>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Domain
+          </Button>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -75,10 +81,16 @@ export default function Emails() {
                 </CardDescription>
               </CardHeader>
               <CardFooter>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Domain
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline">
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Buy Domain
+                  </Button>
+                  <Button>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Domain
+                  </Button>
+                </div>
               </CardFooter>
             </Card>
           ) : (
@@ -160,3 +172,4 @@ export default function Emails() {
     </div>
   );
 }
+
