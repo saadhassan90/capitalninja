@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,16 +52,9 @@ export const useAuthActions = () => {
       });
       
       if (signUpError) throw signUpError;
-
-      // The profile, notification preferences, and team member records will be created automatically
-      // by our database trigger. We just need to update the additional profile fields.
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("email", email)
-        .single();
-
-      if (profileError) throw profileError;
+      
+      // Wait a moment for the trigger to create the profile
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Update the profile with the additional form data
       const { error: updateError } = await supabase
@@ -72,7 +64,7 @@ export const useAuthActions = () => {
           title: formData.title,
           invited_by_team_id: invitingTeamMember?.id || null
         })
-        .eq("id", profile.id);
+        .eq("email", email);
       
       if (updateError) throw updateError;
 
