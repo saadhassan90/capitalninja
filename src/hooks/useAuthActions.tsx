@@ -25,9 +25,10 @@ export const useAuthActions = () => {
           .from("team_invitations")
           .select(`
             email,
-            team_member:team_members(
+            team_member:team_members!team_invitations_team_member_id_fkey(
               id,
-              user:profiles(
+              user_id,
+              profiles!fk_team_members_profiles(
                 company_name
               )
             )
@@ -58,7 +59,7 @@ export const useAuthActions = () => {
         .update({
           first_name: formData.firstName,
           last_name: formData.lastName,
-          company_name: invitingTeamMember ? invitingTeamMember.user.company_name : formData.company,
+          company_name: invitingTeamMember ? invitingTeamMember.profiles.company_name : formData.company,
           title: formData.title,
           email: email,
           invited_by_team_id: invitingTeamMember?.id || null
