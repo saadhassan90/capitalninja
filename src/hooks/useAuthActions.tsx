@@ -25,9 +25,9 @@ export const useAuthActions = () => {
           .from("team_invitations")
           .select(`
             email,
-            team_member:team_members!team_invitations_team_member_id_fkey (
+            team_member:team_members(
               id,
-              user:profiles!team_members_user_id_fkey (
+              user:profiles(
                 company_name
               )
             )
