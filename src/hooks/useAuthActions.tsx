@@ -18,6 +18,19 @@ export const useAuthActions = () => {
     setLoading(true);
 
     try {
+      // First get the invitation data if there's a token
+      let invitingTeamMember = null;
+      if (invitationToken) {
+        const { data: invitation, error: invitationError } = await supabase
+          .from("team_invitations")
+          .select("team_members(id, user_id, profiles(company_name))")
+          .eq("token", invitationToken)
+          .single();
+
+        if (invitationError) throw invitationError;
+        invitingTeamMember = invitation?.team_members;
+      }
+
       const { error: signUpError } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -31,14 +44,16 @@ export const useAuthActions = () => {
       
       if (signUpError) throw signUpError;
 
+      // Update profile with correct company info based on context
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
           first_name: formData.firstName,
           last_name: formData.lastName,
-          company_name: formData.company,
+          company_name: invitingTeamMember ? invitingTeamMember.profiles.company_name : formData.company,
           title: formData.title,
           email: email,
+          invited_by_team_id: invitingTeamMember?.id || null
         })
         .eq("email", email);
       

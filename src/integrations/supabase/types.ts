@@ -823,6 +823,7 @@ export type Database = {
           email: string
           first_name: string | null
           id: string
+          invited_by_team_id: string | null
           last_name: string | null
           linkedin_url: string | null
           location: string | null
@@ -843,6 +844,7 @@ export type Database = {
           email: string
           first_name?: string | null
           id: string
+          invited_by_team_id?: string | null
           last_name?: string | null
           linkedin_url?: string | null
           location?: string | null
@@ -863,6 +865,7 @@ export type Database = {
           email?: string
           first_name?: string | null
           id?: string
+          invited_by_team_id?: string | null
           last_name?: string | null
           linkedin_url?: string | null
           location?: string | null
@@ -873,7 +876,15 @@ export type Database = {
           title?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_invited_by_team_id_fkey"
+            columns: ["invited_by_team_id"]
+            isOneToOne: false
+            referencedRelation: "team_members"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       raise_equity: {
         Row: {
