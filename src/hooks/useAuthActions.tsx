@@ -28,7 +28,7 @@ export const useAuthActions = () => {
             team_member:team_members!team_invitations_team_member_id_fkey(
               id,
               user_id,
-              profiles!fk_team_members_profiles(
+              profiles!team_members_user_id_fkey(
                 company_name
               )
             )
@@ -40,6 +40,7 @@ export const useAuthActions = () => {
         invitingTeamMember = invitation?.team_member;
       }
 
+      // Sign up the user
       const { error: signUpError } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -53,20 +54,28 @@ export const useAuthActions = () => {
       
       if (signUpError) throw signUpError;
 
-      // Update profile with correct company info based on context
-      const { error: profileError } = await supabase
+      // Get the user profile that was automatically created by the trigger
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("email", email)
+        .single();
+
+      if (profileError) throw profileError;
+
+      // Update the profile with the form data
+      const { error: updateError } = await supabase
         .from("profiles")
         .update({
           first_name: formData.firstName,
           last_name: formData.lastName,
           company_name: invitingTeamMember ? invitingTeamMember.profiles.company_name : formData.company,
           title: formData.title,
-          email: email,
           invited_by_team_id: invitingTeamMember?.id || null
         })
-        .eq("email", email);
+        .eq("id", profile.id);
       
-      if (profileError) throw profileError;
+      if (updateError) throw updateError;
 
       if (invitationToken) {
         const { error: invitationError } = await supabase
@@ -82,6 +91,7 @@ export const useAuthActions = () => {
         description: "Check your email for the magic link to complete your signup.",
       });
     } catch (error: any) {
+      console.error('Signup error:', error);
       toast({
         variant: "destructive",
         title: "Error",
