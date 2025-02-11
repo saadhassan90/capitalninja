@@ -23,6 +23,9 @@ serve(async (req) => {
 
     const { email, role } = await req.json()
 
+    // Get the origin from the request headers
+    const origin = req.headers.get('origin') || 'http://localhost:3000'
+
     // Check if user already exists
     const { data: existingUser } = await supabase
       .from('profiles')
@@ -86,7 +89,7 @@ serve(async (req) => {
         invitationToken = newInvitation.token
       }
 
-      // Send invitation email with token in URL
+      // Send invitation email with token in URL and using the correct origin
       const emailResponse = await resend.emails.send({
         from: "noreply@app.capitalninja.ai",
         to: [email],
@@ -99,7 +102,7 @@ serve(async (req) => {
   <p>Hello,</p>
   <p>You have been invited to join Capital Ninja as a ${role}.</p>
   <p>Click the link below to join:</p>
-  <p><a href="https://app.capitalninja.ai/auth?invitation=${invitationToken}">Accept Invitation</a></p>
+  <p><a href="${origin}/auth?invitation=${invitationToken}">Accept Invitation</a></p>
   <p>If you did not expect this invitation, you can safely ignore this email.</p>
   <p>Best regards,<br>The Capital Ninja Team</p>
 </body>
