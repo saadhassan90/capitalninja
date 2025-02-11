@@ -25,18 +25,18 @@ export const useAuthActions = () => {
           .from("team_invitations")
           .select(`
             email,
-            team_members!team_members (
+            team_member:team_members!team_invitations_team_member_id_fkey (
               id,
-              user:profiles (
+              user:profiles!team_members_user_id_fkey (
                 company_name
               )
             )
           `)
           .eq("token", invitationToken)
-          .single();
+          .maybeSingle();
 
         if (invitationError) throw invitationError;
-        invitingTeamMember = invitation?.team_members;
+        invitingTeamMember = invitation?.team_member;
       }
 
       const { error: signUpError } = await supabase.auth.signInWithOtp({

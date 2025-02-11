@@ -1112,6 +1112,7 @@ export type Database = {
           id: string
           role: string
           status: string
+          team_member_id: string | null
           token: string | null
         }
         Insert: {
@@ -1121,6 +1122,7 @@ export type Database = {
           id?: string
           role: string
           status?: string
+          team_member_id?: string | null
           token?: string | null
         }
         Update: {
@@ -1130,9 +1132,18 @@ export type Database = {
           id?: string
           role?: string
           status?: string
+          team_member_id?: string | null
           token?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "team_invitations_team_member_id_fkey"
+            columns: ["team_member_id"]
+            isOneToOne: false
+            referencedRelation: "team_members"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       team_members: {
         Row: {
