@@ -39,59 +39,63 @@ const Root = ({ children }: { children: React.ReactNode }) => {
 
 const router = createBrowserRouter([
   {
+    path: "auth",
+    element: <Root><Auth /></Root>,
+  },
+  {
     path: "/",
     element: <Root><Index /></Root>,
     children: [
       {
-        path: "/",
+        path: "",
         element: <Dashboard />,
       },
       {
-        path: "/profile",
+        path: "profile",
         element: <Profile />,
       },
       {
-        path: "/investors",
+        path: "investors",
         element: <Investors />,
       },
       {
-        path: "/lists",
+        path: "lists",
         element: <Lists />,
       },
       {
-        path: "/lists/:id",
+        path: "lists/:id",
         element: <ListView />,
       },
       {
-        path: "/raise",
+        path: "raise",
         element: <Raise />,
       },
       {
-        path: "/settings",
+        path: "settings",
         element: <Settings />,
       },
       {
-        path: "/enrichment",
+        path: "enrichment",
         element: <Enrichment />,
       },
       {
-        path: "/exports",
+        path: "exports",
         element: <Exports />,
       },
       {
-        path: "/campaigns",
+        path: "campaigns",
         element: <Campaigns />,
       },
       {
-        path: "/campaigns/:id",
+        path: "campaigns/:id",
         element: <CampaignView />,
       },
       {
-        path: "/emails",
+        path: "emails",
         element: <Emails />,
       },
       {
-        path: "/emails/add",
+        path: "emails/add",
         element: <AddEmail />,
       },
       {
@@ -113,10 +117,6 @@ const router = createBrowserRouter([
         ],
       },
     ],
-  },
-  {
-    path: "auth",
-    element: <Root><Auth /></Root>,
   },
 ]);
 
