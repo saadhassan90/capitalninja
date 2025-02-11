@@ -1,3 +1,4 @@
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,6 +15,7 @@ interface SignupFormFieldsProps {
   onCompanyChange: (value: string) => void;
   onTitleChange: (value: string) => void;
   onAcceptedTermsChange: (checked: boolean) => void;
+  isInvitation?: boolean;
 }
 
 export function SignupFormFields({
@@ -27,6 +29,7 @@ export function SignupFormFields({
   onCompanyChange,
   onTitleChange,
   onAcceptedTermsChange,
+  isInvitation
 }: SignupFormFieldsProps) {
   return (
     <>
@@ -56,17 +59,19 @@ export function SignupFormFields({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="company">Company</Label>
-        <Input
-          id="company"
-          value={company}
-          onChange={(e) => onCompanyChange(e.target.value)}
-          required
-          placeholder="Terra Capital"
-          className="h-12"
-        />
-      </div>
+      {!isInvitation && (
+        <div className="space-y-2">
+          <Label htmlFor="company">Company</Label>
+          <Input
+            id="company"
+            value={company}
+            onChange={(e) => onCompanyChange(e.target.value)}
+            required
+            placeholder="Terra Capital"
+            className="h-12"
+          />
+        </div>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="title">Title</Label>

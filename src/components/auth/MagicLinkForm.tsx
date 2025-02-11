@@ -1,17 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { EmailField } from "./EmailField";
 import { SignupFormFields } from "./SignupFormFields";
 import { SubmitButton } from "./SubmitButton";
-
-interface MagicLinkFormProps {
-  email: string;
-  loading: boolean;
-  onEmailChange: (email: string) => void;
-  onSubmit: (e: React.FormEvent, formData?: SignupFormData) => void;
-  type: "signin" | "signup";
-  isInvitation?: boolean;
-}
 
 export interface SignupFormData {
   firstName: string;
@@ -21,36 +12,28 @@ export interface SignupFormData {
   acceptedTerms: boolean;
 }
 
-export function MagicLinkForm({ 
-  email, 
-  loading, 
-  onEmailChange, 
-  onSubmit,
+interface MagicLinkFormProps {
+  type: "signin" | "signup";
+  email: string;
+  loading: boolean;
+  onEmailChange: (email: string) => void;
+  onSubmit: (e: React.FormEvent, formData?: SignupFormData) => void;
+  isInvitation?: boolean;
+}
+
+export function MagicLinkForm({
   type,
+  email,
+  loading,
+  onEmailChange,
+  onSubmit,
   isInvitation
 }: MagicLinkFormProps) {
-  const id = `${type}-email`;
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [company, setCompany] = useState("");
   const [title, setTitle] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [isFormValid, setIsFormValid] = useState(false);
-
-  useEffect(() => {
-    if (type === "signup") {
-      setIsFormValid(
-        email.trim() !== "" &&
-        firstName.trim() !== "" &&
-        lastName.trim() !== "" &&
-        company.trim() !== "" &&
-        title.trim() !== "" &&
-        acceptedTerms
-      );
-    } else {
-      setIsFormValid(email.trim() !== "");
-    }
-  }, [email, firstName, lastName, company, title, acceptedTerms, type]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,11 +49,11 @@ export function MagicLinkForm({
       onSubmit(e);
     }
   };
-  
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <EmailField
-        id={id}
+        id={`${type}-email`}
         email={email}
         onEmailChange={onEmailChange}
       />
@@ -87,10 +70,18 @@ export function MagicLinkForm({
           onCompanyChange={setCompany}
           onTitleChange={setTitle}
           onAcceptedTermsChange={setAcceptedTerms}
+          isInvitation={isInvitation}
         />
       )}
 
-      <SubmitButton loading={loading} isFormValid={isFormValid} />
+      <SubmitButton loading={loading} isFormValid={type === "signin" ? email.trim() !== "" : (
+        email.trim() !== "" &&
+        firstName.trim() !== "" &&
+        lastName.trim() !== "" &&
+        (!isInvitation ? company.trim() !== "" : true) &&
+        title.trim() !== "" &&
+        acceptedTerms
+      )} />
     </form>
   );
 }
