@@ -23,7 +23,15 @@ export const useAuthActions = () => {
       if (invitationToken) {
         const { data: invitation, error: invitationError } = await supabase
           .from("team_invitations")
-          .select("team_members(id, user_id, profiles(company_name))")
+          .select(`
+            email,
+            team_members!team_members (
+              id,
+              user:profiles (
+                company_name
+              )
+            )
+          `)
           .eq("token", invitationToken)
           .single();
 
@@ -50,7 +58,7 @@ export const useAuthActions = () => {
         .update({
           first_name: formData.firstName,
           last_name: formData.lastName,
-          company_name: invitingTeamMember ? invitingTeamMember.profiles.company_name : formData.company,
+          company_name: invitingTeamMember ? invitingTeamMember.user.company_name : formData.company,
           title: formData.title,
           email: email,
           invited_by_team_id: invitingTeamMember?.id || null
