@@ -40,7 +40,7 @@ export const useAuthActions = () => {
         invitingTeamMember = invitation?.team_member;
       }
 
-      // Sign up the user
+      // Sign up the user with metadata
       const { error: signUpError } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -54,7 +54,8 @@ export const useAuthActions = () => {
       
       if (signUpError) throw signUpError;
 
-      // Get the user profile that was automatically created by the trigger
+      // The profile, notification preferences, and team member records will be created automatically
+      // by our database trigger. We just need to update the additional profile fields.
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("*")
@@ -63,12 +64,10 @@ export const useAuthActions = () => {
 
       if (profileError) throw profileError;
 
-      // Update the profile with the form data
+      // Update the profile with the additional form data
       const { error: updateError } = await supabase
         .from("profiles")
         .update({
-          first_name: formData.firstName,
-          last_name: formData.lastName,
           company_name: invitingTeamMember ? invitingTeamMember.profiles.company_name : formData.company,
           title: formData.title,
           invited_by_team_id: invitingTeamMember?.id || null
@@ -77,6 +76,7 @@ export const useAuthActions = () => {
       
       if (updateError) throw updateError;
 
+      // Update invitation status if signing up through invitation
       if (invitationToken) {
         const { error: invitationError } = await supabase
           .from('team_invitations')
