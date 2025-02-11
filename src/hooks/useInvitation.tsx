@@ -24,9 +24,13 @@ export const useInvitation = (invitationToken: string | null) => {
           .eq('status', 'pending')
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching invitation:', error);
+          throw error;
+        }
 
         if (!data) {
+          console.log('No invitation found or invalid token');
           toast({
             variant: "destructive",
             title: "Invalid invitation",
@@ -37,6 +41,7 @@ export const useInvitation = (invitationToken: string | null) => {
 
         const expiryDate = new Date(data.expires_at);
         if (expiryDate < new Date()) {
+          console.log('Invitation expired');
           toast({
             variant: "destructive",
             title: "Expired invitation",
@@ -45,8 +50,10 @@ export const useInvitation = (invitationToken: string | null) => {
           return;
         }
 
+        console.log('Valid invitation found:', data);
         setInvitationData({ email: data.email, role: data.role });
       } catch (error: any) {
+        console.error('Error in checkInvitation:', error);
         toast({
           variant: "destructive",
           title: "Error",

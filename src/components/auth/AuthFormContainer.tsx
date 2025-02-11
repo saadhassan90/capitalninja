@@ -26,6 +26,9 @@ export const AuthFormContainer: FC<AuthFormContainerProps> = ({
   isInvitation,
   invitedEmail,
 }) => {
+  // Determine which tab should be active by default
+  const defaultTab = invitedEmail === email ? "signin" : "signup";
+
   return (
     <div className="flex-1 flex items-center justify-center p-6">
       <div className="w-full max-w-md space-y-8">
@@ -39,7 +42,7 @@ export const AuthFormContainer: FC<AuthFormContainerProps> = ({
           </div>
         )}
 
-        <Tabs defaultValue={invitedEmail === email ? "signin" : "signup"} className="w-full">
+        <Tabs defaultValue={defaultTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-8">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
