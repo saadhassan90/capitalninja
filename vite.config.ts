@@ -13,10 +13,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === 'development' &&
-    componentTagger({
-      treeShaking: true,
-      precompile: true
-    }),
+    componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {

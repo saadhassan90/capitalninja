@@ -1,20 +1,21 @@
 
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 import { Loader2 } from "lucide-react";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
-    if (!loading && !user) {
-      // Simple redirect to auth page without trying to preserve the path
-      // This is more reliable as it avoids URL construction issues
-      navigate("/auth", { replace: true });
-    }
+    const handleAuth = () => {
+      if (!loading && !user) {
+        navigate("/auth", { replace: true });
+      }
+    };
+    
+    handleAuth();
   }, [user, loading, navigate]);
 
   if (loading) {
