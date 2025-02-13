@@ -39,15 +39,11 @@ const Root = ({ children }: { children: React.ReactNode }) => {
 
 const router = createBrowserRouter([
   {
-    path: "auth",
-    element: <Root><Auth /></Root>,
-  },
-  {
     path: "/",
     element: <Root><Index /></Root>,
     children: [
       {
-        path: "",
+        index: true,
         element: <Dashboard />,
       },
       {
@@ -103,7 +99,7 @@ const router = createBrowserRouter([
         element: <AdminLayout />,
         children: [
           {
-            path: "",
+            index: true,
             element: <AdminDashboard />,
           },
           {
@@ -117,6 +113,10 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "auth",
+    element: <Root><Auth /></Root>,
   },
 ]);
 

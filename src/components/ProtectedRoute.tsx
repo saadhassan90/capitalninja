@@ -9,13 +9,14 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleAuth = () => {
-      if (!loading && !user) {
-        navigate("/auth", { replace: true });
-      }
-    };
-    
-    handleAuth();
+    if (!loading && !user) {
+      // Using window.location.origin to ensure we have a valid base URL
+      const authPath = `${window.location.pathname === '/' ? '' : window.location.pathname}`;
+      navigate("/auth", { 
+        replace: true,
+        state: { from: authPath }
+      });
+    }
   }, [user, loading, navigate]);
 
   if (loading) {
