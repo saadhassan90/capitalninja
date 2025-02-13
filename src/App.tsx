@@ -26,21 +26,17 @@ import AdminActivity from "@/pages/admin/Activity";
 
 const queryClient = new QueryClient();
 
-const Root = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <AuthProvider>
-        {children}
-        <Toaster />
-      </AuthProvider>
-    </ThemeProvider>
-  );
-};
-
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root><Index /></Root>,
+    element: (
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <AuthProvider>
+          <Index />
+          <Toaster />
+        </AuthProvider>
+      </ThemeProvider>
+    ),
     children: [
       {
         index: true,
@@ -116,7 +112,14 @@ const router = createBrowserRouter([
   },
   {
     path: "auth",
-    element: <Root><Auth /></Root>,
+    element: (
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <AuthProvider>
+          <Auth />
+          <Toaster />
+        </AuthProvider>
+      </ThemeProvider>
+    ),
   },
 ]);
 
