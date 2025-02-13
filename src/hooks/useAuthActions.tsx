@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,10 +41,11 @@ export const useAuthActions = () => {
       }
 
       // Sign up the user with metadata
+      const redirectTo = `${window.location.origin}/auth`;
       const { error: signUpError } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: redirectTo,
           data: {
             first_name: formData.firstName,
             last_name: formData.lastName,
@@ -98,10 +100,11 @@ export const useAuthActions = () => {
     setLoading(true);
 
     try {
+      const redirectTo = `${window.location.origin}/auth`;
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: redirectTo,
         },
       });
       
