@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // Set up auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log('Auth state changed:', event, session?.user?.email);
           setUser(session?.user ?? null);
           
           if (event === 'SIGNED_OUT') {

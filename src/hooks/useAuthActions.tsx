@@ -40,8 +40,12 @@ export const useAuthActions = () => {
         invitingTeamMember = invitation?.team_member;
       }
 
+      // Get the base URL for redirects
+      const baseUrl = window.location.href.split('/auth')[0] || window.location.origin;
+      const redirectTo = `${baseUrl}/auth`;
+      console.log('Using redirect URL:', redirectTo);
+
       // Sign up the user with metadata
-      const redirectTo = `${window.location.origin}/auth`;
       const { error: signUpError } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -100,7 +104,11 @@ export const useAuthActions = () => {
     setLoading(true);
 
     try {
-      const redirectTo = `${window.location.origin}/auth`;
+      // Get the base URL for redirects
+      const baseUrl = window.location.href.split('/auth')[0] || window.location.origin;
+      const redirectTo = `${baseUrl}/auth`;
+      console.log('Using redirect URL:', redirectTo);
+
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
