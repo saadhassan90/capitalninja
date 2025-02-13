@@ -61,21 +61,17 @@ const Investors = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="companies" className="space-y-4">
+      <Tabs defaultValue="people" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="companies" className="flex items-center gap-2">
-            <Building className="h-4 w-4" />
-            Companies
-          </TabsTrigger>
           <TabsTrigger value="people" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             People
           </TabsTrigger>
+          <TabsTrigger value="companies" className="flex items-center gap-2">
+            <Building className="h-4 w-4" />
+            Companies
+          </TabsTrigger>
         </TabsList>
-        
-        <TabsContent value="companies" className="space-y-4">
-          <InvestorsTable />
-        </TabsContent>
         
         <TabsContent value="people" className="space-y-4">
           <ContactsTable
@@ -86,6 +82,10 @@ const Investors = () => {
             onSelectAll={handleSelectAllContacts}
             onViewContact={(id) => console.log('View contact:', id)}
           />
+        </TabsContent>
+        
+        <TabsContent value="companies" className="space-y-4">
+          <InvestorsTable />
         </TabsContent>
       </Tabs>
     </div>
