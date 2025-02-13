@@ -1,23 +1,22 @@
 
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 import { Loader2 } from "lucide-react";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!loading && !user) {
-      // Using window.location.origin to ensure we have a valid base URL
-      const authPath = `${window.location.pathname === '/' ? '' : window.location.pathname}`;
       navigate("/auth", { 
         replace: true,
-        state: { from: authPath }
+        state: { from: location.pathname }
       });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, location]);
 
   if (loading) {
     return (
