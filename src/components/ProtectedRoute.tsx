@@ -11,10 +11,15 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/auth", { 
-        replace: true,
-        state: { from: location.pathname }
-      });
+      // Don't include state if we're on the root path
+      const navigationOptions = location.pathname === "/" 
+        ? { replace: true }
+        : { 
+            replace: true,
+            state: { from: location.pathname }
+          };
+      
+      navigate("/auth", navigationOptions);
     }
   }, [user, loading, navigate, location]);
 
