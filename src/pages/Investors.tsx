@@ -24,7 +24,12 @@ const Investors = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('investor_contacts')
-        .select('*')
+        .select(`
+          *,
+          limited_partners!inner (
+            limited_partner_name
+          )
+        `)
         .order('created_at', { ascending: false });
       
       if (error) {
@@ -32,7 +37,11 @@ const Investors = () => {
         throw error;
       }
       
-      return data as InvestorContact[];
+      // Transform the data to match our InvestorContact type
+      return data.map(contact => ({
+        ...contact,
+        company_name: contact.limited_partners.limited_partner_name
+      })) as InvestorContact[];
     }
   });
 

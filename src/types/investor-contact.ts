@@ -12,4 +12,5 @@ export type InvestorContact = {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  company_name?: string;
 };
