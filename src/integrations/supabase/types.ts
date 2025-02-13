@@ -449,6 +449,59 @@ export type Database = {
         }
         Relationships: []
       }
+      investor_contacts: {
+        Row: {
+          company_id: number
+          created_at: string
+          email: string | null
+          first_name: string
+          id: string
+          is_primary_contact: boolean | null
+          last_name: string
+          linkedin_url: string | null
+          notes: string | null
+          phone: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: number
+          created_at?: string
+          email?: string | null
+          first_name: string
+          id?: string
+          is_primary_contact?: boolean | null
+          last_name: string
+          linkedin_url?: string | null
+          notes?: string | null
+          phone?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: number
+          created_at?: string
+          email?: string | null
+          first_name?: string
+          id?: string
+          is_primary_contact?: boolean | null
+          last_name?: string
+          linkedin_url?: string | null
+          notes?: string | null
+          phone?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investor_contacts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "limited_partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       limited_partners: {
         Row: {
           allocation_to_alternative_investments: number | null
