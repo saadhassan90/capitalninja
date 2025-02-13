@@ -4,6 +4,9 @@ import { InvestorsTable } from "@/components/InvestorsTable";
 import { ContactsTable } from "@/components/investors/contacts/ContactsTable";
 import { useState } from "react";
 import { Users, Building, Home } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import type { InvestorContact } from "@/types/investor-contact";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,9 +19,22 @@ import {
 const Investors = () => {
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
   
-  // Temporary empty state until we implement the contacts data fetching
-  const contacts = [];
-  const isLoadingContacts = false;
+  const { data: contacts = [], isLoading: isLoadingContacts } = useQuery({
+    queryKey: ['investor-contacts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('investor_contacts')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching contacts:', error);
+        throw error;
+      }
+      
+      return data as InvestorContact[];
+    }
+  });
 
   const handleSelectContact = (id: string, checked: boolean) => {
     if (checked) {
