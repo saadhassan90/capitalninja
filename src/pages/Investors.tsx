@@ -22,28 +22,32 @@ const Investors = () => {
   const { data: contacts = [], isLoading: isLoadingContacts } = useQuery({
     queryKey: ['investor-contacts'],
     queryFn: async () => {
+      // Let's first check what data we get without the join
       const { data, error } = await supabase
         .from('investor_contacts')
         .select(`
           *,
-          limited_partners!inner (
+          limited_partners (
             limited_partner_name
           )
-        `)
-        .order('created_at', { ascending: false });
+        `);
       
       if (error) {
         console.error('Error fetching contacts:', error);
         throw error;
       }
+
+      console.log('Raw data from query:', data); // Add this to debug
       
       // Transform the data to match our InvestorContact type
       return data.map(contact => ({
         ...contact,
-        company_name: contact.limited_partners.limited_partner_name
+        company_name: contact.limited_partners?.limited_partner_name || 'N/A'
       })) as InvestorContact[];
     }
   });
+
+  console.log('Processed contacts:', contacts); // Add this to debug
 
   const handleSelectContact = (id: string, checked: boolean) => {
     if (checked) {
