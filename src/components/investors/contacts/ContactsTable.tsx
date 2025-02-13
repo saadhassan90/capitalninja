@@ -74,7 +74,7 @@ export function ContactsTable({
                 </TableCell>
                 <TableCell>{`${contact.first_name} ${contact.last_name}`}</TableCell>
                 <TableCell>{contact.title || 'N/A'}</TableCell>
-                <TableCell>Company Name</TableCell>
+                <TableCell>{contact.company_name}</TableCell>
                 <TableCell>{contact.email || 'N/A'}</TableCell>
                 <TableCell>{contact.phone || 'N/A'}</TableCell>
                 <TableCell>
