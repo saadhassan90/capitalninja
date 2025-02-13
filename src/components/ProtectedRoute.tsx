@@ -11,11 +11,11 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!loading && !user) {
-      // Ensure we're using a valid path
-      const redirectPath = location.pathname === "/" ? "/auth" : `/auth?redirect=${encodeURIComponent(location.pathname)}`;
-      navigate(redirectPath, { replace: true });
+      // Simple redirect to auth page without trying to preserve the path
+      // This is more reliable as it avoids URL construction issues
+      navigate("/auth", { replace: true });
     }
-  }, [user, loading, navigate, location]);
+  }, [user, loading, navigate]);
 
   if (loading) {
     return (
