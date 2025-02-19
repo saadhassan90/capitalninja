@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ListPlus, Eye } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -8,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
+import { useNavigate } from "react-router-dom";
 import { 
   Table,
   TableBody,
@@ -17,7 +19,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
-import type { InvestorContact } from "@/types/investor-contact";
 
 interface List {
   id: string;
@@ -27,16 +28,11 @@ interface List {
   created_by: string;
 }
 
-interface ListInvestorJoin {
-  contact_id: string;
-  investor_contacts: InvestorContact;
-}
-
 export default function Lists() {
   const [showNewListDialog, setShowNewListDialog] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedListId, setSelectedListId] = useState<string | null>(null);
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const { data: lists, refetch: refetchLists } = useQuery({
@@ -51,36 +47,6 @@ export default function Lists() {
       if (error) throw error;
       return data as List[];
     }
-  });
-
-  const { data: listInvestors } = useQuery({
-    queryKey: ["list-investors", selectedListId],
-    queryFn: async () => {
-      if (!selectedListId) return [];
-      
-      const { data, error } = await supabase
-        .from("list_investors")
-        .select(`
-          contact_id,
-          investor_contacts:contact_id (
-            id,
-            first_name,
-            last_name,
-            email,
-            title,
-            company_name,
-            linkedin_url,
-            phone
-          )
-        `)
-        .eq("list_id", selectedListId);
-
-      if (error) throw error;
-      
-      const typedData = data as unknown as ListInvestorJoin[];
-      return typedData.map(item => item.investor_contacts).filter(Boolean);
-    },
-    enabled: !!selectedListId
   });
 
   const handleCreateList = async (e: React.FormEvent) => {
@@ -144,7 +110,7 @@ export default function Lists() {
                 <TableCell>
                   <Button 
                     variant="link" 
-                    onClick={() => setSelectedListId(list.id === selectedListId ? null : list.id)}
+                    onClick={() => navigate(`/lists/${list.id}`)}
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     View Investors
@@ -162,40 +128,6 @@ export default function Lists() {
           </TableBody>
         </Table>
       </div>
-
-      {selectedListId && (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {listInvestors?.map((investor) => (
-                <TableRow key={investor.id}>
-                  <TableCell>{`${investor.first_name} ${investor.last_name}`}</TableCell>
-                  <TableCell>{investor.title || "—"}</TableCell>
-                  <TableCell>{investor.company_name}</TableCell>
-                  <TableCell>{investor.email || "—"}</TableCell>
-                  <TableCell>{investor.phone || "—"}</TableCell>
-                </TableRow>
-              ))}
-              {(!listInvestors || listInvestors.length === 0) && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6">
-                    No investors in this list yet.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      )}
 
       <Dialog open={showNewListDialog} onOpenChange={setShowNewListDialog}>
         <DialogContent>
