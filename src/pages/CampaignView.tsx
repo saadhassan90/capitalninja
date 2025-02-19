@@ -21,8 +21,24 @@ export default function CampaignView() {
       const { data, error } = await supabase
         .from('campaigns')
         .select(`
-          *,
-          list:list_id (*),
+          id,
+          name,
+          subject,
+          content,
+          status,
+          list_id,
+          source_list_id,
+          scheduled_for,
+          created_by,
+          created_at,
+          updated_at,
+          sent_at,
+          total_recipients,
+          successful_sends,
+          failed_sends,
+          lists:list_id (
+            name
+          ),
           raise:raise_id (
             name,
             id
@@ -41,7 +57,7 @@ export default function CampaignView() {
       // Transform the data to match the Campaign type
       const transformedData: Campaign = {
         ...data,
-        lists: data?.list ? { name: data.list.name } : null,
+        lists: data?.lists ? { name: data.lists.name } : null,
         raise: data?.raise || null
       };
 
