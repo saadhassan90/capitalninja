@@ -28,7 +28,7 @@ const Investors = () => {
           .from('investor_contacts')
           .select(`
             *,
-            limited_partners (
+            limited_partners!fk_limited_partner (
               limited_partner_name
             )
           `);
