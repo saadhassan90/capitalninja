@@ -165,7 +165,7 @@ export function ContactViewDialog({ contact, open, onOpenChange }: ContactViewDi
       <AddToListDialog
         open={showAddToListDialog}
         onOpenChange={setShowAddToListDialog}
-        selectedInvestors={[parseInt(contact.id)]}
+        selectedInvestors={[contact.id]}
         onSuccess={() => {
           setShowAddToListDialog(false);
           onOpenChange(false);
