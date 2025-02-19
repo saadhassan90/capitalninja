@@ -22,7 +22,7 @@ export default function CampaignView() {
         .from('campaigns')
         .select(`
           *,
-          lists:list_id (
+          list:list_id (
             name
           ),
           raise:raise_id (
@@ -43,7 +43,7 @@ export default function CampaignView() {
       // Transform the data to match the Campaign type
       const transformedData: Campaign = {
         ...data,
-        lists: data?.lists ? { name: data.lists.name } : null,
+        lists: data?.list ? { name: data.list.name } : null,
         raise: data?.raise || null
       };
 

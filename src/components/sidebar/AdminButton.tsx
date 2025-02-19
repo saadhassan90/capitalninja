@@ -1,3 +1,4 @@
+
 import { Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,17 +12,26 @@ export function AdminButton() {
   const { data: isAdmin } = useQuery({
     queryKey: ['is-admin', user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('id', user?.id)
-        .eq('is_active', true)
-        .maybeSingle();
-      
-      if (error) throw error;
-      return !!data;
+      try {
+        const { data, error } = await supabase
+          .from('admin_users')
+          .select('is_active')
+          .eq('id', user?.id)
+          .single();
+        
+        if (error) {
+          console.error('Admin check error:', error);
+          return false;
+        }
+        
+        return data?.is_active || false;
+      } catch (error) {
+        console.error('Admin check error:', error);
+        return false;
+      }
     },
-    enabled: !!user
+    enabled: !!user,
+    retry: false
   });
 
   if (!isAdmin) return null;
