@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -13,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import type { InvestorContact } from "@/types/investor-contact";
 import { useState } from "react";
+import { InvestorsSearch } from "../InvestorsSearch";
+import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
 interface ContactsTableProps {
   contacts: InvestorContact[];
@@ -32,16 +35,57 @@ export function ContactsTable({
   onViewContact,
 }: ContactsTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedType, setSelectedType] = useState<InvestorFilterType>(null);
+  const [selectedLocation, setSelectedLocation] = useState<InvestorFilterType>(null);
+  const [selectedAssetClass, setSelectedAssetClass] = useState<InvestorFilterType>(null);
+  const [selectedFirstTimeFunds, setSelectedFirstTimeFunds] = useState<InvestorFilterType>(null);
+  const [selectedAUMRange, setSelectedAUMRange] = useState<AUMRange>(null);
+  
   const itemsPerPage = 10;
 
+  // Filter contacts based on search term and filters
+  const filteredContacts = contacts.filter(contact => {
+    const matchesSearch = searchTerm === "" || 
+      `${contact.first_name} ${contact.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (contact.title && contact.title.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesType = !selectedType || contact.companyType === selectedType;
+    const matchesLocation = !selectedLocation || contact.location === selectedLocation;
+    const matchesAssetClass = !selectedAssetClass || 
+      (contact.assetClasses && contact.assetClasses.includes(selectedAssetClass));
+
+    const matchesAUM = !selectedAUMRange || 
+      (!selectedAUMRange.min || (contact.companyAUM && contact.companyAUM >= selectedAUMRange.min)) &&
+      (!selectedAUMRange.max || (contact.companyAUM && contact.companyAUM <= selectedAUMRange.max));
+
+    return matchesSearch && matchesType && matchesLocation && matchesAssetClass && matchesAUM;
+  });
+
   // Calculate pagination
-  const totalPages = Math.ceil(contacts.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredContacts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentContacts = contacts.slice(startIndex, endIndex);
+  const currentContacts = filteredContacts.slice(startIndex, endIndex);
 
   const allSelected = currentContacts.length > 0 && 
     currentContacts.every(contact => selectedContacts.includes(contact.id));
+
+  const handleFilterChange = (
+    type: InvestorFilterType, 
+    location: InvestorFilterType, 
+    assetClass: InvestorFilterType,
+    firstTimeFunds: InvestorFilterType,
+    aumRange: AUMRange
+  ) => {
+    if (type !== null) setSelectedType(type);
+    if (location !== null) setSelectedLocation(location);
+    if (assetClass !== null) setSelectedAssetClass(assetClass);
+    if (firstTimeFunds !== null) setSelectedFirstTimeFunds(firstTimeFunds);
+    if (aumRange !== null) setSelectedAUMRange(aumRange);
+    setCurrentPage(1);
+  };
 
   const formatAUM = (aum: number | null) => {
     if (!aum) return 'N/A';
@@ -50,6 +94,12 @@ export function ContactsTable({
 
   return (
     <div className="space-y-4">
+      <InvestorsSearch 
+        value={searchTerm}
+        onChange={setSearchTerm}
+        onFilterChange={handleFilterChange}
+      />
+
       {selectedContacts.length > 0 && (
         <BulkActions
           selectedCount={selectedContacts.length}
