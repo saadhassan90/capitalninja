@@ -20,4 +20,11 @@ export type InvestorContact = {
   location: string | null;
   companyDescription: string | null;
   strategy: string | null;
+  // Investment preferences
+  minInvestmentSize: number | null;
+  maxInvestmentSize: number | null;
+  geographicFocus: string | null;
+  // Track record
+  totalFundCommitments: number | null;
+  totalDirectInvestments: number | null;
 };
