@@ -20,23 +20,10 @@ export function MenuList({ items: propItems }: MenuListProps) {
   const location = useLocation();
   const items = propItems || useMenuItems();
 
-  const getValidHref = (href?: string): string => {
-    // If href is undefined or empty, return home route
-    if (!href || href.trim() === '') {
-      return '/';
-    }
-    
-    // Remove any trailing slashes and ensure starts with /
-    const cleanHref = href.trim().replace(/\/+$/, '');
-    return cleanHref.startsWith('/') ? cleanHref : `/${cleanHref}`;
-  };
-
   const isActiveRoute = (href?: string): boolean => {
-    if (!href) return location.pathname === '/';
-    const validHref = getValidHref(href);
-    // Use startsWith to match nested routes
-    return location.pathname.startsWith(validHref === '/' ? validHref : validHref + '/') || 
-           location.pathname === validHref;
+    if (!href) return false;
+    if (href === '/' && location.pathname === '/') return true;
+    return location.pathname.startsWith(href);
   };
 
   return (
@@ -60,7 +47,7 @@ export function MenuList({ items: propItems }: MenuListProps) {
                     )}
                     asChild
                   >
-                    <Link to={getValidHref(subItem.href)}>
+                    <Link to={subItem.href || '/'}>
                       {subItem.icon && (
                         <subItem.icon className="mr-2 h-4 w-4" />
                       )}
@@ -84,7 +71,7 @@ export function MenuList({ items: propItems }: MenuListProps) {
             )}
             asChild
           >
-            <Link to={getValidHref(item.href)}>
+            <Link to={item.href || '/'}>
               {item.icon && <item.icon className="mr-2 h-4 w-4" />}
               {item.title}
             </Link>
