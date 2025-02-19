@@ -29,9 +29,18 @@ export function MenuList({ items: propItems }: MenuListProps) {
   };
 
   const sanitizeHref = (href?: string): string => {
+    // If no href provided, default to home
     if (!href) return '/';
-    // Ensure href starts with /
-    return href.startsWith('/') ? href : `/${href}`;
+    
+    // Remove any leading/trailing whitespace
+    const trimmedHref = href.trim();
+    
+    // If empty after trim, return home
+    if (!trimmedHref) return '/';
+    
+    // Ensure single leading slash and no trailing slash (unless root)
+    const normalizedHref = trimmedHref.startsWith('/') ? trimmedHref : `/${trimmedHref}`;
+    return normalizedHref === '/' ? normalizedHref : normalizedHref.replace(/\/+$/, '');
   };
 
   const renderMenuItem = (item: MenuItem) => {
