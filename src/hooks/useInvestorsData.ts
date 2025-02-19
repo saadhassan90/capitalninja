@@ -77,12 +77,10 @@ export function useInvestorsData({
         }
       }
 
-      // Fixed order syntax for foreign key relationships
-      if (sortConfig.column === 'limited_partner_name') {
-        query = query.order('limited_partners(limited_partner_name)', { ascending: sortConfig.direction === 'asc' });
-      } else {
-        query = query.order(sortConfig.column, { ascending: sortConfig.direction === 'asc' });
-      }
+      // Apply sorting
+      const sortColumn = sortConfig.column === 'limited_partner_name' ? 
+        'limited_partners.limited_partner_name' : sortConfig.column;
+      query = query.order(sortColumn, { ascending: sortConfig.direction === 'asc' });
 
       // Apply pagination
       query = query.range((currentPage - 1) * 200, currentPage * 200 - 1);

@@ -1335,12 +1335,6 @@ export type Database = {
         }
         Returns: number
       }
-      check_admin_access: {
-        Args: {
-          user_id: string
-        }
-        Returns: boolean
-      }
       check_admin_status: {
         Args: {
           user_id: string

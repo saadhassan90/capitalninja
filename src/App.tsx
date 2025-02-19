@@ -18,7 +18,6 @@ import Raise from "@/pages/Raise";
 import Emails from "@/pages/Emails";
 import AddEmail from "@/pages/AddEmail";
 import Lists from "@/pages/Lists";
-import ListDetails from "@/pages/ListDetails";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminUsers from "@/pages/admin/Users";
@@ -53,10 +52,6 @@ const router = createBrowserRouter([
       {
         path: "lists",
         element: <Lists />,
-      },
-      {
-        path: "lists/:id",
-        element: <ListDetails />,
       },
       {
         path: "settings",

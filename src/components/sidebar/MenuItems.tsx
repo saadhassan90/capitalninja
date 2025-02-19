@@ -69,53 +69,50 @@ export const menuItems = [
   },
 ];
 
-const adminMenuItems = {
-  title: "Admin",
-  items: [
-    {
-      title: "Dashboard",
-      href: "/admin",
-      icon: Shield,
-    },
-    {
-      title: "Users",
-      href: "/admin/users",
-      icon: Users,
-    },
-    {
-      title: "Activity",
-      href: "/admin/activity",
-      icon: Activity,
-    },
-  ],
-};
-
 export function useMenuItems() {
   const { user } = useAuth();
 
-  const { data: isAdmin = false } = useQuery({
+  const { data: isAdmin } = useQuery({
     queryKey: ['is-admin', user?.id],
     queryFn: async () => {
-      if (!user?.id) return false;
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('id', user?.id)
+        .eq('is_active', true)
+        .maybeSingle();
       
-      try {
-        const { data, error } = await supabase
-          .rpc('check_admin_access', { user_id: user.id });
-        
-        if (error) {
-          console.error('Admin check error:', error);
-          return false;
-        }
-        
-        return !!data;
-      } catch (error) {
-        console.error('Admin check error:', error);
-        return false;
-      }
+      if (error) throw error;
+      return !!data;
     },
-    enabled: !!user?.id,
-    retry: false
+    enabled: !!user
   });
 
-  return isAdmin ? [...menuItems, adminMenuItems] : menuItems;
+  if (isAdmin) {
+    return [
+      ...menuItems,
+      {
+        title: "Admin",
+        items: [
+          {
+            title: "Dashboard",
+            href: "/admin",
+            icon: Shield,
+          },
+          {
+            title: "Users",
+            href: "/admin/users",
+            icon: Users,
+          },
+          {
+            title: "Activity",
+            href: "/admin/activity",
+            icon: Activity,
+          },
+        ],
+      },
+    ];
+  }
+
+  return menuItems;
 }
