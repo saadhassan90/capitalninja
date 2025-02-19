@@ -1,3 +1,4 @@
+
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -40,7 +41,7 @@ export function MenuList({ items: propItems }: MenuListProps) {
                     )}
                     asChild
                   >
-                    <Link to={subItem.href || "#"}>
+                    <Link to={subItem.href?.startsWith('/') ? subItem.href : `/${subItem.href || ''}`}>
                       {subItem.icon && (
                         <subItem.icon className="mr-2 h-4 w-4" />
                       )}
@@ -64,7 +65,7 @@ export function MenuList({ items: propItems }: MenuListProps) {
             )}
             asChild
           >
-            <Link to={item.href || "#"}>
+            <Link to={item.href?.startsWith('/') ? item.href : `/${item.href || ''}`}>
               {item.icon && <item.icon className="mr-2 h-4 w-4" />}
               {item.title}
             </Link>
