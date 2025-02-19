@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
+import { useNavigate } from "react-router-dom";
 import { 
   Table,
   TableBody,
@@ -38,6 +39,7 @@ export default function Lists() {
   const [description, setDescription] = useState("");
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Fetch lists
   const { data: lists, refetch: refetchLists } = useQuery({
@@ -146,8 +148,8 @@ export default function Lists() {
                 <TableCell>{new Date(list.created_at).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <Button 
-                    variant="link" 
-                    onClick={() => setSelectedListId(list.id === selectedListId ? null : list.id)}
+                    variant="secondary"
+                    onClick={() => navigate(`/lists/${list.id}`)}
                   >
                     View Investors
                   </Button>
@@ -164,40 +166,6 @@ export default function Lists() {
           </TableBody>
         </Table>
       </div>
-
-      {selectedListId && (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {listInvestors?.map((investor) => (
-                <TableRow key={investor.id}>
-                  <TableCell>{`${investor.first_name} ${investor.last_name}`}</TableCell>
-                  <TableCell>{investor.title || "—"}</TableCell>
-                  <TableCell>{investor.company_name}</TableCell>
-                  <TableCell>{investor.email || "—"}</TableCell>
-                  <TableCell>{investor.phone || "—"}</TableCell>
-                </TableRow>
-              ))}
-              {(!listInvestors || listInvestors.length === 0) && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6">
-                    No investors in this list yet.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      )}
 
       <Dialog open={showNewListDialog} onOpenChange={setShowNewListDialog}>
         <DialogContent>
