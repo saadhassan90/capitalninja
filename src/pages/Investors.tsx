@@ -1,3 +1,4 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InvestorsTable } from "@/components/InvestorsTable";
 import { ContactsTable } from "@/components/investors/contacts/ContactsTable";
@@ -59,33 +60,43 @@ const Investors = () => {
 
         console.log('Raw data from query:', data);
         
-        const transformedData = data.map(lp => ({
-          id: lp.id.toString(),
-          first_name: lp.primary_contact?.split(' ')[0] || 'N/A',
-          last_name: lp.primary_contact?.split(' ').slice(1).join(' ') || '',
-          email: lp.primary_contact_email || null,
-          phone: lp.primary_contact_phone || null,
-          title: lp.primary_contact_title || null,
-          company_name: lp.limited_partner_name,
-          linkedin_url: null,
-          company_id: lp.id,
-          is_primary_contact: true,
-          notes: null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          companyType: lp.limited_partner_type || null,
-          companyAUM: lp.aum || null,
-          assetClasses: lp.preferred_fund_type ? lp.preferred_fund_type.split(',').map(s => s.trim()) : [],
-          location: lp.hqlocation || null,
-          companyDescription: lp.description || null,
-          strategy: `${lp.preferred_geography ? `Geography: ${lp.preferred_geography}` : ''} ${
-            lp.preferred_commitment_size_min || lp.preferred_commitment_size_max ? 
-            `\nCommitment Size: $${lp.preferred_commitment_size_min/1000000}M - $${lp.preferred_commitment_size_max/1000000}M` : 
-            ''
-          }`.trim() || null
-        }));
+        // Filter out entries where primary_contact is null or empty
+        const transformedData = data
+          .filter(lp => lp.primary_contact && lp.primary_contact.trim() !== '')
+          .map(lp => {
+            // Split the primary contact into first and last name
+            const nameParts = lp.primary_contact.trim().split(/\s+/);
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
 
-        console.log('Transformed data:', transformedData);
+            return {
+              id: lp.id.toString(),
+              first_name: firstName,
+              last_name: lastName,
+              email: lp.primary_contact_email || null,
+              phone: lp.primary_contact_phone || null,
+              title: lp.primary_contact_title || null,
+              company_name: lp.limited_partner_name,
+              linkedin_url: null,
+              company_id: lp.id,
+              is_primary_contact: true,
+              notes: null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              companyType: lp.limited_partner_type || null,
+              companyAUM: lp.aum || null,
+              assetClasses: lp.preferred_fund_type ? lp.preferred_fund_type.split(',').map(s => s.trim()) : [],
+              location: lp.hqlocation || null,
+              companyDescription: lp.description || null,
+              strategy: `${lp.preferred_geography ? `Geography: ${lp.preferred_geography}` : ''} ${
+                lp.preferred_commitment_size_min || lp.preferred_commitment_size_max ? 
+                `\nCommitment Size: $${lp.preferred_commitment_size_min/1000000}M - $${lp.preferred_commitment_size_max/1000000}M` : 
+                ''
+              }`.trim() || null
+            };
+          });
+
+        console.log('Transformed contact data:', transformedData);
         
         return transformedData as InvestorContact[];
       } catch (error) {
