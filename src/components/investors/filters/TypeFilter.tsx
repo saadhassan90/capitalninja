@@ -1,3 +1,4 @@
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { InvestorFilterType } from "@/types/investorFilters";
 
@@ -34,11 +35,7 @@ export function TypeFilter({ onTypeChange }: TypeFilterProps) {
 
     // Special handling for Family Office types
     if (value === 'Family Office') {
-      onTypeChange((type) => 
-        type === 'Family Office' || 
-        type === 'Single Family Office' || 
-        type === 'Multi Family Office'
-      );
+      onTypeChange('Family Office');
       return;
     }
 

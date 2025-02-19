@@ -1,5 +1,5 @@
 
-import { type AssetClass } from "@/types/assetClass";
+import { AssetClass } from "@/types/assetClass";
 
 // Main asset class colors with a broader palette
 const mainColors = {

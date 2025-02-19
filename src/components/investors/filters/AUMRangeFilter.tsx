@@ -1,3 +1,4 @@
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AUMRange } from "@/types/investorFilters";
@@ -13,18 +14,21 @@ export function AUMRangeFilter({ onAUMRangeChange }: AUMRangeFilterProps) {
 
   const handleMinChange = (value: string) => {
     setMinValue(value);
-    if (value && maxValue) {
-      onAUMRangeChange([Number(value), Number(maxValue)]);
-    } else if (!value && !maxValue) {
-      onAUMRangeChange(null);
-    }
+    updateRange(value, maxValue);
   };
 
   const handleMaxChange = (value: string) => {
     setMaxValue(value);
-    if (minValue && value) {
-      onAUMRangeChange([Number(minValue), Number(value)]);
-    } else if (!minValue && !value) {
+    updateRange(minValue, value);
+  };
+
+  const updateRange = (min: string, max: string) => {
+    if (min || max) {
+      onAUMRangeChange({
+        min: min ? Number(min) : null,
+        max: max ? Number(max) : null
+      });
+    } else {
       onAUMRangeChange(null);
     }
   };

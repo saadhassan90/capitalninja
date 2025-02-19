@@ -32,7 +32,15 @@ export default function CampaignView() {
         .single();
 
       if (error) throw error;
-      return data as Campaign;
+
+      // Transform the data to match the Campaign type
+      const transformedData: Campaign = {
+        ...data,
+        lists: data?.lists ? { name: data.lists.name } : null,
+        raise: data?.raise || null
+      };
+
+      return transformedData;
     },
     enabled: !!id,
   });
