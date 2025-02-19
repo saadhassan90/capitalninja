@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ListPlus } from "lucide-react";
+import { ListPlus, Eye } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -39,7 +39,6 @@ export default function Lists() {
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const { user } = useAuth();
 
-  // Fetch lists
   const { data: lists, refetch: refetchLists } = useQuery({
     queryKey: ["lists"],
     queryFn: async () => {
@@ -54,7 +53,6 @@ export default function Lists() {
     }
   });
 
-  // Fetch investors for selected list
   const { data: listInvestors } = useQuery({
     queryKey: ["list-investors", selectedListId],
     queryFn: async () => {
@@ -79,7 +77,6 @@ export default function Lists() {
 
       if (error) throw error;
       
-      // Safely type and transform the data
       const typedData = data as unknown as ListInvestorJoin[];
       return typedData.map(item => item.investor_contacts).filter(Boolean);
     },
@@ -112,7 +109,7 @@ export default function Lists() {
       toast.error("Error creating list: " + error.message);
     }
   };
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -149,6 +146,7 @@ export default function Lists() {
                     variant="link" 
                     onClick={() => setSelectedListId(list.id === selectedListId ? null : list.id)}
                   >
+                    <Eye className="h-4 w-4 mr-2" />
                     View Investors
                   </Button>
                 </TableCell>
