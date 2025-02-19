@@ -99,19 +99,21 @@ export function useMenuItems() {
       if (!user?.id) return false;
       
       try {
-        const { data } = await supabase
-          .from('admin_users')
-          .select('is_active')
-          .eq('id', user.id)
-          .maybeSingle();
+        const { data, error } = await supabase
+          .rpc('check_admin_access', { user_id: user.id });
         
-        return !!data?.is_active;
+        if (error) {
+          console.error('Admin check error:', error);
+          return false;
+        }
+        
+        return !!data;
       } catch (error) {
         console.error('Admin check error:', error);
         return false;
       }
     },
-    enabled: !!user,
+    enabled: !!user?.id,
     retry: false
   });
 

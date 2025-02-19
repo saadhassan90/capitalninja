@@ -23,22 +23,26 @@ export function MenuList({ items: propItems }: MenuListProps) {
 
   const isActiveRoute = (href?: string): boolean => {
     if (!href) return false;
-    if (href === "/" && location.pathname === "/") return true;
-    if (href === "/") return false;
-    return location.pathname.startsWith(href);
+    const cleanHref = sanitizeHref(href);
+    if (cleanHref === "/" && location.pathname === "/") return true;
+    if (cleanHref === "/") return false;
+    return location.pathname.startsWith(cleanHref);
   };
 
   const sanitizeHref = (href?: string): string => {
     if (!href || href.trim() === "") return "/";
     
-    // Remove any trailing slashes (except for root path)
-    const cleanHref = href.trim().replace(/\/+$/, "") || "/";
-    
-    // Ensure the path starts with a single slash
-    return cleanHref.startsWith("/") ? cleanHref : `/${cleanHref}`;
+    // Normalize slashes and ensure proper format
+    const normalized = href.trim()
+      .replace(/\/+/g, "/")  // Replace multiple slashes with single slash
+      .replace(/\/$/, "");   // Remove trailing slash unless root
+      
+    return normalized === "" ? "/" : normalized.startsWith("/") ? normalized : `/${normalized}`;
   };
 
   const renderMenuItem = (item: MenuItem) => {
+    if (!item.href) return null;
+    
     const href = sanitizeHref(item.href);
     const isActive = isActiveRoute(href);
     
