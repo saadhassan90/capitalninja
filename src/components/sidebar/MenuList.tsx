@@ -28,8 +28,14 @@ export function MenuList({ items: propItems }: MenuListProps) {
     return location.pathname.startsWith(href);
   };
 
+  const sanitizeHref = (href?: string): string => {
+    if (!href) return '/';
+    // Ensure href starts with /
+    return href.startsWith('/') ? href : `/${href}`;
+  };
+
   const renderMenuItem = (item: MenuItem) => {
-    const href = item.href || '/';
+    const href = sanitizeHref(item.href);
     
     return (
       <Button
