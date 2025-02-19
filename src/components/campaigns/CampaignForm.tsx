@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -25,39 +26,23 @@ import type { Campaign } from "@/types/campaign";
 interface CampaignFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  defaultListId?: string;
   campaign?: Campaign;
 }
 
-export function CampaignForm({ open, onOpenChange, defaultListId, campaign }: CampaignFormProps) {
+export function CampaignForm({ open, onOpenChange, campaign }: CampaignFormProps) {
   const navigate = useNavigate();
   const isEditing = !!campaign;
 
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
-  const [selectedListId, setSelectedListId] = useState(defaultListId || "");
   const [selectedRaiseId, setSelectedRaiseId] = useState("");
 
   useEffect(() => {
     if (campaign) {
       setName(campaign.name);
-      setSelectedListId(campaign.list_id || "");
       setSelectedRaiseId(campaign.raise?.id || "");
     }
   }, [campaign]);
-
-  const { data: lists } = useQuery({
-    queryKey: ["lists"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("lists")
-        .select("*")
-        .order("created_at", { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    },
-  });
 
   const { data: raises } = useQuery({
     queryKey: ["raises"],
@@ -82,8 +67,6 @@ export function CampaignForm({ open, onOpenChange, defaultListId, campaign }: Ca
           .from("campaigns")
           .update({
             name,
-            list_id: selectedListId,
-            source_list_id: selectedListId,
             raise_id: selectedRaiseId || null,
           })
           .eq('id', campaign.id);
@@ -97,8 +80,6 @@ export function CampaignForm({ open, onOpenChange, defaultListId, campaign }: Ca
           name,
           subject: "Draft",
           content: "Draft",
-          list_id: selectedListId,
-          source_list_id: selectedListId,
           raise_id: selectedRaiseId || null,
           status: "draft",
           created_by: (await supabase.auth.getUser()).data.user?.id,
@@ -134,28 +115,6 @@ export function CampaignForm({ open, onOpenChange, defaultListId, campaign }: Ca
               required
             />
           </div>
-
-          {!defaultListId && (
-            <div className="space-y-2">
-              <Label htmlFor="list">Select List</Label>
-              <Select
-                value={selectedListId}
-                onValueChange={setSelectedListId}
-                required
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a list" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lists?.map((list) => (
-                    <SelectItem key={list.id} value={list.id}>
-                      {list.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
 
           <div className="space-y-2">
             <Label htmlFor="raise">Select Raise (Optional)</Label>

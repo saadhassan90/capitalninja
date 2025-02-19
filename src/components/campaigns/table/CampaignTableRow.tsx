@@ -1,3 +1,4 @@
+
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -45,7 +46,7 @@ export function CampaignTableRow({
       </TableCell>
       <TableCell>{campaign.name}</TableCell>
       <TableCell>{campaign.raise?.name || '-'}</TableCell>
-      <TableCell>{campaign.lists?.name || '-'}</TableCell>
+      <TableCell>-</TableCell>
       <TableCell>{campaign.status}</TableCell>
       <TableCell>
         {campaign.created_at ? format(new Date(campaign.created_at), 'MMM d, yyyy') : '-'}
