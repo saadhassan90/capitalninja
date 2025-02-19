@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +8,6 @@ import type { Campaign } from "@/types/campaign";
 
 export default function CampaignView() {
   const { id } = useParams();
-  const [selectedInvestors, setSelectedInvestors] = useState<string[]>([]);
 
   const { data: campaignData, isLoading, error } = useQuery({
     queryKey: ['campaign', id],
@@ -26,8 +24,6 @@ export default function CampaignView() {
           subject,
           content,
           status,
-          list_id,
-          source_list_id,
           scheduled_for,
           created_by,
           created_at,
@@ -36,9 +32,6 @@ export default function CampaignView() {
           total_recipients,
           successful_sends,
           failed_sends,
-          target_list:list_id (
-            name
-          ),
           raise:raise_id (
             name,
             id
@@ -57,7 +50,7 @@ export default function CampaignView() {
       // Transform the data to match the Campaign type
       const transformedData: Campaign = {
         ...data,
-        lists: data?.target_list ? { name: data.target_list.name } : null,
+        lists: null,
         raise: data?.raise || null
       };
 
