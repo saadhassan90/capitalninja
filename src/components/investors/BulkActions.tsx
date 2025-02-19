@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -24,7 +25,7 @@ export function BulkActions({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">
-            Selected {selectedCount} {selectedCount === 1 ? 'item' : 'items'}
+            Selected {selectedCount} {selectedCount === 1 ? 'investor' : 'investors'}
           </span>
           <Button
             variant="ghost"
@@ -51,8 +52,7 @@ export function BulkActions({
       <AddToListDialog
         open={showAddToListDialog}
         onOpenChange={setShowAddToListDialog}
-        selectedInvestors={selectedInvestors.map(id => parseInt(id))}
-        listId={listId}
+        selectedInvestors={selectedInvestors}
         onSuccess={() => {
           setShowAddToListDialog(false);
           onClearSelection();

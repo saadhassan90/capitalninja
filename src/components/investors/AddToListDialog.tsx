@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,7 +14,7 @@ import { Loader2 } from "lucide-react";
 interface AddToListDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedInvestors: number[];
+  selectedInvestors: string[];
   onSuccess?: () => void;
   mode?: "copy" | "move";
   sourceListId?: string;
@@ -53,8 +54,8 @@ export function AddToListDialog({
   const handleSubmit = async () => {
     if (selectedInvestors.length === 0) {
       toast({
-        title: "No items selected",
-        description: "Please select at least one contact or company to add to a list.",
+        title: "No investors selected",
+        description: "Please select at least one investor to add to a list.",
         variant: "destructive",
       });
       return;
@@ -79,45 +80,26 @@ export function AddToListDialog({
         targetListId = newListData.id;
       }
 
-      for (const id of selectedInvestors) {
-        if (typeof id === 'number') {
-          const { data: contacts, error: contactsError } = await supabase
-            .rpc('get_company_contacts', { company_id: id });
-          
-          if (contactsError) throw contactsError;
-          
-          if (contacts && contacts.length > 0) {
-            const listContacts = contacts.map(contact => ({
-              list_id: targetListId,
-              contact_id: contact.contact_id,
-            }));
+      const listInvestors = selectedInvestors.map(contactId => ({
+        list_id: targetListId,
+        contact_id: contactId,
+      }));
 
-            const { error: insertError } = await supabase
-              .from("list_investors")
-              .insert(listContacts);
+      const { error: insertError } = await supabase
+        .from("list_investors")
+        .insert(listInvestors);
 
-            if (insertError) throw insertError;
-          }
-        } else {
-          const { error: insertError } = await supabase
-            .from("list_investors")
-            .insert({
-              list_id: targetListId,
-              contact_id: id,
-            });
-
-          if (insertError) throw insertError;
-        }
-      }
+      if (insertError) throw insertError;
 
       toast({
         title: "Success",
-        description: `Successfully added contacts to the list`,
+        description: `Successfully added investors to the list`,
       });
 
       onSuccess?.();
       onOpenChange(false);
     } catch (error: any) {
+      console.error('Error adding to list:', error);
       toast({
         title: "Error",
         description: error.message || `Failed to add to list`,

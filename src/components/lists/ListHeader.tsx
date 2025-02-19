@@ -1,4 +1,6 @@
 
+import { BulkActions } from "@/components/investors/BulkActions";
+
 interface ListHeaderProps {
   selectedInvestors: string[];
   totalInvestors: number;
