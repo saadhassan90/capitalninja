@@ -44,6 +44,11 @@ export function ContactsTable({
   const allSelected = currentContacts.length > 0 && 
     currentContacts.every(contact => selectedContacts.includes(contact.id));
 
+  const formatAUM = (aum: number | null) => {
+    if (!aum) return 'N/A';
+    return `$${(aum / 1000000000).toFixed(1)}B`;
+  };
+
   return (
     <div className="space-y-4">
       {selectedContacts.length > 0 && (
@@ -66,22 +71,24 @@ export function ContactsTable({
                   aria-label="Select all contacts"
                 />
               </TableHead>
-              <TableHead className="w-[200px]">Name</TableHead>
-              <TableHead className="w-[150px]">Title</TableHead>
-              <TableHead className="w-[200px]">Company</TableHead>
-              <TableHead className="w-[200px]">Email</TableHead>
-              <TableHead className="w-[150px]">Phone</TableHead>
+              <TableHead className="w-[180px]">Name</TableHead>
+              <TableHead className="w-[120px]">Title</TableHead>
+              <TableHead className="w-[180px]">Company</TableHead>
+              <TableHead className="w-[150px]">Type</TableHead>
+              <TableHead className="w-[120px]">AUM</TableHead>
+              <TableHead className="w-[180px]">Asset Classes</TableHead>
+              <TableHead className="w-[150px]">Location</TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center">Loading...</TableCell>
+                <TableCell colSpan={9} className="text-center">Loading...</TableCell>
               </TableRow>
             ) : currentContacts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center">No contacts found</TableCell>
+                <TableCell colSpan={9} className="text-center">No contacts found</TableCell>
               </TableRow>
             ) : (
               currentContacts.map((contact) => (
@@ -96,8 +103,10 @@ export function ContactsTable({
                   <TableCell>{`${contact.first_name} ${contact.last_name}`}</TableCell>
                   <TableCell>{contact.title || 'N/A'}</TableCell>
                   <TableCell>{contact.company_name}</TableCell>
-                  <TableCell>{contact.email || 'N/A'}</TableCell>
-                  <TableCell>{contact.phone || 'N/A'}</TableCell>
+                  <TableCell>{contact.companyType || 'N/A'}</TableCell>
+                  <TableCell>{formatAUM(contact.companyAUM)}</TableCell>
+                  <TableCell>{contact.assetClasses?.join(', ') || 'N/A'}</TableCell>
+                  <TableCell>{contact.location || 'N/A'}</TableCell>
                   <TableCell>
                     <Button
                       variant="secondary"

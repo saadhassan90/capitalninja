@@ -13,4 +13,11 @@ export type InvestorContact = {
   created_at: string;
   updated_at: string;
   company_name?: string;
+  // Additional company information
+  companyType?: string | null;
+  companyAUM?: number | null;
+  assetClasses?: string[];
+  location?: string | null;
+  companyDescription?: string | null;
+  strategy?: string | null;
 };

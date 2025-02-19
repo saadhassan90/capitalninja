@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InvestorsTable } from "@/components/InvestorsTable";
 import { ContactsTable } from "@/components/investors/contacts/ContactsTable";
@@ -28,7 +27,6 @@ const Investors = () => {
     queryKey: ['investor-contacts', user?.id],
     queryFn: async () => {
       try {
-        // Query the limited_partners table directly for primary contact information
         const { data, error } = await supabase
           .from('limited_partners')
           .select(`
@@ -37,7 +35,15 @@ const Investors = () => {
             primary_contact,
             primary_contact_title,
             primary_contact_email,
-            primary_contact_phone
+            primary_contact_phone,
+            limited_partner_type,
+            aum,
+            preferred_fund_type,
+            hqlocation,
+            description,
+            preferred_geography,
+            preferred_commitment_size_min,
+            preferred_commitment_size_max
           `);
         
         if (error) {
@@ -53,9 +59,8 @@ const Investors = () => {
 
         console.log('Raw data from query:', data);
         
-        // Transform the data to match our InvestorContact type
         const transformedData = data.map(lp => ({
-          id: lp.id.toString(), // Convert to string since our type expects string
+          id: lp.id.toString(),
           first_name: lp.primary_contact?.split(' ')[0] || 'N/A',
           last_name: lp.primary_contact?.split(' ').slice(1).join(' ') || '',
           email: lp.primary_contact_email || null,
@@ -66,8 +71,18 @@ const Investors = () => {
           company_id: lp.id,
           is_primary_contact: true,
           notes: null,
-          created_at: new Date().toISOString(), // Since we don't have this info
-          updated_at: new Date().toISOString(), // Since we don't have this info
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          companyType: lp.limited_partner_type || null,
+          companyAUM: lp.aum || null,
+          assetClasses: lp.preferred_fund_type ? lp.preferred_fund_type.split(',').map(s => s.trim()) : [],
+          location: lp.hqlocation || null,
+          companyDescription: lp.description || null,
+          strategy: `${lp.preferred_geography ? `Geography: ${lp.preferred_geography}` : ''} ${
+            lp.preferred_commitment_size_min || lp.preferred_commitment_size_max ? 
+            `\nCommitment Size: $${lp.preferred_commitment_size_min/1000000}M - $${lp.preferred_commitment_size_max/1000000}M` : 
+            ''
+          }`.trim() || null
         }));
 
         console.log('Transformed data:', transformedData);
