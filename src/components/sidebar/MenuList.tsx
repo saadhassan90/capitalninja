@@ -34,7 +34,9 @@ export function MenuList({ items: propItems }: MenuListProps) {
   const isActiveRoute = (href?: string): boolean => {
     if (!href) return location.pathname === '/';
     const validHref = getValidHref(href);
-    return location.pathname === validHref;
+    // Use startsWith to match nested routes
+    return location.pathname.startsWith(validHref === '/' ? validHref : validHref + '/') || 
+           location.pathname === validHref;
   };
 
   return (
@@ -47,34 +49,30 @@ export function MenuList({ items: propItems }: MenuListProps) {
                 {item.title}
               </h4>
               <div className="space-y-1">
-                {item.items.map((subItem, subIndex) => {
-                  const href = getValidHref(subItem.href);
-                  return (
-                    <Button
-                      key={subIndex}
-                      variant="ghost"
-                      className={cn(
-                        "w-full justify-start transition-colors",
-                        "hover:bg-accent/50",
-                        isActiveRoute(subItem.href) && "bg-primary text-primary-foreground hover:bg-primary/90"
+                {item.items.map((subItem, subIndex) => (
+                  <Button
+                    key={subIndex}
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-start transition-colors",
+                      "hover:bg-accent/50",
+                      isActiveRoute(subItem.href) && "bg-primary text-primary-foreground hover:bg-primary/90"
+                    )}
+                    asChild
+                  >
+                    <Link to={getValidHref(subItem.href)}>
+                      {subItem.icon && (
+                        <subItem.icon className="mr-2 h-4 w-4" />
                       )}
-                      asChild
-                    >
-                      <Link to={href}>
-                        {subItem.icon && (
-                          <subItem.icon className="mr-2 h-4 w-4" />
-                        )}
-                        {subItem.title}
-                      </Link>
-                    </Button>
-                  );
-                })}
+                      {subItem.title}
+                    </Link>
+                  </Button>
+                ))}
               </div>
             </div>
           );
         }
 
-        const href = getValidHref(item.href);
         return (
           <Button
             key={index}
@@ -86,7 +84,7 @@ export function MenuList({ items: propItems }: MenuListProps) {
             )}
             asChild
           >
-            <Link to={href}>
+            <Link to={getValidHref(item.href)}>
               {item.icon && <item.icon className="mr-2 h-4 w-4" />}
               {item.title}
             </Link>
