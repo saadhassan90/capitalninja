@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ListPlus } from "lucide-react";
@@ -65,7 +64,7 @@ export default function Lists() {
         .from("list_investors")
         .select(`
           contact_id,
-          investor_contacts (
+          investor_contacts:contact_id (
             id,
             first_name,
             last_name,
@@ -81,7 +80,7 @@ export default function Lists() {
       if (error) throw error;
       
       // Safely type and transform the data
-      const typedData = data as ListInvestorJoin[];
+      const typedData = data as unknown as ListInvestorJoin[];
       return typedData.map(item => item.investor_contacts).filter(Boolean);
     },
     enabled: !!selectedListId
