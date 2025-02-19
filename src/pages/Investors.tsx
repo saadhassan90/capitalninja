@@ -15,6 +15,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { toast } from "sonner";
 
 const Investors = () => {
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
@@ -22,32 +23,45 @@ const Investors = () => {
   const { data: contacts = [], isLoading: isLoadingContacts } = useQuery({
     queryKey: ['investor-contacts'],
     queryFn: async () => {
-      // Let's first check what data we get without the join
-      const { data, error } = await supabase
-        .from('investor_contacts')
-        .select(`
-          *,
-          limited_partners (
-            limited_partner_name
-          )
-        `);
-      
-      if (error) {
-        console.error('Error fetching contacts:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('investor_contacts')
+          .select(`
+            *,
+            limited_partners (
+              limited_partner_name
+            )
+          `);
+        
+        if (error) {
+          console.error('Error fetching contacts:', error);
+          toast.error('Failed to fetch contacts');
+          throw error;
+        }
+
+        if (!data) {
+          console.log('No data returned from query');
+          return [];
+        }
+
+        console.log('Raw data from query:', data);
+        
+        const transformedData = data.map(contact => ({
+          ...contact,
+          company_name: contact.limited_partners?.limited_partner_name || 'N/A'
+        }));
+
+        console.log('Transformed data:', transformedData);
+        
+        return transformedData as InvestorContact[];
+      } catch (error) {
+        console.error('Error in queryFn:', error);
+        toast.error('An error occurred while fetching contacts');
+        return [];
       }
-
-      console.log('Raw data from query:', data); // Add this to debug
-      
-      // Transform the data to match our InvestorContact type
-      return data.map(contact => ({
-        ...contact,
-        company_name: contact.limited_partners?.limited_partner_name || 'N/A'
-      })) as InvestorContact[];
-    }
+    },
+    retry: 1
   });
-
-  console.log('Processed contacts:', contacts); // Add this to debug
 
   const handleSelectContact = (id: string, checked: boolean) => {
     if (checked) {
