@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -12,12 +13,12 @@ import { InvestorsPagination } from "./InvestorsPagination";
 import { ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import { InvestorProfile } from "../InvestorProfile";
 import { useState } from "react";
-import type { LimitedPartner } from "@/types/investor";
+import type { InvestorContact } from "@/types/investor-contact";
 import type { SortConfig } from "@/types/sorting";
 import type { Campaign } from "@/types/campaign";
 
 interface InvestorsTableViewProps {
-  investors: LimitedPartner[];
+  investors: InvestorContact[];
   isLoading: boolean;
   onViewInvestor: (id: number) => void;
   currentPage: number;
@@ -25,9 +26,9 @@ interface InvestorsTableViewProps {
   onPageChange: (page: number) => void;
   sortConfig: SortConfig;
   onSort: (column: string) => void;
-  selectedInvestors: number[];
+  selectedInvestors: string[];
   onSelectAll: (checked: boolean) => void;
-  onSelectInvestor: (id: number, checked: boolean) => void;
+  onSelectInvestor: (id: string, checked: boolean) => void;
   listId?: string;
   campaign?: Campaign;
 }
@@ -93,23 +94,22 @@ export function InvestorsTableView({
                     aria-label="Select all investors"
                   />
                 </TableHead>
-                <SortableHeader column="limited_partner_name">Name</SortableHeader>
-                <SortableHeader column="limited_partner_type">Type</SortableHeader>
-                <SortableHeader column="aum">AUM (USD M)</SortableHeader>
-                <SortableHeader column="hqlocation">Location</SortableHeader>
-                <TableHead className="text-xs font-medium">Investment Focus</TableHead>
-                <SortableHeader column="primary_contact">Primary Contact</SortableHeader>
+                <SortableHeader column="first_name">First Name</SortableHeader>
+                <SortableHeader column="last_name">Last Name</SortableHeader>
+                <SortableHeader column="email">Email</SortableHeader>
+                <SortableHeader column="company_name">Company</SortableHeader>
+                <SortableHeader column="title">Title</SortableHeader>
                 <TableHead className="text-xs font-medium">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-sm">Loading...</TableCell>
+                  <TableCell colSpan={7} className="text-center text-sm">Loading...</TableCell>
                 </TableRow>
               ) : investors.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-sm">No investors found</TableCell>
+                  <TableCell colSpan={7} className="text-center text-sm">No investors found</TableCell>
                 </TableRow>
               ) : (
                 investors.map((investor) => (

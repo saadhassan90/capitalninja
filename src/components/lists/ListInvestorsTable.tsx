@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { InvestorProfile } from "@/components/InvestorProfile";
 import { InvestorsTableView } from "@/components/investors/InvestorsTableView";
@@ -13,7 +14,7 @@ interface ListInvestorsTableProps {
 export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
   const { toast } = useToast();
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
-  const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
+  const [selectedInvestors, setSelectedInvestors] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'limited_partner_name',
@@ -44,15 +45,15 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
   };
 
   const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      const allIds = (investorsData?.data || []).map(investor => investor.id);
+    if (checked && investorsData?.data) {
+      const allIds = investorsData.data.map(investor => investor.id);
       setSelectedInvestors(allIds);
     } else {
       setSelectedInvestors([]);
     }
   };
 
-  const handleSelectInvestor = (id: number, checked: boolean) => {
+  const handleSelectInvestor = (id: string, checked: boolean) => {
     if (checked) {
       setSelectedInvestors(prev => [...prev, id]);
     } else {
