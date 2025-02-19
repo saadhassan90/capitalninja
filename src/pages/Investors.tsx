@@ -26,13 +26,16 @@ const Investors = () => {
     queryKey: ['investor-contacts', user?.id],
     queryFn: async () => {
       try {
+        // Query the limited_partners table directly for primary contact information
         const { data, error } = await supabase
-          .from('investor_contacts')
+          .from('limited_partners')
           .select(`
-            *,
-            limited_partners (
-              limited_partner_name
-            )
+            id,
+            limited_partner_name,
+            primary_contact,
+            primary_contact_title,
+            primary_contact_email,
+            primary_contact_phone
           `);
         
         if (error) {
@@ -48,9 +51,21 @@ const Investors = () => {
 
         console.log('Raw data from query:', data);
         
-        const transformedData = data.map(contact => ({
-          ...contact,
-          company_name: contact.limited_partners?.limited_partner_name || 'N/A'
+        // Transform the data to match our InvestorContact type
+        const transformedData = data.map(lp => ({
+          id: lp.id.toString(), // Convert to string since our type expects string
+          first_name: lp.primary_contact?.split(' ')[0] || 'N/A',
+          last_name: lp.primary_contact?.split(' ').slice(1).join(' ') || '',
+          email: lp.primary_contact_email || null,
+          phone: lp.primary_contact_phone || null,
+          title: lp.primary_contact_title || null,
+          company_name: lp.limited_partner_name,
+          linkedin_url: null,
+          company_id: lp.id,
+          is_primary_contact: true,
+          notes: null,
+          created_at: new Date().toISOString(), // Since we don't have this info
+          updated_at: new Date().toISOString(), // Since we don't have this info
         }));
 
         console.log('Transformed data:', transformedData);
