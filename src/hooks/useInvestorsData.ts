@@ -1,10 +1,9 @@
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
-import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
-import type { LimitedPartner } from "@/types/investor";
-import type { SortConfig } from "@/types/sorting";
 
-const INVESTORS_PER_PAGE = 200;
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import type { InvestorContact } from "@/types/investor-contact";
+import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
+import type { SortConfig } from "@/types/sorting";
 
 interface UseInvestorsDataParams {
   searchTerm: string;
@@ -18,7 +17,7 @@ interface UseInvestorsDataParams {
   onError?: (error: Error) => void;
 }
 
-async function fetchInvestors({
+export function useInvestorsData({
   searchTerm,
   selectedType,
   selectedLocation,
@@ -27,74 +26,64 @@ async function fetchInvestors({
   selectedAUMRange,
   currentPage,
   sortConfig,
+  onError,
 }: UseInvestorsDataParams) {
-  const start = (currentPage - 1) * INVESTORS_PER_PAGE;
-  
-  let query = supabase
-    .from('limited_partners')
-    .select('id, limited_partner_name, limited_partner_type, aum, hqlocation, preferred_fund_type, primary_contact, primary_contact_title, count:id', { count: 'exact' })
-    .order(sortConfig.column, { ascending: sortConfig.direction === 'asc' })
-    .range(start, start + INVESTORS_PER_PAGE - 1);
-
-  if (searchTerm) {
-    query = query.ilike('limited_partner_name', `%${searchTerm}%`);
-  }
-
-  if (selectedType && selectedType !== '_all') {
-    if (typeof selectedType === 'function') {
-      // For Family Office filter, use an OR condition for all family office types
-      query = query.or(
-        'limited_partner_type.eq.Family Office,' +
-        'limited_partner_type.eq.Single Family Office,' +
-        'limited_partner_type.eq.Multi Family Office'
-      );
-    } else {
-      // Convert selectedType to string explicitly
-      query = query.eq('limited_partner_type', String(selectedType));
-    }
-  }
-
-  if (selectedLocation && selectedLocation !== '_all') {
-    if (selectedLocation === 'US') {
-      query = query.ilike('hqlocation', '%United States%');
-    } else if (selectedLocation === 'MENA') {
-      query = query.or('hqlocation.ilike.%Middle East%,hqlocation.ilike.%North Africa%');
-    } else {
-      query = query.ilike('hqlocation', `%${String(selectedLocation)}%`);
-    }
-  }
-
-  if (selectedAssetClass && selectedAssetClass !== '_all') {
-    query = query.ilike('preferred_fund_type', `%${String(selectedAssetClass)}%`);
-  }
-
-  if (selectedFirstTimeFunds && selectedFirstTimeFunds !== '_all') {
-    query = query.eq('open_to_first_time_funds', String(selectedFirstTimeFunds));
-  }
-
-  if (selectedAUMRange) {
-    const [min, max] = selectedAUMRange;
-    query = query.gte('aum', min * 1000000).lte('aum', max * 1000000);
-  }
-
-  const { data, error, count } = await query;
-  
-  if (error) {
-    throw error;
-  }
-  
-  return { data, count };
-}
-
-export function useInvestorsData(params: UseInvestorsDataParams) {
   return useQuery({
-    queryKey: ['investors', params],
-    queryFn: () => fetchInvestors(params),
-    retry: (failureCount, error: any) => {
-      if (error?.message?.includes('rate limit')) {
-        return false;
-      }
-      return failureCount < 3;
+    queryKey: ['investors', {
+      searchTerm,
+      selectedType,
+      selectedLocation,
+      selectedAssetClass,
+      selectedFirstTimeFunds,
+      selectedAUMRange,
+      currentPage,
+      sortConfig
+    }],
+    queryFn: async () => {
+      const { data, error, count } = await supabase
+        .from('investor_contacts')
+        .select(`
+          *,
+          limited_partners!inner (
+            id,
+            limited_partner_name,
+            limited_partner_type,
+            aum,
+            preferred_fund_type,
+            hqlocation,
+            description,
+            preferred_geography
+          )
+        `, { count: 'exact' });
+
+      if (error) throw error;
+
+      const transformedData: InvestorContact[] = (data || []).map(contact => ({
+        id: contact.id,
+        first_name: contact.first_name,
+        last_name: contact.last_name,
+        email: contact.email,
+        phone: contact.phone,
+        title: contact.title,
+        company_name: contact.limited_partners.limited_partner_name,
+        linkedin_url: contact.linkedin_url,
+        company_id: contact.company_id,
+        is_primary_contact: contact.is_primary_contact,
+        notes: contact.notes,
+        created_at: contact.created_at,
+        updated_at: contact.updated_at,
+        companyType: contact.limited_partners.limited_partner_type,
+        companyAUM: contact.limited_partners.aum,
+        assetClasses: contact.limited_partners.preferred_fund_type ? 
+          contact.limited_partners.preferred_fund_type.split(',').map(s => s.trim()) : [],
+        location: contact.limited_partners.hqlocation,
+        companyDescription: contact.limited_partners.description,
+        strategy: contact.limited_partners.preferred_geography
+      }));
+
+      return { data: transformedData, count };
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
   });
 }

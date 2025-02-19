@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -7,7 +6,7 @@ import { X } from "lucide-react";
 
 interface BulkActionsProps {
   selectedCount: number;
-  selectedInvestors: number[] | string[];
+  selectedInvestors: string[];
   onClearSelection: () => void;
   listId?: string;
 }

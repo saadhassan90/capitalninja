@@ -22,109 +22,25 @@ interface ListCardProps {
   onDelete?: () => void;
 }
 
-function ListCardComponent({ list, onDelete }: ListCardProps) {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [showViewDialog, setShowViewDialog] = useState(false);
+export function ListCard({ list, onDelete }: ListCardProps) {
   const [showEditDialog, setShowEditDialog] = useState(false);
 
-  const { data: investorCount } = useQuery({
-    queryKey: ['listInvestorsCount', list.id],
-    queryFn: async () => {
-      const { count, error } = await supabase
-        .from('list_investors')
-        .select('*', { count: 'exact', head: true })
-        .eq('list_id', list.id);
-      
-      if (error) throw error;
-      return count || 0;
-    },
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
-  });
-
-  const handleDelete = async () => {
-    try {
-      const { error } = await supabase
-        .from('lists')
-        .delete()
-        .eq('id', list.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "List deleted successfully",
-      });
-
-      if (onDelete) {
-        onDelete();
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete list",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleCardClick = () => {
-    navigate(`/lists/${list.id}`);
-  };
-
   return (
-    <>
-      <Card 
-        className="border-gray-200 hover:shadow-md transition-shadow cursor-pointer" 
-        onClick={handleCardClick}
-      >
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">{list.name}</CardTitle>
-            <div onClick={(e) => e.stopPropagation()}>
-              <ListCardMenu
-                listName={list.name}
-                onView={() => setShowViewDialog(true)}
-                onEdit={() => setShowEditDialog(true)}
-                onDelete={handleDelete}
-              />
-            </div>
-          </div>
-          {list.description && (
-            <CardDescription className="text-muted-foreground mt-2">
-              {list.description}
-            </CardDescription>
-          )}
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>Last updated:</span>
-            <span>{formatDistanceToNow(new Date(list.created_at), { addSuffix: true })}</span>
-          </div>
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>Records:</span>
-            <span>{investorCount ?? '...'}</span>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{list.name}</DialogTitle>
-          </DialogHeader>
-          <ListInvestorsTable listId={list.id} />
-        </DialogContent>
-      </Dialog>
-
-      <ListEditDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        list={list}
-      />
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle>{list.name}</CardTitle>
+        {list.description && (
+          <CardDescription>{list.description}</CardDescription>
+        )}
+      </CardHeader>
+      <CardContent>
+        <ListCardMenu 
+          listId={list.id}
+          listName={list.name}
+          listDescription={list.description}
+          onListUpdated={onDelete || (() => {})}
+        />
+      </CardContent>
+    </Card>
   );
 }
-
-export const ListCard = memo(ListCardComponent);

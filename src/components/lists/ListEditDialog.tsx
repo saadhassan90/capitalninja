@@ -13,11 +13,12 @@ interface ListEditDialogProps {
   list: {
     id: string;
     name: string;
-    description: string;
+    description: string | null;
   };
+  onSuccess?: () => void;
 }
 
-export function ListEditDialog({ open, onOpenChange, list }: ListEditDialogProps) {
+export function ListEditDialog({ open, onOpenChange, list, onSuccess }: ListEditDialogProps) {
   const { toast } = useToast();
   const [editForm, setEditForm] = useState({
     name: list.name,
@@ -43,6 +44,7 @@ export function ListEditDialog({ open, onOpenChange, list }: ListEditDialogProps
 
       onOpenChange(false);
       window.location.reload();
+      onSuccess && onSuccess();
     } catch (error: any) {
       toast({
         title: "Error",

@@ -1,3 +1,4 @@
+
 export interface Campaign {
   id: string;
   name: string;
@@ -14,10 +15,10 @@ export interface Campaign {
   total_recipients: number | null;
   successful_sends: number | null;
   failed_sends: number | null;
-  lists: {
+  lists?: {
     name: string;
   } | null;
-  raise: {
+  raise?: {
     name: string;
     id: string;
   } | null;

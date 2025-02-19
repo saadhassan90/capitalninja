@@ -1,10 +1,8 @@
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CampaignHeader } from "@/components/campaigns/CampaignHeader";
-import { CampaignDetails } from "@/components/campaigns/CampaignDetails";
-import { CampaignInvestorsTable } from "@/components/campaigns/CampaignInvestorsTable";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import type { Campaign } from "@/types/campaign";
@@ -21,36 +19,24 @@ export default function CampaignView() {
 
       const { data, error } = await supabase
         .from('campaigns')
-        .select('*')
+        .select(`
+          *,
+          lists (
+            name
+          ),
+          raise:raise_id (
+            name,
+            id
+          )
+        `)
         .eq('id', id)
         .single();
 
       if (error) throw error;
-      setCampaign(data);
       return data as Campaign;
-    },
-    onSuccess: (data) => {
-      setCampaign(data);
     },
     enabled: !!id,
   });
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked && investorsData?.data) {
-      const allIds = investorsData.data.map(investor => investor.id.toString());
-      setSelectedInvestors(allIds);
-    } else {
-      setSelectedInvestors([]);
-    }
-  };
-
-  const handleSelectInvestor = (id: string, checked: boolean) => {
-    if (checked) {
-      setSelectedInvestors(prev => [...prev, id]);
-    } else {
-      setSelectedInvestors(prev => prev.filter(investorId => investorId !== id));
-    }
-  };
 
   if (isLoading) {
     return (
@@ -73,19 +59,9 @@ export default function CampaignView() {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <CampaignHeader campaign={campaignData} />
-      <div className="flex-1 flex flex-col md:flex-row gap-4 p-4">
-        <CampaignDetails campaign={campaignData} />
-        <div className="flex-1">
-          <CampaignInvestorsTable
-            campaign={campaignData}
-            selectedInvestors={selectedInvestors}
-            onSelectAll={handleSelectAll}
-            onSelectInvestor={handleSelectInvestor}
-          />
-        </div>
-      </div>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">{campaignData.name}</h1>
+      <pre className="whitespace-pre-wrap">{JSON.stringify(campaignData, null, 2)}</pre>
     </div>
   );
 }

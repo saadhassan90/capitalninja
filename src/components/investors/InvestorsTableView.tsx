@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -33,9 +32,9 @@ interface InvestorsTableViewProps {
   campaign?: Campaign;
 }
 
-export function InvestorsTableView({ 
-  investors, 
-  isLoading, 
+export function InvestorsTableView({
+  investors,
+  isLoading,
   onViewInvestor,
   currentPage,
   totalPages,
