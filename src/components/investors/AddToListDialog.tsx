@@ -1,14 +1,13 @@
+
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { AddToExistingList } from "./lists/AddToExistingList";
+import { CreateNewList } from "./lists/CreateNewList";
+import { useAddToList } from "./lists/useAddToList";
 
 interface AddToListDialogProps {
   open: boolean;
@@ -30,114 +29,16 @@ export function AddToListDialog({
   const [listMode, setListMode] = useState<"existing" | "new">("existing");
   const [selectedListId, setSelectedListId] = useState<string>("");
   const [newList, setNewList] = useState({ name: "", description: "" });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+  
+  const { isSubmitting, addToList } = useAddToList({ onSuccess, onOpenChange });
 
-  const { data: lists, isLoading: listsLoading } = useQuery({
-    queryKey: ["static-lists"],
-    queryFn: async () => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error("Not authenticated");
-
-      const { data, error } = await supabase
-        .from("lists")
-        .select("*")
-        .eq("type", "static")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const handleSubmit = async () => {
-    if (selectedInvestors.length === 0) {
-      toast({
-        title: "No investors selected",
-        description: "Please select at least one investor to add to a list.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      let targetListId = selectedListId;
-
-      if (listMode === "new") {
-        const { data: user } = await supabase.auth.getUser();
-        if (!user.user) throw new Error("Not authenticated");
-
-        const { data: newListData, error: createError } = await supabase
-          .from("lists")
-          .insert({
-            name: newList.name,
-            description: newList.description,
-            type: "static",
-            created_by: user.user.id
-          })
-          .select()
-          .single();
-
-        if (createError) throw createError;
-        targetListId = newListData.id;
-      }
-
-      // Filter out any invalid IDs and convert to numbers
-      const validInvestors = selectedInvestors
-        .filter(id => id !== null && id !== undefined)
-        .map(id => parseInt(id, 10))
-        .filter(id => !isNaN(id));
-
-      if (validInvestors.length === 0) {
-        throw new Error("No valid investor IDs found");
-      }
-
-      // First, fetch the UUIDs for the selected investors
-      const { data: investorContacts, error: fetchError } = await supabase
-        .from('investor_contacts')
-        .select('id')
-        .in('company_id', validInvestors);
-
-      if (fetchError) throw fetchError;
-      if (!investorContacts || investorContacts.length === 0) {
-        throw new Error("No matching investor contacts found");
-      }
-
-      // Create the list_investors records with the fetched UUIDs
-      const listInvestors = investorContacts.map(contact => ({
-        list_id: targetListId,
-        contact_id: contact.id
-      }));
-
-      console.log('Inserting list investors:', listInvestors);
-
-      const { error: insertError } = await supabase
-        .from("list_investors")
-        .insert(listInvestors);
-
-      if (insertError) {
-        console.error('Insert error:', insertError);
-        throw insertError;
-      }
-
-      toast({
-        title: "Success",
-        description: `Successfully added investors to the list`,
-      });
-
-      onSuccess?.();
-      onOpenChange(false);
-    } catch (error: any) {
-      console.error('Error adding to list:', error);
-      toast({
-        title: "Error",
-        description: error.message || `Failed to add to list`,
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleSubmit = () => {
+    addToList({
+      selectedInvestors,
+      targetListId: selectedListId,
+      isNewList: listMode === "new",
+      newList: listMode === "new" ? newList : undefined
+    });
   };
 
   return (
@@ -166,31 +67,10 @@ export function AddToListDialog({
                 </Label>
               </div>
               {listMode === "existing" && (
-                <div className="pl-6 space-y-2">
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Select a list from your existing static lists
-                  </p>
-                  {listsLoading ? (
-                    <div className="flex items-center justify-center py-4">
-                      <Loader2 className="h-6 w-6 animate-spin" />
-                    </div>
-                  ) : lists && lists.length > 0 ? (
-                    <RadioGroup
-                      value={selectedListId}
-                      onValueChange={setSelectedListId}
-                      className="flex flex-col space-y-2"
-                    >
-                      {lists.map((list) => (
-                        <div key={list.id} className="flex items-center space-x-2">
-                          <RadioGroupItem value={list.id} id={list.id} />
-                          <Label htmlFor={list.id} className="font-medium">{list.name}</Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No lists found. Create a new one!</p>
-                  )}
-                </div>
+                <AddToExistingList
+                  selectedListId={selectedListId}
+                  onSelectList={setSelectedListId}
+                />
               )}
             </div>
 
@@ -202,29 +82,10 @@ export function AddToListDialog({
                 </Label>
               </div>
               {listMode === "new" && (
-                <div className="pl-6 space-y-4">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Create a new list to add your selected investors
-                  </p>
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="font-medium">List Name</Label>
-                    <Input
-                      id="name"
-                      value={newList.name}
-                      onChange={(e) => setNewList({ ...newList, name: e.target.value })}
-                      placeholder="Enter list name"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="description" className="font-medium">Description</Label>
-                    <Textarea
-                      id="description"
-                      value={newList.description}
-                      onChange={(e) => setNewList({ ...newList, description: e.target.value })}
-                      placeholder="Enter list description"
-                    />
-                  </div>
-                </div>
+                <CreateNewList
+                  newList={newList}
+                  onChange={setNewList}
+                />
               )}
             </div>
           </RadioGroup>
