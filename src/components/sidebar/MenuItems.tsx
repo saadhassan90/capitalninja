@@ -93,22 +93,17 @@ const adminMenuItems = {
 export function useMenuItems() {
   const { user } = useAuth();
 
-  const { data: isAdmin } = useQuery({
+  const { data: isAdmin = false } = useQuery({
     queryKey: ['is-admin', user?.id],
     queryFn: async () => {
       if (!user?.id) return false;
       
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('admin_users')
           .select('is_active')
           .eq('id', user.id)
-          .single();
-        
-        if (error) {
-          console.error('Admin check error:', error);
-          return false;
-        }
+          .maybeSingle();
         
         return !!data?.is_active;
       } catch (error) {
@@ -117,8 +112,7 @@ export function useMenuItems() {
       }
     },
     enabled: !!user,
-    retry: false,
-    initialData: false
+    retry: false
   });
 
   return isAdmin ? [...menuItems, adminMenuItems] : menuItems;
