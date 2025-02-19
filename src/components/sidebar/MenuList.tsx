@@ -23,28 +23,24 @@ export function MenuList({ items: propItems }: MenuListProps) {
 
   const isActiveRoute = (href?: string): boolean => {
     if (!href) return false;
-    if (href === '/' && location.pathname === '/') return true;
-    if (href === '/') return false;
+    if (href === "/" && location.pathname === "/") return true;
+    if (href === "/") return false;
     return location.pathname.startsWith(href);
   };
 
   const sanitizeHref = (href?: string): string => {
-    // If no href provided, default to home
-    if (!href) return '/';
+    if (!href || href.trim() === "") return "/";
     
-    // Remove any leading/trailing whitespace
-    const trimmedHref = href.trim();
+    // Remove any trailing slashes (except for root path)
+    const cleanHref = href.trim().replace(/\/+$/, "") || "/";
     
-    // If empty after trim, return home
-    if (!trimmedHref) return '/';
-    
-    // Ensure single leading slash and no trailing slash (unless root)
-    const normalizedHref = trimmedHref.startsWith('/') ? trimmedHref : `/${trimmedHref}`;
-    return normalizedHref === '/' ? normalizedHref : normalizedHref.replace(/\/+$/, '');
+    // Ensure the path starts with a single slash
+    return cleanHref.startsWith("/") ? cleanHref : `/${cleanHref}`;
   };
 
   const renderMenuItem = (item: MenuItem) => {
     const href = sanitizeHref(item.href);
+    const isActive = isActiveRoute(href);
     
     return (
       <Button
@@ -52,7 +48,7 @@ export function MenuList({ items: propItems }: MenuListProps) {
         className={cn(
           "w-full justify-start transition-colors",
           "hover:bg-accent/50",
-          isActiveRoute(href) && "bg-primary text-primary-foreground hover:bg-primary/90"
+          isActive && "bg-primary text-primary-foreground hover:bg-primary/90"
         )}
         asChild
       >
