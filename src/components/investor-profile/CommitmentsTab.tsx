@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -13,10 +14,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getAssetClassStyle } from "@/utils/assetClassColors";
+import { getAssetClassStyle, mapFundTypeToAssetClass } from "@/utils/assetClassColors";
 import { formatCurrency } from "@/utils/formatters";
 import { CommitmentsTabProps } from "@/types/investor-profile";
-import { AssetClass } from "@/utils/assetClassColors";
+import { AssetClass } from "@/types/assetClass";
 
 export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
   const totalCommitments = commitments.reduce(
@@ -131,7 +132,7 @@ export function CommitmentsTab({ commitments, investor }: CommitmentsTabProps) {
                 count: investor.total_commitments_in_other_funds || 0,
               },
             ].map(({ type, count }) => {
-              const style = getAssetClassStyle(mapToAssetClass(type));
+              const style = getAssetClassStyle(mapFundTypeToAssetClass(type));
               return count > 0 ? (
                 <div key={type} className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
