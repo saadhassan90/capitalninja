@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/AuthProvider";
 
 interface ListEditDialogProps {
   open: boolean;
@@ -20,12 +22,22 @@ interface ListEditDialogProps {
 
 export function ListEditDialog({ open, onOpenChange, list, onSuccess }: ListEditDialogProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [editForm, setEditForm] = useState({
     name: list.name,
     description: list.description || "",
   });
 
   const handleEdit = async () => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to edit lists",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('lists')
@@ -33,7 +45,8 @@ export function ListEditDialog({ open, onOpenChange, list, onSuccess }: ListEdit
           name: editForm.name,
           description: editForm.description,
         })
-        .eq('id', list.id);
+        .eq('id', list.id)
+        .eq('created_by', user.id); // Ensure user owns the list
 
       if (error) throw error;
 
@@ -43,8 +56,7 @@ export function ListEditDialog({ open, onOpenChange, list, onSuccess }: ListEdit
       });
 
       onOpenChange(false);
-      window.location.reload();
-      onSuccess && onSuccess();
+      onSuccess?.();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -82,7 +94,7 @@ export function ListEditDialog({ open, onOpenChange, list, onSuccess }: ListEdit
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleEdit} disabled={!editForm.name}>
+          <Button onClick={handleEdit} disabled={!editForm.name || !user}>
             Save changes
           </Button>
         </DialogFooter>

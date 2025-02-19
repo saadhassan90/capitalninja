@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,10 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
   });
 
   const handleCreate = () => {
-    if (!user) return;
+    if (!user) {
+      toast.error("You must be logged in to create a list");
+      return;
+    }
     
     const listData = {
       name: newList.name,
@@ -74,7 +78,7 @@ export function CreateListDialog({ open, onOpenChange, onCreateList }: CreateLis
           </Button>
           <Button 
             onClick={handleCreate} 
-            disabled={!newList.name}
+            disabled={!newList.name || !user}
             className="bg-black hover:bg-black/80"
           >
             Create List
