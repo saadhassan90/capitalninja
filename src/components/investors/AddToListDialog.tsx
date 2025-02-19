@@ -53,8 +53,8 @@ export function AddToListDialog({
   const handleSubmit = async () => {
     if (selectedInvestors.length === 0) {
       toast({
-        title: "No investors selected",
-        description: "Please select at least one investor to add to a list.",
+        title: "No items selected",
+        description: "Please select at least one contact or company to add to a list.",
         variant: "destructive",
       });
       return;
@@ -79,48 +79,40 @@ export function AddToListDialog({
         targetListId = newListData.id;
       }
 
-      // First, get existing investors in the target list
-      const { data: existingInvestors } = await supabase
-        .from("list_investors")
-        .select("investor_id")
-        .eq("list_id", targetListId);
+      for (const id of selectedInvestors) {
+        if (typeof id === 'number') {
+          const { data: contacts, error: contactsError } = await supabase
+            .rpc('get_company_contacts', { company_id: id });
+          
+          if (contactsError) throw contactsError;
+          
+          if (contacts && contacts.length > 0) {
+            const listContacts = contacts.map(contact => ({
+              list_id: targetListId,
+              contact_id: contact.contact_id,
+            }));
 
-      // Filter out investors that are already in the list
-      const existingIds = new Set((existingInvestors || []).map(i => i.investor_id));
-      const newInvestors = selectedInvestors.filter(id => !existingIds.has(id));
+            const { error: insertError } = await supabase
+              .from("list_investors")
+              .insert(listContacts);
 
-      if (newInvestors.length > 0) {
-        const listInvestors = newInvestors.map(investorId => ({
-          list_id: targetListId,
-          investor_id: investorId,
-        }));
+            if (insertError) throw insertError;
+          }
+        } else {
+          const { error: insertError } = await supabase
+            .from("list_investors")
+            .insert({
+              list_id: targetListId,
+              contact_id: id,
+            });
 
-        const { error: insertError } = await supabase
-          .from("list_investors")
-          .insert(listInvestors);
-
-        if (insertError) throw insertError;
+          if (insertError) throw insertError;
+        }
       }
 
-      // If this is a move operation, delete from the source list
-      if (mode === "move" && sourceListId) {
-        const { error: deleteError } = await supabase
-          .from("list_investors")
-          .delete()
-          .eq("list_id", sourceListId)
-          .in("investor_id", selectedInvestors);
-
-        if (deleteError) throw deleteError;
-      }
-
-      const skippedCount = selectedInvestors.length - newInvestors.length;
-      const actionWord = mode === "move" ? "Moved" : "Copied";
-      
       toast({
         title: "Success",
-        description: `${actionWord} ${newInvestors.length} investor${newInvestors.length === 1 ? "" : "s"} to the list.${
-          skippedCount > 0 ? ` (${skippedCount} already in list)` : ""
-        }`,
+        description: `Successfully added contacts to the list`,
       });
 
       onSuccess?.();
@@ -128,7 +120,7 @@ export function AddToListDialog({
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || `Failed to ${mode} investors to list`,
+        description: error.message || `Failed to add to list`,
         variant: "destructive",
       });
     } finally {
