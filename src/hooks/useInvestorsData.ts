@@ -77,9 +77,9 @@ export function useInvestorsData({
         }
       }
 
-      // Apply sorting - Fixed by separating orderBy column and direction
+      // Fixed order syntax for foreign key relationships
       if (sortConfig.column === 'limited_partner_name') {
-        query = query.order('limited_partners.limited_partner_name', { ascending: sortConfig.direction === 'asc' });
+        query = query.order('limited_partners(limited_partner_name)', { ascending: sortConfig.direction === 'asc' });
       } else {
         query = query.order(sortConfig.column, { ascending: sortConfig.direction === 'asc' });
       }
