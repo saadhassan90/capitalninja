@@ -51,7 +51,7 @@ export function BulkActions({
       <AddToListDialog
         open={showAddToListDialog}
         onOpenChange={setShowAddToListDialog}
-        selectedInvestors={selectedInvestors}
+        selectedInvestors={selectedInvestors.map(id => parseInt(id))}
         listId={listId}
         onSuccess={() => {
           setShowAddToListDialog(false);

@@ -114,10 +114,19 @@ export function InvestorsTableView({
                 investors.map((investor) => (
                   <InvestorsTableRow 
                     key={investor.id}
-                    investor={investor}
-                    onViewInvestor={handleViewInvestor}
+                    investor={{
+                      id: investor.company_id,
+                      limited_partner_name: investor.company_name,
+                      limited_partner_type: investor.companyType || '',
+                      aum: investor.companyAUM || 0,
+                      hqlocation: investor.location || '',
+                      preferred_fund_type: investor.assetClasses.join(', '),
+                      primary_contact: `${investor.first_name} ${investor.last_name}`,
+                      primary_contact_title: investor.title || ''
+                    }}
+                    onViewInvestor={onViewInvestor}
                     selected={selectedInvestors.includes(investor.id)}
-                    onSelect={onSelectInvestor}
+                    onSelect={(id, checked) => onSelectInvestor(id.toString(), checked)}
                     listId={listId}
                     campaign={campaign}
                   />

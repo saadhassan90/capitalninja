@@ -1,8 +1,6 @@
-import { BulkActions } from "@/components/investors/BulkActions";
-import type { QueryObserverResult } from "@tanstack/react-query";
 
 interface ListHeaderProps {
-  selectedInvestors: number[];
+  selectedInvestors: string[];
   totalInvestors: number;
   listId: string;
   onClearSelection: () => void;

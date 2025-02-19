@@ -21,7 +21,7 @@ export default function CampaignView() {
         .from('campaigns')
         .select(`
           *,
-          lists (
+          lists:list_id (
             name
           ),
           raise:raise_id (
@@ -33,7 +33,15 @@ export default function CampaignView() {
         .single();
 
       if (error) throw error;
-      return data as Campaign;
+      
+      // Ensure correct typing of lists property
+      const typedData: Campaign = {
+        ...data,
+        lists: data.lists as { name: string } | null,
+        raise: data.raise as { name: string, id: string } | null
+      };
+
+      return typedData;
     },
     enabled: !!id,
   });

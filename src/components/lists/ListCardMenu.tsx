@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -108,9 +107,7 @@ export function ListCardMenu({
       <ListEditDialog
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
-        listId={listId}
-        currentName={listName}
-        currentDescription={listDescription}
+        list={{ id: listId, name: listName, description: listDescription }}
         onSuccess={() => {
           onListUpdated();
           setShowEditDialog(false);

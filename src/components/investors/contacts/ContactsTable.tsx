@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -54,7 +53,7 @@ export function ContactsTable({
       {selectedContacts.length > 0 && (
         <BulkActions
           selectedCount={selectedContacts.length}
-          selectedInvestors={selectedContacts.map(id => parseInt(id))}
+          selectedInvestors={selectedContacts}
           onClearSelection={() => onSelectAll(false)}
           listId=""
         />
