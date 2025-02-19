@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -83,17 +84,28 @@ export function AddToListDialog({
         targetListId = newListData.id;
       }
 
-      const validInvestors = selectedInvestors
-        .filter(id => id !== null && id !== undefined)
-        .map(id => String(id));
+      // Filter out any invalid IDs
+      const validInvestors = selectedInvestors.filter(id => id !== null && id !== undefined);
 
       if (validInvestors.length === 0) {
         throw new Error("No valid investor IDs found");
       }
 
-      const listInvestors = validInvestors.map(contactId => ({
+      // First, fetch the UUIDs for the selected investors
+      const { data: investorContacts, error: fetchError } = await supabase
+        .from('investor_contacts')
+        .select('id')
+        .in('company_id', validInvestors);
+
+      if (fetchError) throw fetchError;
+      if (!investorContacts || investorContacts.length === 0) {
+        throw new Error("No matching investor contacts found");
+      }
+
+      // Create the list_investors records with the fetched UUIDs
+      const listInvestors = investorContacts.map(contact => ({
         list_id: targetListId,
-        contact_id: contactId
+        contact_id: contact.id
       }));
 
       console.log('Inserting list investors:', listInvestors);
