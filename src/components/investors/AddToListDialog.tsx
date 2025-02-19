@@ -80,7 +80,22 @@ export function AddToListDialog({
         targetListId = newListData.id;
       }
 
-      const listInvestors = selectedInvestors.map(contactId => ({
+      // Filter out any invalid UUIDs
+      const validInvestors = selectedInvestors.filter(id => {
+        try {
+          // Simple UUID validation
+          return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+        } catch (e) {
+          console.warn('Invalid UUID found:', id);
+          return false;
+        }
+      });
+
+      if (validInvestors.length === 0) {
+        throw new Error("No valid investor IDs found");
+      }
+
+      const listInvestors = validInvestors.map(contactId => ({
         list_id: targetListId,
         contact_id: contactId,
       }));

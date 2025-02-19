@@ -9,7 +9,6 @@ import type { Campaign } from "@/types/campaign";
 
 export default function CampaignView() {
   const { id } = useParams();
-  const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [selectedInvestors, setSelectedInvestors] = useState<string[]>([]);
 
   const { data: campaignData, isLoading, error } = useQuery({
@@ -35,7 +34,10 @@ export default function CampaignView() {
           total_recipients,
           successful_sends,
           failed_sends,
-          list:list_id (
+          sourceList:source_list_id (
+            name
+          ),
+          targetList:list_id (
             name
           ),
           raise:raise_id (
@@ -48,11 +50,11 @@ export default function CampaignView() {
 
       if (error) throw error;
       
-      // Ensure correct typing of lists property
+      // Ensure correct typing
       const typedData: Campaign = {
         ...data,
-        lists: data.list ? { name: data.list.name } : null,
-        raise: data.raise,
+        lists: data.targetList ? { name: data.targetList.name } : null,
+        raise: data.raise
       };
 
       return typedData;

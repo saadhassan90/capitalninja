@@ -61,9 +61,13 @@ export function useListInvestors({ listId, currentPage, sortConfig }: UseListInv
             limited_partner_type,
             aum,
             preferred_fund_type,
+            preferred_commitment_size_min,
+            preferred_commitment_size_max,
+            preferred_geography,
             hqlocation,
             description,
-            preferred_geography
+            total_commitments_in_pefunds,
+            direct_investments
           )
         `)
         .in('id', contactIds)
@@ -95,7 +99,13 @@ export function useListInvestors({ listId, currentPage, sortConfig }: UseListInv
           contact.limited_partners.preferred_fund_type.split(',').map(s => s.trim()) : [],
         location: contact.limited_partners.hqlocation,
         companyDescription: contact.limited_partners.description,
-        strategy: contact.limited_partners.preferred_geography || null
+        strategy: contact.limited_partners.preferred_geography || null,
+        // Add the missing properties
+        minInvestmentSize: contact.limited_partners.preferred_commitment_size_min,
+        maxInvestmentSize: contact.limited_partners.preferred_commitment_size_max,
+        geographicFocus: contact.limited_partners.preferred_geography,
+        totalFundCommitments: contact.limited_partners.total_commitments_in_pefunds,
+        totalDirectInvestments: contact.limited_partners.direct_investments
       })) || [];
 
       console.log('Successfully fetched contacts:', transformedData.length);
