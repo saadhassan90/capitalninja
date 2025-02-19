@@ -36,7 +36,7 @@ export default function CampaignView() {
           total_recipients,
           successful_sends,
           failed_sends,
-          lists:list_id (
+          target_list:list_id (
             name
           ),
           raise:raise_id (
@@ -57,7 +57,7 @@ export default function CampaignView() {
       // Transform the data to match the Campaign type
       const transformedData: Campaign = {
         ...data,
-        lists: data?.lists ? { name: data.lists.name } : null,
+        lists: data?.target_list ? { name: data.target_list.name } : null,
         raise: data?.raise || null
       };
 
