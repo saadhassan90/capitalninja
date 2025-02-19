@@ -17,9 +17,11 @@ import {
 } from "@/components/ui/breadcrumb";
 import { toast } from "sonner";
 import { useAuth } from "@/components/AuthProvider";
+import { ContactViewDialog } from "@/components/investors/contacts/ContactViewDialog";
 
 const Investors = () => {
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+  const [selectedContact, setSelectedContact] = useState<InvestorContact | null>(null);
   const { user } = useAuth();
   
   const { data: contacts = [], isLoading: isLoadingContacts } = useQuery({
@@ -97,6 +99,13 @@ const Investors = () => {
     }
   };
 
+  const handleViewContact = (id: string) => {
+    const contact = contacts.find(c => c.id === id);
+    if (contact) {
+      setSelectedContact(contact);
+    }
+  };
+
   return (
     <div className="flex-1 space-y-6 p-8">
       <Breadcrumb>
@@ -141,7 +150,7 @@ const Investors = () => {
             selectedContacts={selectedContacts}
             onSelectContact={handleSelectContact}
             onSelectAll={handleSelectAllContacts}
-            onViewContact={(id) => console.log('View contact:', id)}
+            onViewContact={handleViewContact}
           />
         </TabsContent>
         
@@ -149,6 +158,12 @@ const Investors = () => {
           <InvestorsTable />
         </TabsContent>
       </Tabs>
+
+      <ContactViewDialog
+        contact={selectedContact}
+        open={!!selectedContact}
+        onOpenChange={(open) => !open && setSelectedContact(null)}
+      />
     </div>
   );
 }
