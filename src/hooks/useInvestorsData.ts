@@ -2,8 +2,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { InvestorContact } from "@/types/investor-contact";
-import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 import type { SortConfig } from "@/types/sorting";
+import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
 interface UseInvestorsDataParams {
   searchTerm: string;
@@ -14,7 +14,7 @@ interface UseInvestorsDataParams {
   selectedAUMRange: AUMRange;
   currentPage: number;
   sortConfig: SortConfig;
-  onError?: (error: Error) => void;
+  onError?: (error: any) => void;
 }
 
 export function useInvestorsData({
@@ -26,21 +26,12 @@ export function useInvestorsData({
   selectedAUMRange,
   currentPage,
   sortConfig,
-  onError,
+  onError
 }: UseInvestorsDataParams) {
   return useQuery({
-    queryKey: ['investors', {
-      searchTerm,
-      selectedType,
-      selectedLocation,
-      selectedAssetClass,
-      selectedFirstTimeFunds,
-      selectedAUMRange,
-      currentPage,
-      sortConfig
-    }],
+    queryKey: ['investors', searchTerm, selectedType, selectedLocation, selectedAssetClass, selectedFirstTimeFunds, selectedAUMRange, currentPage, sortConfig],
     queryFn: async () => {
-      const { data, error, count } = await supabase
+      let query = supabase
         .from('investor_contacts')
         .select(`
           *,
@@ -50,15 +41,60 @@ export function useInvestorsData({
             limited_partner_type,
             aum,
             preferred_fund_type,
+            preferred_commitment_size_min,
+            preferred_commitment_size_max,
+            preferred_geography,
             hqlocation,
             description,
-            preferred_geography
+            total_commitments_in_pefunds,
+            direct_investments
           )
         `, { count: 'exact' });
 
-      if (error) throw error;
+      // Apply filters
+      if (searchTerm) {
+        query = query.ilike('limited_partners.limited_partner_name', `%${searchTerm}%`);
+      }
 
-      const transformedData: InvestorContact[] = (data || []).map(contact => ({
+      if (selectedType) {
+        query = query.eq('limited_partners.limited_partner_type', selectedType);
+      }
+
+      if (selectedLocation) {
+        query = query.ilike('limited_partners.hqlocation', `%${selectedLocation}%`);
+      }
+
+      if (selectedAssetClass) {
+        query = query.ilike('limited_partners.preferred_fund_type', `%${selectedAssetClass}%`);
+      }
+
+      if (selectedAUMRange) {
+        if (selectedAUMRange.min) {
+          query = query.gte('limited_partners.aum', selectedAUMRange.min);
+        }
+        if (selectedAUMRange.max) {
+          query = query.lte('limited_partners.aum', selectedAUMRange.max);
+        }
+      }
+
+      // Apply sorting
+      const sortColumn = sortConfig.column === 'limited_partner_name' ? 
+        'limited_partners.limited_partner_name' : sortConfig.column;
+      query = query.order(sortColumn, { ascending: sortConfig.direction === 'asc' });
+
+      // Apply pagination
+      query = query.range((currentPage - 1) * 200, currentPage * 200 - 1);
+
+      const { data: contacts, error, count } = await query;
+
+      if (error) {
+        console.error('Error fetching investors:', error);
+        if (onError) onError(error);
+        throw error;
+      }
+
+      // Transform the data to match InvestorContact type
+      const transformedData: InvestorContact[] = contacts?.map(contact => ({
         id: contact.id,
         first_name: contact.first_name,
         last_name: contact.last_name,
@@ -78,12 +114,18 @@ export function useInvestorsData({
           contact.limited_partners.preferred_fund_type.split(',').map(s => s.trim()) : [],
         location: contact.limited_partners.hqlocation,
         companyDescription: contact.limited_partners.description,
-        strategy: contact.limited_partners.preferred_geography
-      }));
+        strategy: contact.limited_partners.preferred_geography || null,
+        minInvestmentSize: contact.limited_partners.preferred_commitment_size_min,
+        maxInvestmentSize: contact.limited_partners.preferred_commitment_size_max,
+        geographicFocus: contact.limited_partners.preferred_geography,
+        totalFundCommitments: contact.limited_partners.total_commitments_in_pefunds,
+        totalDirectInvestments: contact.limited_partners.direct_investments
+      })) || [];
 
-      return { data: transformedData, count };
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 30, // 30 minutes
+      return {
+        data: transformedData,
+        count: count || 0
+      };
+    }
   });
 }

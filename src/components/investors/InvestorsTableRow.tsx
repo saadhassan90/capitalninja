@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -27,58 +28,6 @@ export function InvestorsTableRow({
 }: InvestorsTableRowProps) {
   const [showDraftDialog, setShowDraftDialog] = useState(false);
 
-  const renderFundTypes = (fundTypes: string | null) => {
-    if (!fundTypes) return 'N/A';
-    
-    const mapFundTypeToAssetClass = (type: string) => {
-      type = type.toLowerCase().trim();
-      
-      if (type.includes('buyout')) return 'buyout';
-      if (type.includes('growth') || type.includes('expansion')) return 'growth';
-      if (type.includes('real estate')) return 'realEstate';
-      if (type.includes('early stage') || type.includes('seed')) return 'earlyStage';
-      if (type.includes('late stage')) return 'lateStage';
-      if (type.includes('venture') || type.includes('vc')) return 'venture';
-      if (type.includes('energy')) return 'energy';
-      if (type.includes('infrastructure')) return 'infrastructure';
-      if (type.includes('secondaries')) return 'secondaries';
-      if (type.includes('fund of funds') || type.includes('fof')) return 'fundOfFunds';
-      if (type.includes('distressed')) return 'distressed';
-      if (type.includes('mezzanine')) return 'mezzanine';
-      if (type.includes('credit') || type.includes('debt')) return 'privateCredit';
-      if (type.includes('private equity') || type.includes('pe')) return 'privateEquity';
-      
-      return 'other';
-    };
-    
-    return fundTypes.split(',').map((type, index) => {
-      const assetClass = mapFundTypeToAssetClass(type);
-      const style = getAssetClassStyle(assetClass);
-      
-      return (
-        <span
-          key={index}
-          className="inline-block mr-1 mb-1 px-2 py-0.5 rounded text-xs"
-          style={style}
-        >
-          {type.trim()}
-        </span>
-      );
-    });
-  };
-
-  const renderPrimaryContact = () => {
-    if (!investor.primary_contact) return 'N/A';
-    return (
-      <div>
-        <div>{investor.primary_contact}</div>
-        {investor.primary_contact_title && (
-          <div className="text-xs text-gray-500">{investor.primary_contact_title}</div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <TableRow>
       <TableCell>
@@ -92,8 +41,30 @@ export function InvestorsTableRow({
       <TableCell className="text-sm">{investor.limited_partner_type || 'N/A'}</TableCell>
       <TableCell className="text-sm">{investor.aum ? `${(investor.aum / 1e6).toFixed(0)}` : 'N/A'}</TableCell>
       <TableCell className="text-sm">{investor.hqlocation || 'N/A'}</TableCell>
-      <TableCell className="flex flex-wrap gap-1">{renderFundTypes(investor.preferred_fund_type)}</TableCell>
-      <TableCell className="text-sm">{renderPrimaryContact()}</TableCell>
+      <TableCell className="flex flex-wrap gap-1">
+        {investor.preferred_fund_type?.split(',').map((type, index) => {
+          const style = getAssetClassStyle(type.toLowerCase().trim());
+          return (
+            <span
+              key={index}
+              className="inline-block mr-1 mb-1 px-2 py-0.5 rounded text-xs"
+              style={style}
+            >
+              {type.trim()}
+            </span>
+          );
+        })}
+      </TableCell>
+      <TableCell className="text-sm">
+        {investor.primary_contact && (
+          <div>
+            <div>{investor.primary_contact}</div>
+            {investor.primary_contact_title && (
+              <div className="text-xs text-gray-500">{investor.primary_contact_title}</div>
+            )}
+          </div>
+        )}
+      </TableCell>
       <TableCell>
         <div className="flex gap-2">
           <Button
@@ -102,7 +73,7 @@ export function InvestorsTableRow({
             onClick={() => onViewInvestor(investor.id)}
             className="transition-colors hover:bg-black hover:text-white"
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-4 w-4 mr-1" />
             View
           </Button>
           {campaign && (
@@ -112,7 +83,7 @@ export function InvestorsTableRow({
               onClick={() => setShowDraftDialog(true)}
               className="transition-colors hover:bg-black hover:text-white"
             >
-              <FileEdit className="h-4 w-4" />
+              <FileEdit className="h-4 w-4 mr-1" />
               Personalize Email
             </Button>
           )}
