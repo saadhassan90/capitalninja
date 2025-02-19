@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -83,15 +84,7 @@ export function AddToListDialog({
         targetListId = newListData.id;
       }
 
-      // Filter out any invalid UUIDs
-      const validInvestors = selectedInvestors.filter(id => {
-        try {
-          return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-        } catch (e) {
-          console.warn('Invalid UUID found:', id);
-          return false;
-        }
-      });
+      const validInvestors = selectedInvestors.filter(id => id !== null && id !== undefined);
 
       if (validInvestors.length === 0) {
         throw new Error("No valid investor IDs found");
