@@ -17,6 +17,7 @@ import CampaignView from "@/pages/CampaignView";
 import Raise from "@/pages/Raise";
 import Emails from "@/pages/Emails";
 import AddEmail from "@/pages/AddEmail";
+import Lists from "@/pages/Lists";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminUsers from "@/pages/admin/Users";
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "investors",
         element: <Investors />,
+      },
+      {
+        path: "lists",
+        element: <Lists />,
       },
       {
         path: "settings",
