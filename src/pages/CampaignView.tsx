@@ -20,8 +20,22 @@ export default function CampaignView() {
       const { data, error } = await supabase
         .from('campaigns')
         .select(`
-          *,
-          lists:list_id!inner (
+          id,
+          name,
+          subject,
+          content,
+          status,
+          list_id,
+          source_list_id,
+          scheduled_for,
+          created_by,
+          created_at,
+          updated_at,
+          sent_at,
+          total_recipients,
+          successful_sends,
+          failed_sends,
+          list:list_id (
             name
           ),
           raise:raise_id (
@@ -37,8 +51,8 @@ export default function CampaignView() {
       // Ensure correct typing of lists property
       const typedData: Campaign = {
         ...data,
-        lists: data.lists as { name: string } | null,
-        raise: data.raise as { name: string, id: string } | null
+        lists: data.list ? { name: data.list.name } : null,
+        raise: data.raise,
       };
 
       return typedData;
