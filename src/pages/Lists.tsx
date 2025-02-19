@@ -28,6 +28,11 @@ interface List {
   created_by: string;
 }
 
+interface ListInvestorJoin {
+  contact_id: string;
+  investor_contacts: InvestorContact;
+}
+
 export default function Lists() {
   const [showNewListDialog, setShowNewListDialog] = useState(false);
   const [name, setName] = useState("");
@@ -74,7 +79,10 @@ export default function Lists() {
         .eq("list_id", selectedListId);
 
       if (error) throw error;
-      return data.map(item => item.investor_contacts) as InvestorContact[];
+      
+      // Safely type and transform the data
+      const typedData = data as ListInvestorJoin[];
+      return typedData.map(item => item.investor_contacts).filter(Boolean);
     },
     enabled: !!selectedListId
   });
