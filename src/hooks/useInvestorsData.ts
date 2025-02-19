@@ -69,10 +69,10 @@ export function useInvestorsData({
       }
 
       if (selectedAUMRange) {
-        if (selectedAUMRange.min) {
+        if (selectedAUMRange.min !== null) {
           query = query.gte('limited_partners.aum', selectedAUMRange.min);
         }
-        if (selectedAUMRange.max) {
+        if (selectedAUMRange.max !== null) {
           query = query.lte('limited_partners.aum', selectedAUMRange.max);
         }
       }

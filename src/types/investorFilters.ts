@@ -1,8 +1,12 @@
-export type InvestorFilterType = string | ((type: string) => boolean) | null;
-export type AUMRange = [number, number] | null;
+
+export type InvestorFilterType = string | null;
+export type AUMRange = {
+  min: number | null;
+  max: number | null;
+} | null;
 
 export interface ListFilters {
-  type: string | null;  // Serialized version for storage
+  type: string | null;
   location: string | null;
   assetClass: string | null;
   firstTimeFunds: string | null;

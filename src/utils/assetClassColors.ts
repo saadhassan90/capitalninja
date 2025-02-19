@@ -1,3 +1,6 @@
+
+import { type AssetClass } from "@/types/assetClass";
+
 // Main asset class colors with a broader palette
 const mainColors = {
   privateEquity: '#1B4965',    // Deep Blue
@@ -15,21 +18,7 @@ const mainColors = {
   distressed: '#EF4444',      // Red
   mezzanine: '#10B981',       // Emerald
   other: '#6C757D',          // Neutral Gray
-};
-
-// Generate lighter shades for sub-asset classes
-const generateLighterShade = (hex: string, percent: number) => {
-  const num = parseInt(hex.replace('#', ''), 16);
-  const amt = Math.round(2.55 * percent);
-  const R = (num >> 16) + amt;
-  const G = (num >> 8 & 0x00FF) + amt;
-  const B = (num & 0x0000FF) + amt;
-  return '#' + (
-    0x1000000 +
-    (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
-    (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
-    (B < 255 ? (B < 1 ? 0 : B) : 255)
-  ).toString(16).slice(1);
+  debtFunds: '#5FA777',      // Forest Green
 };
 
 export const assetClassColors = {
@@ -94,15 +83,16 @@ export const assetClassColors = {
     text: 'white'
   },
   debtFunds: {
-    bg: mainColors.privateCredit,
+    bg: mainColors.debtFunds,
     text: 'white'
   }
 };
 
-export type AssetClass = keyof typeof assetClassColors;
+export type AssetClassType = keyof typeof assetClassColors;
 
-export const getAssetClassStyle = (assetClass: AssetClass) => {
-  const colors = assetClassColors[assetClass] || assetClassColors.other;
+export const getAssetClassStyle = (type: string) => {
+  const normalizedType = type.toLowerCase().trim() as AssetClassType;
+  const colors = assetClassColors[normalizedType] || assetClassColors.other;
   return {
     backgroundColor: colors.bg,
     color: colors.text,
@@ -113,24 +103,23 @@ export const getAssetClassStyle = (assetClass: AssetClass) => {
   };
 };
 
-// Helper function to map fund types to their appropriate asset class
-export const mapFundTypeToAssetClass = (type: string): AssetClass => {
-  type = type.toLowerCase().trim();
+export const mapFundTypeToAssetClass = (type: string): AssetClassType => {
+  const normalizedType = type.toLowerCase().trim();
   
-  if (type.includes('buyout')) return 'buyout';
-  if (type.includes('growth') || type.includes('expansion')) return 'growth';
-  if (type.includes('real estate')) return 'realEstate';
-  if (type.includes('early stage') || type.includes('seed')) return 'earlyStage';
-  if (type.includes('late stage')) return 'lateStage';
-  if (type.includes('venture') || type.includes('vc')) return 'venture';
-  if (type.includes('energy')) return 'energy';
-  if (type.includes('infrastructure')) return 'infrastructure';
-  if (type.includes('secondaries')) return 'secondaries';
-  if (type.includes('fund of funds') || type.includes('fof')) return 'fundOfFunds';
-  if (type.includes('distressed')) return 'distressed';
-  if (type.includes('mezzanine')) return 'mezzanine';
-  if (type.includes('credit') || type.includes('debt')) return 'debtFunds';
-  if (type.includes('private equity') || type.includes('pe')) return 'privateEquity';
+  if (normalizedType.includes('buyout')) return 'buyout';
+  if (normalizedType.includes('growth') || normalizedType.includes('expansion')) return 'growth';
+  if (normalizedType.includes('real estate')) return 'realEstate';
+  if (normalizedType.includes('early stage') || normalizedType.includes('seed')) return 'earlyStage';
+  if (normalizedType.includes('late stage')) return 'lateStage';
+  if (normalizedType.includes('venture') || normalizedType.includes('vc')) return 'venture';
+  if (normalizedType.includes('energy')) return 'energy';
+  if (normalizedType.includes('infrastructure')) return 'infrastructure';
+  if (normalizedType.includes('secondaries')) return 'secondaries';
+  if (normalizedType.includes('fund of funds') || normalizedType.includes('fof')) return 'fundOfFunds';
+  if (normalizedType.includes('distressed')) return 'distressed';
+  if (normalizedType.includes('mezzanine')) return 'mezzanine';
+  if (normalizedType.includes('credit') || normalizedType.includes('debt')) return 'debtFunds';
+  if (normalizedType.includes('private equity') || normalizedType.includes('pe')) return 'privateEquity';
   
   return 'other';
 };

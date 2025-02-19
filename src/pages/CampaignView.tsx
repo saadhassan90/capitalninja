@@ -19,25 +19,8 @@ export default function CampaignView() {
       const { data, error } = await supabase
         .from('campaigns')
         .select(`
-          id,
-          name,
-          subject,
-          content,
-          status,
-          list_id,
-          source_list_id,
-          scheduled_for,
-          created_by,
-          created_at,
-          updated_at,
-          sent_at,
-          total_recipients,
-          successful_sends,
-          failed_sends,
-          sourceList:source_list_id (
-            name
-          ),
-          targetList:list_id (
+          *,
+          lists:list_id (
             name
           ),
           raise:raise_id (
@@ -49,15 +32,7 @@ export default function CampaignView() {
         .single();
 
       if (error) throw error;
-      
-      // Ensure correct typing
-      const typedData: Campaign = {
-        ...data,
-        lists: data.targetList ? { name: data.targetList.name } : null,
-        raise: data.raise
-      };
-
-      return typedData;
+      return data as Campaign;
     },
     enabled: !!id,
   });
