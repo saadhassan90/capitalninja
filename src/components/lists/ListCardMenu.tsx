@@ -1,10 +1,17 @@
-import { MoreHorizontal } from "lucide-react";
+
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ListEditDialog } from "./ListEditDialog";
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,134 +21,123 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 interface ListCardMenuProps {
+  listId: string;
   listName: string;
-  onView: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
+  listDescription: string | null;
+  onListUpdated: () => void;
 }
 
-export function ListCardMenu({ listName, onView, onEdit, onDelete }: ListCardMenuProps) {
-  const handleClone = async () => {
+export function ListCardMenu({ 
+  listId, 
+  listName, 
+  listDescription, 
+  onListUpdated 
+}: ListCardMenuProps) {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
     try {
-      // First, get all lists to check for existing names
-      const { data: existingLists } = await supabase
-        .from('lists')
-        .select('name');
+      setIsDeleting(true);
 
-      // Find the highest number suffix for this list name
-      const baseNameRegex = new RegExp(`^${listName}( \\(\\d+\\))?$`);
-      const matchingNames = existingLists
-        ?.filter(list => baseNameRegex.test(list.name))
-        .map(list => list.name) || [];
-
-      let newName = listName;
-      if (matchingNames.length > 0) {
-        // Extract numbers from existing names and find the highest
-        const numbers = matchingNames
-          .map(name => {
-            const match = name.match(/\((\d+)\)$/);
-            return match ? parseInt(match[1]) : 0;
-          });
-        const highestNumber = Math.max(...numbers, 0);
-        newName = `${listName} (${highestNumber + 1})`;
-      }
-
-      // Get the original list data
-      const { data: originalList } = await supabase
-        .from('lists')
-        .select('id, description, created_by')
-        .eq('name', listName)
-        .single();
-
-      if (!originalList) throw new Error('Original list not found');
-
-      // Create the new list
-      const { data: newList, error: createError } = await supabase
-        .from('lists')
-        .insert({
-          name: newName,
-          description: originalList.description,
-          created_by: originalList.created_by,
-        })
-        .select()
-        .single();
-
-      if (createError) throw createError;
-
-      // Get all investors from the original list
-      const { data: listInvestors } = await supabase
+      // First delete all list investors
+      const { error: deleteInvestorsError } = await supabase
         .from('list_investors')
-        .select('investor_id')
-        .eq('list_id', originalList.id);
+        .delete()
+        .eq('list_id', listId);
 
-      if (listInvestors && listInvestors.length > 0 && newList) {
-        // Clone the list_investors relationships
-        const newListInvestors = listInvestors.map(li => ({
-          list_id: newList.id,
-          investor_id: li.investor_id,
-        }));
+      if (deleteInvestorsError) throw deleteInvestorsError;
 
-        const { error: investorsError } = await supabase
-          .from('list_investors')
-          .insert(newListInvestors);
+      // Then delete the list itself
+      const { error: deleteListError } = await supabase
+        .from('lists')
+        .delete()
+        .eq('id', listId);
 
-        if (investorsError) throw investorsError;
-      }
+      if (deleteListError) throw deleteListError;
 
-      toast.success('List cloned successfully');
-      // Trigger a refresh of the lists
-      window.location.reload();
+      toast({
+        title: "Success",
+        description: "List deleted successfully",
+      });
+
+      onListUpdated();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to clone list');
+      console.error('Error deleting list:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete list",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
     }
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={onView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleClone}>Clone</DropdownMenuItem>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <DropdownMenuItem
-              className="text-red-600 focus:text-red-600"
-              onSelect={(e) => {
-                e.preventDefault();
-              }}
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => navigate(`/lists/${listId}`)}>
+            View List
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+            Edit List
+          </DropdownMenuItem>
+          <DropdownMenuItem 
+            className="text-destructive"
+            onClick={() => setShowDeleteDialog(true)}
+          >
+            Delete List
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <ListEditDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        listId={listId}
+        currentName={listName}
+        currentDescription={listDescription}
+        onSuccess={() => {
+          onListUpdated();
+          setShowEditDialog(false);
+        }}
+      />
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the list and remove all investors from it.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive hover:bg-destructive/90"
+              disabled={isDeleting}
             >
-              Delete
-            </DropdownMenuItem>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the list "{listName}"
-                and remove all investors from it.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={onDelete}>
-                Delete List
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </DropdownMenuContent>
-    </DropdownMenu>
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

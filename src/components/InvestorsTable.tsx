@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useInvestorsData } from "@/hooks/useInvestorsData";
 import { InvestorProfile } from "./InvestorProfile";
@@ -7,6 +8,7 @@ import { BulkActions } from "./investors/BulkActions";
 import { useToast } from "@/hooks/use-toast";
 import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 import type { SortConfig } from "@/types/sorting";
+import type { InvestorContact } from "@/types/investor-contact";
 
 export function InvestorsTable({ listId }: { listId?: string }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,7 +18,7 @@ export function InvestorsTable({ listId }: { listId?: string }) {
   const [selectedFirstTimeFunds, setSelectedFirstTimeFunds] = useState<InvestorFilterType>(null);
   const [selectedAUMRange, setSelectedAUMRange] = useState<AUMRange>(null);
   const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
-  const [selectedInvestors, setSelectedInvestors] = useState<number[]>([]);
+  const [selectedInvestors, setSelectedInvestors] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'limited_partner_name',
@@ -76,14 +78,14 @@ export function InvestorsTable({ listId }: { listId?: string }) {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      const allIds = (investorsData?.data || []).map(investor => investor.id);
+      const allIds = (investorsData?.data || []).map(investor => investor.id.toString());
       setSelectedInvestors(allIds);
     } else {
       setSelectedInvestors([]);
     }
   };
 
-  const handleSelectInvestor = (id: number, checked: boolean) => {
+  const handleSelectInvestor = (id: string, checked: boolean) => {
     if (checked) {
       setSelectedInvestors(prev => [...prev, id]);
     } else {
