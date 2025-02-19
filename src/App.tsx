@@ -1,3 +1,4 @@
+
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
@@ -11,8 +12,6 @@ import Lists from "@/pages/Lists";
 import ListDetails from "@/pages/ListDetails";
 import Investors from "@/pages/Investors";
 import Campaigns from "@/pages/Campaigns";
-import NewCampaign from "@/pages/NewCampaign";
-import CampaignDetails from "@/pages/CampaignDetails";
 
 const router = createBrowserRouter([
   {
@@ -38,14 +37,6 @@ const router = createBrowserRouter([
       {
         path: "/campaigns",
         element: <Campaigns />,
-      },
-      {
-        path: "/campaigns/new",
-        element: <NewCampaign />,
-      },
-      {
-        path: "/campaigns/:id",
-        element: <CampaignDetails />,
       },
       {
         path: "/profile",
