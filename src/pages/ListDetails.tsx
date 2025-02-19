@@ -12,6 +12,11 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { InvestorsPagination } from "@/components/investors/InvestorsPagination";
+import { BulkActions } from "@/components/investors/BulkActions";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
+import { InvestorProfile } from "@/components/InvestorProfile";
 import type { InvestorContact } from "@/types/investor-contact";
 
 interface ListInvestorJoin {
@@ -22,6 +27,8 @@ interface ListInvestorJoin {
 export default function ListDetails() {
   const { id } = useParams<{ id: string }>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedInvestors, setSelectedInvestors] = useState<string[]>([]);
+  const [selectedInvestorId, setSelectedInvestorId] = useState<number | null>(null);
   const pageSize = 10;
 
   const { data: list } = useQuery({
@@ -69,6 +76,28 @@ export default function ListDetails() {
     },
   });
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked && investorsData?.investors) {
+      setSelectedInvestors(investorsData.investors.map(investor => investor.id));
+    } else {
+      setSelectedInvestors([]);
+    }
+  };
+
+  const handleSelectInvestor = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedInvestors(prev => [...prev, id]);
+    } else {
+      setSelectedInvestors(prev => prev.filter(investorId => investorId !== id));
+    }
+  };
+
+  const allSelected = 
+    investorsData?.investors?.length > 0 && 
+    investorsData.investors.every(investor => 
+      selectedInvestors.includes(investor.id)
+    );
+
   return (
     <div className="h-screen flex flex-col space-y-4">
       <div>
@@ -78,31 +107,65 @@ export default function ListDetails() {
         </p>
       </div>
 
+      {selectedInvestors.length > 0 && (
+        <BulkActions
+          selectedCount={selectedInvestors.length}
+          selectedInvestors={selectedInvestors}
+          onClearSelection={() => setSelectedInvestors([])}
+          listId={id}
+        />
+      )}
+
       <div className="flex-1 min-h-0">
         <div className="rounded-md border h-full flex flex-col">
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px]">
+                  <Checkbox 
+                    checked={allSelected}
+                    onCheckedChange={handleSelectAll}
+                  />
+                </TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Company</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {investorsData?.investors.map((investor) => (
                 <TableRow key={investor.id}>
+                  <TableCell>
+                    <Checkbox 
+                      checked={selectedInvestors.includes(investor.id)}
+                      onCheckedChange={(checked) => 
+                        handleSelectInvestor(investor.id, checked as boolean)
+                      }
+                    />
+                  </TableCell>
                   <TableCell>{`${investor.first_name} ${investor.last_name}`}</TableCell>
                   <TableCell>{investor.title || "—"}</TableCell>
                   <TableCell>{investor.company_name}</TableCell>
                   <TableCell>{investor.email || "—"}</TableCell>
                   <TableCell>{investor.phone || "—"}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedInvestorId(Number(investor.id))}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
               {(!investorsData?.investors || investorsData.investors.length === 0) && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6">
+                  <TableCell colSpan={7} className="text-center py-6">
                     No investors in this list yet.
                   </TableCell>
                 </TableRow>
@@ -118,6 +181,14 @@ export default function ListDetails() {
           </div>
         </div>
       </div>
+
+      {selectedInvestorId && (
+        <InvestorProfile
+          investorId={selectedInvestorId}
+          open={selectedInvestorId !== null}
+          onOpenChange={(open) => !open && setSelectedInvestorId(null)}
+        />
+      )}
     </div>
   );
 }
