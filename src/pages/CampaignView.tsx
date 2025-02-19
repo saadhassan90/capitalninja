@@ -47,14 +47,10 @@ export default function CampaignView() {
 
       console.log('Fetched campaign data:', data);
 
-      // Transform the data to match the Campaign type
-      const transformedData: Campaign = {
+      return {
         ...data,
-        lists: null,
         raise: data?.raise || null
-      };
-
-      return transformedData;
+      } as Campaign;
     },
     enabled: !!id,
   });
