@@ -711,28 +711,21 @@ export type Database = {
       }
       list_investors: {
         Row: {
+          contact_id: string | null
           created_at: string
-          investor_id: number
           list_id: string
         }
         Insert: {
+          contact_id?: string | null
           created_at?: string
-          investor_id: number
           list_id: string
         }
         Update: {
+          contact_id?: string | null
           created_at?: string
-          investor_id?: number
           list_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "list_investors_investor_id_fkey"
-            columns: ["investor_id"]
-            isOneToOne: false
-            referencedRelation: "limited_partners"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "list_investors_list_id_fkey"
             columns: ["list_id"]
@@ -1348,6 +1341,14 @@ export type Database = {
           max_requests?: number
         }
         Returns: boolean
+      }
+      get_company_contacts: {
+        Args: {
+          company_id: number
+        }
+        Returns: {
+          contact_id: string
+        }[]
       }
       gtrgm_compress: {
         Args: {
