@@ -75,17 +75,23 @@ export function useMenuItems() {
   const { data: isAdmin } = useQuery({
     queryKey: ['is-admin', user?.id],
     queryFn: async () => {
+      if (!user?.id) return false;
+      
       const { data, error } = await supabase
         .from('admin_users')
-        .select('*')
-        .eq('id', user?.id)
-        .eq('is_active', true)
+        .select('is_active')
+        .eq('id', user.id)
         .maybeSingle();
       
-      if (error) throw error;
-      return !!data;
+      if (error) {
+        console.error('Admin check error:', error);
+        return false;
+      }
+      
+      return data?.is_active || false;
     },
-    enabled: !!user
+    enabled: !!user,
+    retry: false
   });
 
   if (isAdmin) {

@@ -20,6 +20,11 @@ export function MenuList({ items: propItems }: MenuListProps) {
   const location = useLocation();
   const items = propItems || useMenuItems();
 
+  const getValidHref = (href?: string) => {
+    if (!href) return '/';
+    return href.startsWith('/') ? href : `/${href}`;
+  };
+
   return (
     <nav className="space-y-6">
       {items.map((item, index) => {
@@ -41,7 +46,7 @@ export function MenuList({ items: propItems }: MenuListProps) {
                     )}
                     asChild
                   >
-                    <Link to={subItem.href?.startsWith('/') ? subItem.href : `/${subItem.href || ''}`}>
+                    <Link to={getValidHref(subItem.href)}>
                       {subItem.icon && (
                         <subItem.icon className="mr-2 h-4 w-4" />
                       )}
@@ -65,7 +70,7 @@ export function MenuList({ items: propItems }: MenuListProps) {
             )}
             asChild
           >
-            <Link to={item.href?.startsWith('/') ? item.href : `/${item.href || ''}`}>
+            <Link to={getValidHref(item.href)}>
               {item.icon && <item.icon className="mr-2 h-4 w-4" />}
               {item.title}
             </Link>
