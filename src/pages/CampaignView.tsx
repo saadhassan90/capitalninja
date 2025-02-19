@@ -16,28 +16,48 @@ export default function CampaignView() {
     queryFn: async () => {
       if (!id) throw new Error("Campaign ID is required");
 
-      const { data, error } = await supabase
+      // First get the campaign details
+      const { data: campaign, error: campaignError } = await supabase
         .from('campaigns')
-        .select(`
-          *,
-          lists:lists!list_id(
-            name
-          ),
-          raise:raises!raise_id(
-            name,
-            id
-          )
-        `)
+        .select('*')
         .eq('id', id)
         .single();
 
-      if (error) throw error;
+      if (campaignError) throw campaignError;
+
+      // If there's a list_id, fetch the list details
+      let listData = null;
+      if (campaign.list_id) {
+        const { data: list, error: listError } = await supabase
+          .from('lists')
+          .select('name')
+          .eq('id', campaign.list_id)
+          .single();
+        
+        if (!listError && list) {
+          listData = { name: list.name };
+        }
+      }
+
+      // If there's a raise_id, fetch the raise details
+      let raiseData = null;
+      if (campaign.raise_id) {
+        const { data: raise, error: raiseError } = await supabase
+          .from('raises')
+          .select('name, id')
+          .eq('id', campaign.raise_id)
+          .single();
+        
+        if (!raiseError && raise) {
+          raiseData = raise;
+        }
+      }
 
       // Transform the data to match the Campaign type
       const transformedData: Campaign = {
-        ...data,
-        lists: data?.lists ? { name: data.lists.name } : null,
-        raise: data?.raise || null
+        ...campaign,
+        lists: listData,
+        raise: raiseData
       };
 
       return transformedData;
