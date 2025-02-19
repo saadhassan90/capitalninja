@@ -52,38 +52,20 @@ export function useAddToList({ onSuccess, onOpenChange }: UseAddToListProps) {
         finalListId = newListData.id;
       }
 
-      // Filter out any invalid IDs and convert to numbers
-      const validInvestors = selectedInvestors
-        .filter(id => id !== null && id !== undefined)
-        .map(id => parseInt(id, 10))
-        .filter(id => !isNaN(id));
-
-      if (validInvestors.length === 0) {
-        throw new Error("No valid investor IDs found");
-      }
-
-      // Fetch the UUIDs for the selected investors
-      const { data: investorContacts, error: fetchError } = await supabase
-        .from('investor_contacts')
-        .select('id')
-        .in('company_id', validInvestors);
-
-      if (fetchError) throw fetchError;
-      if (!investorContacts || investorContacts.length === 0) {
-        throw new Error("No matching investor contacts found");
-      }
-
-      // Create the list_investors records
-      const listInvestors = investorContacts.map(contact => ({
+      // Since we're working with contact IDs directly now
+      const listInvestors = selectedInvestors.map(contactId => ({
         list_id: finalListId,
-        contact_id: contact.id
+        contact_id: contactId
       }));
 
       const { error: insertError } = await supabase
         .from("list_investors")
         .insert(listInvestors);
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('Insert error:', insertError);
+        throw insertError;
+      }
 
       toast({
         title: "Success",
