@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,12 +65,16 @@ export function AddToListDialog({
       let targetListId = selectedListId;
 
       if (listMode === "new") {
+        const { data: user } = await supabase.auth.getUser();
+        if (!user.user) throw new Error("Not authenticated");
+
         const { data: newListData, error: createError } = await supabase
           .from("lists")
           .insert({
             name: newList.name,
             description: newList.description,
             type: "static",
+            created_by: user.user.id
           })
           .select()
           .single();
@@ -83,7 +86,6 @@ export function AddToListDialog({
       // Filter out any invalid UUIDs
       const validInvestors = selectedInvestors.filter(id => {
         try {
-          // Simple UUID validation
           return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
         } catch (e) {
           console.warn('Invalid UUID found:', id);
