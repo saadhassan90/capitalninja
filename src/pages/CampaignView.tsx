@@ -22,9 +22,7 @@ export default function CampaignView() {
         .from('campaigns')
         .select(`
           *,
-          list:list_id (
-            name
-          ),
+          list:list_id (*),
           raise:raise_id (
             name,
             id
