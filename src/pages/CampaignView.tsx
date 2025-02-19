@@ -16,54 +16,51 @@ export default function CampaignView() {
     queryFn: async () => {
       if (!id) throw new Error("Campaign ID is required");
 
-      // First get the campaign details
-      const { data: campaign, error: campaignError } = await supabase
+      console.log('Fetching campaign:', id);
+
+      const { data, error } = await supabase
         .from('campaigns')
-        .select('*')
+        .select(`
+          *,
+          lists:list_id (
+            name
+          ),
+          raise:raise_id (
+            name,
+            id
+          )
+        `)
         .eq('id', id)
         .single();
 
-      if (campaignError) throw campaignError;
-
-      // If there's a list_id, fetch the list details
-      let listData = null;
-      if (campaign.list_id) {
-        const { data: list, error: listError } = await supabase
-          .from('lists')
-          .select('name')
-          .eq('id', campaign.list_id)
-          .single();
-        
-        if (!listError && list) {
-          listData = { name: list.name };
-        }
+      if (error) {
+        console.error('Error fetching campaign:', error);
+        throw error;
       }
 
-      // If there's a raise_id, fetch the raise details
-      let raiseData = null;
-      if (campaign.raise_id) {
-        const { data: raise, error: raiseError } = await supabase
-          .from('raises')
-          .select('name, id')
-          .eq('id', campaign.raise_id)
-          .single();
-        
-        if (!raiseError && raise) {
-          raiseData = raise;
-        }
-      }
+      console.log('Fetched campaign data:', data);
 
       // Transform the data to match the Campaign type
       const transformedData: Campaign = {
-        ...campaign,
-        lists: listData,
-        raise: raiseData
+        ...data,
+        lists: data?.lists ? { name: data.lists.name } : null,
+        raise: data?.raise || null
       };
 
       return transformedData;
     },
     enabled: !!id,
   });
+
+  if (!id) {
+    return (
+      <div className="p-8">
+        <Alert variant="destructive">
+          <AlertDescription>Campaign ID is required</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -74,6 +71,7 @@ export default function CampaignView() {
   }
 
   if (error || !campaignData) {
+    console.error('Error in component:', error);
     return (
       <div className="p-8">
         <Alert variant="destructive">
