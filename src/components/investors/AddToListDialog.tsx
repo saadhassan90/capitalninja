@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,7 +83,9 @@ export function AddToListDialog({
         targetListId = newListData.id;
       }
 
-      const validInvestors = selectedInvestors.filter(id => id !== null && id !== undefined);
+      const validInvestors = selectedInvestors
+        .filter(id => id !== null && id !== undefined)
+        .map(id => String(id));
 
       if (validInvestors.length === 0) {
         throw new Error("No valid investor IDs found");
@@ -92,14 +93,19 @@ export function AddToListDialog({
 
       const listInvestors = validInvestors.map(contactId => ({
         list_id: targetListId,
-        contact_id: contactId,
+        contact_id: contactId
       }));
+
+      console.log('Inserting list investors:', listInvestors);
 
       const { error: insertError } = await supabase
         .from("list_investors")
         .insert(listInvestors);
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('Insert error:', insertError);
+        throw insertError;
+      }
 
       toast({
         title: "Success",
