@@ -18,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
+import type { InvestorContact } from "@/types/investor-contact";
 
 interface List {
   id: string;
@@ -31,6 +32,7 @@ export default function Lists() {
   const [showNewListDialog, setShowNewListDialog] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const { user } = useAuth();
 
   // Fetch lists
@@ -46,6 +48,35 @@ export default function Lists() {
       if (error) throw error;
       return data as List[];
     }
+  });
+
+  // Fetch investors for selected list
+  const { data: listInvestors } = useQuery({
+    queryKey: ["list-investors", selectedListId],
+    queryFn: async () => {
+      if (!selectedListId) return [];
+      
+      const { data, error } = await supabase
+        .from("list_investors")
+        .select(`
+          contact_id,
+          investor_contacts (
+            id,
+            first_name,
+            last_name,
+            email,
+            title,
+            company_name,
+            linkedin_url,
+            phone
+          )
+        `)
+        .eq("list_id", selectedListId);
+
+      if (error) throw error;
+      return data.map(item => item.investor_contacts) as InvestorContact[];
+    },
+    enabled: !!selectedListId
   });
 
   const handleCreateList = async (e: React.FormEvent) => {
@@ -107,7 +138,10 @@ export default function Lists() {
                 <TableCell>{list.description || "—"}</TableCell>
                 <TableCell>{new Date(list.created_at).toLocaleDateString()}</TableCell>
                 <TableCell>
-                  <Button variant="link" onClick={() => console.log("View investors")}>
+                  <Button 
+                    variant="link" 
+                    onClick={() => setSelectedListId(list.id === selectedListId ? null : list.id)}
+                  >
                     View Investors
                   </Button>
                 </TableCell>
@@ -123,6 +157,40 @@ export default function Lists() {
           </TableBody>
         </Table>
       </div>
+
+      {selectedListId && (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>Company</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Phone</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {listInvestors?.map((investor) => (
+                <TableRow key={investor.id}>
+                  <TableCell>{`${investor.first_name} ${investor.last_name}`}</TableCell>
+                  <TableCell>{investor.title || "—"}</TableCell>
+                  <TableCell>{investor.company_name}</TableCell>
+                  <TableCell>{investor.email || "—"}</TableCell>
+                  <TableCell>{investor.phone || "—"}</TableCell>
+                </TableRow>
+              ))}
+              {(!listInvestors || listInvestors.length === 0) && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-6">
+                    No investors in this list yet.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       <Dialog open={showNewListDialog} onOpenChange={setShowNewListDialog}>
         <DialogContent>
