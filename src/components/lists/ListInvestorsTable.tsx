@@ -17,7 +17,7 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
   const [selectedInvestors, setSelectedInvestors] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
-    column: 'limited_partner_name',
+    column: 'first_name', // Change default sort to first_name
     direction: 'asc'
   });
 
@@ -73,7 +73,7 @@ export function ListInvestorsTable({ listId }: ListInvestorsTableProps) {
       <InvestorsTableView 
         investors={investorsData?.data ?? []}
         isLoading={isLoading}
-        onViewInvestor={setSelectedInvestorId}
+        onViewInvestor={(id) => setSelectedInvestorId(id)}
         currentPage={currentPage}
         totalPages={Math.ceil((investorsData?.count ?? 0) / 200)}
         onPageChange={setCurrentPage}

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { SortConfig } from "@/types/sorting";
+import type { InvestorContact } from "@/types/investor-contact";
 
 interface UseListInvestorsParams {
   listId: string;
@@ -37,8 +38,17 @@ export function useListInvestors({ listId, currentPage, sortConfig }: UseListInv
         return { data: [], count: 0 };
       }
 
-      const contactIds = listContacts.map(lc => lc.contact_id);
+      const contactIds = listContacts.map(lc => lc.contact_id).filter(Boolean);
+      
+      if (contactIds.length === 0) {
+        return { data: [], count: 0 };
+      }
+
       console.log('Fetching contact details for IDs:', contactIds);
+
+      // Map sort column to the correct table
+      const sortColumn = sortConfig.column === 'limited_partner_name' ? 
+        'limited_partners.limited_partner_name' : sortConfig.column;
 
       // Join with limited_partners to get company information
       const { data: contacts, error: contactsError } = await supabase
@@ -57,7 +67,7 @@ export function useListInvestors({ listId, currentPage, sortConfig }: UseListInv
           )
         `)
         .in('id', contactIds)
-        .order(sortConfig.column, { ascending: sortConfig.direction === 'asc' });
+        .order(sortColumn, { ascending: sortConfig.direction === 'asc' });
 
       if (contactsError) {
         console.error('Error fetching contacts:', contactsError);
@@ -65,7 +75,7 @@ export function useListInvestors({ listId, currentPage, sortConfig }: UseListInv
       }
 
       // Transform the data to match our expected format
-      const transformedData = contacts?.map(contact => ({
+      const transformedData: InvestorContact[] = contacts?.map(contact => ({
         id: contact.id,
         first_name: contact.first_name,
         last_name: contact.last_name,
@@ -86,31 +96,13 @@ export function useListInvestors({ listId, currentPage, sortConfig }: UseListInv
         location: contact.limited_partners.hqlocation,
         companyDescription: contact.limited_partners.description,
         strategy: contact.limited_partners.preferred_geography || null
-      }));
+      })) || [];
 
-      console.log('Successfully fetched contacts:', transformedData?.length);
-      return { data: transformedData || [], count: count || 0 };
+      console.log('Successfully fetched contacts:', transformedData.length);
+      return { data: transformedData, count: count || 0 };
     },
     enabled: !!listId,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
-    meta: {
-      onError: (error: any) => {
-        console.error('Query error:', error);
-        if (error?.message?.includes('rate limit')) {
-          toast({
-            title: "Rate Limit Reached",
-            description: "Please wait a moment before making more requests.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Error",
-            description: "Failed to load contacts data. Please try again later.",
-            variant: "destructive",
-          });
-        }
-      },
-    },
   });
 }
