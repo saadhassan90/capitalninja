@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,8 +83,11 @@ export function AddToListDialog({
         targetListId = newListData.id;
       }
 
-      // Filter out any invalid IDs
-      const validInvestors = selectedInvestors.filter(id => id !== null && id !== undefined);
+      // Filter out any invalid IDs and convert to numbers
+      const validInvestors = selectedInvestors
+        .filter(id => id !== null && id !== undefined)
+        .map(id => parseInt(id, 10))
+        .filter(id => !isNaN(id));
 
       if (validInvestors.length === 0) {
         throw new Error("No valid investor IDs found");
