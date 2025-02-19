@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { InvestorContact } from "@/types/investor-contact";
+import type { LimitedPartner } from "@/types/investor";
 import type { SortConfig } from "@/types/sorting";
 import type { InvestorFilterType, AUMRange } from "@/types/investorFilters";
 
@@ -32,60 +32,42 @@ export function useInvestorsData({
     queryKey: ['investors', searchTerm, selectedType, selectedLocation, selectedAssetClass, selectedFirstTimeFunds, selectedAUMRange, currentPage, sortConfig],
     queryFn: async () => {
       let query = supabase
-        .from('investor_contacts')
-        .select(`
-          *,
-          limited_partners!inner (
-            id,
-            limited_partner_name,
-            limited_partner_type,
-            aum,
-            preferred_fund_type,
-            preferred_commitment_size_min,
-            preferred_commitment_size_max,
-            preferred_geography,
-            hqlocation,
-            description,
-            total_commitments_in_pefunds,
-            direct_investments
-          )
-        `, { count: 'exact' });
+        .from('limited_partners')
+        .select('*', { count: 'exact' });
 
       // Apply filters
       if (searchTerm) {
-        query = query.ilike('limited_partners.limited_partner_name', `%${searchTerm}%`);
+        query = query.ilike('limited_partner_name', `%${searchTerm}%`);
       }
 
       if (selectedType) {
-        query = query.eq('limited_partners.limited_partner_type', selectedType);
+        query = query.eq('limited_partner_type', selectedType);
       }
 
       if (selectedLocation) {
-        query = query.ilike('limited_partners.hqlocation', `%${selectedLocation}%`);
+        query = query.ilike('hqlocation', `%${selectedLocation}%`);
       }
 
       if (selectedAssetClass) {
-        query = query.ilike('limited_partners.preferred_fund_type', `%${selectedAssetClass}%`);
+        query = query.ilike('preferred_fund_type', `%${selectedAssetClass}%`);
       }
 
       if (selectedAUMRange) {
         if (selectedAUMRange.min !== null) {
-          query = query.gte('limited_partners.aum', selectedAUMRange.min);
+          query = query.gte('aum', selectedAUMRange.min);
         }
         if (selectedAUMRange.max !== null) {
-          query = query.lte('limited_partners.aum', selectedAUMRange.max);
+          query = query.lte('aum', selectedAUMRange.max);
         }
       }
 
       // Apply sorting
-      const sortColumn = sortConfig.column === 'limited_partner_name' ? 
-        'limited_partners.limited_partner_name' : sortConfig.column;
-      query = query.order(sortColumn, { ascending: sortConfig.direction === 'asc' });
+      query = query.order(sortConfig.column, { ascending: sortConfig.direction === 'asc' });
 
       // Apply pagination
       query = query.range((currentPage - 1) * 200, currentPage * 200 - 1);
 
-      const { data: contacts, error, count } = await query;
+      const { data: investors, error, count } = await query;
 
       if (error) {
         console.error('Error fetching investors:', error);
@@ -93,33 +75,16 @@ export function useInvestorsData({
         throw error;
       }
 
-      // Transform the data to match InvestorContact type
-      const transformedData: InvestorContact[] = contacts?.map(contact => ({
-        id: contact.id,
-        first_name: contact.first_name,
-        last_name: contact.last_name,
-        email: contact.email,
-        phone: contact.phone,
-        title: contact.title,
-        company_name: contact.limited_partners.limited_partner_name,
-        linkedin_url: contact.linkedin_url,
-        company_id: contact.company_id,
-        is_primary_contact: contact.is_primary_contact,
-        notes: contact.notes,
-        created_at: contact.created_at,
-        updated_at: contact.updated_at,
-        companyType: contact.limited_partners.limited_partner_type,
-        companyAUM: contact.limited_partners.aum,
-        assetClasses: contact.limited_partners.preferred_fund_type ? 
-          contact.limited_partners.preferred_fund_type.split(',').map(s => s.trim()) : [],
-        location: contact.limited_partners.hqlocation,
-        companyDescription: contact.limited_partners.description,
-        strategy: contact.limited_partners.preferred_geography || null,
-        minInvestmentSize: contact.limited_partners.preferred_commitment_size_min,
-        maxInvestmentSize: contact.limited_partners.preferred_commitment_size_max,
-        geographicFocus: contact.limited_partners.preferred_geography,
-        totalFundCommitments: contact.limited_partners.total_commitments_in_pefunds,
-        totalDirectInvestments: contact.limited_partners.direct_investments
+      // Transform data to match LimitedPartner type
+      const transformedData = investors?.map(lp => ({
+        id: lp.id,
+        limited_partner_name: lp.limited_partner_name,
+        limited_partner_type: lp.limited_partner_type,
+        aum: lp.aum,
+        hqlocation: lp.hqlocation,
+        preferred_fund_type: lp.preferred_fund_type,
+        primary_contact: lp.primary_contact,
+        primary_contact_title: lp.primary_contact_title
       })) || [];
 
       return {

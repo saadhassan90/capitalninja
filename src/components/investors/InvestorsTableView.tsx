@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -12,12 +13,12 @@ import { InvestorsPagination } from "./InvestorsPagination";
 import { ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import { InvestorProfile } from "../InvestorProfile";
 import { useState } from "react";
-import type { InvestorContact } from "@/types/investor-contact";
+import type { LimitedPartner } from "@/types/investor";
 import type { SortConfig } from "@/types/sorting";
 import type { Campaign } from "@/types/campaign";
 
 interface InvestorsTableViewProps {
-  investors: InvestorContact[];
+  investors: LimitedPartner[];
   isLoading: boolean;
   onViewInvestor: (id: number) => void;
   currentPage: number;
@@ -72,12 +73,8 @@ export function InvestorsTableView({
   };
 
   const allSelected = investors.length > 0 && investors.every(investor => 
-    selectedInvestors.includes(investor.id)
+    selectedInvestors.includes(investor.id.toString())
   );
-
-  const handleViewInvestor = (id: number) => {
-    setSelectedInvestorId(id);
-  };
 
   return (
     <div className="flex flex-col h-full">
@@ -93,11 +90,11 @@ export function InvestorsTableView({
                     aria-label="Select all investors"
                   />
                 </TableHead>
-                <SortableHeader column="first_name">First Name</SortableHeader>
-                <SortableHeader column="last_name">Last Name</SortableHeader>
-                <SortableHeader column="email">Email</SortableHeader>
-                <SortableHeader column="company_name">Company</SortableHeader>
-                <SortableHeader column="title">Title</SortableHeader>
+                <SortableHeader column="limited_partner_name">Company Name</SortableHeader>
+                <SortableHeader column="limited_partner_type">Type</SortableHeader>
+                <SortableHeader column="aum">AUM</SortableHeader>
+                <SortableHeader column="hqlocation">Location</SortableHeader>
+                <SortableHeader column="preferred_fund_type">Strategy</SortableHeader>
                 <TableHead className="text-xs font-medium">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -114,18 +111,9 @@ export function InvestorsTableView({
                 investors.map((investor) => (
                   <InvestorsTableRow 
                     key={investor.id}
-                    investor={{
-                      id: investor.company_id,
-                      limited_partner_name: investor.company_name,
-                      limited_partner_type: investor.companyType || '',
-                      aum: investor.companyAUM || 0,
-                      hqlocation: investor.location || '',
-                      preferred_fund_type: investor.assetClasses.join(', '),
-                      primary_contact: `${investor.first_name} ${investor.last_name}`,
-                      primary_contact_title: investor.title || ''
-                    }}
+                    investor={investor}
                     onViewInvestor={onViewInvestor}
-                    selected={selectedInvestors.includes(investor.id)}
+                    selected={selectedInvestors.includes(investor.id.toString())}
                     onSelect={(id, checked) => onSelectInvestor(id.toString(), checked)}
                     listId={listId}
                     campaign={campaign}
