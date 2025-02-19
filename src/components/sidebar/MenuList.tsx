@@ -23,7 +23,29 @@ export function MenuList({ items: propItems }: MenuListProps) {
   const isActiveRoute = (href?: string): boolean => {
     if (!href) return false;
     if (href === '/' && location.pathname === '/') return true;
+    if (href === '/') return false;
     return location.pathname.startsWith(href);
+  };
+
+  const renderMenuItem = (item: MenuItem) => {
+    const href = item.href || '/';
+    
+    return (
+      <Button
+        variant="ghost"
+        className={cn(
+          "w-full justify-start transition-colors",
+          "hover:bg-accent/50",
+          isActiveRoute(href) && "bg-primary text-primary-foreground hover:bg-primary/90"
+        )}
+        asChild
+      >
+        <Link to={href}>
+          {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+          {item.title}
+        </Link>
+      </Button>
+    );
   };
 
   return (
@@ -37,46 +59,16 @@ export function MenuList({ items: propItems }: MenuListProps) {
               </h4>
               <div className="space-y-1">
                 {item.items.map((subItem, subIndex) => (
-                  <Button
-                    key={subIndex}
-                    variant="ghost"
-                    className={cn(
-                      "w-full justify-start transition-colors",
-                      "hover:bg-accent/50",
-                      isActiveRoute(subItem.href) && "bg-primary text-primary-foreground hover:bg-primary/90"
-                    )}
-                    asChild
-                  >
-                    <Link to={subItem.href || '/'}>
-                      {subItem.icon && (
-                        <subItem.icon className="mr-2 h-4 w-4" />
-                      )}
-                      {subItem.title}
-                    </Link>
-                  </Button>
+                  <React.Fragment key={subIndex}>
+                    {renderMenuItem(subItem)}
+                  </React.Fragment>
                 ))}
               </div>
             </div>
           );
         }
 
-        return (
-          <Button
-            key={index}
-            variant="ghost"
-            className={cn(
-              "w-full justify-start transition-colors",
-              "hover:bg-accent/50",
-              isActiveRoute(item.href) && "bg-primary text-primary-foreground hover:bg-primary/90"
-            )}
-            asChild
-          >
-            <Link to={item.href || '/'}>
-              {item.icon && <item.icon className="mr-2 h-4 w-4" />}
-              {item.title}
-            </Link>
-          </Button>
-        );
+        return <React.Fragment key={index}>{renderMenuItem(item)}</React.Fragment>;
       })}
     </nav>
   );

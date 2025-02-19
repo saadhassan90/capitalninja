@@ -69,6 +69,27 @@ export const menuItems = [
   },
 ];
 
+const adminMenuItems = {
+  title: "Admin",
+  items: [
+    {
+      title: "Dashboard",
+      href: "/admin",
+      icon: Shield,
+    },
+    {
+      title: "Users",
+      href: "/admin/users",
+      icon: Users,
+    },
+    {
+      title: "Activity",
+      href: "/admin/activity",
+      icon: Activity,
+    },
+  ],
+};
+
 export function useMenuItems() {
   const { user } = useAuth();
 
@@ -77,48 +98,28 @@ export function useMenuItems() {
     queryFn: async () => {
       if (!user?.id) return false;
       
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('is_active')
-        .eq('id', user.id)
-        .maybeSingle();
-      
-      if (error) {
+      try {
+        const { data, error } = await supabase
+          .from('admin_users')
+          .select('is_active')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) {
+          console.error('Admin check error:', error);
+          return false;
+        }
+        
+        return !!data?.is_active;
+      } catch (error) {
         console.error('Admin check error:', error);
         return false;
       }
-      
-      return data?.is_active || false;
     },
     enabled: !!user,
-    retry: false
+    retry: false,
+    initialData: false
   });
 
-  if (isAdmin) {
-    return [
-      ...menuItems,
-      {
-        title: "Admin",
-        items: [
-          {
-            title: "Dashboard",
-            href: "/admin",
-            icon: Shield,
-          },
-          {
-            title: "Users",
-            href: "/admin/users",
-            icon: Users,
-          },
-          {
-            title: "Activity",
-            href: "/admin/activity",
-            icon: Activity,
-          },
-        ],
-      },
-    ];
-  }
-
-  return menuItems;
+  return isAdmin ? [...menuItems, adminMenuItems] : menuItems;
 }
