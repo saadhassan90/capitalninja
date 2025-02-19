@@ -16,19 +16,21 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { toast } from "sonner";
+import { useAuth } from "@/components/AuthProvider";
 
 const Investors = () => {
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+  const { user } = useAuth();
   
   const { data: contacts = [], isLoading: isLoadingContacts } = useQuery({
-    queryKey: ['investor-contacts'],
+    queryKey: ['investor-contacts', user?.id],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
           .from('investor_contacts')
           .select(`
             *,
-            limited_partners!fk_limited_partner (
+            limited_partners (
               limited_partner_name
             )
           `);
@@ -60,6 +62,7 @@ const Investors = () => {
         return [];
       }
     },
+    enabled: !!user,
     retry: 1
   });
 
