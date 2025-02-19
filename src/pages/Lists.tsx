@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ListPlus, Eye } from "lucide-react";
+import { ListPlus } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
+import { useNavigate } from "react-router-dom";
 import { 
   Table,
   TableBody,
@@ -38,7 +39,9 @@ export default function Lists() {
   const [description, setDescription] = useState("");
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
+  // Fetch lists
   const { data: lists, refetch: refetchLists } = useQuery({
     queryKey: ["lists"],
     queryFn: async () => {
@@ -53,6 +56,7 @@ export default function Lists() {
     }
   });
 
+  // Fetch investors for selected list
   const { data: listInvestors } = useQuery({
     queryKey: ["list-investors", selectedListId],
     queryFn: async () => {
@@ -77,6 +81,7 @@ export default function Lists() {
 
       if (error) throw error;
       
+      // Safely type and transform the data
       const typedData = data as unknown as ListInvestorJoin[];
       return typedData.map(item => item.investor_contacts).filter(Boolean);
     },
@@ -109,7 +114,7 @@ export default function Lists() {
       toast.error("Error creating list: " + error.message);
     }
   };
-
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -143,10 +148,9 @@ export default function Lists() {
                 <TableCell>{new Date(list.created_at).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <Button 
-                    variant="link" 
-                    onClick={() => setSelectedListId(list.id === selectedListId ? null : list.id)}
+                    variant="secondary"
+                    onClick={() => navigate(`/lists/${list.id}`)}
                   >
-                    <Eye className="h-4 w-4 mr-2" />
                     View Investors
                   </Button>
                 </TableCell>
@@ -162,40 +166,6 @@ export default function Lists() {
           </TableBody>
         </Table>
       </div>
-
-      {selectedListId && (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {listInvestors?.map((investor) => (
-                <TableRow key={investor.id}>
-                  <TableCell>{`${investor.first_name} ${investor.last_name}`}</TableCell>
-                  <TableCell>{investor.title || "—"}</TableCell>
-                  <TableCell>{investor.company_name}</TableCell>
-                  <TableCell>{investor.email || "—"}</TableCell>
-                  <TableCell>{investor.phone || "—"}</TableCell>
-                </TableRow>
-              ))}
-              {(!listInvestors || listInvestors.length === 0) && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6">
-                    No investors in this list yet.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      )}
 
       <Dialog open={showNewListDialog} onOpenChange={setShowNewListDialog}>
         <DialogContent>

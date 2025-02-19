@@ -1,127 +1,68 @@
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/components/AuthProvider";
+import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Dashboard";
 import Profile from "@/pages/Profile";
-import Investors from "@/pages/Investors";
 import Settings from "@/pages/Settings";
-import Enrichment from "@/pages/Enrichment";
-import Exports from "@/pages/Exports";
-import Campaigns from "@/pages/Campaigns";
-import CampaignView from "@/pages/CampaignView";
-import Raise from "@/pages/Raise";
-import Emails from "@/pages/Emails";
-import AddEmail from "@/pages/AddEmail";
 import Lists from "@/pages/Lists";
-import AdminLayout from "@/components/admin/AdminLayout";
-import AdminDashboard from "@/pages/admin/Dashboard";
-import AdminUsers from "@/pages/admin/Users";
-import AdminActivity from "@/pages/admin/Activity";
-
-const queryClient = new QueryClient();
+import ListDetails from "@/pages/ListDetails";
+import Investors from "@/pages/Investors";
+import Campaigns from "@/pages/Campaigns";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <AuthProvider>
-          <Index />
-          <Toaster />
-        </AuthProvider>
-      </ThemeProvider>
-    ),
+    element: <Index />,
     children: [
       {
-        index: true,
+        path: "/",
         element: <Dashboard />,
       },
       {
-        path: "profile",
-        element: <Profile />,
-      },
-      {
-        path: "investors",
-        element: <Investors />,
-      },
-      {
-        path: "lists",
+        path: "/lists",
         element: <Lists />,
       },
       {
-        path: "settings",
-        element: <Settings />,
+        path: "/lists/:id",
+        element: <ListDetails />,
       },
       {
-        path: "enrichment",
-        element: <Enrichment />,
+        path: "/investors",
+        element: <Investors />,
       },
       {
-        path: "exports",
-        element: <Exports />,
-      },
-      {
-        path: "campaigns",
+        path: "/campaigns",
         element: <Campaigns />,
       },
       {
-        path: "campaigns/:id",
-        element: <CampaignView />,
+        path: "/profile",
+        element: <Profile />,
       },
       {
-        path: "raise",
-        element: <Raise />,
-      },
-      {
-        path: "emails",
-        element: <Emails />,
-      },
-      {
-        path: "emails/add",
-        element: <AddEmail />,
-      },
-      {
-        path: "admin",
-        element: <AdminLayout />,
-        children: [
-          {
-            index: true,
-            element: <AdminDashboard />,
-          },
-          {
-            path: "users",
-            element: <AdminUsers />,
-          },
-          {
-            path: "activity",
-            element: <AdminActivity />,
-          },
-        ],
+        path: "/settings",
+        element: <Settings />,
       },
     ],
   },
   {
-    path: "auth",
-    element: (
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <AuthProvider>
-          <Auth />
-          <Toaster />
-        </AuthProvider>
-      </ThemeProvider>
-    ),
+    path: "/auth",
+    element: <Auth />,
   },
 ]);
 
-export function App() {
+const queryClient = new QueryClient();
+
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+        <Toaster />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
