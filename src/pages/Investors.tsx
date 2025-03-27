@@ -28,6 +28,7 @@ const Investors = () => {
     queryKey: ['investor-contacts', user?.id],
     queryFn: async () => {
       try {
+        // Only get 300 random investor contacts from limited_partners table
         const { data, error } = await supabase
           .from('limited_partners')
           .select(`
@@ -45,7 +46,9 @@ const Investors = () => {
             preferred_geography,
             preferred_commitment_size_min,
             preferred_commitment_size_max
-          `);
+          `)
+          .limit(300)
+          .order('id', { ascending: true });
         
         if (error) {
           console.error('Error fetching contacts:', error);

@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      account_links: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          link_code: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          link_code?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          link_code?: string
+        }
+        Relationships: []
+      }
       activity_logs: {
         Row: {
           action_type: string
@@ -92,6 +116,39 @@ export type Database = {
           id?: string
           is_active?: boolean
           role?: Database["public"]["Enums"]["admin_role"]
+        }
+        Relationships: []
+      }
+      agent_suggestions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          output_description: string | null
+          steps: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          output_description?: string | null
+          steps?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          output_description?: string | null
+          steps?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -215,6 +272,138 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      companies: {
+        Row: {
+          created_at: string
+          id: string
+          industry: string | null
+          name: string
+          size: string | null
+          status: string | null
+          type: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          industry?: string | null
+          name: string
+          size?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          industry?: string | null
+          name?: string
+          size?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      contacts: {
+        Row: {
+          aum: string | null
+          created_at: string
+          email: string | null
+          id: string
+          last_contact: string | null
+          location: string | null
+          name: string
+          organization: string | null
+          phone: string | null
+          role: string | null
+          status: string | null
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          aum?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_contact?: string | null
+          location?: string | null
+          name: string
+          organization?: string | null
+          phone?: string | null
+          role?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aum?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_contact?: string | null
+          location?: string | null
+          name?: string
+          organization?: string | null
+          phone?: string | null
+          role?: string | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      deals: {
+        Row: {
+          assigned_to: string | null
+          company_name: string
+          created_at: string
+          description: string | null
+          id: string
+          industry: string | null
+          investment_size: number | null
+          priority: string | null
+          stage: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          company_name: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          industry?: string | null
+          investment_size?: number | null
+          priority?: string | null
+          stage?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          company_name?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          industry?: string | null
+          investment_size?: number | null
+          priority?: string | null
+          stage?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       direct_investments: {
         Row: {
@@ -769,6 +958,111 @@ export type Database = {
         }
         Relationships: []
       }
+      mandates: {
+        Row: {
+          additional_fees: string | null
+          allocation_deadline: string | null
+          application_deadline: string | null
+          application_kickoff: string | null
+          asset_class_appetites: string[]
+          audience: string[] | null
+          average_ticket_size: number
+          capital_allocation: number
+          carried_interest_structure_percent: number | null
+          contact_member: string | null
+          creation_date: string
+          description: string
+          desired_project_stage: string
+          equity_multiple: number | null
+          expected_due_diligence_duration: number | null
+          geographic_focus: string
+          gp_capital_percent: number | null
+          id: string
+          impact_investment_vehicle: string[] | null
+          investment_conduct: string
+          irr_percent: number | null
+          management_fee_capital_type: string | null
+          management_fee_percent: number | null
+          name: string
+          pe_capital_stack: string[] | null
+          preferred_returns_percent: number | null
+          risk_tolerance: string | null
+          sector_focus: string[] | null
+          status: string
+          strategy: string[] | null
+          tax_incentives: string | null
+          term_duration: number
+        }
+        Insert: {
+          additional_fees?: string | null
+          allocation_deadline?: string | null
+          application_deadline?: string | null
+          application_kickoff?: string | null
+          asset_class_appetites: string[]
+          audience?: string[] | null
+          average_ticket_size: number
+          capital_allocation: number
+          carried_interest_structure_percent?: number | null
+          contact_member?: string | null
+          creation_date?: string
+          description: string
+          desired_project_stage: string
+          equity_multiple?: number | null
+          expected_due_diligence_duration?: number | null
+          geographic_focus: string
+          gp_capital_percent?: number | null
+          id?: string
+          impact_investment_vehicle?: string[] | null
+          investment_conduct: string
+          irr_percent?: number | null
+          management_fee_capital_type?: string | null
+          management_fee_percent?: number | null
+          name: string
+          pe_capital_stack?: string[] | null
+          preferred_returns_percent?: number | null
+          risk_tolerance?: string | null
+          sector_focus?: string[] | null
+          status: string
+          strategy?: string[] | null
+          tax_incentives?: string | null
+          term_duration: number
+        }
+        Update: {
+          additional_fees?: string | null
+          allocation_deadline?: string | null
+          application_deadline?: string | null
+          application_kickoff?: string | null
+          asset_class_appetites?: string[]
+          audience?: string[] | null
+          average_ticket_size?: number
+          capital_allocation?: number
+          carried_interest_structure_percent?: number | null
+          contact_member?: string | null
+          creation_date?: string
+          description?: string
+          desired_project_stage?: string
+          equity_multiple?: number | null
+          expected_due_diligence_duration?: number | null
+          geographic_focus?: string
+          gp_capital_percent?: number | null
+          id?: string
+          impact_investment_vehicle?: string[] | null
+          investment_conduct?: string
+          irr_percent?: number | null
+          management_fee_capital_type?: string | null
+          management_fee_percent?: number | null
+          name?: string
+          pe_capital_stack?: string[] | null
+          preferred_returns_percent?: number | null
+          risk_tolerance?: string | null
+          sector_focus?: string[] | null
+          status?: string
+          strategy?: string[] | null
+          tax_incentives?: string | null
+          term_duration?: number
+        }
+        Relationships: []
+      }
       master_leads: {
         Row: {
           company_name: string
@@ -1062,6 +1356,62 @@ export type Database = {
         }
         Relationships: []
       }
+      raise_files: {
+        Row: {
+          category: string
+          created_at: string
+          file_name: string
+          file_type: string | null
+          file_url: string
+          id: string
+          notes: string | null
+          raise_id: string | null
+          sub_category: string | null
+          upload_date: string
+          upload_type: string | null
+          uploaded_by: string
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          file_name: string
+          file_type?: string | null
+          file_url: string
+          id?: string
+          notes?: string | null
+          raise_id?: string | null
+          sub_category?: string | null
+          upload_date?: string
+          upload_type?: string | null
+          uploaded_by: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          file_name?: string
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          notes?: string | null
+          raise_id?: string | null
+          sub_category?: string | null
+          upload_date?: string
+          upload_type?: string | null
+          uploaded_by?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "raise_files_raise_id_fkey"
+            columns: ["raise_id"]
+            isOneToOne: false
+            referencedRelation: "raises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       raises: {
         Row: {
           category: Database["public"]["Enums"]["investment_category"]
@@ -1122,6 +1472,185 @@ export type Database = {
           client_ip?: string
           id?: number
           request_time?: string | null
+        }
+        Relationships: []
+      }
+      startup_raise_files: {
+        Row: {
+          category: string
+          created_at: string
+          file_name: string
+          file_type: string | null
+          file_url: string
+          id: string
+          notes: string | null
+          raise_id: string | null
+          sub_category: string | null
+          upload_date: string
+          upload_type: string | null
+          uploaded_by: string
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          file_name: string
+          file_type?: string | null
+          file_url: string
+          id?: string
+          notes?: string | null
+          raise_id?: string | null
+          sub_category?: string | null
+          upload_date?: string
+          upload_type?: string | null
+          uploaded_by: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          file_name?: string
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          notes?: string | null
+          raise_id?: string | null
+          sub_category?: string | null
+          upload_date?: string
+          upload_type?: string | null
+          uploaded_by?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "startup_raise_files_raise_id_fkey"
+            columns: ["raise_id"]
+            isOneToOne: false
+            referencedRelation: "startup_raises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      startup_raises: {
+        Row: {
+          banner_url: string | null
+          created_at: string
+          description: string | null
+          has_lead_investor: boolean | null
+          id: string
+          investment_round: string | null
+          investment_type: string | null
+          investor_types: string[] | null
+          lead_investor_details: string | null
+          name: string
+          primary_contact_email: string | null
+          primary_contact_name: string | null
+          status: string | null
+          target_raise: number | null
+          total_capital_raised: number | null
+          updated_at: string
+          use_of_funds_administrative_percent: number | null
+          use_of_funds_capital_costs_percent: number | null
+          use_of_funds_development_percent: number | null
+          use_of_funds_marketing_percent: number | null
+          use_of_funds_other_percent: number | null
+          use_of_funds_professional_services_percent: number | null
+          use_of_funds_sales_percent: number | null
+          user_id: string | null
+          version: number | null
+        }
+        Insert: {
+          banner_url?: string | null
+          created_at?: string
+          description?: string | null
+          has_lead_investor?: boolean | null
+          id?: string
+          investment_round?: string | null
+          investment_type?: string | null
+          investor_types?: string[] | null
+          lead_investor_details?: string | null
+          name: string
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          status?: string | null
+          target_raise?: number | null
+          total_capital_raised?: number | null
+          updated_at?: string
+          use_of_funds_administrative_percent?: number | null
+          use_of_funds_capital_costs_percent?: number | null
+          use_of_funds_development_percent?: number | null
+          use_of_funds_marketing_percent?: number | null
+          use_of_funds_other_percent?: number | null
+          use_of_funds_professional_services_percent?: number | null
+          use_of_funds_sales_percent?: number | null
+          user_id?: string | null
+          version?: number | null
+        }
+        Update: {
+          banner_url?: string | null
+          created_at?: string
+          description?: string | null
+          has_lead_investor?: boolean | null
+          id?: string
+          investment_round?: string | null
+          investment_type?: string | null
+          investor_types?: string[] | null
+          lead_investor_details?: string | null
+          name?: string
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          status?: string | null
+          target_raise?: number | null
+          total_capital_raised?: number | null
+          updated_at?: string
+          use_of_funds_administrative_percent?: number | null
+          use_of_funds_capital_costs_percent?: number | null
+          use_of_funds_development_percent?: number | null
+          use_of_funds_marketing_percent?: number | null
+          use_of_funds_other_percent?: number | null
+          use_of_funds_professional_services_percent?: number | null
+          use_of_funds_sales_percent?: number | null
+          user_id?: string | null
+          version?: number | null
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
