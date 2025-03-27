@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -34,13 +35,10 @@ export function UserMenu() {
     navigate("/auth");
   };
 
-  const userInitials = profile?.first_name && profile?.last_name
-    ? `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase()
-    : user?.email?.slice(0, 2).toUpperCase() || "??";
-
-  const displayName = profile?.first_name && profile?.last_name
-    ? `${profile.first_name} ${profile.last_name}`
-    : profile?.company_name || user?.email?.split("@")[0] || "User";
+  // Hardcoded user details as requested
+  const userInitials = "JD";
+  const displayName = "John Doe";
+  const userEmail = "johndoe@capitalninja.ai";
 
   return (
     <SidebarFooter className="border-t border-border/50">
@@ -58,13 +56,16 @@ export function UserMenu() {
           className="flex w-full items-center justify-between rounded-md p-2 hover:bg-[hsl(var(--sidebar-accent))]"
         >
           <div className="flex items-center gap-3">
-            <UserAvatar avatarUrl={profile?.avatar_url} userInitials={userInitials} />
+            <UserAvatar 
+              avatarUrl="/lovable-uploads/9ba6b591-1361-4aef-af76-1c6fcd0911b0.png" 
+              userInitials={userInitials} 
+            />
             <div className="flex flex-col items-start text-left">
               <span className="text-sm font-medium text-[hsl(var(--sidebar-foreground))]">
                 {displayName}
               </span>
               <span className="text-xs text-[hsl(var(--sidebar-muted-foreground))]">
-                {user?.email}
+                {userEmail}
               </span>
             </div>
           </div>
